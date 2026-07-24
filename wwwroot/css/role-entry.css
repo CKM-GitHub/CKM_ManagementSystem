@@ -1,0 +1,139 @@
+﻿body {
+    background: linear-gradient(135deg, #1d3557 0%, #0d1b2a 100%);
+    min-height: 100vh;
+    color: #333;
+}
+
+.role-entry-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    padding: 2.5rem;
+    max-width: 720px;
+    margin: 2rem auto;
+}
+
+.role-entry-title {
+    color: #212529;
+    font-weight: 700;
+    font-size: 1.75rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.form-label-custom {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.4rem;
+}
+
+.form-control:focus {
+    border-color: #5846f6;
+    box-shadow: 0 0 0 0.2rem rgba(88, 70, 246, 0.25);
+}
+
+.permissions-table-wrapper {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    max-height: 380px; 
+    overflow-y: auto;
+}
+
+.permissions-table thead th {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa; 
+    z-index: 2;
+    font-weight: 600;
+    color: #495057;
+    border-bottom: 1px solid #dee2e6;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); 
+}
+
+.permissions-table-wrapper::-webkit-scrollbar {
+    width: 6px;
+}
+
+.permissions-table-wrapper::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.permissions-table-wrapper::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
+    .permissions-table-wrapper::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
+
+
+
+.parent-menu-row {
+    background-color: #f8f9fa;
+    font-weight: 700;
+}
+
+.submenu-indent {
+    padding-left: 1.75rem !important;
+    color: #6c757d;
+}
+
+.btn-register {
+    background-color: #5846f6;
+    border: none;
+    color: #ffffff;
+    font-weight: 600;
+    padding: 0.6rem 1rem;
+    transition: background-color 0.2s ease-in-out;
+}
+
+    .btn-register:hover {
+        background-color: #4332d9;
+        color: #ffffff;
+    }
+
+.btn-clear {
+    background-color: #6c757d;
+    border: none;
+    color: #ffffff;
+    font-weight: 600;
+    padding: 0.6rem 1rem;
+}
+
+    .btn-clear:hover {
+        background-color: #5a6268;
+        color: #ffffff;
+    }
+
+.swal2-popup {
+    border-radius: 16px !important;
+    padding: 2rem !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important; 
+}
+
+.swal2-title {
+    font-size: 1.4rem !important;
+    font-weight: 600 !important;
+    color: #2b2d42 !important;
+}
+
+.swal2-html-container {
+    font-size: 1rem !important;
+    color: #6c757d !important;
+}
+
+
+.swal2-icon.swal2-success {
+    border-color: #635bff !important;
+    color: #635bff !important;
+}
+
+    .swal2-icon.swal2-success .swal2-success-ring {
+        border-color: rgba(99, 91, 255, 0.3) !important;
+    }
+
+    .swal2-icon.swal2-success [class^='swal2-success-line'] {
+        background-color: #635bff !important;
+    }
