@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\DELL\\source\\repos\\CKM_ManagementSystem\\CKM_ManagementSystem.csproj": {}
+    "C:\\CKM_ManagementSystem\\CKM_ManagementSystem.csproj": {}
   },
   "projects": {
-    "C:\\Users\\DELL\\source\\repos\\CKM_ManagementSystem\\CKM_ManagementSystem.csproj": {
+    "C:\\CKM_ManagementSystem\\CKM_ManagementSystem.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\DELL\\source\\repos\\CKM_ManagementSystem\\CKM_ManagementSystem.csproj",
+        "projectUniqueName": "C:\\CKM_ManagementSystem\\CKM_ManagementSystem.csproj",
         "projectName": "CKM_ManagementSystem",
-        "projectPath": "C:\\Users\\DELL\\source\\repos\\CKM_ManagementSystem\\CKM_ManagementSystem.csproj",
-        "packagesPath": "C:\\Users\\DELL\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\DELL\\source\\repos\\CKM_ManagementSystem\\obj\\",
+        "projectPath": "C:\\CKM_ManagementSystem\\CKM_ManagementSystem.csproj",
+        "packagesPath": "C:\\Users\\FOR YOU\\.nuget\\packages\\",
+        "outputPath": "C:\\CKM_ManagementSystem\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\DELL\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\FOR YOU\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -44,11 +44,17 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.300"
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[8.0.11, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -68,7 +74,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.315/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
