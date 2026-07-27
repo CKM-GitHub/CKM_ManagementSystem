@@ -13,7 +13,7 @@ namespace CKM_ManagementSystem.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public IActionResult User_Entry()
         {
             return View();
         }
