@@ -1,26 +1,25 @@
 ﻿@model CKM_ManagementSystem.Models.ViewModels.RoleEntryViewModel
 
 @{
-    ViewData["Title"] = "User Role Entry";
+    bool isEditMode = ViewBag.IsEditMode ?? false;
+    ViewData["Title"] = isEditMode ? "Edit User Role" : "User Role Entry";
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css/role-entry.css" asp-append-version="true" />
-    <!-- SweetAlert2 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 }
 
 <div class="container py-3">
     <div class="role-entry-card">
-        <h3 class="role-entry-title">User Role Entry</h3>
+        <h3 class="role-entry-title">@(isEditMode ? "Edit User Role" : "User Role Entry")</h3>
 
         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
 
         <form id="roleForm" asp-action="SaveRole" method="post">
             <div class="mb-3">
                 <label class="form-label form-label-custom">Role Code <span class="text-danger">*</span></label>
-                <input type="text" asp-for="RoleCode" id="RoleCode" class="form-control" placeholder="e.g., role code" autocomplete="off" />
+                <input type="text" asp-for="RoleCode" id="RoleCode" class="form-control" placeholder="e.g., role code" autocomplete="off" readonly="@(isEditMode ? "readonly" : null)" />
                 <span id="roleCodeError" class="text-danger small ms-1"></span>
             </div>
 
@@ -38,7 +37,7 @@
             <div class="mb-3 d-flex align-items-center gap-4">
                 <label class="form-label form-label-custom mb-0">Status</label>
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" asp-for="Status" value="true" id="statusActive" checked>
+                    <input class="form-check-input" type="radio" asp-for="Status" value="true" id="statusActive">
                     <label class="form-check-label" for="statusActive">Active</label>
                 </div>
                 <div class="form-check form-check-inline">
@@ -105,10 +104,10 @@
 
             <div class="row g-2">
                 <div class="col-6">
-                    <button type="button" class="btn btn-clear w-100" id="btnClear">Clear</button>
+                    <a asp-action="RoleList" class="btn btn-clear w-100 text-center text-decoration-none">Cancel</a>
                 </div>
                 <div class="col-6">
-                    <button type="submit" class="btn btn-register w-100">Register</button>
+                    <button type="submit" class="btn btn-register w-100">@(isEditMode ? "Update" : "Register")</button>
                 </div>
             </div>
         </form>
@@ -116,36 +115,31 @@
 </div>
 
 @section Scripts {
-    <!-- SweetAlert2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         $(document).ready(function () {
+            var isEditMode = @(isEditMode.ToString().ToLower());
 
-            $('#RoleCode').focus();
+            if (!isEditMode) {
+                $('#RoleCode').focus();
+            }
 
             
         @if (TempData["SuccessMessage"] != null)
         {
-            <text>
-                Swal.fire({
-                    title: 'အောင်မြင်ပါသည်!',
-                    text: '@Html.Raw(TempData["SuccessMessage"])',
-                    icon: 'success',
-                    confirmButtonColor: '#635bff',
-                    timer: 2500
-                });
-            </text>
+            @:Swal.fire({
+            @:    title: 'အောင်မြင်ပါသည်!',
+            @:    text: '@Html.Raw(TempData["SuccessMessage"])',
+            @:    icon: 'success',
+            @:    confirmButtonColor: '#635bff',
+            @:    timer: 2500
+            @:});
         }
 
-            $('#btnClear').click(function () {
-                $('#roleForm')[0].reset();
-                $('#roleCodeError').text('');
-                $('#displayNameError').text('');
-                $('#RoleCode').focus();
-            });
-
             $('#RoleCode').on('blur', function () {
+                if (isEditMode) return;
+
                 var code = $(this).val().trim();
                 if (code !== '') {
                     $.post('/Role/CheckDuplicateCode', { roleCode: code }, function (res) {
@@ -189,7 +183,6 @@
                 var $parentTr = $(this).closest('tr');
                 var parentMenuId = $parentTr.data('menu-id');
                 var isChecked = $(this).prop('checked');
-
                 var colIndex = $(this).closest('.form-check').index();
 
                 $('tr[data-parent-id="' + parentMenuId + '"]').each(function () {
@@ -205,18 +198,12 @@
                 var $parentRow = $('tr[data-menu-id="' + parentId + '"]');
                 var $parentCheckbox = $parentRow.find('.form-check').eq(colIndex).find('input[type="checkbox"]');
 
-                var totalSub = $('tr[data-parent-id="' + parentId + '"]').length;
                 var checkedSub = $('tr[data-parent-id="' + parentId + '"]').filter(function () {
                     return $(this).find('.form-check').eq(colIndex).find('input[type="checkbox"]').is(':checked');
                 }).length;
 
-                if (checkedSub > 0) {
-                    $parentCheckbox.prop('checked', true);
-                } else {
-                    $parentCheckbox.prop('checked', false);
-                }
+                $parentCheckbox.prop('checked', checkedSub > 0);
             });
-
         });
     </script>
 }

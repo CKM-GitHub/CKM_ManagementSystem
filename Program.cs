@@ -1,7 +1,13 @@
+using CKM_ManagementSystem.Services;
+using CKM_ManagementSystem.Services.Interfaces;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Register Custom Services (Dependency Injection)
+builder.Services.AddScoped<IRoleService, RoleService>();
 
 var app = builder.Build();
 
