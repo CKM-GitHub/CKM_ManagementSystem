@@ -2,7 +2,7 @@
 
 namespace CKM_ManagementSystem.Controllers
 {
-    public class NotificationController1 : Controller
+    public class NotificationController : Controller
     {
         public IActionResult Index()
         {

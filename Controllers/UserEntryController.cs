@@ -2,76 +2,43 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Identity;
-using AspNetCoreGeneratedDocument;
-using Microsoft.EntityFrameworkCore;
+using CKM_ManagementSystem.Repositories;
 
 namespace CKM_ManagementSystem.Controllers
 {
     public class UserEntryController : Controller
     {
-        private readonly CkmManagementSystemContext _context;
         private readonly IWebHostEnvironment _environment;
-
-        public UserEntryController(CkmManagementSystemContext context, IWebHostEnvironment environment)
-        {
-            _context = context;
-            _environment = environment;
-        }
-
+        private readonly IUserRepository _userRepository;
         private readonly PasswordHasher<User> _passwordHasher = new();
 
-        [HttpGet]
-        public IActionResult UserCreate()
+        public UserEntryController(IWebHostEnvironment environment, IUserRepository userRepository)
         {
-            ViewBag.DepartmentList = new SelectList(
-                _context.Departments, 
-                "DepartmentCode",
-                "DepartmentName");
-            ViewBag.UserRoleList = new SelectList(
-                _context.UserRoles,
-                "RoleCode", 
-                "RoleName");
+            _environment = environment;
+            _userRepository = userRepository;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> UserCreate()
+        {
+            await PopulateDropdownsAsync();
             return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> UserCreate(UserCreateDto dto)
         {
-            if (await _context.Users.AnyAsync(u => u.StaffCode == dto.StaffCode))
-            {
-                ModelState.AddModelError("StaffCode", "StaffCode is already registered.");
-            }
-
-            if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
-            {
-                ModelState.AddModelError("Email", "This Email is already registered.");
-            }
-            
             if (!ModelState.IsValid)
             {
-
-                ViewBag.DepartmentList = new SelectList(
-                    _context.Departments, 
-                    "DepartmentCode", 
-                    "DepartmentName",
-                    dto.DepartmentCode);
-                ViewBag.UserRoleList = new SelectList(
-                    _context.UserRoles, 
-                    "RoleCode",
-                    "RoleName",
-                    dto.RoleCode);
+                await PopulateDropdownsAsync(dto.DepartmentCode, dto.RoleCode);
                 return View(dto);
             }
 
             // Bar lo folder new generate load lae so dop, new environmet change twar yin a shin phay aung lo
-            string? imageUrl = null;   
-
+            string? imageUrl = null;
             if (dto.ImageFile != null)
             {
-                string imageFolder = Path.Combine
-                    (_environment.WebRootPath,
-                    "images", 
-                    "users");
+                string imageFolder = Path.Combine(_environment.WebRootPath, "images", "users");
 
                 if (!Directory.Exists(imageFolder))
                 {
@@ -87,7 +54,7 @@ namespace CKM_ManagementSystem.Controllers
                 }
 
                 imageUrl = "/images/users/" + fileName;
-            } 
+            }
 
             var user = new User
             {
@@ -104,13 +71,40 @@ namespace CKM_ManagementSystem.Controllers
 
             user.Password = _passwordHasher.HashPassword(user, dto.Password);
 
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            int errorCode = await _userRepository.CreateUserAsync(user);
+
+            if (errorCode == 1)
+            {
+                ModelState.AddModelError("StaffCode", "StaffCode is already registered.");
+            }
+            else if (errorCode == 2)
+            {
+                ModelState.AddModelError("Email", "This Email is already registered.");
+            }
+            else if (errorCode == -1)
+            {
+                ModelState.AddModelError(string.Empty, "An unexpected system error occurred on the database tier.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                await PopulateDropdownsAsync(dto.DepartmentCode, dto.RoleCode);
+                return View(dto);
+            }
 
             TempData["SuccessMessage"] = "User created successfully";
+            return RedirectToAction("UserList","UserManagement");
+        }
 
-            return RedirectToAction("UserCreate");
+        private async Task PopulateDropdownsAsync(string? selectedDept = null, string? selectedRole = null)
+        {
+            var departments = await _userRepository.GetActiveDepartmentsAsync();
+            var roles = await _userRepository.GetUserRolesAsync();
+
+            ViewBag.DepartmentList = new SelectList(departments, "DepartmentCode", "DepartmentName", selectedDept);
+            ViewBag.UserRoleList = new SelectList(roles, "RoleCode", "RoleName", selectedRole);
         }
     }
 }
+
 

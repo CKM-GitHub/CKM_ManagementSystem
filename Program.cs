@@ -1,10 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using CKM_ManagementSystem.Models;
+using CKM_ManagementSystem.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddDbContext<CkmManagementSystemContext>(options =>
    options.UseSqlServer(
@@ -30,7 +32,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=UserEntry}/{action=UserCreate}/{id?}");
+    pattern: "{controller=UserManagement}/{action=UserList}/{id?}");
 
 
 app.Run();
