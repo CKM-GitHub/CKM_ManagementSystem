@@ -1,11 +1,10 @@
-﻿/* Global Background & Font */
-body {
-    background: #1e40af; /* Deep Royal Blue */
+﻿body {
+    background: #1e40af; 
     min-height: 100vh;
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
-/* Page Header Title */
+
 .page-title {
     color: #ffffff;
     font-weight: 700;
@@ -16,7 +15,7 @@ body {
     letter-spacing: 0.5px;
 }
 
-/* Floating White Card Containers */
+
 .custom-card {
     background-color: #ffffff;
     border-radius: 12px;
@@ -26,7 +25,6 @@ body {
     border: none;
 }
 
-/* Search & Filter Header Form Layout */
 .filter-container {
     display: flex;
     justify-content: space-between;
@@ -42,7 +40,7 @@ body {
     flex-wrap: wrap;
 }
 
-/* Inputs & Buttons Styling */
+
 .search-input-group {
     position: relative;
     width: 220px;
@@ -116,7 +114,6 @@ body {
         color: #ffffff;
     }
 
-/* Table Styling */
 .role-table {
     width: 100%;
     border-collapse: separate;
@@ -151,7 +148,6 @@ body {
     margin-left: 3px;
 }
 
-/* Status Badges */
 .badge-status-active {
     background-color: #dcfce7;
     color: #16a34a;
@@ -172,7 +168,7 @@ body {
     display: inline-block;
 }
 
-/* Action Icon Buttons */
+
 .action-icon-btn {
     background: transparent;
     border: none;
@@ -199,7 +195,7 @@ body {
         color: #b91c1c;
     }
 
-/* Footer & Pagination */
+
 .table-footer {
     display: flex;
     justify-content: space-between;

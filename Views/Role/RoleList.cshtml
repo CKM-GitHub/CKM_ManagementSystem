@@ -14,7 +14,6 @@
 
     @Html.AntiForgeryToken()
 
-   
     <div class="custom-card">
         <form method="get" asp-action="RoleList" id="searchForm">
             <input type="hidden" name="pageNumber" value="1" />
@@ -45,7 +44,6 @@
         </form>
     </div>
 
-    
     <div class="custom-card">
         <div class="table-responsive">
             <table class="role-table">
@@ -149,22 +147,21 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function () {
-            
+
         @if (TempData["SuccessMessage"] != null)
         {
             <text>
-                        Swal.fire({
-                            title: 'အောင်မြင်ပါသည်!',
-                            text: '@Html.Raw(TempData["SuccessMessage"])',
-                            icon: 'success',
-                            confirmButtonColor: '#635bff',
-                            timer: 2500
-                        });
+                    Swal.fire({
+                        title: 'အောင်မြင်ပါသည်!',
+                        text: '@Html.Raw(TempData["SuccessMessage"])',
+                        icon: 'success',
+                        confirmButtonColor: '#635bff',
+                        timer: 2500
+                    });
             </text>
         }
         });
 
-        
         function deleteRole(roleCode) {
             Swal.fire({
                 title: 'သေချာပါသလား?',

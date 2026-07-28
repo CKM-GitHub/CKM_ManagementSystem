@@ -124,13 +124,11 @@ namespace CKM_ManagementSystem.Controllers
             {
                 if (isEditMode)
                 {
-               
                     var roleListPaged = await _roleService.GetRoleListAsync(model.RoleCode, null);
                     var existingRole = roleListPaged.Roles?.FirstOrDefault(r => r.RoleCode == model.RoleCode);
 
                     if (existingRole != null)
                     {
-                        
                         bool isPermissionsChanged = false;
                         var existingPerms = existingRole.MenuPermissions ?? new List<MenuPermissionViewModel>();
                         var modelPerms = model.MenuPermissions ?? new List<MenuPermissionViewModel>();
@@ -152,7 +150,6 @@ namespace CKM_ManagementSystem.Controllers
                             }
                         }
 
-                        
                         bool isChanged = (existingRole.DisplayName != model.DisplayName) ||
                                          (existingRole.Description != model.Description) ||
                                          (existingRole.Status != model.Status) ||
@@ -160,25 +157,24 @@ namespace CKM_ManagementSystem.Controllers
 
                         if (!isChanged)
                         {
-                            
                             return RedirectToAction("RoleList");
                         }
                     }
                 }
 
-               
                 await _roleService.SaveRoleWithPermissionsAsync(model);
 
                 if (isEditMode)
                 {
                     TempData["SuccessMessage"] = "Role အချက်အလက်များကို အောင်မြင်စွာ ပြင်ဆင်ပြီးပါပြီ။";
-                    return RedirectToAction("RoleList");
                 }
                 else
                 {
                     TempData["SuccessMessage"] = "Role အသစ်ကို အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ။";
-                    return RedirectToAction("RoleEntry");
                 }
+
+                
+                return RedirectToAction("RoleList");
             }
             catch (Exception ex)
             {
