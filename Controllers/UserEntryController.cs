@@ -93,7 +93,7 @@ namespace CKM_ManagementSystem.Controllers
             }
 
             TempData["SuccessMessage"] = "User created successfully";
-            return RedirectToAction("UserList","UserManagement");
+            return RedirectToAction("UserCreate","UserEntry");
         }
 
         private async Task PopulateDropdownsAsync(string? selectedDept = null, string? selectedRole = null)
