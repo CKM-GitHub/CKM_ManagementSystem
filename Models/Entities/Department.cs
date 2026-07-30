@@ -6,9 +6,7 @@ namespace CKM_ManagementSystem.Models.Entities
     [Table("Departments")]
     public class Department
     {
-        [Key]
-        [Column("ID")]
-        public Guid Id { get; set; }
+        
 
         [Required]
         [StringLength(30)]

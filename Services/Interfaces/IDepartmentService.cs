@@ -1,4 +1,4 @@
-﻿using CKM_ManagementSystem.Models.ViewModels;
+﻿using CKM_ManagementSystem.Models.ViewModels.Departments;
 
 namespace CKM_ManagementSystem.Services.Interfaces
 {

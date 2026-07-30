@@ -1,6 +1,6 @@
 ﻿using CKM_ManagementSystem.Data;
 using CKM_ManagementSystem.Models.Entities;
-using CKM_ManagementSystem.Models.ViewModels;
+using CKM_ManagementSystem.Models.ViewModels.Departments;
 using CKM_ManagementSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,7 +32,6 @@ namespace CKM_ManagementSystem.Services
         {
             Department department = new Department();
 
-            department.Id = Guid.NewGuid();
             department.DepartmentCode = model.DepartmentCode;   
             department.DepartmentName = model.DepartmentName;
             department.Description = model.Description;

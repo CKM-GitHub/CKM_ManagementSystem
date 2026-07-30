@@ -1,25 +1,35 @@
 ﻿document.addEventListener("DOMContentLoaded", function () {
 
     const departmentCode = document.getElementById("departmentCode");
-
-    if (departmentCode) {
-        departmentCode.focus();
-    }
-
-});
-document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("departmentEntryForm");
-    const departmentCode = document.getElementById("departmentCode");
+    const clearButton = document.getElementById("btnClear");
 
     if (departmentCode) {
         departmentCode.focus();
     }
 
-    if (form && departmentCode) {
-        form.addEventListener("reset", function () {
-            setTimeout(function () {
-                departmentCode.focus();
-            }, 0);
+    if (clearButton) {
+        clearButton.addEventListener("click", function () {
+
+            form.reset();
+
+            document.querySelector("[name='DepartmentCode']").value = "";
+            document.querySelector("[name='DepartmentName']").value = "";
+            document.querySelector("[name='Description']").value = "";
+
+            document.querySelectorAll("[name='Status']")
+                .forEach(r => r.checked = false);
+
+            document.querySelectorAll(".validation-message")
+                .forEach(s => s.textContent = "");
+
+            const summary = document.querySelector(".validation-summary");
+            if (summary) {
+                summary.innerHTML = "";
+            }
+
+            departmentCode.focus();
         });
     }
+
 });
