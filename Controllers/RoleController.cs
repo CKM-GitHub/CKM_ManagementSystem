@@ -1,49 +1,60 @@
 ﻿using CKM_ManagementSystem.Models.ViewModels;
-using Dapper;
+using CKM_ManagementSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
-using System.Data;
-using CKM_ManagementSystem.Models;
 
 namespace CKM_ManagementSystem.Controllers
 {
     public class RoleController : Controller
     {
-        private readonly string _connectionString;
+        private readonly IRoleService _roleService;
 
-        public RoleController(IConfiguration configuration)
+        public RoleController(IRoleService roleService)
         {
-            _connectionString = configuration.GetConnectionString("DefaultConnection")!;
+            _roleService = roleService;
         }
 
-
+        
         [HttpGet]
         public IActionResult RoleEntry()
         {
             var model = new RoleEntryViewModel
             {
-                MenuPermissions = new List<MenuPermissionViewModel>() 
+                MenuPermissions = new List<MenuPermissionViewModel>
+                {
+                    
+                    new MenuPermissionViewModel { MenuId = 1, MenuName = "Main Menu 1", ParentId = null },
+                    new MenuPermissionViewModel { MenuId = 2, MenuName = "Submenu 1", ParentId = 1 },
+                    new MenuPermissionViewModel { MenuId = 3, MenuName = "Submenu 2", ParentId = 1 },
+                    new MenuPermissionViewModel { MenuId = 4, MenuName = "Submenu 3", ParentId = 1 },
+
+                   
+                    new MenuPermissionViewModel { MenuId = 5, MenuName = "Main Menu 2", ParentId = null },
+                    new MenuPermissionViewModel { MenuId = 6, MenuName = "Submenu 1", ParentId = 5 },
+                    new MenuPermissionViewModel { MenuId = 7, MenuName = "Submenu 2", ParentId = 5 },
+                    new MenuPermissionViewModel { MenuId = 8, MenuName = "Submenu 3", ParentId = 5 },
+
+                    
+                    new MenuPermissionViewModel { MenuId = 9, MenuName = "Main Menu 3", ParentId = null },
+                    new MenuPermissionViewModel { MenuId = 10, MenuName = "Submenu 1", ParentId = 9 },
+                    new MenuPermissionViewModel { MenuId = 11, MenuName = "Submenu 2", ParentId = 9 },
+
+                    
+                    new MenuPermissionViewModel { MenuId = 12, MenuName = "Main Menu 4", ParentId = null }
+                }
             };
 
             return View(model);
         }
 
+        
         [HttpPost]
         public async Task<IActionResult> CheckDuplicateCode(string roleCode)
         {
-            using (IDbConnection db = new SqlConnection(_connectionString))
-            {
-                var count = await db.ExecuteScalarAsync<int>(
-                    "sp_CheckDuplicateRoleCode",
-                    new { RoleCode = roleCode },
-                    commandType: CommandType.StoredProcedure
-                );
-
-                return Json(new { isDuplicate = count > 0 });
-            }
+            bool isDuplicate = await _roleService.CheckDuplicateRoleCodeAsync(roleCode);
+            return Json(new { isDuplicate = isDuplicate });
         }
 
-       
+        
         [HttpPost]
         public async Task<IActionResult> SaveRole(RoleEntryViewModel model)
         {
@@ -54,35 +65,7 @@ namespace CKM_ManagementSystem.Controllers
 
             try
             {
-                using (IDbConnection db = new SqlConnection(_connectionString))
-                {
-                    await db.ExecuteAsync("sp_SaveRoleInfo", new
-                    {
-                        RoleCode = model.RoleCode,
-                        RoleName = model.DisplayName,
-                        Description = model.Description,
-                        Status = model.Status
-                    }, commandType: CommandType.StoredProcedure);
-
-                    if (model.MenuPermissions != null)
-                    {
-                        foreach (var perm in model.MenuPermissions)
-                        {
-                            if (perm.CanRead || perm.CanWrite || perm.CanDelete)
-                            {
-                                await db.ExecuteAsync("sp_SaveRolePermission", new
-                                {
-                                    RoleCode = model.RoleCode,
-                                    MenuId = perm.MenuId,
-                                    CanRead = perm.CanRead,
-                                    CanWrite = perm.CanWrite,
-                                    CanDelete = perm.CanDelete
-                                }, commandType: CommandType.StoredProcedure);
-                            }
-                        }
-                    }
-                }
-
+                await _roleService.SaveRoleWithPermissionsAsync(model);
                 TempData["SuccessMessage"] = "Role ကို အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ။";
                 return RedirectToAction("RoleEntry");
             }
