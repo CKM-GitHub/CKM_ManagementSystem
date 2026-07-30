@@ -16,7 +16,6 @@ namespace CKM_ManagementSystem.DL
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
-       
         public async Task<bool> CheckDuplicateRoleCodeSPAsync(string roleCode)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
@@ -33,7 +32,6 @@ namespace CKM_ManagementSystem.DL
             }
         }
 
-      
         public async Task<bool> SaveRoleInfoSPAsync(RoleEntryViewModel model)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
@@ -42,20 +40,17 @@ namespace CKM_ManagementSystem.DL
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
 
+                  
                     cmd.Parameters.AddWithValue("@RoleCode", model.RoleCode ?? (object)DBNull.Value);
-                   
                     cmd.Parameters.AddWithValue("@RoleName", model.DisplayName ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@Description", model.Description ?? (object)DBNull.Value);
-                    cmd.Parameters.AddWithValue("@IsActive", model.Status);
-
+                    cmd.Parameters.AddWithValue("@Status", model.Status); 
                     await conn.OpenAsync();
                     int rows = await cmd.ExecuteNonQueryAsync();
                     return rows > 0;
                 }
             }
         }
-
-        
         public async Task<bool> SaveRolePermissionSPAsync(string roleCode, int menuId, bool isAllowed)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
@@ -75,7 +70,6 @@ namespace CKM_ManagementSystem.DL
             }
         }
 
-        
         public async Task<DataTable> GetRoleByCodeSPAsync(string roleCode)
         {
             DataTable dt = new DataTable();

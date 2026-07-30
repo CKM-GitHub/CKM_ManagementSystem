@@ -13,27 +13,30 @@
         <h2 class="role-entry-title">User Role Entry</h2>
 
         <form asp-action="SaveRole" method="post">
-
-            
-            <div class="mb-3">
-                <label class="form-label-custom">Role Code</label>
-                <input asp-for="RoleCode" class="form-control" placeholder="e.g., role code" />
-                <span asp-validation-for="RoleCode" class="text-danger small"></span>
-            </div>
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3 small"></div>
 
            
             <div class="mb-3">
+                <label class="form-label-custom">Role Code</label>
+                <input asp-for="RoleCode" id="RoleCode" class="form-control" placeholder="e.g., role code" maxlength="20" autofocus />
+                <span asp-validation-for="RoleCode" class="text-danger small"></span>
+            </div>
+
+            
+            <div class="mb-3">
                 <label class="form-label-custom">Display Name</label>
-                <input asp-for="DisplayName" class="form-control" placeholder="e.g., Admin" />
+                <input asp-for="DisplayName" class="form-control" placeholder="e.g., Admin" maxlength="50" />
                 <span asp-validation-for="DisplayName" class="text-danger small"></span>
             </div>
 
            
             <div class="mb-3">
                 <label class="form-label-custom">Description</label>
-                <textarea asp-for="Description" class="form-control" rows="3" placeholder="e.g., Admin"></textarea>
+                <textarea asp-for="Description" class="form-control" rows="3" placeholder="e.g., Admin" maxlength="250"></textarea>
+                <span asp-validation-for="Description" class="text-danger small"></span>
             </div>
 
+            
             <div class="mb-4 d-flex align-items-center">
                 <label class="form-label-custom mb-0 me-4">Status</label>
                 <div class="form-check form-check-inline mb-0 me-3">
@@ -78,11 +81,10 @@
                                         data-parent-id="@Model.MenuPermissions[i].ParentId">
 
                                        
-                                        <input type="hidden" asp-for="MenuPermissions[i].MenuId" />
-                                        <input type="hidden" asp-for="MenuPermissions[i].MenuName" />
-                                        <input type="hidden" asp-for="MenuPermissions[i].ParentId" />
+                                        <input type="hidden" name="MenuPermissions[@i].MenuId" value="@Model.MenuPermissions[i].MenuId" />
+                                        <input type="hidden" name="MenuPermissions[@i].MenuName" value="@Model.MenuPermissions[i].MenuName" />
+                                        <input type="hidden" name="MenuPermissions[@i].ParentId" value="@Model.MenuPermissions[i].ParentId" />
 
-                                       
                                         <td style="padding-left: 1.5rem;">
                                             @if (isParent)
                                             {
@@ -95,7 +97,6 @@
                                             }
                                         </td>
 
-                                        
                                         <td>
                                             <div class="d-flex justify-content-center gap-3">
                                                 <div class="form-check form-check-inline mb-0 me-0">
@@ -128,7 +129,7 @@
                 </div>
             </div>
 
-           
+            
             <div class="row g-2 pt-2">
                 <div class="col-6">
                     <button type="reset" class="btn btn-clear w-100 py-2">Clear</button>
@@ -148,7 +149,27 @@
     <script>
         $(document).ready(function () {
 
-           
+            $('#RoleCode').focus();
+
+          
+            $('#RoleCode').on('blur', function () {
+                var roleCodeVal = $(this).val();
+                var $valSpan = $('span[asp-validation-for="RoleCode"]');
+
+                if (roleCodeVal) {
+                    $.post('/Role/CheckDuplicateCode', { roleCode: roleCodeVal }, function (res) {
+                        if (res.isDuplicate) {
+                            $valSpan.text('ဒီ Role Code မှာ ရှိပြီးသား ဖြစ်နေပါသည်။');
+                        } else {
+                            if ($valSpan.text() === 'ဒီ Role Code မှာ ရှိပြီးသား ဖြစ်နေပါသည်။') {
+                                $valSpan.text('');
+                            }
+                        }
+                    });
+                }
+            });
+
+            
             $('.parent-menu-row input[type="checkbox"]').on('change', function () {
                 var $parentRow = $(this).closest('tr');
                 var parentId = $parentRow.data('menu-id');
