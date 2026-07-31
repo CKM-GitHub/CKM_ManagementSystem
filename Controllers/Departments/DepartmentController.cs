@@ -1,6 +1,6 @@
 ﻿using CKM_ManagementSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using CKM_ManagementSystem.DL;
+using CKM_ManagementSystem.BL;
 using CKM_ManagementSystem.Models.Entities;
 using CKM_ManagementSystem.Models.ViewModels.Departments;
 
@@ -8,11 +8,11 @@ namespace CKM_ManagementSystem.Controllers.Departments
 {
     public class DepartmentsController : Controller
     {
-        private readonly DepartmentDL _departmentDL;
+        private readonly DepartmentBL _departmentBL;
 
-        public DepartmentsController(DepartmentDL departmentDL)
+        public DepartmentsController(DepartmentBL departmentBL)
         {
-            _departmentDL = departmentDL;
+            _departmentBL = departmentBL;
         }
 
 
@@ -46,7 +46,7 @@ namespace CKM_ManagementSystem.Controllers.Departments
             }
 
 
-            bool exists = _departmentDL
+            bool exists = _departmentBL
                 .IsDepartmentCodeDuplicate(model.DepartmentCode);
             if (exists)
             {
@@ -58,7 +58,7 @@ namespace CKM_ManagementSystem.Controllers.Departments
 
 
             }
-            bool nameExists = _departmentDL
+            bool nameExists = _departmentBL
                 .IsDepartmentNameDuplicate(model.DepartmentName);
 
             if (nameExists)
@@ -77,7 +77,7 @@ namespace CKM_ManagementSystem.Controllers.Departments
                 Status = model.Status
             };
 
-            string result = _departmentDL.Department_Insert(department);
+            string result = _departmentBL.Department_Insert(department);
 
             if (result != "true")
             {

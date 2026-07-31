@@ -8,7 +8,7 @@
         departmentCode.focus();
     }
 
-    if (clearButton) {
+    if (clearButton && form) {
         clearButton.addEventListener("click", function () {
 
             form.reset();
@@ -17,13 +17,19 @@
             document.querySelector("[name='DepartmentName']").value = "";
             document.querySelector("[name='Description']").value = "";
 
-            document.querySelectorAll("[name='Status']")
-                .forEach(r => r.checked = false);
+            const activeRadio = document.querySelector(
+                "[name='Status'][value='true']"
+            );
+
+            if (activeRadio) {
+                activeRadio.checked = true;
+            }
 
             document.querySelectorAll(".validation-message")
                 .forEach(s => s.textContent = "");
 
             const summary = document.querySelector(".validation-summary");
+
             if (summary) {
                 summary.innerHTML = "";
             }
@@ -31,5 +37,13 @@
             departmentCode.focus();
         });
     }
+    const successModalElement =
+        document.getElementById("successModal");
 
+    if (successModalElement) {
+        const successModal =
+            new bootstrap.Modal(successModalElement);
+
+        successModal.show();
+    }
 });
