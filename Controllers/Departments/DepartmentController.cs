@@ -6,11 +6,11 @@ using CKM_ManagementSystem.Models.ViewModels.Departments;
 
 namespace CKM_ManagementSystem.Controllers.Departments
 {
-    public class DepartmentController : Controller
+    public class DepartmentsController : Controller
     {
         private readonly DepartmentDL _departmentDL;
 
-        public DepartmentController(DepartmentDL departmentDL)
+        public DepartmentsController(DepartmentDL departmentDL)
         {
             _departmentDL = departmentDL;
         }
