@@ -1,5 +1,5 @@
 ﻿using CKM_ManagementSystem.Models.Entities;
-using CKM_ManagementSystem.DL;   
+using CKM_ManagementSystem.DL;
 using Microsoft.Data.SqlClient;
 
 namespace CKM_ManagementSystem.BL
@@ -15,15 +15,18 @@ namespace CKM_ManagementSystem.BL
 
         public string Department_Insert(Department department)
         {
-            SqlParameter[] sqlprms = new SqlParameter[5];
+            SqlParameter[] sqlprms =
+            {
+                new SqlParameter("@Department_Code", department.DepartmentCode),
+                new SqlParameter("@Department_Name", department.DepartmentName),
+                new SqlParameter("@Manager_User_Id", department.ManagerUserId),
+                new SqlParameter("@Description", department.Description),
+                new SqlParameter("@Status", department.Status)
+            };
 
-            sqlprms[0] = new SqlParameter("@Department_Code", department.DepartmentCode);
-            sqlprms[1] = new SqlParameter("@Department_Name", department.DepartmentName);
-            sqlprms[2] = new SqlParameter("@Manager_User_Id", department.ManagerUserId);
-            sqlprms[3] = new SqlParameter("@Description", department.Description);
-            sqlprms[4] = new SqlParameter("@Status", department.Status);
-
-            return bdl.InsertUpdateDeleteData("sp_Department_Insert", sqlprms);
+            return bdl.InsertUpdateDeleteData(
+                "sp_Department_Insert",
+                sqlprms);
         }
 
         public bool IsDepartmentCodeDuplicate(string departmentCode)
