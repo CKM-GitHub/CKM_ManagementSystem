@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using CKM_ManagementSystem.Models.ViewModels.Roles; 
-namespace CKM_ManagementSystem.BL 
+using CKM_ManagementSystem.Models.Entities;
+using CKM_ManagementSystem.Models.ViewModels.Roles;
+using CKM_ManagementSystem.Models.ViewModels;
+
+namespace CKM_ManagementSystem.BL
 {
     public class RoleBL
     {
@@ -51,7 +55,7 @@ namespace CKM_ManagementSystem.BL
             }
         }
 
-        public async Task<bool> SaveRolePermissionSPAsync(string roleCode, int menuId, bool isAllowed)
+        public async Task<bool> SaveRolePermissionSPAsync(string roleCode, int menuId, bool canRead, bool canWrite, bool canDelete)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
@@ -61,7 +65,9 @@ namespace CKM_ManagementSystem.BL
 
                     cmd.Parameters.AddWithValue("@RoleCode", roleCode ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@MenuId", menuId);
-                    cmd.Parameters.AddWithValue("@IsAllowed", isAllowed);
+                    cmd.Parameters.AddWithValue("@CanRead", canRead);
+                    cmd.Parameters.AddWithValue("@CanWrite", canWrite);
+                    cmd.Parameters.AddWithValue("@CanDelete", canDelete);
 
                     await conn.OpenAsync();
                     int rows = await cmd.ExecuteNonQueryAsync();
@@ -88,6 +94,99 @@ namespace CKM_ManagementSystem.BL
                 }
             }
             return dt;
+        }
+
+        public async Task<RoleListPagedViewModel> GetRoleListAsync(string search, int? status, int page, int pageSize)
+        {
+            int safePage = page < 1 ? 1 : page;
+            int safePageSize = pageSize < 1 ? 10 : pageSize;
+
+            var model = new RoleListPagedViewModel
+            {
+                PageNumber = safePage,
+                PageSize = safePageSize,
+                SearchKeyword = search,
+                Status = status
+            };
+
+            var roles = new List<RoleEntryViewModel>();
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("sp_GetRoleList", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.AddWithValue("@SearchKeyword", string.IsNullOrWhiteSpace(search) ? (object)DBNull.Value : search);
+                    cmd.Parameters.AddWithValue("@Status", status.HasValue ? status.Value : (object)DBNull.Value);
+
+                   
+                    cmd.Parameters.AddWithValue("@PageNumber", safePage);
+                    cmd.Parameters.AddWithValue("@PageSize", safePageSize);
+
+                    SqlParameter totalRecordsParam = new SqlParameter("@TotalRecords", SqlDbType.Int)
+                    {
+                        Direction = ParameterDirection.Output
+                    };
+                    cmd.Parameters.Add(totalRecordsParam);
+
+                    await conn.OpenAsync();
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            roles.Add(new RoleEntryViewModel
+                            {
+                                RoleCode = reader["RoleCode"] != DBNull.Value ? reader["RoleCode"].ToString() : "",
+                                DisplayName = reader["DisplayName"] != DBNull.Value ? reader["DisplayName"].ToString() : "",
+                                Description = reader["Description"] != DBNull.Value ? reader["Description"].ToString() : null,
+                                Status = reader["Status"] != DBNull.Value && Convert.ToBoolean(reader["Status"])
+                            });
+                        }
+                    }
+
+                    if (totalRecordsParam.Value != DBNull.Value)
+                    {
+                        model.TotalRecords = Convert.ToInt32(totalRecordsParam.Value);
+                    }
+                }
+            }
+
+            model.Roles = roles;
+            return model;
+        }
+
+        public async Task<RoleEntryViewModel> GetRoleByCodeAsync(string roleCode)
+        {
+            DataTable dt = await GetRoleByCodeSPAsync(roleCode);
+            if (dt.Rows.Count > 0)
+            {
+                DataRow row = dt.Rows[0];
+                return new RoleEntryViewModel
+                {
+                    RoleCode = row.Table.Columns.Contains("RoleCode") ? row["RoleCode"].ToString() : row["Role_Code"].ToString(),
+                    DisplayName = row.Table.Columns.Contains("DisplayName") ? row["DisplayName"].ToString() : row["Role_Name"].ToString(),
+                    Description = row["Description"] != DBNull.Value ? row["Description"].ToString() : null,
+                    Status = Convert.ToBoolean(row["Status"])
+                };
+            }
+            return null;
+        }
+
+        public async Task<bool> DeleteRoleAsync(string roleCode)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("sp_DeleteRole", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@RoleCode", roleCode ?? (object)DBNull.Value);
+
+                    await conn.OpenAsync();
+                    int rows = await cmd.ExecuteNonQueryAsync();
+                    return rows > 0;
+                }
+            }
         }
     }
 }

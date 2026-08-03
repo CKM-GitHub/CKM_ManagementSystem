@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using CKM_ManagementSystem.Models.ViewModels.Roles; 
+using System.Collections.Generic;
 
 namespace CKM_ManagementSystem.Models.ViewModels
 {
