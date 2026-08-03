@@ -44,6 +44,10 @@
         const successModal =
             new bootstrap.Modal(successModalElement);
 
+        successModalElement.addEventListener("hidden.bs.modal", function () {
+            departmentCode.focus();
+        });
+
         successModal.show();
     }
 });
