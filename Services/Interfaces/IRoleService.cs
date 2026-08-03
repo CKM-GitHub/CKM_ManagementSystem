@@ -1,4 +1,5 @@
-﻿using CKM_ManagementSystem.Models.ViewModels;
+﻿using System.Threading.Tasks;
+using CKM_ManagementSystem.Models.ViewModels.Roles; 
 
 namespace CKM_ManagementSystem.Services.Interfaces
 {

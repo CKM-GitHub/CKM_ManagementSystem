@@ -1,6 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
-namespace CKM_ManagementSystem.Models.ViewModels
+namespace CKM_ManagementSystem.Models.ViewModels.Roles 
 {
     public class RoleEntryViewModel
     {

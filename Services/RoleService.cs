@@ -1,67 +1,40 @@
 ﻿using System.Data;
-using CKM_ManagementSystem.DL;
-using CKM_ManagementSystem.Models.ViewModels;
+using System.Linq;
+using System.Threading.Tasks;
+using CKM_ManagementSystem.BL; 
+using CKM_ManagementSystem.Models.ViewModels.Roles; 
 using CKM_ManagementSystem.Services.Interfaces;
+using Microsoft.Extensions.Configuration;
 
 namespace CKM_ManagementSystem.Services
 {
     public class RoleService : IRoleService
     {
-        private readonly RoleDL _roleDL;
-
-        public RoleService(RoleDL roleDL)
+        private readonly RoleBL _roleBL; 
+        public RoleService(IConfiguration configuration)
         {
-            _roleDL = roleDL;
+            _roleBL = new RoleBL(configuration);
         }
 
-        
         public async Task<bool> CheckDuplicateRoleCodeAsync(string roleCode)
         {
-            if (string.IsNullOrWhiteSpace(roleCode)) return false;
-
-            return await _roleDL.CheckDuplicateRoleCodeAsync(roleCode);
+            return await _roleBL.CheckDuplicateRoleCodeSPAsync(roleCode);
         }
 
-        
         public async Task SaveRoleWithPermissionsAsync(RoleEntryViewModel model)
         {
-            if (model == null) throw new ArgumentNullException(nameof(model));
+            bool isRoleSaved = await _roleBL.SaveRoleInfoSPAsync(model);
 
-            await _roleDL.SaveRoleWithPermissionsAsync(model);
-        }
+            if (!isRoleSaved) return;
 
-        
-        public async Task<RoleListPagedViewModel> GetRoleListAsync(string searchKeyword, int? status, int pageNumber = 1, int pageSize = 10)
-        {
-            return await _roleDL.GetRoleListAsync(searchKeyword, status, pageNumber, pageSize);
-        }
-
-        public async Task<RoleEntryViewModel> GetRoleByCodeAsync(string roleCode)
-        {
-            if (string.IsNullOrWhiteSpace(roleCode)) return null;
-
-            DataTable dt = await _roleDL.GetRoleByCodeSPAsync(roleCode);
-
-            if (dt == null || dt.Rows.Count == 0) return null;
-
-            DataRow row = dt.Rows[0];
-
-            var model = new RoleEntryViewModel
+            if (model.MenuPermissions != null && model.MenuPermissions.Any())
             {
-                RoleCode = row["RoleCode"]?.ToString(),
-                DisplayName = row.Table.Columns.Contains("DisplayName") ? row["DisplayName"]?.ToString() : row["Role_Name"]?.ToString(),
-                Description = row.Table.Columns.Contains("Description") ? row["Description"]?.ToString() : string.Empty,
-                Status = row.Table.Columns.Contains("Status") && row["Status"] != DBNull.Value && Convert.ToBoolean(row["Status"])
-            };
-
-            return model;
-        }
-
-        public async Task<bool> DeleteRoleAsync(string roleCode)
-        {
-            if (string.IsNullOrWhiteSpace(roleCode)) return false;
-
-            return await _roleDL.DeleteRoleAsync(roleCode);
+                foreach (var perm in model.MenuPermissions)
+                {
+                    bool isAllowed = perm.CanRead || perm.CanWrite || perm.CanDelete;
+                    await _roleBL.SaveRolePermissionSPAsync(model.RoleCode, perm.MenuId, isAllowed);
+                }
+            }
         }
     }
 }
