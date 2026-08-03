@@ -31,7 +31,7 @@
                     </select>
 
                     <button type="submit" class="btn btn-search-menu">
-                        <i class="bi bi-search me-1"></i> Search Menu
+                        <i class="bi bi-search me-1"></i> Search Role
                     </button>
                 </div>
 
@@ -151,13 +151,13 @@
         @if (TempData["SuccessMessage"] != null)
         {
             <text>
-                    Swal.fire({
-                        title: 'အောင်မြင်ပါသည်!',
-                        text: '@Html.Raw(TempData["SuccessMessage"])',
-                        icon: 'success',
-                        confirmButtonColor: '#635bff',
-                        timer: 2500
-                    });
+                        Swal.fire({
+                            title: 'အောင်မြင်ပါသည်!',
+                            text: '@Html.Raw(TempData["SuccessMessage"])',
+                            icon: 'success',
+                            confirmButtonColor: '#635bff',
+                            timer: 2500
+                        });
             </text>
         }
         });

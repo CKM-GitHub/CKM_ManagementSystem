@@ -1,3 +1,4 @@
+using CKM_ManagementSystem.DL; 
 using CKM_ManagementSystem.Services;
 using CKM_ManagementSystem.Services.Interfaces;
 
@@ -6,10 +7,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 
+builder.Services.AddScoped<RoleDL>(); 
 builder.Services.AddScoped<IRoleService, RoleService>();
 
 var app = builder.Build();
-
 
 if (!app.Environment.IsDevelopment())
 {
