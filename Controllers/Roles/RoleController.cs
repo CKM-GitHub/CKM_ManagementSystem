@@ -1,4 +1,4 @@
-﻿using CKM_ManagementSystem.Models.ViewModels;
+﻿using CKM_ManagementSystem.Models.ViewModels.Roles;
 using CKM_ManagementSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 

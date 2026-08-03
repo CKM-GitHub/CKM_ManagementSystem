@@ -3,15 +3,14 @@ using System.Data;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using CKM_ManagementSystem.Models.ViewModels;
-
-namespace CKM_ManagementSystem.DL
+using CKM_ManagementSystem.Models.ViewModels.Roles; 
+namespace CKM_ManagementSystem.BL 
 {
-    public class RoleDL
+    public class RoleBL
     {
         private readonly string _connectionString;
 
-        public RoleDL(IConfiguration configuration)
+        public RoleBL(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
@@ -40,17 +39,18 @@ namespace CKM_ManagementSystem.DL
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
 
-                  
                     cmd.Parameters.AddWithValue("@RoleCode", model.RoleCode ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@RoleName", model.DisplayName ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@Description", model.Description ?? (object)DBNull.Value);
-                    cmd.Parameters.AddWithValue("@Status", model.Status); 
+                    cmd.Parameters.AddWithValue("@Status", model.Status);
+
                     await conn.OpenAsync();
                     int rows = await cmd.ExecuteNonQueryAsync();
                     return rows > 0;
                 }
             }
         }
+
         public async Task<bool> SaveRolePermissionSPAsync(string roleCode, int menuId, bool isAllowed)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
