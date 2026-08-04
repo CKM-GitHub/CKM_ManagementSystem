@@ -1,0 +1,2 @@
+F:\MyData\CKM_ManagementSystem\wwwroot\css\Department_Entry.css
+F:\MyData\CKM_ManagementSystem\wwwroot\js\Department_Entry.js
