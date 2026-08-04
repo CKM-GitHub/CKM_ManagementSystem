@@ -1,8 +1,9 @@
 ﻿using CKM_ManagementSystem.Models;
+using CKM_ManagementSystem.Models.ViewModels;
+using CKM_ManagementSystem.Repositories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Identity;
-using CKM_ManagementSystem.Repositories;
 
 namespace CKM_ManagementSystem.Controllers
 {
@@ -26,17 +27,17 @@ namespace CKM_ManagementSystem.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UserCreate(UserCreateViewModel dto)
+        public async Task<IActionResult> UserCreate(UserCreateViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                await PopulateDropdownsAsync(dto.DepartmentCode, dto.RoleCode);
-                return View(dto);
+                await PopulateDropdownsAsync(model.DepartmentCode, model.RoleCode);
+                return View(model);
             }
 
             // Bar lo folder new generate load lae so dop, new environmet change twar yin a shin phay aung lo
             string? imageUrl = null;
-            if (dto.ImageFile != null)
+            if (model.ImageFile != null)
             {
                 string imageFolder = Path.Combine(_environment.WebRootPath, "images", "users");
 
@@ -45,12 +46,12 @@ namespace CKM_ManagementSystem.Controllers
                     Directory.CreateDirectory(imageFolder);
                 }
 
-                string fileName = Guid.NewGuid().ToString() + Path.GetExtension(dto.ImageFile.FileName);
+                string fileName = Guid.NewGuid().ToString() + Path.GetExtension(model.ImageFile.FileName);
                 string filePath = Path.Combine(imageFolder, fileName);
 
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
-                    await dto.ImageFile.CopyToAsync(stream);
+                    await model.ImageFile.CopyToAsync(stream);
                 }
 
                 imageUrl = "/images/users/" + fileName;
@@ -58,18 +59,17 @@ namespace CKM_ManagementSystem.Controllers
 
             var user = new User
             {
-                Id = Guid.NewGuid(),
-                StaffCode = dto.StaffCode,
-                Name = dto.Name,
-                Email = dto.Email,
-                Gender = dto.Gender,
-                DepartmentCode = dto.DepartmentCode,
-                RoleCode = dto.RoleCode,
-                Status = dto.Status,
+                StaffCode = model.StaffCode,
+                Name = model.Name,
+                Email = model.Email,
+                Gender = model.Gender,
+                DepartmentCode = model.DepartmentCode,
+                RoleCode = model.RoleCode,
+                Status = model.Status,
                 ImageUrl = imageUrl
             };
 
-            user.Password = _passwordHasher.HashPassword(user, dto.Password);
+            user.Password = _passwordHasher.HashPassword(user, model.Password);
 
             int errorCode = await _userRepository.CreateUserAsync(user);
 
@@ -88,12 +88,12 @@ namespace CKM_ManagementSystem.Controllers
 
             if (!ModelState.IsValid)
             {
-                await PopulateDropdownsAsync(dto.DepartmentCode, dto.RoleCode);
-                return View(dto);
+                await PopulateDropdownsAsync(model.DepartmentCode, model.RoleCode);
+                return View(model);
             }
 
             TempData["SuccessMessage"] = "User created successfully";
-            return RedirectToAction("UserCreate","UserEntry");
+            return RedirectToAction("UserCreate", "UserEntry");
         }
 
         private async Task PopulateDropdownsAsync(string? selectedDept = null, string? selectedRole = null)

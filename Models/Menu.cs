@@ -25,6 +25,8 @@ public partial class Menu
 
     public DateTime? DeletedDate { get; set; }
 
+    public bool Status { get; set; }
+
     public virtual ICollection<Menu> InverseParentMenu { get; set; } = new List<Menu>();
 
     public virtual Menu? ParentMenu { get; set; }

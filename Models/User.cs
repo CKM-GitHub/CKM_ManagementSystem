@@ -5,8 +5,6 @@ namespace CKM_ManagementSystem.Models;
 
 public partial class User
 {
-    public Guid Id { get; set; }
-
     public string StaffCode { get; set; } = null!;
 
     public string Name { get; set; } = null!;
@@ -34,8 +32,6 @@ public partial class User
     public DateTime? DeletedDate { get; set; }
 
     public virtual Department DepartmentCodeNavigation { get; set; } = null!;
-
-    public virtual ICollection<Department> Departments { get; set; } = new List<Department>();
 
     public virtual UserRole RoleCodeNavigation { get; set; } = null!;
 }

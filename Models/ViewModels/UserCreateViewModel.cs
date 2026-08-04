@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
+using CKM_ManagementSystem.Models.Validation;
 
-public class UserCreateDto
+namespace CKM_ManagementSystem.Models.ViewModels;
+public class UserCreateViewModel
 {
     [Required(ErrorMessage = "Staff Code is required")]
     [RegularExpression(@"^CKM-\d{4}$", ErrorMessage = "Staff Code must be in format CKM-XXXX (e.g., CKM-0001)")]  // Dr ka Code format check htar drr pr
@@ -41,7 +43,7 @@ public class UserCreateDto
     public string RoleCode { get; set; } = string.Empty;
 
     [Display(Name = "Status")]
-    public bool Status { get; set; } = true; 
+    public bool Status { get; set; } = true;
 
     [Required(ErrorMessage = "You must agree to the Terms of Service and Privacy Policy")]
     [MustBeTrue(ErrorMessage = "You must agree to the Terms of Service and Privacy Policy")]
@@ -54,47 +56,8 @@ public class UserCreateDto
     public IFormFile? ImageFile { get; set; }
 }
 
-public class MustBeTrueAttribute : ValidationAttribute
-{
-    protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
-    {
-        return value is bool b && b
-            ? ValidationResult.Success
-            : new ValidationResult(ErrorMessage ?? "This Field must be checked bro.");
-    }
 
-}
 
-public class AllowedExtensionsAttribute : ValidationAttribute
-{
-    private readonly string[] _extensions;
-    public AllowedExtensionsAttribute(string[] extensions) => _extensions = extensions;
 
-    protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
-    {
-        if (value is IFormFile file)
-        {
-            var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
-            if (!_extensions.Contains(extension))
-            {
-                return new ValidationResult(ErrorMessage ?? $"Only {string.Join(", ", _extensions)} files are allowed.");
-            }
-        }
-        return ValidationResult.Success;
-    }
-}
 
-public class MaxFileSizeAttribute : ValidationAttribute
-{
-    private readonly int _maxFileSize;
-    public MaxFileSizeAttribute(int maxFileSize) => _maxFileSize = maxFileSize;
 
-    protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
-    {
-        if (value is IFormFile file && file.Length > _maxFileSize)
-        {
-            return new ValidationResult(ErrorMessage ?? $"Maximum allowed file size is {_maxFileSize} bytes.");
-        }
-        return ValidationResult.Success;
-    }
-}

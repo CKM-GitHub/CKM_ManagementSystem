@@ -24,7 +24,6 @@ namespace CKM_ManagementSystem.Repositories
             // String matches the exact names inside your CREATE PROCEDURE definition
             var parameters = new[]
             {
-                new SqlParameter("@ID", user.Id),
                 new SqlParameter("@Staff_Code", user.StaffCode ?? (object)DBNull.Value),
                 new SqlParameter("@Name", user.Name ?? (object)DBNull.Value),
                 new SqlParameter("@Email", user.Email ?? (object)DBNull.Value),
@@ -39,7 +38,7 @@ namespace CKM_ManagementSystem.Repositories
 
             // Explicitly mapping parameters to avoid positional mismatches
             await _context.Database.ExecuteSqlRawAsync(
-                "EXEC sp_CreateUser @ID, @Staff_Code, @Name, @Email, @Password, @Image_URL, @Role_Code, @Gender, @Department_Code, @Status, @ErrorCode OUTPUT",
+                "EXEC sp_CreateUser @Staff_Code, @Name, @Email, @Password, @Image_URL, @Role_Code, @Gender, @Department_Code, @Status, @ErrorCode OUTPUT",
                 parameters
             );
 
