@@ -1,7 +1,22 @@
+using CKM_ManagementSystem.Data;
+using CKM_ManagementSystem.Services;
+using CKM_ManagementSystem.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using CKM_ManagementSystem.BL;
+using CKM_ManagementSystem.DL;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// 1. DbContext Register 
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// 2. IDepartmentService 
+builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+builder.Services.AddScoped<BaseDL>();
+builder.Services.AddScoped<DepartmentBL>();
 
 var app = builder.Build();
 
@@ -9,7 +24,6 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -20,8 +34,9 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Departments}/{action=Entry}/{id?}");
 
 app.Run();
