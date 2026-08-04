@@ -26,7 +26,7 @@ namespace CKM_ManagementSystem.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UserCreate(UserCreateDto dto)
+        public async Task<IActionResult> UserCreate(UserCreateViewModel dto)
         {
             if (!ModelState.IsValid)
             {
