@@ -1,0 +1,118 @@
+﻿@model CKM_ManagementSystem.Models.ViewModels.CreateMenuViewModel
+@{
+    ViewData["Title"] = "Menu Entry";
+}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
+            <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+                <div class="card-header bg-white border-0 pt-4 pb-2 text-center">
+                    <h4 class="fw-bold text-dark mb-0">Menu Entry</h4>
+                </div>
+                <div class="card-body p-4">
+             
+                    <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-sm">
+                            <div class="modal-content custom-modal-popup">
+                                <div class="modal-body text-center p-4">
+                                    <div class="text-success mb-2">
+                                        <i class="bi bi-check-circle-fill display-4 text-emerald"></i>
+                                    </div>
+                                    <h5 class="custom-modal-title">Success!</h5>
+                                    <p class="custom-modal-text">@TempData["SuccessMessage"]</p>
+                                    <button type="button" class="btn custom-modal-btn w-100 mt-3" data-bs-dismiss="modal">OK</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div asp-validation-summary="All" class="text-danger small mb-3"></div>
+                    <form asp-action = "MenuEntry" method="post" id="menuForm">
+                        <div class="mb-3">
+                            <label asp-for="DisplayText" class="form-label fw-semibold text-secondary small">Display Text</label>
+                            <input asp-for="DisplayText" class="form-control" placeholder="e.g. , Register User" maxlength="150"  />
+                            <span asp-validation-for="DisplayText" class="text-danger small"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="ActionName" class="form-label fw-semibold text-secondary small">Action Name(Form Name)</label>
+                            <input asp-for="ActionName" class="form-control" placeholder="e.g. , Register " maxlength="150" />
+                            <span asp-validation-for="ActionName" class="text-danger small"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="ControllerName" class="form-label fw-semibold text-secondary small">Controller Name</label>
+                            <input asp-for="ControllerName" class="form-control" placeholder="e.g. , Account" maxlength="150" />
+                            <span asp-validation-for="ControllerName" class="text-danger small"></span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="IconClass" class="form-label fw-semibold text-secondary small">Icon Class</label>
+                            <input asp-for="IconClass" class="form-control" placeholder="e.g. , fas fa-user-plus" maxlength="100" />
+                            <span asp-validation-for="IconClass" class="text-danger small"></span>
+                        </div>
+                        
+                        <div id="msgContainer" data-success="@TempData["SuccessMessage"]"></div>
+                        <div class="row mb-3 d-flex align-items-center">
+                            <label class="col-sm-4 form-label fw-semibold text-secondary small d-block">Menu Type</label>
+                            <div class="col-sm-8 d-flex gap-3">
+                                <div class="form-check">
+                                    <input asp-for="MenuType" class="form-check-input" type="radio"  id="typeParent" value="Parent" checked />
+                                    <label class="form-check-label" for="typeParent">Parent Menu</label>
+                                </div>
+                                <div class="form-check">
+                                    <input asp-for="MenuType" class="form-check-input" type="radio"  id="typeSub" value="Sub"  />
+                                    <label class="form-check-label" for="typeSub">Sub Menu</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ParentMenuId" class="form-label fw-semibold text-secondary small">Parent Menu</label>
+                            <select asp-for="ParentMenuId" asp-items="Model.ParentMenuList" class="form-select" id="ParentMenu" disabled>
+                                <option value="0">None (Root Level)</option>
+                            </select>
+                            <input type = "hidden" id="hiddenParentMenu" name="ParentMenuId" value="0" />
+                            <span asp-validation-for="ParentMenuId" class="text-danger small"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="DisplayOrder" class="form-label fw-semibold text-secondary small">Display Order</label>
+                            <input asp-for="DisplayOrder" type="text" id="DisplayOrder" class="form-control" placeholder="e.g. , 000 - 999" />
+                            <span asp-validation-for="DisplayOrder" class="text-danger small"></span>
+                        </div>
+                        <div class="row mb-3 d-flex align-items-center">
+                            <label class="col-sm-4 form-label fw-semibold text-secondary small d-block">Status</label>
+                            <div class="col-sm-8 d-flex gap-3">
+                                <div class="form-check">
+                                    <input asp-for="Status" class="form-check-input" type="radio"  id="statusActive" value="true" checked />
+                                    <label class="form-check-label" for="statusActive" >Active</label>
+                                </div>
+                                <div class="form-check">
+                                    <input asp-for="Status" class="form-check-input" type="radio" id="statusInactive" value="false" />
+                                    <label class="form-check-label" for="statusInactive">Inactive</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-2 pt-2">
+                            <div class="col-6">
+                                <button type="reset" id="btnClear" class="btn btn-clear btn-outline-secondary w-100 fw-bold">Clear</button>
+                            </div>
+                            <div class="col-6">
+                                <button type="submit" id="btnRegister" class="btn btn-success w-100 fw-bold">Register</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/menu-entry.js" asp-append-version="true"></script>
+    <script src="~/lib/sweetalert2/dist/sweetalert2.all.min.js"></script>
+    <script>
+        var successMessage = '@(TempData["SuccessMessage"] ?? "")';
+    </script>
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/menu-entry.css" />
+}
