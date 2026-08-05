@@ -5,7 +5,7 @@ using Microsoft.Data.SqlClient;
 namespace CKM_ManagementSystem.BL
 {
     public class DepartmentBL
-    {
+    {   
         private readonly BaseDL bdl;
 
         public DepartmentBL(BaseDL baseDL)
@@ -19,7 +19,6 @@ namespace CKM_ManagementSystem.BL
             {
                 new SqlParameter("@Department_Code", department.DepartmentCode),
                 new SqlParameter("@Department_Name", department.DepartmentName),
-                new SqlParameter("@Manager_User_Id", department.ManagerUserId),
                 new SqlParameter("@Description", department.Description),
                 new SqlParameter("@Status", department.Status)
             };
