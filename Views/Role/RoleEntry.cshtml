@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "User Role Entry";
+
+    bool isEditMode = !string.IsNullOrEmpty(Model?.RoleCode);
 }
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -15,9 +17,22 @@
         <form asp-action="SaveRole" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3 small"></div>
 
+        
+            @if (isEditMode)
+            {
+                <input type="hidden" asp-for="RoleCode" />
+            }
+
             <div class="mb-3">
                 <label class="form-label-custom">Role Code</label>
-                <input asp-for="RoleCode" id="RoleCode" class="form-control" placeholder="e.g., role code" maxlength="20" autofocus />
+                
+                <input asp-for="RoleCode"
+                       id="RoleCode"
+                       class="form-control @(isEditMode ? "bg-light text-muted" : "")"
+                       placeholder="e.g., role code"
+                       maxlength="20"
+                       readonly="@(isEditMode ? "readonly" : null)"
+                       autofocus="@(isEditMode ? null : "autofocus")" />
                 <span asp-validation-for="RoleCode" class="text-danger small"></span>
             </div>
 
@@ -123,7 +138,6 @@
                 </div>
             </div>
 
-            
             <div class="row g-2 pt-2">
                 <div class="col-6">
                     <a id="btnDynamicCancelClear" asp-action="RoleList" asp-controller="Role" class="btn btn-outline-secondary w-100 py-2 text-center text-decoration-none">
@@ -131,7 +145,9 @@
                     </a>
                 </div>
                 <div class="col-6">
-                    <button type="submit" class="btn btn-register w-100 py-2">Register</button>
+                    <button type="submit" class="btn btn-register w-100 py-2">
+                        @(isEditMode ? "Update" : "Register")
+                    </button>
                 </div>
             </div>
 
@@ -145,10 +161,15 @@
     <script>
         $(document).ready(function () {
 
-            $('#RoleCode').focus();
+            var isEditMode = @(isEditMode ? "true" : "false");
 
-            
+            if (!isEditMode) {
+                $('#RoleCode').focus();
+            }
+
             $('#RoleCode').on('blur', function () {
+                if ($(this).is('[readonly]')) return;
+
                 var roleCodeVal = $(this).val();
                 var $valSpan = $('span[asp-validation-for="RoleCode"]');
 
@@ -208,22 +229,22 @@
             var $form = $('form');
 
             
-            $form.on('input change', 'input, textarea, select', function () {
-                checkFormDirtyState();
-            });
+            if (!isEditMode) {
+                $form.on('input change', 'input, textarea, select', function () {
+                    checkFormDirtyState();
+                });
+            }
 
             function checkFormDirtyState() {
                 var isDirty = false;
 
-                
-                $form.find('input[type="text"], textarea').each(function () {
+                $form.find('input[type="text"]:not([readonly]), textarea').each(function () {
                     if ($(this).val().trim() !== '') {
                         isDirty = true;
                         return false;
                     }
                 });
 
-               
                 if (!isDirty) {
                     $form.find('input[type="checkbox"]').each(function () {
                         if ($(this).is(':checked')) {
@@ -234,14 +255,12 @@
                 }
 
                 if (isDirty) {
-                   
                     $dynamicBtn
                         .text('Clear')
                         .removeClass('btn-outline-secondary')
                         .addClass('btn-clear')
                         .removeAttr('href');
                 } else {
-                    
                     resetToCancelState();
                 }
             }
@@ -254,15 +273,14 @@
                     .attr('href', '/Role/RoleList');
             }
 
-            
             $dynamicBtn.on('click', function (e) {
                 if ($(this).text().trim() === 'Clear') {
-                    e.preventDefault(); 
+                    e.preventDefault();
 
-                    $form[0].reset(); 
-                    $('span[asp-validation-for]').text(''); 
+                    $form[0].reset();
+                    $('span[asp-validation-for]').text('');
 
-                    resetToCancelState(); 
+                    resetToCancelState();
                     $('#RoleCode').focus();
                 }
             });

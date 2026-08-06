@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
@@ -76,6 +77,63 @@ namespace CKM_ManagementSystem.BL
             }
         }
 
+        
+        public async Task<bool> SaveRoleWithPermissionsSPAsync(RoleEntryViewModel model)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                await conn.OpenAsync();
+
+                
+                using (SqlTransaction transaction = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        
+                        using (SqlCommand cmdRole = new SqlCommand("sp_SaveRoleInfo", conn, transaction))
+                        {
+                            cmdRole.CommandType = CommandType.StoredProcedure;
+                            cmdRole.Parameters.AddWithValue("@RoleCode", model.RoleCode ?? (object)DBNull.Value);
+                            cmdRole.Parameters.AddWithValue("@RoleName", model.DisplayName ?? (object)DBNull.Value);
+                            cmdRole.Parameters.AddWithValue("@Description", model.Description ?? (object)DBNull.Value);
+                            cmdRole.Parameters.AddWithValue("@Status", model.Status);
+
+                            await cmdRole.ExecuteNonQueryAsync();
+                        }
+
+                        
+                        if (model.MenuPermissions != null && model.MenuPermissions.Any())
+                        {
+                            foreach (var perm in model.MenuPermissions)
+                            {
+                                using (SqlCommand cmdPerm = new SqlCommand("sp_SaveRolePermission", conn, transaction))
+                                {
+                                    cmdPerm.CommandType = CommandType.StoredProcedure;
+                                    cmdPerm.Parameters.AddWithValue("@RoleCode", model.RoleCode ?? (object)DBNull.Value);
+                                    cmdPerm.Parameters.AddWithValue("@MenuId", perm.MenuId);
+                                    cmdPerm.Parameters.AddWithValue("@CanRead", perm.CanRead);
+                                    cmdPerm.Parameters.AddWithValue("@CanWrite", perm.CanWrite);
+                                    cmdPerm.Parameters.AddWithValue("@CanDelete", perm.CanDelete);
+
+                                    await cmdPerm.ExecuteNonQueryAsync();
+                                }
+                            }
+                        }
+
+                        
+                        await transaction.CommitAsync();
+                        return true;
+                    }
+                    catch (Exception)
+                    {
+                        
+                        await transaction.RollbackAsync();
+                        throw;
+                    }
+                }
+            }
+        }
+
         public async Task<DataTable> GetRoleByCodeSPAsync(string roleCode)
         {
             DataTable dt = new DataTable();
@@ -120,7 +178,6 @@ namespace CKM_ManagementSystem.BL
                     cmd.Parameters.AddWithValue("@SearchKeyword", string.IsNullOrWhiteSpace(search) ? (object)DBNull.Value : search);
                     cmd.Parameters.AddWithValue("@Status", status.HasValue ? status.Value : (object)DBNull.Value);
 
-                   
                     cmd.Parameters.AddWithValue("@PageNumber", safePage);
                     cmd.Parameters.AddWithValue("@PageSize", safePageSize);
 

@@ -26,24 +26,8 @@ namespace CKM_ManagementSystem.Services
 
         public async Task SaveRoleWithPermissionsAsync(RoleEntryViewModel model)
         {
-            bool isRoleSaved = await _roleBL.SaveRoleInfoSPAsync(model);
-
-            if (!isRoleSaved) return;
-
-            if (model.MenuPermissions != null && model.MenuPermissions.Any())
-            {
-                foreach (var perm in model.MenuPermissions)
-                {
-                    
-                    await _roleBL.SaveRolePermissionSPAsync(
-                        model.RoleCode,
-                        perm.MenuId,
-                        perm.CanRead,
-                        perm.CanWrite,
-                        perm.CanDelete
-                    );
-                }
-            }
+            
+            await _roleBL.SaveRoleWithPermissionsSPAsync(model);
         }
 
         public async Task<RoleListPagedViewModel> GetRoleListAsync(string search, int? status, int page, int pageSize)

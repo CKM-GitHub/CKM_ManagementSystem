@@ -23,10 +23,8 @@ namespace CKM_ManagementSystem.Controllers
         {
             try
             {
-                
                 int? filterStatus = status;
 
-                
                 var pagedData = await _roleService.GetRoleListAsync(searchKeyword, filterStatus, pageNumber, pageSize);
 
                 return View(pagedData);
@@ -74,8 +72,12 @@ namespace CKM_ManagementSystem.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveRole(RoleEntryViewModel model, bool isEdit = false)
+        public async Task<IActionResult> SaveRole(RoleEntryViewModel model)
         {
+            
+            var existingRole = await _roleService.GetRoleByCodeAsync(model.RoleCode);
+            bool isEdit = existingRole != null;
+
             if (!ModelState.IsValid)
             {
                 if (model.MenuPermissions == null || !model.MenuPermissions.Any())
@@ -87,26 +89,27 @@ namespace CKM_ManagementSystem.Controllers
 
             if (isEdit)
             {
-                var existingRole = await _roleService.GetRoleByCodeAsync(model.RoleCode);
+                
+                bool isDataChanged = existingRole.DisplayName != model.DisplayName ||
+                                     existingRole.Description != model.Description ||
+                                     existingRole.Status != model.Status;
 
-                if (existingRole != null)
+                if (!isDataChanged)
                 {
-                    bool isDataChanged = existingRole.DisplayName != model.DisplayName ||
-                                         existingRole.Description != model.Description ||
-                                         existingRole.Status != model.Status;
-
-                    if (!isDataChanged)
-                    {
-                        return RedirectToAction("RoleList");
-                    }
+                    return RedirectToAction("RoleList");
                 }
             }
             else
             {
+                
                 bool isDuplicate = await _roleService.CheckDuplicateRoleCodeAsync(model.RoleCode);
                 if (isDuplicate)
                 {
                     ModelState.AddModelError("RoleCode", "ဒီ Role Code မှာ ရှိပြီးသား ဖြစ်နေပါသည်။");
+                    if (model.MenuPermissions == null || !model.MenuPermissions.Any())
+                    {
+                        model.MenuPermissions = GetDefaultMenuPermissions();
+                    }
                     return View("RoleEntry", model);
                 }
             }
@@ -124,6 +127,10 @@ namespace CKM_ManagementSystem.Controllers
             catch (Exception ex)
             {
                 ModelState.AddModelError("", "Data သိမ်းဆည်းရာတွင် အမှားအယွင်း ရှိနေပါသည်: " + ex.Message);
+                if (model.MenuPermissions == null || !model.MenuPermissions.Any())
+                {
+                    model.MenuPermissions = GetDefaultMenuPermissions();
+                }
                 return View("RoleEntry", model);
             }
         }
