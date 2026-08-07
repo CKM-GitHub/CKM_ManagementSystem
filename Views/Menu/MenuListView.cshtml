@@ -120,8 +120,8 @@
                                         }
                                     </td>
                                     <td class="text-center">
-                                        <a href="#" class="action-btn me-2" title="Edit"><i class="bi bi-pencil-square"></i></a>
-                                        <a href="#" class="action-btn" title="Delete"><i class="bi bi-trash"></i></a>
+                                        <a asp-action="MenuEdit" class="action-btn me-2" asp-route-menuId="@item.MenuID" title="Edit"><i class="bi bi-pencil-square"></i></a>
+                                        <a href="javascript:void(0);" class="action-btn delete-btn" data-menu-id="@item.MenuID" title="Delete"><i class="bi bi-trash"></i></a>
                                     </td>
                             </tr>
                             index++;
@@ -138,6 +138,9 @@
                         }
                     </tbody>
                 </table>
+                <form id="antiForgeryForm">
+                    @Html.AntiForgeryToken()
+                </form>
         </div>
         <div class="table-footer">
                 <div class="footer-text">
@@ -176,10 +179,11 @@
     <script>
         var successMessage = '@(TempData["SuccessMessage"] ?? "")';
     </script>
-    <script src="~/js/menu-management.js" asp-append-version="true"></script>
     <script src="~/lib/sweetalert2/dist/sweetalert2.all.min.js"></script>
+    <script src="~/js/menu-management.js" asp-append-version="true"></script>
 }
 @section Styles {
     <link rel="stylesheet" href="~/css/menu-management.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/sweetalert2/dist/sweetalert2.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 }

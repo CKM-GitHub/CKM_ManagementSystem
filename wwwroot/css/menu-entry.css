@@ -5,7 +5,9 @@
     border-radius: 15px !important;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
 }
-
+.card-body {
+    padding-bottom: 2.5rem !important;
+}
 .card-header h4 {
     color: #2c3e50;
 }
@@ -19,6 +21,7 @@
     padding: 0.55rem 0.75rem;
     font-size: 0.9rem;
     border-radius: 6px;
+    height: 40px;
 }
 
 .form-control:focus, .form-select:focus {
@@ -49,25 +52,13 @@
     color: #ffffff;
 }
 
-.btn-register {
-    background-color: #28a745;
-    color: #ffffff;
-    border: none;
-    padding: 0.6rem;
-    border-radius: 6px;
-}
-
-.btn-register:hover {
-    background-color: #218838;
-    color: #ffffff;
-}
-
-.custom-modal-popcup {
+.custom-modal-popup {
     border: none !important;
     border-radius: 45px !important; 
     background: #FFFFFF !important;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important; 
     overflow: hidden !important;
+    max-width: 380px !important;
 }
 
 .custom-modal-title {

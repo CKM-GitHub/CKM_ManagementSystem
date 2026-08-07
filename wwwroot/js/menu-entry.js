@@ -1,69 +1,79 @@
 ﻿
 $(document).ready(function () {
+    const $menuForm = $('#menuForm');
+    const $displayText = $('#DisplayText');
+    const $parentMenu = $('#ParentMenu');
+    const $hiddenParentMenu = $('#hiddenParentMenu');
+    const $displayOrder = $('#DisplayOrder');
+    const $typeParent = $('#typeParent');
+
     if (typeof successMessage !== 'undefined' && successMessage !== '') {
-        var modalElement = document.getElementById('successModal');
+        const modalElement = document.getElementById('successModal');
         if (modalElement) {
-            var successModal = new bootstrap.Modal(modalElement);
+            const successModal = new bootstrap.Modal(modalElement);
             successModal.show();
             $(modalElement).on('hidden.bs.modal', function () {
-                $('#DisplayText').focus();
+                $displayText.focus();
             });
         }
     }
     else {
         setTimeout(function () {
-            $('#DisplayText').focus();
+            $displayText.focus();
         }, 100);
         
     }
     function toggleParentMenu() {
-        var selectedType = $('input[name="MenuType"]:checked').val();
+        const selectedType = $('input[name="MenuType"]:checked').val();
         if (selectedType === 'Sub') {
-            $('#ParentMenu').prop('disabled', false);
-            $('#hiddenParentMenu').prop('disabled', true);
+            $parentMenu.prop('disabled', false).removeClass('bg-light');
+            $hiddenParentMenu.prop('disabled', true);
                 
         } else {
-            $('#ParentMenu').val('0').prop('disabled', true);
-            $('#hiddenParentMenu').prop('disabled', false);
+            $parentMenu.val('0').prop('disabled', true).addClass('bg-light');
+            $hiddenParentMenu.prop('disabled', false);
         }
     }
+
+    function revalidateDisplayOrder() {
+        if ($menuForm.data('validator') && $displayOrder.val() !== '') {
+            $menuForm.validate().element('#DisplayOrder');
+        }
+    }
+
     toggleParentMenu();
 
     $('input[name="MenuType"]').change(function () {
         toggleParentMenu();
         revalidateDisplayOrder();
     });
-    $('#ParentMenu').change(function () {
+    $parentMenu.on('change', function () {
         revalidateDisplayOrder();
     });
-    $('#DisplayOrder').on('keyup input change', function () {
+    $displayOrder.on('keyup input change', function () {
         revalidateDisplayOrder();
     });
-    function revalidateDisplayOrder() {
-        var form = $('#menuForm');
-        if (form.data('validator') && $('#DisplayOrder').val() !== '') {
-            form.validate().element('#DisplayOrder');
-        }
-    }
+    
    
         $("#btnClear").click(function (e) {
             e.preventDefault();
 
-            var form = $('#menuForm');
+            $menuForm.find('input[type="text"], input[type= "number"], textarea').val('');
+            $menuForm.find('select').prop('selectedIndex', 0);
+            $typeParent.prop('checked', true);
 
-            form.find('input[type="text"], input[type= "number"], textarea').val('');
-            form.find('select').prop('selectedIndex', 0);
-            $('#typeParent').prop('checked', true);
+            if ($menuForm.data('validator')) {
+                $menuForm.data('validator').resetForm();
+                $menuForm.find('.field-validation-error')
+                    .removeClass('.field-validation-error')
+                    .addClass('.field-validation-valid')
+                    .empty();
 
-            if (form.data('validator')) {
-                form.data('validator').resetForm();
-                form.find('.field-validation-error').empty();
-                form.find('.input-validation-error').removeClass('input-validation-error');
+                $menuForm.find('.input-validation-error').removeClass('input-validation-error');
             }
             setTimeout(function () {
-                $('#typeParent').prop('checked', true);
                 toggleParentMenu();
-                $('#DisplayText').focus();
+                $displayText.focus();
             }, 10);
     });
 }); 
