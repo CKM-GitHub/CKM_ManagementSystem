@@ -24,7 +24,7 @@
   </ItemGroup>
 	<ItemGroup>
 		<Compile Remove="DL\**" />
-		<Compile Remove ="MenuBL\**" />
+		<Compile Remove="MenuBL\**" />
 		<EmbeddedResource Remove="DL\**" />
 		<EmbeddedResource Remove="MenuBL\**" />
 		<None Remove="DL\**" />
