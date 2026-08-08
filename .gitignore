@@ -2,9 +2,10 @@
 
 bin/
 obj/
-=======
+
 .history/
 .lh/
 
-
+**/bin/
+**/obj/
 
