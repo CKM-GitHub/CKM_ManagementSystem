@@ -1,0 +1,207 @@
+﻿@model CKM_ManagementSystem.Models.ViewModels.PagedResponse<CKM_ManagementSystem.Models.ViewModels.UserListViewModel>
+
+@{
+    ViewData["Title"] = "User Management";
+
+    string? currentSearch = ViewBag.SearchText as string;
+    bool? currentStatus = ViewBag.Status as bool?;
+    string? currentDept = ViewBag.DepartmentCode as string;
+    string? currentRole = ViewBag.RoleCode as string;
+    int currentPage = ViewBag.PageNumber ?? 1;
+    int pageSize = 10; 
+    int totalItems = Model.TotalCount;
+    int startItem = totalItems > 0 ? (currentPage - 1) * pageSize + 1 : 0;
+    int endItem = totalItems > 0 ? Math.Min(currentPage * pageSize, totalItems) : 0;
+    int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+    if (totalPages < 1) totalPages = 1;
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="~/css/UserList.css" />
+
+<h2 class="text-center text-dark fw-bold mb-4">User Management</h2>
+<div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3 mb-4">
+    <div class="col">
+        <div class="card h-100 shadow-sm p-3 d-flex flex-row align-items-center gap-3 border-0">
+            <div class="stat-icon-box bg-light text-primary"><i class="fas fa-users"></i></div>
+            <div>
+                <div class="text-secondary small">Total Users</div>
+                <div class="fs-4 fw-bold text-dark">@Model.OverallTotalCount</div>
+                <div class="small text-muted">All registered users <i class="far fa-question-circle"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-100 shadow-sm p-3 d-flex flex-row align-items-center gap-3 border-0">
+            <div class="stat-icon-box bg-success bg-opacity-10 text-success"><i class="fas fa-user-check"></i></div>
+            <div>
+                <div class="text-secondary small">Active Users</div>
+                <div class="fs-4 fw-bold text-dark">@Model.OverallActiveCount</div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-100 shadow-sm p-3 d-flex flex-row align-items-center gap-3 border-0">
+            <div class="stat-icon-box bg-warning bg-opacity-10 text-warning"><i class="fas fa-user-slash"></i></div>
+            <div>
+                <div class="text-secondary small">Inactive Users</div>
+                <div class="fs-4 fw-bold text-dark">@Model.OverallInactiveCount</div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-100 shadow-sm p-3 d-flex flex-row align-items-center gap-3 border-0">
+            <div class="stat-icon-box bg-purple bg-opacity-10 text-purple"><i class="fas fa-building" style="color: #a855f7;"></i></div>
+            <div>
+                <div class="text-secondary small">Departments</div>
+                <div class="fs-4 fw-bold text-dark">SKIP--P</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form method="get" asp-controller="UserList" asp-action="UserList" class="card shadow-sm p-3 mb-4 border-0">
+    <div class="d-flex flex-wrap align-items-center gap-2 justify-content-between">
+        <div class="d-flex flex-wrap align-items-center gap-2 flex-grow-1">
+
+            <div class="input-group" style="max-width: 300px;">
+                <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-search"></i></span>
+                <input type="text" name="searchText" value="@currentSearch" class="form-control border-start-0 text-secondary small" placeholder="Search users by name, email, or code...">
+            </div>
+
+            @* Uncomment when Dropdowns are available in ViewBags
+            <select name="departmentCode" class="form-select text-secondary small" style="width: auto; min-width: 140px;">
+                <option value="">All Departments</option>
+            </select>
+            <select name="roleCode" class="form-select text-secondary small" style="width: auto; min-width: 120px;">
+                <option value="">All Roles</option>
+            </select>
+            *@
+
+            <select name="status" class="form-select text-secondary small" style="width: auto; min-width: 120px;">
+                <option value="">All Statuses</option>
+                <option value="true" selected="@(currentStatus == true)">Active</option>
+                <option value="false" selected="@(currentStatus == false)">Inactive</option>
+            </select>
+
+            <button type="submit" class="btn btn-primary btn-sm px-3"><i class="fas fa-search me-1"></i> Search User</button>
+            <a asp-action="UserList" class="btn btn-outline-secondary btn-sm px-3">Clear</a>
+        </div>
+        <button type="button" class="btn btn-primary px-3"><i class="fas fa-plus me-1"></i> Add New User</button>
+    </div>
+</form>
+
+<div class="card shadow-sm border-0 mb-4">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0 bg-white">
+            <thead class="bg-light text-secondary small fw-semibold">
+                <tr>
+                    <th class="w-5 ps-4">No.</th>
+                    <th class="w-12">Employee Code</th>
+                    <th class="w-15">Name</th>
+                    <th class="w-20">Email</th>
+                    <th class="w-10">Department</th>
+                    <th class="w-12">System Role</th>
+                    <th class="w-10">Status</th>
+                    <th class="w-10 text-end pe-4">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Data != null && Model.Data.Count > 0)
+                {
+                    int index = startItem;
+                    foreach (var user in Model.Data)
+                    {
+                        string roleBadgeClass = "badge-role-viewer"; 
+                        string roleName = user.RoleName?.ToLower() ?? "";
+                        if (roleName.Contains("manager")) { roleBadgeClass = "badge-role-manager"; }
+                        else if (roleName.Contains("admin")) { roleBadgeClass = "badge-role-admin"; }
+                        else if (roleName.Contains("leader")) { roleBadgeClass = "badge-role-leader"; }
+                        else if (roleName.Contains("member")) { roleBadgeClass = "badge-role-member"; }
+                        <tr>
+                            <td class="ps-4">@index</td>
+                            <td>@user.StaffCode</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="@(string.IsNullOrEmpty(user.ImageUrl) ? "https://i.pravatar.cc/150?img=6" : user.ImageUrl)" alt="" class="rounded-circle me-2" width="32" height="32">
+                                    <span>@user.Name</span>
+                                </div>
+                            </td>
+                            <td>@user.Email</td>
+                            <td>@user.DepartmentName</td>
+                            <td>
+                                <span class="badge @roleBadgeClass rounded-pill px-2 py-1">@user.RoleName</span>
+                            </td>
+                            <td>
+                                @if (user.Status)
+                                {
+                                    <span class="badge bg-light text-success border border-light rounded-pill badge-status active">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-light text-danger border border-light rounded-pill badge-status inactive">Inactive</span>
+                                }
+                            </td>
+                            <td class="text-end pe-4 text-muted">
+                              @*  <form asp-controller="UserList"
+                                      asp-action="DeleteUser"
+                                      method="post"
+                                      onsubmit="return confirm('ဖျက်မှာသေချာလား သူငယ်ချင်း ?');">
+
+                                    @Html.AntiForgeryToken()
+
+                                    <input type="hidden"
+                                           name="id"
+                                           value="@user.StaffCode" />
+
+                                    <button type="submit"
+                                            class="btn btn-danger">
+                                        Delete
+                                    </button>
+                                </form>  *@
+                                <a href="#" class="text-secondary me-2"><i class="far fa-pen-to-square"></i></a>
+                                <a href="" class="text-secondary"><i class="far fa-trash-can"></i></a>
+                            </td>
+                        </tr>
+                        index++;
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-4">No users found matching the filter</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @if (totalPages > 1 || totalItems > 0)
+    {
+        <div class="d-flex flex-wrap justify-content-between align-items-center p-3 border-top bg-white">
+            <div class="small text-secondary mb-2 mb-md-0">
+                Showing @startItem-@endItem of @totalItems users
+            </div>
+            <nav aria-label="Page navigation">
+                <ul class="pagination mb-0">
+                    <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                        <a class="page-link" href="@Url.Action("UserList", "UserList", new { searchText = currentSearch, status = currentStatus, departmentCode = currentDept, roleCode = currentRole, pageNumber = currentPage - 1 })">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    @for (int i = 1; i <= totalPages; i++)
+                    {
+                        <li class="page-item @(currentPage == i ? "active" : "")">
+                            <a class="page-link" href="@Url.Action("UserList", "UserList", new { searchText = currentSearch, status = currentStatus, departmentCode = currentDept, roleCode = currentRole, pageNumber = i })">@i</a>
+                        </li>
+                    }
+                    <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                        <a class="page-link" href="@Url.Action("UserList", "UserList", new { searchText = currentSearch, status = currentStatus, departmentCode = currentDept, roleCode = currentRole, pageNumber = currentPage + 1 })">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    }
+</div>

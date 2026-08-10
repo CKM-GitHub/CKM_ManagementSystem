@@ -1,8 +1,12 @@
+using CKM_ManagementSystem.BL;
+using CKM_ManagementSystem.DL;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddScoped<IUserListDL, UserListDL>();
+builder.Services.AddScoped<IUserListBL, UserListBL>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -22,6 +26,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=UserList}/{action=UserList}/{id?}");
 
 app.Run();
