@@ -326,8 +326,20 @@
     max-width: 380px !important;
     overflow: hidden !important;
     line-height: 1 !important;
+    padding: 2px 20px !important;
+    margin: 0 auto !important;
 }
-
+.custom-modal-popup .bi-check-circle-fill,
+.custom-modal-popup i{
+    font-size: 2.8rem !important;
+}
+.modal-dialog{
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 1.75rem auto !important;
+    min-height: 100vh !important;
+}
 .custom-modal-title {
     font-size: 20px !important;
     font-weight: 700 !important;
@@ -341,7 +353,7 @@
     font-size: 14px !important;
     color: #64748B !important;
     line-height: 1.5 !important;
-    margin-bottom: 0 !important;
+    margin-bottom: 20px !important;
 }
 
 .custom-modal-btn {
@@ -354,6 +366,7 @@
     border: none !important;
     box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
     transition: all 0.2s ease-in-out !important;
+    width: 100% !important;
 }
 
 .custom-modal-btn:hover {

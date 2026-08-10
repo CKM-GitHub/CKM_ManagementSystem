@@ -222,12 +222,13 @@ namespace MenuBL
             };
         }
 
-        public async Task<List<MenuListItem>> GetMenuListAsync(string? searchTerm, int? parentMenuId)
+        public async Task<List<MenuListItem>> GetMenuListAsync(string? searchTerm, int? parentMenuId, bool? statusFilter=null)
         {
             var parameters = new[]
             {
                 new SqlParameter("@SearchTerm", string.IsNullOrWhiteSpace(searchTerm) ? DBNull.Value : searchTerm),
-                new SqlParameter("@ParentMenuId", (object?)parentMenuId ?? DBNull.Value)
+                new SqlParameter("@ParentMenuId", (object?)parentMenuId ?? DBNull.Value),
+                new SqlParameter("@StatusFilters", (object?)statusFilter ?? DBNull.Value)
             };
 
             DataTable dt = await SelectDataTableAsync("sp_GetMenuList", parameters);

@@ -54,13 +54,26 @@
 
 .custom-modal-popup {
     border: none !important;
-    border-radius: 45px !important; 
+    border-radius: 20px !important; 
     background: #FFFFFF !important;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important; 
     overflow: hidden !important;
     max-width: 380px !important;
+    padding: 28px 20px !important;
+    width: 100% !important;
+    margin: 0 auto !important;
 }
-
+.modal-dialog{
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 100vh !important;
+    margin: 0 auto !important;
+}
+.custom-modal-popup .bi-check-circle-fill,
+.custom-modal-btn i{
+    font-size: 2.8rem !important;
+}
 .custom-modal-title {
     font-size: 20px !important;
     font-weight: 700 !important;
@@ -73,7 +86,7 @@
     font-size: 14px !important;
     color: #64748B !important;
     line-height: 1.5 !important;
-    margin-bottom: 0 !important;
+    margin-bottom: 20px !important;
 }
 .custom-modal-btn {
     border-radius: 12px !important;
@@ -85,6 +98,7 @@
     border: none !important;
     box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
     transition: all 0.2s ease-in-out !important;
+    width: 100% !important;
 }
 
 .custom-modal-btn:hover {

@@ -23,7 +23,7 @@ namespace CKM_ManagementSystem.Controllers.Menu
         {
             int pageSize = 10;
 
-            var rawMenuList = await _menuBL.GetMenuListAsync(searchTerm, selectedParentId);
+            var rawMenuList = await _menuBL.GetMenuListAsync(searchTerm, selectedParentId, statusFilter: null);
             var menuItems = rawMenuList.Select(m => new MenuListItem
             {
                 MenuID = m.MenuID,
@@ -251,7 +251,7 @@ namespace CKM_ManagementSystem.Controllers.Menu
         private async Task<List<SelectListItem>> GetParentMenuListAsync()
         {
             var parentMenus = await _dbContext.Menus
-                .Where(m => (m.ParentMenuId == null || m.ParentMenuId == 0) && m.Deleted_Date == null)
+                .Where(m => (m.ParentMenuId == null || m.ParentMenuId == 0) && m.Deleted_Date == null && m.Status == true)
                 .OrderBy(m => m.DisplayOrder)
                 .ToListAsync();
             return parentMenus.Select(m => new SelectListItem
