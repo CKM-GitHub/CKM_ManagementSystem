@@ -25,8 +25,6 @@ namespace CKM_ManagementSystem.Controllers
             ViewBag.RoleCode = roleCode;
             ViewBag.PageNumber = pageNumber;
             ViewBag.PageSize = pageSize;
-           // ViewBag.RoleList = await _userListBL.GetRoleListAsync(); 
-           // ViewBag.DepartmentList = await _userListBL.GetDepartmentListAsync();
 
             var model = await _userListBL.GetUserListAsync(
                 searchText,
@@ -36,6 +34,11 @@ namespace CKM_ManagementSystem.Controllers
                 pageNumber,
                 pageSize
                 );
+
+            if (model.ErrorCode != 0)
+            {
+                ModelState.AddModelError(string.Empty, "Error Shi Dl !!");
+            }
 
             return View(model);
         }

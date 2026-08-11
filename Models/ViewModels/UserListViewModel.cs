@@ -13,5 +13,16 @@
         public int OverallActiveCount { get; set; }
         public int OverallInactiveCount { get; set; }
         public int TotalCount { get; set; }
+        public int DepartmentCount { get; set; }
+    }
+    public class DepartmentDropdownViewModel
+    {
+        public string DepartmentCode { get; set; } = string.Empty;
+        public string DepartmentName { get; set;} = string.Empty;
+    }
+    public class RoleDropdownViewModel
+    {
+        public string RoleCode { get; set; } = string.Empty;
+        public string RoleName { get; set; } = string.Empty;
     }
 }

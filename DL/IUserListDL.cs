@@ -4,7 +4,7 @@ namespace CKM_ManagementSystem.DL
 {
     public interface IUserListDL
     {
-        Task<(List<UserListViewModel>Users,int ErrorCode)> GetUsersAsync(
+        Task<(List<UserListViewModel>Users,List<DepartmentDropdownViewModel> Departments,List<RoleDropdownViewModel> Roles, int ErrorCode)> GetUsersAsync(
             string? searchText,
             bool? status,
             string? departmentCode,

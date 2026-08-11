@@ -3,9 +3,10 @@ using CKM_ManagementSystem.Models.ViewModels;
 
 namespace CKM_ManagementSystem.BL
 {
-    public class UserListBL: IUserListBL
+    public class UserListBL : IUserListBL
     {
         private readonly IUserListDL _userDL;
+
         public UserListBL(IUserListDL userListDL)
         {
             _userDL = userListDL;
@@ -20,20 +21,22 @@ namespace CKM_ManagementSystem.BL
             int pageSize)
         {
             if (pageNumber < 1) pageNumber = 1;
-            if (pageSize < 1 || pageSize > 100) pageSize = 10; 
+            if (pageSize < 1 || pageSize > 100) pageSize = 10;
 
-            var (rawUsers, dbErrorCode) = await _userDL.GetUsersAsync(
+            var (rawUsers, rawDepartments, rawRoles, dbErrorCode) = await _userDL.GetUsersAsync(
                 searchText,
                 status,
                 departmentCode,
                 roleCode,
                 pageNumber,
                 pageSize
-                );
+            );
 
             var response = new PagedResponse<UserListViewModel>
             {
                 Data = rawUsers,
+                Departments = rawDepartments, 
+                Roles = rawRoles,            
                 ErrorCode = dbErrorCode,
                 PageNumber = pageNumber,
                 PageSize = pageSize
@@ -46,17 +49,10 @@ namespace CKM_ManagementSystem.BL
                 response.OverallActiveCount = targetRow.OverallActiveCount;
                 response.OverallInactiveCount = targetRow.OverallInactiveCount;
                 response.TotalCount = targetRow.TotalCount;
+                response.DepartmentCount = targetRow.DepartmentCount;
             }
 
             return response;
         }
-        //public async Task<PagedResponse<UserListViewModel>> GetRoleListAsync()
-        //{
-       //     return
-       // }
-      //  public async Task<PagedResponse<UserListViewModel>> GetRoleListAsync()
-      //  {
-        //    return
-     //   }
     }
 }
