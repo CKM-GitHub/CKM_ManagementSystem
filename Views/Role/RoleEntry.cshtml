@@ -29,8 +29,7 @@
 
             <div class="mb-3">
                 <label class="form-label-custom">Description</label>
-                <textarea asp-for="Description" class="form-control" rows="3" placeholder="e.g., Admin" maxlength="250"></textarea>
-                <span asp-validation-for="Description" class="text-danger small"></span>
+                <textarea asp-for="Description" class="form-control" rows="3" placeholder="e.g., Description..." maxlength="250"></textarea>
             </div>
 
             <div class="mb-4 d-flex align-items-center">
@@ -123,7 +122,6 @@
                 </div>
             </div>
 
-            
             <div class="row g-2 pt-2">
                 <div class="col-6">
                     <a id="btnDynamicCancelClear" asp-action="RoleList" asp-controller="Role" class="btn btn-outline-secondary w-100 py-2 text-center text-decoration-none">
@@ -147,7 +145,6 @@
 
             $('#RoleCode').focus();
 
-            
             $('#RoleCode').on('blur', function () {
                 var roleCodeVal = $(this).val();
                 var $valSpan = $('span[asp-validation-for="RoleCode"]');
@@ -165,7 +162,6 @@
                 }
             });
 
-           
             $('.parent-menu-row input[type="checkbox"]').on('change', function () {
                 var $parentRow = $(this).closest('tr');
                 var parentId = $parentRow.data('menu-id');
@@ -183,7 +179,6 @@
                 }
             });
 
-            
             $('.child-menu-row input[type="checkbox"]').on('change', function () {
                 var $childRow = $(this).closest('tr');
                 var parentId = $childRow.data('parent-id');
@@ -203,11 +198,9 @@
                 }
             });
 
-            
             var $dynamicBtn = $('#btnDynamicCancelClear');
             var $form = $('form');
 
-            
             $form.on('input change', 'input, textarea, select', function () {
                 checkFormDirtyState();
             });
@@ -215,7 +208,6 @@
             function checkFormDirtyState() {
                 var isDirty = false;
 
-                
                 $form.find('input[type="text"], textarea').each(function () {
                     if ($(this).val().trim() !== '') {
                         isDirty = true;
@@ -223,7 +215,6 @@
                     }
                 });
 
-               
                 if (!isDirty) {
                     $form.find('input[type="checkbox"]').each(function () {
                         if ($(this).is(':checked')) {
@@ -234,14 +225,12 @@
                 }
 
                 if (isDirty) {
-                   
                     $dynamicBtn
                         .text('Clear')
                         .removeClass('btn-outline-secondary')
                         .addClass('btn-clear')
                         .removeAttr('href');
                 } else {
-                    
                     resetToCancelState();
                 }
             }
@@ -254,15 +243,14 @@
                     .attr('href', '/Role/RoleList');
             }
 
-            
             $dynamicBtn.on('click', function (e) {
                 if ($(this).text().trim() === 'Clear') {
-                    e.preventDefault(); 
+                    e.preventDefault();
 
-                    $form[0].reset(); 
-                    $('span[asp-validation-for]').text(''); 
+                    $form[0].reset();
+                    $('span[asp-validation-for]').text('');
 
-                    resetToCancelState(); 
+                    resetToCancelState();
                     $('#RoleCode').focus();
                 }
             });
