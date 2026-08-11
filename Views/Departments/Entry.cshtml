@@ -35,9 +35,11 @@
             </h2>
             
             <form asp-controller="Departments"
-                  asp-action="Entry"
+                  asp-action="@(string.IsNullOrWhiteSpace(Model.OriginalDepartmentCode)
+                     ?"Entry":"Edit")" 
                   method="post"
                   id="departmentEntryForm">
+                  <input type="hidden" asp-for="OriginalDepartmentCode" />
 
                 <div asp-validation-summary="ModelOnly"
                      class="validation-summary">
@@ -50,7 +52,8 @@
                     <input asp-for="DepartmentCode"
                            id="departmentCode"
                            class="form-control"
-                           autocomplete="off" />
+                           autocomplete="off" 
+                           readonly="@(!string.IsNullOrWhiteSpace(Model.OriginalDepartmentCode))"/>
 
                     <span asp-validation-for="DepartmentCode"
                           class="validation-message">

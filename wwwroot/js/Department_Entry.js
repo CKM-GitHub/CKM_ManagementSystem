@@ -3,30 +3,45 @@
     const departmentCode = document.getElementById("departmentCode");
     const form = document.getElementById("departmentEntryForm");
     const clearButton = document.getElementById("btnClear");
+    const departmentName = document.getElementById("DepartmentName");
+    const originalStatus =document.querySelector("[name='Status']:checked")?.value;
 
-    if (departmentCode) {
-        departmentCode.focus();
+    if (departmentCode && departmentName) {
+        if (departmentCode.readOnly) {
+            departmentName.focus();
+        } else {
+            departmentCode.focus();
+        }
     }
 
     if (clearButton && form) {
         clearButton.addEventListener("click", function () {
 
-            form.reset();
+            const isEditMode = departmentCode.readOnly;
 
-            document.querySelector("[name='DepartmentCode']").value = "";
-            document.querySelector("[name='DepartmentName']").value = "";
-            document.querySelector("[name='Description']").value = "";
+            if (!isEditMode) {
+                departmentCode.value = "";
+            }
+            departmentName.value = "";
 
-            const activeRadio = document.querySelector(
-                "[name='Status'][value='true']"
-            );
+            const description = document.querySelector("[name='Description']");
 
-            if (activeRadio) {
-                activeRadio.checked = true;
+            if (description) {
+                description.value = "";
+            }
+            if (originalStatus) {
+                const originalStatusRadio = document.querySelector(
+                    `[name='Status'][value='${originalStatus}']`
+                );
+
+                if (originalStatusRadio) {
+                    originalStatusRadio.checked = true;
+                }
             }
 
-            document.querySelectorAll(".validation-message")
-                .forEach(s => s.textContent = "");
+            document.querySelectorAll(".validation-message").forEach(function (message) {
+                message.textContent = "";
+            });
 
             const summary = document.querySelector(".validation-summary");
 
@@ -34,7 +49,11 @@
                 summary.innerHTML = "";
             }
 
-            departmentCode.focus();
+            if (isEditMode) {
+                departmentName.focus();
+            } else {
+                departmentCode.focus();
+            }
         });
     }
     const successModalElement =
@@ -45,7 +64,12 @@
             new bootstrap.Modal(successModalElement);
 
         successModalElement.addEventListener("hidden.bs.modal", function () {
-            departmentCode.focus();
+            if (departmentCode.readOnly) {
+                departmentName.focus();
+            } else {
+                departmentCode.focus();
+            }
+
         });
 
         successModal.show();
