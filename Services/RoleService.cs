@@ -1,12 +1,8 @@
-﻿using System.Data;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using CKM_ManagementSystem.BL;
-using CKM_ManagementSystem.Models.Entities;
-using CKM_ManagementSystem.Models.ViewModels;
 using CKM_ManagementSystem.Models.ViewModels.Roles;
 using CKM_ManagementSystem.Services.Interfaces;
-using Microsoft.Extensions.Configuration;
+using CKM_ManagementSystem.BL; 
 
 namespace CKM_ManagementSystem.Services
 {
@@ -14,35 +10,24 @@ namespace CKM_ManagementSystem.Services
     {
         private readonly RoleBL _roleBL;
 
-        public RoleService(IConfiguration configuration)
+        public RoleService(RoleBL roleBL)
         {
-            _roleBL = new RoleBL(configuration);
+            _roleBL = roleBL;
+        }
+
+        public async Task<List<MenuPermissionViewModel>> GetMenuPermissionsAsync()
+        {
+            return await _roleBL.GetMenuPermissionsAsync();
         }
 
         public async Task<bool> CheckDuplicateRoleCodeAsync(string roleCode)
         {
-            return await _roleBL.CheckDuplicateRoleCodeSPAsync(roleCode);
+            return await _roleBL.CheckDuplicateRoleCodeAsync(roleCode);
         }
 
         public async Task SaveRoleWithPermissionsAsync(RoleEntryViewModel model)
         {
-            
-            await _roleBL.SaveRoleWithPermissionsSPAsync(model);
-        }
-
-        public async Task<RoleListPagedViewModel> GetRoleListAsync(string search, int? status, int page, int pageSize)
-        {
-            return await _roleBL.GetRoleListAsync(search, status, page, pageSize);
-        }
-
-        public async Task<RoleEntryViewModel> GetRoleByCodeAsync(string roleCode)
-        {
-            return await _roleBL.GetRoleByCodeAsync(roleCode);
-        }
-
-        public async Task<bool> DeleteRoleAsync(string roleCode)
-        {
-            return await _roleBL.DeleteRoleAsync(roleCode);
+            await _roleBL.SaveRoleWithPermissionsAsync(model);
         }
     }
 }

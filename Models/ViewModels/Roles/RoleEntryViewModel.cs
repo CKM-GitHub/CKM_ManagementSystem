@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace CKM_ManagementSystem.Models.ViewModels.Roles 
+namespace CKM_ManagementSystem.Models.ViewModels.Roles
 {
     public class RoleEntryViewModel
     {
@@ -14,7 +14,7 @@ namespace CKM_ManagementSystem.Models.ViewModels.Roles
         public string DisplayName { get; set; }
 
         [StringLength(250, ErrorMessage = "Description သည် စာလုံးရေ 250 ထက် မပိုရပါ။")]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         public bool Status { get; set; } = true;
 
@@ -24,7 +24,7 @@ namespace CKM_ManagementSystem.Models.ViewModels.Roles
     public class MenuPermissionViewModel
     {
         public int MenuId { get; set; }
-        public string MenuName { get; set; }
+        public string MenuName { get; set; } = string.Empty;
         public int? ParentId { get; set; }
         public bool CanRead { get; set; }
         public bool CanWrite { get; set; }
