@@ -54,5 +54,11 @@ namespace CKM_ManagementSystem.BL
 
             return response;
         }
+        public async Task<(int ErrorCode, string? UserName)> DeleteUserAsync(string staffCode)
+        {
+            var result = await _userDL.DeleteUserAsync(staffCode);
+
+            return result;
+        }
     }
 }

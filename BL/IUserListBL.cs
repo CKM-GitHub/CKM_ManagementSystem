@@ -11,5 +11,6 @@ namespace CKM_ManagementSystem.BL
             string? roleCode,
             int pageNumber,
             int pageSize);
+        Task<(int ErrorCode, string? UserName)> DeleteUserAsync(string staffCode);
     }
 }

@@ -13,8 +13,7 @@ public class BaseDL
         _connectionString = configuration.GetConnectionString("DefaultConnection")
             ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
     }
-
-    protected int ExecuteNonQuery(string spName, params SqlParameter[] parameters)
+    protected async Task<int> ExecuteNonQuery(string spName, params SqlParameter[] parameters)
     {
         using SqlConnection conn = new SqlConnection(_connectionString);
         using SqlCommand cmd = new SqlCommand(spName, conn); 
@@ -26,8 +25,9 @@ public class BaseDL
             cmd.Parameters.AddRange(parameters);
         }
 
-        conn.Open();
-        return cmd.ExecuteNonQuery();
+        await conn.OpenAsync();
+
+        return await cmd.ExecuteNonQueryAsync();
     }
     protected SqlParameter CreateParameter(string ParameterName, object? value)
     {

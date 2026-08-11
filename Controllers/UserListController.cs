@@ -42,12 +42,28 @@ namespace CKM_ManagementSystem.Controllers
 
             return View(model);
         }
-     //   [HttpPost]
-    //    public async Task<IActionResult> DeleteUser(string staffCode)
-     //   {
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteUser(string staffCode)
+        {
+            if (string.IsNullOrWhiteSpace(staffCode))
+            {
+                TempData["ErrorMessage"] = "Sraff Code is Required!!";
 
+                return RedirectToAction("UserList");
+            }
+            
+            var result = await _userListBL.DeleteUserAsync(staffCode);
+            if (result.ErrorCode == 0)
+            {
+                   TempData["SuccessMessage"] = $"Successfully Deleted . User :{result.UserName}  ";
+            }
+            else
+            {
+                   TempData["ErrorMessage"] = "User could not be deleted";
+            }
 
-      //      return RedirectToAction("UserList");
-     //   }
+            return RedirectToAction("UserList");
+        }
     }
 }

@@ -3,16 +3,12 @@ using CKM_ManagementSystem.Models;
 using CKM_ManagementSystem.Models.ViewModels;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using Microsoft.VisualBasic;
 using System.Data;
 
 public class UserListDL : BaseDL, IUserListDL
 {
     public UserListDL(IConfiguration configuration) : base(configuration) { }
-
-    public Task<bool> DeleteUserAsync(string saffCode)
-    {
-        throw new NotImplementedException();
-    }
 
     public async Task<(List<UserListViewModel> Users,List<DepartmentDropdownViewModel> Departments , List<RoleDropdownViewModel> Roles, int ErrorCode)> GetUsersAsync(
         string? searchText = null,
@@ -115,4 +111,33 @@ public class UserListDL : BaseDL, IUserListDL
 
         return (users,departments,roles, errorCode);
     }
+    public async Task<(int ErrorCode, string? UserName)> DeleteUserAsync(string saffCode)
+    {
+        using SqlConnection conn = new SqlConnection(_connectionString);
+        using SqlCommand cmd = new SqlCommand("sp_UserDelete", conn);
+        cmd.CommandType = CommandType.StoredProcedure;
+
+        cmd.Parameters.Add("@StaffCode",SqlDbType.VarChar,50).Value = saffCode;
+
+        SqlParameter errorCode = new SqlParameter("@Error_Code", SqlDbType.Int);
+        errorCode.Direction = ParameterDirection.Output;
+
+        cmd.Parameters.Add(errorCode);
+
+        SqlParameter userName = new SqlParameter("@UserName", SqlDbType.VarChar, 200);
+        userName.Direction = ParameterDirection.Output;
+
+        cmd.Parameters.Add(userName);
+
+        await conn.OpenAsync();
+
+        await cmd.ExecuteNonQueryAsync();
+
+        int result = Convert.ToInt32(errorCode.Value);
+
+        string? name = userName.Value == DBNull.Value? null : userName.Value.ToString();
+
+        return (result,name);
+    }
 }
+

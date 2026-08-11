@@ -11,7 +11,6 @@ namespace CKM_ManagementSystem.DL
             string? roleCode,
             int pageNumber,
             int pageSize);
-        Task<bool> DeleteUserAsync(string saffCode);
+        Task<(int ErrorCode, string? UserName)> DeleteUserAsync(string saffCode);
     }
-
 }

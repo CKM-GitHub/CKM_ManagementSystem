@@ -70,18 +70,22 @@
                 <input type="text" name="searchText" value="@currentSearch" class="form-control border-start-0 text-secondary small" placeholder="Search users by name, email, or code...">
             </div>
 
-            <select name="departmentCode" class="form-select text-secondary small" style="width: auto; min-width: 140px;">
+            <select name="departmentCode" class="form-select text-secondary small" style="width: auto; min-width: 140px;" ">
                 <option value="">All Departments</option>
                 @foreach (var dept in Model.Departments)
                 {
-                    <option value="@dept.DepartmentCode" selected="@(ViewBag.DepartmenrCode == dept.DepartmentCode)">@dept.DepartmentName</option>
+                    <option value="@dept.DepartmentCode" selected="@(ViewBag.DepartmentCode == dept.DepartmentCode ? "selected" : null)">
+                        @dept.DepartmentName
+                    </option>
                 }
             </select>
-            <select name="roleCode" class="form-select text-secondary small" style="width: auto; min-width: 120px;">
+            <select name="roleCode" class="form-select text-secondary small" style="width: auto; min-width: 120px;" ">
                 <option value="">All Roles</option>
-                @foreach (var dept in Model.Roles)
+                @foreach (var role in Model.Roles)
                 {
-                    <option value="@dept.RoleCode" selected="@(ViewBag.DepartmenrCode == dept.RoleCode)">@dept.RoleName</option>
+                    <option value="@role.RoleCode" selected="@(ViewBag.RoleCode == role.RoleCode ? "selected" : null)">
+                        @role.RoleName
+                    </option>
                 }
             </select>
 
@@ -97,6 +101,37 @@
         <button type="button" class="btn btn-primary px-3"><i class="fas fa-plus me-1"></i> Add New User</button>
     </div>
 </form>
+@*
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success mt-2">
+    @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger mt-2">
+    @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}  *@
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success mt-2 d-flex align-items-center justify-content-between" role="alert">
+        <span>@TempData["SuccessMessage"]</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger mt-2 d-flex align-items-center justify-content-between" role="alert">
+        <span>@TempData["ErrorMessage"]</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
 
 <div class="card shadow-sm border-0 mb-4">
     <div class="table-responsive">
@@ -150,25 +185,22 @@
                                 }
                             </td>
                             <td class="text-end pe-4 text-muted">
-                              @*  <form asp-controller="UserList"
+                                <a asp-controller="UserList" asp-action="EditUser" asp-route-id="@user.StaffCode" class="text-secondary me-3">
+                                    <i class="far fa-pen-to-square"></i>
+                                </a>
+                                <form asp-controller="UserList"
                                       asp-action="DeleteUser"
                                       method="post"
-                                      onsubmit="return confirm('ဖျက်မှာသေချာလား သူငယ်ချင်း ?');">
-
+                                      onsubmit="return confirm('ဖျက်မှာသေချာလား သူငယ်ချင်း ?');"
+                                      style="display: inline;">
                                     @Html.AntiForgeryToken()
-
-                                    <input type="hidden"
-                                           name="id"
-                                           value="@user.StaffCode" />
-
-                                    <button type="submit"
-                                            class="btn btn-danger">
-                                        Delete
+                                    <input type="hidden" name="staffCode" value="@user.StaffCode" />
+                                    <button type="submit" class="p-0 border-0 bg-transparent text-secondary hover-danger" title="Delete">
+                                        <i class="far fa-trash-can"></i>
                                     </button>
-                                </form>  *@
-                                <a href="#" class="text-secondary me-2"><i class="far fa-pen-to-square"></i></a>
-                                <a href="" class="text-secondary"><i class="far fa-trash-can"></i></a>
+                                </form>
                             </td>
+
                         </tr>
                         index++;
                     }
