@@ -1,4 +1,4 @@
-﻿using CKM_ManagementSystem.DL;
+﻿using CKM_ManagementSystem.DL.Interface;
 using CKM_ManagementSystem.Models;
 using CKM_ManagementSystem.Models.ViewModels;
 using Microsoft.Data.SqlClient;

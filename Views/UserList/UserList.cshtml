@@ -70,7 +70,7 @@
                 <input type="text" name="searchText" value="@currentSearch" class="form-control border-start-0 text-secondary small" placeholder="Search users by name, email, or code...">
             </div>
 
-            <select name="departmentCode" class="form-select text-secondary small" style="width: auto; min-width: 140px;" ">
+            <select name="departmentCode" class="form-select text-secondary small" style="width: auto; min-width: 140px;">
                 <option value="">All Departments</option>
                 @foreach (var dept in Model.Departments)
                 {
@@ -79,7 +79,7 @@
                     </option>
                 }
             </select>
-            <select name="roleCode" class="form-select text-secondary small" style="width: auto; min-width: 120px;" ">
+            <select name="roleCode" class="form-select text-secondary small" style="width: auto; min-width: 120px;" >
                 <option value="">All Roles</option>
                 @foreach (var role in Model.Roles)
                 {
@@ -185,14 +185,17 @@
                                 }
                             </td>
                             <td class="text-end pe-4 text-muted">
-                                <a asp-controller="UserList" asp-action="EditUser" asp-route-id="@user.StaffCode" class="text-secondary me-3">
-                                    <i class="far fa-pen-to-square"></i>
-                                </a>
+                                <form asp-controller="UserUpdate" asp-action="UserUpdate" method="get" class="d-inline me-2">
+                                     <input type="hidden" name="staffCode" value="@user.StaffCode"/>
+                                    <button type="submit" class="p-0 border-0 bg-transparent text-secondary hover-danger" title="Update">
+                                        <i class="far fa-pen-to-square"></i>
+                                    </button>
+                                </form>                               
                                 <form asp-controller="UserList"
                                       asp-action="DeleteUser"
                                       method="post"
                                       onsubmit="return confirm('ဖျက်မှာသေချာလား သူငယ်ချင်း ?');"
-                                      style="display: inline;">
+                                      class="d-inline me-2">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="staffCode" value="@user.StaffCode" />
                                     <button type="submit" class="p-0 border-0 bg-transparent text-secondary hover-danger" title="Delete">

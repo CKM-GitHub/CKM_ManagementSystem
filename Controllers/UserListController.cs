@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using CKM_ManagementSystem.BL;
 using System.Reflection.Metadata.Ecma335;
+using CKM_ManagementSystem.BL.Interface;
 
 namespace CKM_ManagementSystem.Controllers
 {
@@ -56,7 +56,7 @@ namespace CKM_ManagementSystem.Controllers
             var result = await _userListBL.DeleteUserAsync(staffCode);
             if (result.ErrorCode == 0)
             {
-                   TempData["SuccessMessage"] = $"Successfully Deleted . User :{result.UserName}  ";
+                   TempData["SuccessMessage"] = $"User Delete successfully! User : {result.UserName}  ";
             }
             else
             {

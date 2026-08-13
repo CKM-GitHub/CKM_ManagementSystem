@@ -1,4 +1,5 @@
-﻿using CKM_ManagementSystem.DL;
+﻿using CKM_ManagementSystem.BL.Interface;
+using CKM_ManagementSystem.DL.Interface;
 using CKM_ManagementSystem.Models.ViewModels;
 
 namespace CKM_ManagementSystem.BL

@@ -1,5 +1,7 @@
 using CKM_ManagementSystem.BL;
 using CKM_ManagementSystem.DL;
+using CKM_ManagementSystem.BL.Interface;
+using CKM_ManagementSystem.DL.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IUserListDL, UserListDL>();
 builder.Services.AddScoped<IUserListBL, UserListBL>();
+builder.Services.AddScoped<IUserUpdateDL, UserUpdateDL>();
+builder.Services.AddScoped<IUserUpdateBL, UserUpdateBL>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

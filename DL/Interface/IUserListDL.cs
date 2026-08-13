@@ -1,6 +1,6 @@
 ﻿using CKM_ManagementSystem.Models.ViewModels;
 
-namespace CKM_ManagementSystem.DL
+namespace CKM_ManagementSystem.DL.Interface
 {
     public interface IUserListDL
     {
