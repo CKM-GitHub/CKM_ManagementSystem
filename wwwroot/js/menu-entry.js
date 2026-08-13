@@ -35,7 +35,7 @@ $(document).ready(function () {
             if ($invalidInputs.length > 0) {
                 $menuForm.find('.field-validation-error')
                     .removeClass('field-validation-error')
-                    .addClass('field-validation-error')
+                    .addClass('field-validation-valid')
                     .empty();
                 const firstInvalidInput = $invalidInputs.first()[0];
                 validator.element(firstInvalidInput);
