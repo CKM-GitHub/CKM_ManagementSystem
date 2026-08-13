@@ -35,6 +35,6 @@ namespace CKM_ManagementSystem.Models.ViewModels
         [AllowedExtensionsAttribute(new string[] { ".jpg", ".jpeg", ".png", ".gif" }, ErrorMessage = "Only image files (.jpg, .jpeg, .png, .gif) are allowed")]  //Drr ga image format check tr pop nyi lay yrr
         [MaxFileSizeAttribute(5 * 1024 * 1024, ErrorMessage = "Maximum file size is 5MB")]   // dr ka file size pop nyi lay yrr  
         public IFormFile? ImageFile { get; set; }
-        public string ImageUrl { get; set; } = string.Empty;
+        public string? ImageUrl { get; set; } 
     }
 }

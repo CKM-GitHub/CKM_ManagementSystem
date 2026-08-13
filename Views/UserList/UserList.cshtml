@@ -19,6 +19,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="~/css/UserList.css" />
+<script src="~/js/UserList.js"></script>
 
 <h2 class="text-center text-dark fw-bold mb-4">User Management</h2>
 <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3 mb-4">
@@ -104,21 +105,6 @@
 @*
 @if (TempData["SuccessMessage"] != null)
 {
-    <div class="alert alert-success mt-2">
-    @TempData["SuccessMessage"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-}
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger mt-2">
-    @TempData["ErrorMessage"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-}  *@
-
-@if (TempData["SuccessMessage"] != null)
-{
     <div class="alert alert-success mt-2 d-flex align-items-center justify-content-between" role="alert">
         <span>@TempData["SuccessMessage"]</span>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -131,90 +117,178 @@
         <span>@TempData["ErrorMessage"]</span>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
+} *@
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title text-success">
+                        Success
+                    </h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-check-circle-fill text-success"
+                           style="font-size: 50px;"></i>
+                    </div>
+
+                    <p class="mb-0">
+                        @TempData["SuccessMessage"]
+                    </p>
+                </div>
+
+                <div class="modal-footer border-0 justify-content-center">
+                    <button type="button"
+                            class="btn btn-success px-4"
+                            data-bs-dismiss="modal">
+                        OK
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title text-danger">
+                        Error
+                    </h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-x-circle-fill text-danger"
+                           style="font-size: 50px;"></i>
+                    </div>
+
+                    <p class="mb-0">
+                        @TempData["ErrorMessage"]
+                    </p>
+                </div>
+
+                <div class="modal-footer border-0 justify-content-center">
+                    <button type="button"
+                            class="btn btn-danger px-4"
+                            data-bs-dismiss="modal">
+                        OK
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 }
 
 <div class="card shadow-sm border-0 mb-4">
     <div class="table-responsive">
-        <table class="table align-middle mb-0 bg-white">
-            <thead class="bg-light text-secondary small fw-semibold">
-                <tr>
-                    <th class="w-5 ps-4">No.</th>
-                    <th class="w-12">Employee Code</th>
-                    <th class="w-15">Name</th>
-                    <th class="w-20">Email</th>
-                    <th class="w-10">Department</th>
-                    <th class="w-12">System Role</th>
-                    <th class="w-10">Status</th>
-                    <th class="w-10 text-end pe-4">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (Model.Data != null && Model.Data.Count > 0)
-                {
-                    int index = startItem;
-                    foreach (var user in Model.Data)
-                    {
-                        string roleBadgeClass = "badge-role-viewer"; 
-                        string roleName = user.RoleName?.ToLower() ?? "";
-                        if (roleName.Contains("manager")) { roleBadgeClass = "badge-role-manager"; }
-                        else if (roleName.Contains("admin")) { roleBadgeClass = "badge-role-admin"; }
-                        else if (roleName.Contains("leader")) { roleBadgeClass = "badge-role-leader"; }
-                        else if (roleName.Contains("member")) { roleBadgeClass = "badge-role-member"; }
-                        <tr>
-                            <td class="ps-4">@index</td>
-                            <td>@user.StaffCode</td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <img src="@(string.IsNullOrEmpty(user.ImageUrl) ? "https://i.pravatar.cc/150?img=6" : user.ImageUrl)" alt="" class="rounded-circle me-2" width="32" height="32">
-                                    <span>@user.Name</span>
-                                </div>
-                            </td>
-                            <td>@user.Email</td>
-                            <td>@user.DepartmentName</td>
-                            <td>
-                                <span class="badge @roleBadgeClass rounded-pill px-2 py-1">@user.RoleName</span>
-                            </td>
-                            <td>
-                                @if (user.Status)
-                                {
-                                    <span class="badge bg-light text-success border border-light rounded-pill badge-status active">Active</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-light text-danger border border-light rounded-pill badge-status inactive">Inactive</span>
-                                }
-                            </td>
-                            <td class="text-end pe-4 text-muted">
-                                <form asp-controller="UserUpdate" asp-action="UserUpdate" method="get" class="d-inline me-2">
-                                     <input type="hidden" name="staffCode" value="@user.StaffCode"/>
-                                    <button type="submit" class="p-0 border-0 bg-transparent text-secondary hover-danger" title="Update">
-                                        <i class="far fa-pen-to-square"></i>
-                                    </button>
-                                </form>                               
-                                <form asp-controller="UserList"
-                                      asp-action="DeleteUser"
-                                      method="post"
-                                      onsubmit="return confirm('ဖျက်မှာသေချာလား သူငယ်ချင်း ?');"
-                                      class="d-inline me-2">
-                                    @Html.AntiForgeryToken()
-                                    <input type="hidden" name="staffCode" value="@user.StaffCode" />
-                                    <button type="submit" class="p-0 border-0 bg-transparent text-secondary hover-danger" title="Delete">
-                                        <i class="far fa-trash-can"></i>
-                                    </button>
-                                </form>
-                            </td>
-
-                        </tr>
-                        index++;
-                    }
-                }
-                else
-                {
+        <table class="table table-custom align-middle mb-0 bg-white">
+            @if (Model.Data != null && Model.Data.Count > 0)
+            {
+                <thead class="bg-light text-secondary small">
                     <tr>
-                        <td colspan="8" class="text-center text-muted py-4">No users found matching the filter</td>
+                        <th class="w-5 ps-4">No.</th>
+                        <th class="w-12">Employee Code</th>
+                        <th class="w-15">Name</th>
+                        <th class="w-20">Email</th>
+                        <th class="w-10">Department</th>
+                        <th class="w-12">System Role</th>
+                        <th class="w-10">Status</th>
+                        <th class="w-10 text-end pe-4">Actions</th>
                     </tr>
-                }
-            </tbody>
+                </thead>
+                <tbody>
+                    @{
+                        int index = startItem;
+                        foreach (var user in Model.Data)
+                        {
+                            string roleBadgeClass = "badge-role-viewer";
+                            string roleName = user.RoleName?.ToLower() ?? "";
+                            if (roleName.Contains("manager")) { roleBadgeClass = "badge-role-manager"; }
+                            else if (roleName.Contains("admin")) { roleBadgeClass = "badge-role-admin"; }
+                            else if (roleName.Contains("leader")) { roleBadgeClass = "badge-role-leader"; }
+                            else if (roleName.Contains("member")) { roleBadgeClass = "badge-role-member"; }
+
+                            <tr>
+                                <td class="ps-4">@index</td>
+                                <td>@user.StaffCode</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="rounded-circle border border-1 p-0 me-2">
+                                            <img src="@(string.IsNullOrEmpty(user.ImageUrl) ? "https://i.pravatar.cc/150?img=6" : user.ImageUrl)"
+                                                 alt=""
+                                                 class="rounded-circle"
+                                                 width="34"
+                                                 height="34">
+                                        </div>
+                                        <span>@user.Name</span>
+                                    </div>
+                                </td>
+                                <td>@user.Email</td>
+                                <td>@user.DepartmentName</td>
+                                <td>
+                                    <span class="badge @roleBadgeClass rounded-pill px-2 py-1">@user.RoleName</span>
+                                </td>
+                                <td>
+                                    @if (user.Status)
+                                    {
+                                        <span class="badge bg-light text-success border border-light rounded-pill badge-status active">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-light text-danger border border-light rounded-pill badge-status inactive">Inactive</span>
+                                    }
+                                </td>
+                                <td class="text-end pe-4 text-muted">
+                                    <form asp-controller="UserUpdate" asp-action="UserUpdate" method="get" class="d-inline me-2">
+                                        <input type="hidden" name="staffCode" value="@user.StaffCode" />
+                                        <button type="submit" class="p-0 border-0 bg-transparent text-secondary hover-danger" title="Update">
+                                            <i class="far fa-pen-to-square"></i>
+                                        </button>
+                                    </form>
+                                    <form asp-controller="UserList"
+                                          asp-action="DeleteUser"
+                                          method="post"
+                                          onsubmit="return confirm('ဖျက်မှာသေချာလား သူငယ်ချင်း ?');"
+                                          class="d-inline me-2">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="staffCode" value="@user.StaffCode" />
+                                        <button type="submit" class="p-0 border-0 bg-transparent text-secondary hover-danger" title="Delete">
+                                            <i class="far fa-trash-can"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            index++;
+                        }
+                    }
+                </tbody>
+            }
+            else
+            {
+                <tbody>
+                    <tr>
+                        <td colspan="8" class="empty-state">
+                            <i class="fas fa-user-slash"></i>
+                            <span class="fs-5">Not found</span>
+                        </td>
+                    </tr>
+                </tbody>
+            }
         </table>
     </div>
     @if (totalPages > 1 || totalItems > 0)

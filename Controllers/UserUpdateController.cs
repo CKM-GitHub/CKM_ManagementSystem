@@ -20,14 +20,14 @@ namespace CKM_ManagementSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> UserUpdate(string StaffCode)
         {
-            if (string.IsNullOrWhiteSpace(StaffCode)) 
+            if (string.IsNullOrWhiteSpace(StaffCode))
             {
                 TempData["ErrorMessage"] = "Fail";
-                return RedirectToAction("UserList","UserList");
+                return RedirectToAction("UserList", "UserList");
             }
             var model = await _userUpdateBL.GetUserByStaffCodeAsync(StaffCode);
 
-            if (model == null) 
+            if (model == null)
             {
                 TempData["ErrorMessage"] = "User Not Found";
                 return RedirectToAction("UserList", "UserList");
@@ -52,54 +52,33 @@ namespace CKM_ManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UserUpdate(UserUpdateViewModel model)
         {
-            if (!ModelState.IsValid) 
-            { 
+            if (!ModelState.IsValid)
+            {
                 await loadDropdownAsync(model);
-                return View("~/Views/UserList/UserUpdate.cshtml", model); ;
+                return View("~/Views/UserList/UserUpdate.cshtml", model);
             }
 
             if (model.ImageFile != null)
             {
-                string imageFolder = Path.Combine(
-                    _environment.WebRootPath,
-                    "images",
-                    "users");
-
-                if (!Directory.Exists(imageFolder))
-                {
-                    Directory.CreateDirectory(imageFolder);
-                }
-
-                string fileName =
-                    Guid.NewGuid().ToString() +
-                    Path.GetExtension(model.ImageFile.FileName);
-
-                string filePath = Path.Combine(imageFolder, fileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await model.ImageFile.CopyToAsync(stream);
-                }
-
-                model.ImageUrl = "/images/users/" + fileName;
+                model.ImageUrl = await SaveImageAsync(model.ImageFile);
             }
 
-            int ErrorCode = await _userUpdateBL.UserUpdateAsync(model);
+            int errorCode = await _userUpdateBL.UserUpdateAsync(model);
 
-            if (ErrorCode == 0)
+            if (errorCode == 0)
             {
                 TempData["SuccessMessage"] = "User Update Successfully";
                 return RedirectToAction("UserList", "UserList");
             }
 
-            if (ErrorCode == 2)
+            if (errorCode == 2)
             {
                 ModelState.AddModelError(
                     nameof(model.Email),
                     "This Email already exists."
                 );
             }
-            else if (ErrorCode == 3)
+            else if (errorCode == 3)
             {
                 ModelState.AddModelError(
                     string.Empty,
@@ -134,6 +113,33 @@ namespace CKM_ManagementSystem.Controllers
              "RoleCode",
              "RoleName",
               model.RoleCode);
+        }
+    private async Task<string?> SaveImageAsync(IFormFile? imageFile)
+        {
+            if (imageFile == null)
+            {
+                return null;
+            }
+
+            string imageFolder = Path.Combine(
+                _environment.WebRootPath,
+                "images",
+                "users");
+
+            Directory.CreateDirectory(imageFolder);
+
+            string fileName =
+                $"{Guid.NewGuid()}{Path.GetExtension(imageFile.FileName)}";
+
+            string filePath = Path.Combine(imageFolder, fileName);
+
+            using var stream = new FileStream(
+                filePath,
+                FileMode.Create);
+
+            await imageFile.CopyToAsync(stream);
+
+            return $"/images/users/{fileName}";
         }
     }
 }

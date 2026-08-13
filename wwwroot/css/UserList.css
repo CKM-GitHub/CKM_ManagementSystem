@@ -73,3 +73,66 @@
 .w-10 {
     width: 10%;
 }
+
+.table-custom thead th {
+    height : 60px;
+    vertical-align: bottom;
+    border-bottom: 1px solid #dee2e6 !important;
+    font-weight: bold;
+    color: #6c757d; 
+    background-color: #f8f9fa; 
+}
+
+.table-custom tbody td {
+    height : 55px;
+    border-bottom: 1px solid #e9ecef !important;
+    vertical-align: middle;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #adb5bd;
+    min-height : 80vh;
+    vertical-align: middle;
+}
+
+.empty-state i {
+   font-size: 4rem;
+   display: block;
+   margin-bottom: 1.5rem;
+   opacity: 0.6;
+}
+
+.empty-state span {
+    font-size: 1.5rem; 
+    display: block;
+}
+
+#alertModal .modal-content {
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+#alertIcon i {
+    font-size: 4rem;
+}
+
+.alert-success-icon i {
+    color: #198754; /* Bootstrap success green */
+}
+
+.alert-danger-icon i {
+    color: #dc3545; /* Bootstrap danger red */
+}
+
+#alertOkButton {
+    background-color: #6c757d;
+    color: white;
+    min-width: 120px;
+}
+
+    #alertOkButton:hover {
+        background-color: #5c636a;
+        color: white;
+    }

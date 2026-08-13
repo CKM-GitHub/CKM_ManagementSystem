@@ -23,12 +23,12 @@
     font-size: 11px;
 }
 
-    .upload-btn:hover {
-        background-color: #2563eb !important;
-        border-color: #2563eb !important;
-        color: #fff !important;
-        text-decoration: none;
-    }
+.upload-btn:hover {
+    background-color: #2563eb !important;
+    border-color: #2563eb !important;
+    color: #fff !important;
+    text-decoration: none;
+}
 
 .gender-radio:checked {
     background-color: #2563eb;
@@ -48,15 +48,6 @@
         border-color: #2563eb;
     }
 
-.terms-checkbox {
-    border-color: #cbd5e1;
-}
-
-    .terms-checkbox:checked {
-        background-color: #2563eb;
-        border-color: #2563eb;
-    }
-
 .form-actions {
     border-color: #f1f5f9 !important;
 }
@@ -65,21 +56,10 @@
     background-color: #ffffff;
     border-color: #e2e8f0 !important;
 }
-
-    .cancel-btn:hover {
-        background-color: #f8fafc;
-        border-color: #cbd5e1 !important;
-    }
-
-.create-btn {
-    background-color: #0052cc;
-    border-color: #0052cc;
+.cancel-btn:hover {
+   background-color: #f8fafc;
+   border-color: #cbd5e1 !important;
 }
-
-    .create-btn:hover {
-        background-color: #0047b3;
-        border-color: #0047b3;
-    }
 
 .form-control:focus,
 .form-select:focus {
