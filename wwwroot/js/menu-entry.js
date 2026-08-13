@@ -6,6 +6,7 @@ $(document).ready(function () {
     const $hiddenParentMenu = $('#hiddenParentMenu');
     const $displayOrder = $('#DisplayOrder');
     const $typeParent = $('#typeParent');
+    const $statusActive = $('#statusActive');
 
     if (typeof successMessage !== 'undefined' && successMessage !== '') {
         const modalElement = document.getElementById('successModal');
@@ -23,6 +24,26 @@ $(document).ready(function () {
         }, 100);
         
     }
+
+    $menuForm.on('submit', function (e) {
+        if ($menuForm.valid && !$menuForm.valid()) {
+            e.preventDefault();
+            const validator = $menuForm.validate();
+            const $invalidInputs = $menuForm.find(':input').filter(function () {
+                return !validator.element(this);
+            });
+            if ($invalidInputs.length > 0) {
+                $menuForm.find('.field-validation-error')
+                    .removeClass('field-validation-error')
+                    .addClass('field-validation-error')
+                    .empty();
+                const firstInvalidInput = $invalidInputs.first()[0];
+                validator.element(firstInvalidInput);
+                $(firstInvalidInput).focus();
+            }
+            return false;
+        }
+    });
     function toggleParentMenu() {
         const selectedType = $('input[name="MenuType"]:checked').val();
         if (selectedType === 'Sub') {
@@ -61,12 +82,13 @@ $(document).ready(function () {
             $menuForm.find('input[type="text"], input[type= "number"], textarea').val('');
             $menuForm.find('select').prop('selectedIndex', 0);
             $typeParent.prop('checked', true);
+            $statusActive.prop('checked', true);
 
             if ($menuForm.data('validator')) {
                 $menuForm.data('validator').resetForm();
                 $menuForm.find('.field-validation-error')
-                    .removeClass('.field-validation-error')
-                    .addClass('.field-validation-valid')
+                    .removeClass('field-validation-error')
+                    .addClass('field-validation-valid')
                     .empty();
 
                 $menuForm.find('.input-validation-error').removeClass('input-validation-error');
