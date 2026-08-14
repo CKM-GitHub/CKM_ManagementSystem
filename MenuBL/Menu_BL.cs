@@ -276,8 +276,7 @@ namespace CKM_ManagementSystem.MenuBL
         {
             var allMenus = await GetMenuListAsync(searchTerm: null, parentMenuId: null, statusFilter: true);
             var parentMenus = allMenus
-                .Where(m => (m.ParentMenuId == null || m.ParentMenuId == 0) && m.Deleted_Date == null && m.Status == true)
-                .OrderBy(m => m.DisplayOrder)
+                .Where(m => m.ParentMenuId == null || m.ParentMenuId == 0) 
                 .Select(m => new SelectListItem
                 {
                     Value = m.MenuID.ToString(),
@@ -305,7 +304,6 @@ namespace CKM_ManagementSystem.MenuBL
             public string ParentMenuName { get; set; } = "Main Menu";
             public int DisplayOrder { get; set; }
             public bool Status { get; set; }
-            public DateTime? Deleted_Date { get; set; }
         }
     
     }
