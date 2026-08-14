@@ -54,6 +54,8 @@ public class UserCreateViewModel
     [AllowedExtensions(new string[] { ".jpg", ".jpeg", ".png", ".gif" }, ErrorMessage = "Only image files (.jpg, .jpeg, .png, .gif) are allowed")]  //Drr ga image format check tr pop nyi lay yrr
     [MaxFileSize(5 * 1024 * 1024, ErrorMessage = "Maximum file size is 5MB")]   // dr ka file size pop nyi lay yrr  
     public IFormFile? ImageFile { get; set; }
+    public string? TempImageName { get; set; }
+    public string? ImageUrl { get; set; }
 }
 
 

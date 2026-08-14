@@ -15,11 +15,61 @@ imageUpload.addEventListener("change", function () {
     }
 });
 
-const checkbok = document.getElementById("termsCheck");
-const submitBtn = document.getElementById("submitBtn");
+document.getElementById("clearBtn").addEventListener("click", function () {
 
-checkbok.addEventListener("change",
-    function () {
-        submitBtn.disabled = !this.checked;
+    const form = document.getElementById("UserForm");
+    const imageUpload = document.getElementById("image-upload");
+    const preview = document.getElementById("avatar-preview");
+    const defaultIcon = document.getElementById("default-icon");
+
+    form.reset();
+
+    form.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]').forEach(input => { input.value = ""; });
+
+    form.querySelectorAll("select").forEach(select => {
+        select.selectedIndex = 0;
+    });
+
+    document.getElementById("genderMale").checked = true;
+    document.getElementById("genderFemale").checked = false;
+
+    document.getElementById("statusActive").checked = true;
+    document.getElementById("statusInactive").checked = false;
+
+    const termsCheckbox = form.querySelector(
+        'input[name="AcceptTerms"]'
+    );
+
+    if (termsCheckbox) {
+        termsCheckbox.checked = false;
     }
-);
+
+    if (imageUpload) {
+        imageUpload.value = "";
+    }
+
+    if (preview) {
+        preview.src = "";
+        preview.classList.add("d-none");
+    }
+
+    if (defaultIcon) {
+        defaultIcon.classList.remove("d-none");
+    }
+
+    const tempImage = document.getElementById("TempImageName");
+
+    if (tempImage) {
+        tempImage.value = "";
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    var successModal = document.getElementById('successModal');
+
+    if (successModal) {
+        var modal = new bootstrap.Modal(successModal);
+        modal.show();
+    }
+});

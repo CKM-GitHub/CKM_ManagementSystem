@@ -1,12 +1,16 @@
-using Microsoft.EntityFrameworkCore;
+using CKM_ManagementSystem.BL;
+using CKM_ManagementSystem.BL.Interface;
+using CKM_ManagementSystem.DL;
+using CKM_ManagementSystem.DL.Interface;
 using CKM_ManagementSystem.Models;
-using CKM_ManagementSystem.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserEntryBL, UserEntryBL>();
+builder.Services.AddScoped<IUserEntryDL, UserEntryDL>();
 
 builder.Services.AddDbContext<CkmManagementSystemContext>(options =>
    options.UseSqlServer(

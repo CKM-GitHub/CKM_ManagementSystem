@@ -5,28 +5,71 @@
     <script src="~/js/UserEntry.js" asp-append-version="true"></script>
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <link rel="stylesheet" href="~/css/UserEntry.css"/>
 
 <div class="container d-flex justify-content-center align-items-center min-vh-100 py-5">
     <div class="card border-0 rounded-4 shadow p-5 bg-white w-100 user-entry-card">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-body text-center">
+                            <div class="mb-3">
+                                <i class="bi bi-check-circle-fill text-success"
+                                   style="font-size: 50px;"></i>
+                            </div>
+                            <p class="mb-0">
+                                @TempData["SuccessMessage"]
+                            </p>
+                        </div>
+
+                        <div class="modal-footer border-0 justify-content-center">
+                            <a type="button" class="btn btn-success px-4" asp-controller="UserList" asp-action="UserList">OK</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
         <h2 class="text-center fw-bold mb-5 user-entry-title">User Entry</h2>
-        <form class="row g-4" method="post" asp-controller="UserEntry" asp-action="UserCreate" enctype="multipart/form-data">
+        <form class="row g-4" method="post" asp-controller="UserEntry" asp-action="UserCreate" enctype="multipart/form-data" id="UserForm">
             <div class="col-md-4 d-flex flex-column align-items-center border-end-md pe-md-4">
-                <label class="form-label fw-semibold text-secondary mb-3">Profile Photo</label>
+                <label class="form-label fw-semibold text-secondary mb-3">
+                    Profile Photo
+                </label>
                 <div class="d-flex flex-column align-items-center">
                     <div class="avatar-preview-circle rounded-circle border border-2 overflow-hidden d-flex align-items-center justify-content-center" style="width:130px;height:130px;">
-                        <i id="default-icon" class="fa-solid fa-camera text-secondary" style="font-size:30px;"></i>
-                        <img id="avatar-preview" class="w-100 h-100 object-fit-cover d-none" alt="Profile Preview">
+                        @if (!string.IsNullOrEmpty(Model?.TempImageName))
+                        {
+                            <img id="avatar-preview"
+                                 src="@Url.Content("~/images/temp/" + Model.TempImageName)"
+                                 class="rounded-circle"
+                                 width="120"
+                                 height="120"
+                                 alt="Profile Preview" />
+                            <i id="default-icon" class="d-none"></i>
+                        }
+                        else
+                        {
+                            <img id="avatar-preview"
+                                 class="rounded-circle d-none"
+                                 width="120"
+                                 height="120"
+                                 alt="Profile Preview" />
+                            <i id="default-icon" class="bi bi-camera-fill"></i>
+                        }
                     </div>
                     <label for="image-upload" class="btn border border-secondary-subtle d-flex align-items-center gap-2 px-3 py-2 upload-btn mt-3 text-primary fw-bold">
                         <i class="fa-regular fa-user"></i>
                         Upload Profile
                     </label>
+                    <input type="hidden" asp-for="TempImageName" />
                     <input type="file"
                            id="image-upload"
                            asp-for="ImageFile"
                            class="d-none"
-                           accept="image/*">
+                           accept=".jpg,.jpeg,.png,.gif" />
                 </div>
                 <span asp-validation-for="ImageFile" class="text-danger small"></span>
             </div>
@@ -82,7 +125,7 @@
                             <label class="col-sm-4 form-label fw-medium text-secondary mb-0">Gender</label>
                             <div class="col-sm-8 d-flex gap-4">
                                 <div class="form-check">
-                                    <input class="form-check-input gender-radio" type="radio" asp-for="Gender" value="Male" id="genderMale">
+                                    <input class="form-check-input gender-radio" type="radio" asp-for="Gender" value="Male" id="genderMale" checked>
                                     <label class="form-check-label text-secondary" for="genderMale">Male</label>
                                 </div>
                                 <div class="form-check">
@@ -119,7 +162,7 @@
                             <label class="col-sm-4 form-label fw-medium text-secondary mb-0">Status</label>
                             <div class="col-sm-8 d-flex gap-4">
                                 <div class="form-check">
-                                    <input class="form-check-input status-radio" type="radio" asp-for="Status" value="true" id="statusActive">
+                                    <input class="form-check-input status-radio" type="radio" asp-for="Status" value="true" id="statusActive" checked >
                                     <label class="form-check-label text-secondary" for="statusActive">Active</label>
                                 </div>
                                 <div class="form-check">
@@ -130,12 +173,13 @@
                         </div>
                     </div>
                     <div class="col-12">
-                        <div class="col-sm-8 offset-sm-4">
-                            <div class="form-check">
-                                <input class="form-check-input rounded-1 terms-checkbox" type="checkbox" asp-for="AcceptTerms" id="termsCheck">
-                                <label class="form-check-label text-secondary small" for="termsCheck">
+                        <div class="col-sm-8">
+                            <div class="form-check d-flex align-items-start">
+                                <input class="form-check-input rounded-1 terms-checkbox mt-1" type="checkbox" asp-for="AcceptTerms">
+                                <label class="form-check-label text-secondary small ms-2" for="AcceptTerms">
                                     I agree to the Terms of Service and Privacy Policy
                                 </label>
+                                <span asp-validation-for="AcceptTerms" class="text-danger small"></span>
                             </div>
                         </div>
                     </div>
@@ -143,8 +187,8 @@
                 </div>
             </div>
             <div class="col-12 d-flex justify-content-end gap-3 mt-5 pt-3 border-top form-actions">
-                <button type="button" class="btn btn-light px-4 py-2 rounded-3 fw-medium text-secondary border cancel-btn">Cancel</button>
-                <button type="submit" class="btn btn-primary px-4 py-2 rounded-3 fw-medium create-btn" id="submitBtn" disabled>Create User</button>
+                <button type="button" class="btn btn-light px-4 py-2 rounded-3 fw-medium text-secondary border clear-btn" id="clearBtn">Clear</button>
+                <button type="submit" class="btn btn-primary px-4 py-2 rounded-3 fw-medium create-btn" id="submitBtn">Create User</button>
             </div>
         </form>
     </div>
