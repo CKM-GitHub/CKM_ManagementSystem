@@ -1,14 +1,15 @@
-﻿using DL;
+﻿using CKM_ManagementSystem.DL;
 using System.Data;
 using Microsoft.Data.SqlClient;
-using System.Security.Cryptography.X509Certificates;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
-namespace MenuBL
+namespace CKM_ManagementSystem.MenuBL
 {
     public class Menu_BL : BaseDL
     {
-        public Menu_BL(string connectionString, int commandTimeout= 30)
-            :base(connectionString, commandTimeout){ }
+        public Menu_BL(IConfiguration configuration)
+            :base(configuration){ }
 
         public async Task<MenuActionResult> CreateMenuAsync(
             string? menuName,
@@ -270,6 +271,21 @@ namespace MenuBL
 
             return parentMenus;
         }
+
+        public async Task<List<SelectListItem>> GetParentMenuListAsync()
+        {
+            var allMenus = await GetMenuListAsync(searchTerm: null, parentMenuId: null, statusFilter: true);
+            var parentMenus = allMenus
+                .Where(m => (m.ParentMenuId == null || m.ParentMenuId == 0) && m.Deleted_Date == null && m.Status == true)
+                .OrderBy(m => m.DisplayOrder)
+                .Select(m => new SelectListItem
+                {
+                    Value = m.MenuID.ToString(),
+                    Text = m.MenuName,
+                })
+                .ToList();
+            return parentMenus;
+        }
         public class MenuActionResult
         {
             public int StatusCode { get; set; }
@@ -289,6 +305,7 @@ namespace MenuBL
             public string ParentMenuName { get; set; } = "Main Menu";
             public int DisplayOrder { get; set; }
             public bool Status { get; set; }
+            public DateTime? Deleted_Date { get; set; }
         }
     
     }

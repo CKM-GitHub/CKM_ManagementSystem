@@ -1,19 +1,20 @@
 ﻿using System.Data;
-using System.Linq;
 using System.Text.Json;
 using Microsoft.Data.SqlClient;
+using System.Linq;
 
-namespace DL
+namespace CKM_ManagementSystem.DL
 {
     public class BaseDL
     {
         protected readonly string _connectionString;
         protected readonly int _commandTimeout;
 
-        public BaseDL(string connectionString, int connectionTimeout = 30)
+        public BaseDL(IConfiguration configuration)
         {
-            _connectionString = connectionString;
-            _commandTimeout = connectionTimeout;
+            _connectionString = configuration.GetConnectionString("DefaultConnection")
+                                ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+            _commandTimeout = 30;
         }
 
         public async Task<DataTable> SelectDataTableAsync(string storedProcedure, params SqlParameter[] parameters)

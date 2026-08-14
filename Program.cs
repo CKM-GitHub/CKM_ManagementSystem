@@ -1,5 +1,6 @@
 using CKM_ManagementSystem.Data;
-using MenuBL;
+using CKM_ManagementSystem.MenuBL;
+using CKM_ManagementSystem.DL;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,12 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddScoped<Menu_BL>(sp =>
-{
-    var configuration = sp.GetRequiredService<IConfiguration>();
-    var connectionString = configuration.GetConnectionString("DefaultConnection")!;
-    return new Menu_BL(connectionString);
-});
+builder.Services.AddScoped<Menu_BL>();
+builder.Services.AddScoped<BaseDL>();
 // builder.Services.AddScoped<IMenuService, MenuService>();
 
 var app = builder.Build();

@@ -19,15 +19,5 @@
     <Folder Include="Services\Interfaces\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="MenuBL\MenuBL.csproj" />
-  </ItemGroup>
-	<ItemGroup>
-		<Compile Remove="DL\**" />
-		<Compile Remove="MenuBL\**" />
-		<EmbeddedResource Remove="DL\**" />
-		<EmbeddedResource Remove="MenuBL\**" />
-		<None Remove="DL\**" />
-		<None Remove="MenuBL\**" />
-	</ItemGroup>
+  
 </Project>

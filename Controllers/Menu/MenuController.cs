@@ -3,18 +3,16 @@ using CKM_ManagementSystem.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using MenuBL;
+using CKM_ManagementSystem.MenuBL;
 
 namespace CKM_ManagementSystem.Controllers.Menu
 {
     public class MenuController : Controller
     {
-        private readonly ApplicationDbContext _dbContext;
         private readonly Menu_BL _menuBL;
 
-        public MenuController(ApplicationDbContext dbContext, Menu_BL menuBL)
+        public MenuController(Menu_BL menuBL)
         {
-            _dbContext = dbContext;
             _menuBL = menuBL;
         }
 
@@ -141,7 +139,7 @@ namespace CKM_ManagementSystem.Controllers.Menu
             {
                 return NotFound();
             }
-            var menu = await _menuBL.GetMenuByIdAsync(menuId); ;
+            var menu = await _menuBL.GetMenuByIdAsync(menuId); 
             if (menu == null)
             {
                 TempData["ErrorMessage"] = "The menu item could not be found.";
@@ -250,15 +248,7 @@ namespace CKM_ManagementSystem.Controllers.Menu
         }
         private async Task<List<SelectListItem>> GetParentMenuListAsync()
         {
-            var parentMenus = await _dbContext.Menus
-                .Where(m => (m.ParentMenuId == null || m.ParentMenuId == 0) && m.Deleted_Date == null && m.Status == true)
-                .OrderBy(m => m.DisplayOrder)
-                .ToListAsync();
-            return parentMenus.Select(m => new SelectListItem
-            {
-                Value = m.MenuID.ToString(),
-                Text = m.MenuName,
-            }).ToList();
+            return await _menuBL.GetParentMenuListAsync();
         }
     }
 }
