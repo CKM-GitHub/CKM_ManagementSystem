@@ -1,14 +1,13 @@
-﻿using DL;
+﻿using CKM_ManagementSystem.DL;
 using System.Data;
 using Microsoft.Data.SqlClient;
-using System.Security.Cryptography.X509Certificates;
 
-namespace MenuBL
+namespace CKM_ManagementSystem.MenuBL
 {
     public class Menu_BL : BaseDL
     {
-        public Menu_BL(string connectionString, int commandTimeout= 30)
-            :base(connectionString, commandTimeout){ }
+        public Menu_BL(IConfiguration configuration)
+            :base(configuration){ }
 
         public async Task<MenuActionResult> CreateMenuAsync(
             string? menuName,

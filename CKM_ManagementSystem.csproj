@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.11">
@@ -19,15 +20,5 @@
     <Folder Include="Services\Interfaces\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="MenuBL\MenuBL.csproj" />
-  </ItemGroup>
-	<ItemGroup>
-		<Compile Remove="DL\**" />
-		<Compile Remove="MenuBL\**" />
-		<EmbeddedResource Remove="DL\**" />
-		<EmbeddedResource Remove="MenuBL\**" />
-		<None Remove="DL\**" />
-		<None Remove="MenuBL\**" />
-	</ItemGroup>
+  
 </Project>

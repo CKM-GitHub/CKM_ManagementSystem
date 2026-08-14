@@ -3,7 +3,7 @@ using CKM_ManagementSystem.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using MenuBL;
+using CKM_ManagementSystem.MenuBL;
 
 namespace CKM_ManagementSystem.Controllers.Menu
 {
