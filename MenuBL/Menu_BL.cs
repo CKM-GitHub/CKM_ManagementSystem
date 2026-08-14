@@ -1,7 +1,7 @@
 ﻿using CKM_ManagementSystem.DL;
 using System.Data;
 using Microsoft.Data.SqlClient;
-
+using Microsoft.AspNetCore.Mvc.Rendering;
 namespace CKM_ManagementSystem.MenuBL
 {
     public class Menu_BL : BaseDL
@@ -69,7 +69,31 @@ namespace CKM_ManagementSystem.MenuBL
                 StatusMessage = statusMessageParam.Value?.ToString() ?? string.Empty
             };
         }
-
+        
+        public async Task<List<SelectListItem>> GetParentMenuListAsync()
+        {
+            var parmeters = new[]
+            {
+                new SqlParameter("@SearchTerm", DBNull.Value),
+                new SqlParameter("@ParentMenuId", DBNull.Value),
+                new SqlParameter("@StatusFilters", true)
+            };
+            DataTable dt = await SelectDataTableAsync("sp_GetMenuList", parmeters);
+            var parentMenuList = new List<SelectListItem>();
+            foreach (DataRow row in dt.Rows)
+            {
+                bool isParent = row["ParentMenuId"] == DBNull.Value || Convert.ToInt32(row["ParentMenuId"]) == 0;
+                if (isParent)
+                {
+                    parentMenuList.Add(new SelectListItem
+                    {
+                        Value = row["MenuID"].ToString(),
+                        Text = row["MenuName"].ToString()
+                    });
+                }
+            }
+            return parentMenuList;
+        }
         public class MenuActionResult
         {
             public int StatusCode { get; set; }
@@ -89,6 +113,7 @@ namespace CKM_ManagementSystem.MenuBL
             public string ParentMenuName { get; set; } = "Main Menu";
             public int DisplayOrder { get; set; }
             public bool Status { get; set; }
+            public DateTime? Deleted_Date { get; set; }
         }
     
     }
