@@ -151,13 +151,13 @@
         @if (TempData["SuccessMessage"] != null)
         {
             <text>
-                        Swal.fire({
-                            title: 'အောင်မြင်ပါသည်!',
-                            text: '@Html.Raw(TempData["SuccessMessage"])',
-                            icon: 'success',
-                            confirmButtonColor: '#635bff',
-                            timer: 2500
-                        });
+                    Swal.fire({
+                        title: 'အောင်မြင်ပါသည်!',
+                        text: '@Html.Raw(TempData["SuccessMessage"])',
+                        icon: 'success',
+                        confirmButtonColor: '#635bff',
+                        timer: 2500
+                    });
             </text>
         }
         });
@@ -188,7 +188,7 @@
                                 Swal.fire({
                                     icon: 'success',
                                     title: 'ဖျက်ပြီးပါပြီ!',
-                                    text: 'Role ကို အောင်မြင်စွာ ဖျက်ပြီးပါပြီ။',
+                                    text: res.message || 'Role ကို အောင်မြင်စွာ ဖျက်ပြီးပါပြီ။',
                                     timer: 1500,
                                     showConfirmButton: false
                                 }).then(() => {
@@ -199,7 +199,11 @@
                             }
                         },
                         error: function (xhr, status, error) {
-                            Swal.fire('အမှားအယွင်းရှိပါသည်!', 'စနစ်အတွင်း အမှားအယွင်းဖြစ်ပေါ်နေပါသည်: ' + error, 'error');
+                            var errMsg = "စနစ်အတွင်း အမှားအယွင်း ရှိနေပါသည်: " + error;
+                            if (xhr.responseJSON && xhr.responseJSON.message) {
+                                errMsg = xhr.responseJSON.message;
+                            }
+                            Swal.fire('အမှားအယွင်းရှိပါသည်!', errMsg, 'error');
                         }
                     });
                 }

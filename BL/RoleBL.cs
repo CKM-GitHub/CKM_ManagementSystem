@@ -4,6 +4,7 @@ using System.Data;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using CKM_ManagementSystem.Models.ViewModels;
 using CKM_ManagementSystem.Models.ViewModels.Roles;
 
 namespace CKM_ManagementSystem.BL
@@ -17,7 +18,34 @@ namespace CKM_ManagementSystem.BL
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
+        #region Helper Methods
+
+        private bool ParseStatus(object statusObj)
+        {
+            if (statusObj == null || statusObj == DBNull.Value)
+                return false;
+
+            if (statusObj is bool b)
+                return b;
+
+            if (int.TryParse(statusObj.ToString(), out int val))
+            {
+                // Status 1 = Active, 0 သို့မဟုတ် 2 = Inactive
+                return val == 1;
+            }
+
+            string str = statusObj.ToString().Trim();
+            return str.Equals("true", StringComparison.OrdinalIgnoreCase) || str == "1";
+        }
+
+        #endregion
+
         #region Service Wrapper Methods
+
+        public async Task<RoleListPagedViewModel> GetRoleListPagedAsync(int pageNumber, int pageSize, string searchKeyword, int? status)
+        {
+            return await GetRoleListPagedSPAsync(pageNumber, pageSize, searchKeyword, status);
+        }
 
         public async Task<List<MenuPermissionViewModel>> GetMenuPermissionsAsync(string roleCode = null)
         {
@@ -48,32 +76,86 @@ namespace CKM_ManagementSystem.BL
             }
         }
 
+        public async Task<(bool Success, string Message)> DeleteRoleAsync(string roleCode)
+        {
+            return await DeleteRoleSPAsync(roleCode);
+        }
+
         #endregion
 
-        #region Stored Procedure Implementations
+        #region Query Implementations
+
+        public async Task<RoleListPagedViewModel> GetRoleListPagedSPAsync(int pageNumber, int pageSize, string searchKeyword, int? status)
+        {
+            var result = new RoleListPagedViewModel
+            {
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                SearchKeyword = searchKeyword,
+                Status = status
+            };
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                await conn.OpenAsync();
+
+                string query = @"
+                    SELECT COUNT(1) 
+                    FROM UserRoles 
+                    WHERE (@SearchKeyword IS NULL OR Role_Code LIKE '%' + @SearchKeyword + '%' OR Role_Name LIKE '%' + @SearchKeyword + '%')
+                      AND (@Status IS NULL OR Status = @Status);
+
+                    SELECT 
+                        Role_Code AS RoleCode, 
+                        Role_Name AS DisplayName, 
+                        Description, 
+                        Status
+                    FROM UserRoles
+                    WHERE (@SearchKeyword IS NULL OR Role_Code LIKE '%' + @SearchKeyword + '%' OR Role_Name LIKE '%' + @SearchKeyword + '%')
+                      AND (@Status IS NULL OR Status = @Status)
+                    ORDER BY ISNULL(Updated_Date, Created_Date) DESC
+                    OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@SearchKeyword", string.IsNullOrWhiteSpace(searchKeyword) ? (object)DBNull.Value : searchKeyword);
+                    cmd.Parameters.AddWithValue("@Status", status.HasValue ? (object)status.Value : DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Offset", (pageNumber - 1) * pageSize);
+                    cmd.Parameters.AddWithValue("@PageSize", pageSize);
+
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        if (await reader.ReadAsync())
+                        {
+                            result.TotalRecords = Convert.ToInt32(reader[0]);
+                        }
+
+                        if (await reader.NextResultAsync())
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                result.Roles.Add(new RoleEntryViewModel
+                                {
+                                    RoleCode = reader["RoleCode"].ToString(),
+                                    DisplayName = reader["DisplayName"] != DBNull.Value ? reader["DisplayName"].ToString() : string.Empty,
+                                    Description = reader["Description"] != DBNull.Value ? reader["Description"].ToString() : string.Empty,
+                                    Status = ParseStatus(reader["Status"])
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
 
         public async Task<bool> CheckDuplicateRoleCodeSPAsync(string roleCode)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                using (SqlCommand cmd = new SqlCommand("sp_CheckDuplicateRoleCode", conn))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@RoleCode", roleCode ?? (object)DBNull.Value);
-
-                    await conn.OpenAsync();
-                    var result = await cmd.ExecuteScalarAsync();
-                    return result != null && Convert.ToBoolean(result);
-                }
-            }
-        }
-
-        public async Task<bool> CheckRoleExistsSPAsync(string roleCode)
-        {
-            using (SqlConnection conn = new SqlConnection(_connectionString))
-            {
                 await conn.OpenAsync();
-                string query = "SELECT COUNT(1) FROM UserRoles WHERE RoleCode = @RoleCode";
+                string query = "SELECT COUNT(1) FROM UserRoles WHERE Role_Code = @RoleCode";
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@RoleCode", roleCode ?? (object)DBNull.Value);
@@ -81,6 +163,11 @@ namespace CKM_ManagementSystem.BL
                     return count > 0;
                 }
             }
+        }
+
+        public async Task<bool> CheckRoleExistsSPAsync(string roleCode)
+        {
+            return await CheckDuplicateRoleCodeSPAsync(roleCode);
         }
 
         public async Task<List<MenuPermissionViewModel>> GetMenuPermissionsSPAsync(string roleCode = null)
@@ -122,7 +209,7 @@ namespace CKM_ManagementSystem.BL
                             ISNULL(p.CanDelete, 0) AS CanDelete
                         FROM Menus m
                         LEFT JOIN UserRolePermissions p ON m.MenuID = p.MenuID 
-                            AND p.RoleCode = @RoleCode
+                            AND p.Role_Code = @RoleCode
                         ORDER BY 
                             COALESCE(m.ParentMenuId, m.MenuID),
                             CASE WHEN m.ParentMenuId IS NULL THEN 0 ELSE 1 END,
@@ -161,16 +248,31 @@ namespace CKM_ManagementSystem.BL
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                using (SqlCommand cmd = new SqlCommand("sp_SaveRoleInfo", conn))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
+                await conn.OpenAsync();
 
+                string query = @"
+                    IF EXISTS (SELECT 1 FROM UserRoles WHERE Role_Code = @RoleCode)
+                    BEGIN
+                        UPDATE UserRoles 
+                        SET Role_Name = @RoleName,
+                            Description = @Description,
+                            Status = @Status,
+                            Updated_Date = GETDATE()
+                        WHERE Role_Code = @RoleCode
+                    END
+                    ELSE
+                    BEGIN
+                        INSERT INTO UserRoles (ID, Role_Code, Role_Name, Description, Status, Created_Date)
+                        VALUES (NEWID(), @RoleCode, @RoleName, @Description, @Status, GETDATE())
+                    END";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
                     cmd.Parameters.AddWithValue("@RoleCode", model.RoleCode ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@RoleName", model.DisplayName ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@Description", model.Description ?? (object)DBNull.Value);
-                    cmd.Parameters.AddWithValue("@Status", model.Status);
+                    cmd.Parameters.AddWithValue("@Status", model.Status ? 1 : 0);
 
-                    await conn.OpenAsync();
                     int rows = await cmd.ExecuteNonQueryAsync();
                     return rows > 0;
                 }
@@ -181,17 +283,29 @@ namespace CKM_ManagementSystem.BL
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                using (SqlCommand cmd = new SqlCommand("sp_SaveRolePermission", conn))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
+                await conn.OpenAsync();
 
+                string query = @"
+                    IF EXISTS (SELECT 1 FROM UserRolePermissions WHERE Role_Code = @RoleCode AND MenuID = @MenuId)
+                    BEGIN
+                        UPDATE UserRolePermissions 
+                        SET CanRead = @CanRead, CanWrite = @CanWrite, CanDelete = @CanDelete
+                        WHERE Role_Code = @RoleCode AND MenuID = @MenuId
+                    END
+                    ELSE
+                    BEGIN
+                        INSERT INTO UserRolePermissions (Role_Code, MenuID, CanRead, CanWrite, CanDelete)
+                        VALUES (@RoleCode, @MenuId, @CanRead, @CanWrite, @CanDelete)
+                    END";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
                     cmd.Parameters.AddWithValue("@RoleCode", roleCode ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@MenuId", menuId);
                     cmd.Parameters.AddWithValue("@CanRead", canRead);
                     cmd.Parameters.AddWithValue("@CanWrite", canWrite);
                     cmd.Parameters.AddWithValue("@CanDelete", canDelete);
 
-                    await conn.OpenAsync();
                     int rows = await cmd.ExecuteNonQueryAsync();
                     return rows > 0;
                 }
@@ -204,12 +318,21 @@ namespace CKM_ManagementSystem.BL
 
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                using (SqlCommand cmd = new SqlCommand("sp_GetRoleByCode", conn))
+                await conn.OpenAsync();
+
+                string query = @"
+                    SELECT 
+                        Role_Code AS RoleCode, 
+                        Role_Name AS DisplayName, 
+                        Description, 
+                        Status
+                    FROM UserRoles 
+                    WHERE Role_Code = @RoleCode";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@RoleCode", roleCode ?? (object)DBNull.Value);
 
-                    await conn.OpenAsync();
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         if (await reader.ReadAsync())
@@ -219,13 +342,60 @@ namespace CKM_ManagementSystem.BL
                                 RoleCode = reader["RoleCode"].ToString(),
                                 DisplayName = reader["DisplayName"] != DBNull.Value ? reader["DisplayName"].ToString() : string.Empty,
                                 Description = reader["Description"] != DBNull.Value ? reader["Description"].ToString() : string.Empty,
-                                Status = reader["Status"] != DBNull.Value && Convert.ToBoolean(reader["Status"])
+                                Status = ParseStatus(reader["Status"])
                             };
                         }
                     }
                 }
             }
             return role;
+        }
+
+        public async Task<(bool Success, string Message)> DeleteRoleSPAsync(string roleCode)
+        {
+            var role = await GetRoleByCodeSPAsync(roleCode);
+            if (role == null)
+            {
+                return (false, "Role မရှိပါ။");
+            }
+
+           
+            if (role.Status)
+            {
+                return (false, "Active ဖြစ်နေသော Role ကိုဖျက်လို့မရပါ");
+            }
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                await conn.OpenAsync();
+                using (SqlTransaction transaction = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        string deletePermsQuery = "DELETE FROM UserRolePermissions WHERE Role_Code = @RoleCode";
+                        using (SqlCommand cmdPerm = new SqlCommand(deletePermsQuery, conn, transaction))
+                        {
+                            cmdPerm.Parameters.AddWithValue("@RoleCode", roleCode ?? (object)DBNull.Value);
+                            await cmdPerm.ExecuteNonQueryAsync();
+                        }
+
+                        string deleteRoleQuery = "DELETE FROM UserRoles WHERE Role_Code = @RoleCode";
+                        using (SqlCommand cmdRole = new SqlCommand(deleteRoleQuery, conn, transaction))
+                        {
+                            cmdRole.Parameters.AddWithValue("@RoleCode", roleCode ?? (object)DBNull.Value);
+                            await cmdRole.ExecuteNonQueryAsync();
+                        }
+
+                        transaction.Commit();
+                        return (true, "Role ကို အောင်မြင်စွာ ဖျက်ပြီးပါပြီ။");
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        return (false, "Role ဖျက်ရာတွင် အမှားအယွင်း ရှိနေပါသည်: " + ex.Message);
+                    }
+                }
+            }
         }
 
         #endregion

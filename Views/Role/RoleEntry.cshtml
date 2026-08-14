@@ -1,7 +1,8 @@
 ﻿@model CKM_ManagementSystem.Models.ViewModels.Roles.RoleEntryViewModel
 
 @{
-    ViewData["Title"] = "User Role Entry";
+    bool isEdit = ViewBag.IsEdit ?? false;
+    ViewData["Title"] = isEdit ? "User Role Edit" : "User Role Entry";
 }
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -10,20 +11,29 @@
 <div class="container py-4">
     <div class="role-entry-card position-relative">
 
-        <h2 class="role-entry-title">User Role Entry</h2>
+        <h2 class="role-entry-title">@(isEdit ? "User Role Edit" : "User Role Entry")</h2>
 
-        <form asp-action="SaveRole" method="post">
+        <form asp-action="SaveRole" method="post" id="roleForm">
+            <input type="hidden" name="isEdit" value="@(isEdit ? "true" : "false")" />
+
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3 small"></div>
 
             <div class="mb-3">
                 <label class="form-label-custom">Role Code</label>
-                <input asp-for="RoleCode" id="RoleCode" class="form-control" placeholder="e.g., role code" maxlength="20" autofocus />
+                @if (isEdit)
+                {
+                    <input asp-for="RoleCode" id="RoleCode" class="form-control" readonly />
+                }
+                else
+                {
+                    <input asp-for="RoleCode" id="RoleCode" class="form-control" placeholder="e.g., role code" maxlength="20" autofocus />
+                }
                 <span asp-validation-for="RoleCode" class="text-danger small"></span>
             </div>
 
             <div class="mb-3">
                 <label class="form-label-custom">Display Name</label>
-                <input asp-for="DisplayName" class="form-control" placeholder="e.g., Admin" maxlength="50" />
+                <input asp-for="DisplayName" id="DisplayName" class="form-control" placeholder="e.g., Admin" maxlength="50" />
                 <span asp-validation-for="DisplayName" class="text-danger small"></span>
             </div>
 
@@ -129,7 +139,7 @@
                     </a>
                 </div>
                 <div class="col-6">
-                    <button type="submit" class="btn btn-register w-100 py-2">Register</button>
+                    <button type="submit" id="btnSubmit" class="btn btn-register w-100 py-2">@(isEdit ? "Update" : "Register")</button>
                 </div>
             </div>
 
@@ -142,11 +152,19 @@
 
     <script>
         $(document).ready(function () {
+            var isEditMode = $('#RoleCode').prop('readonly');
 
-            $('#RoleCode').focus();
+            if (isEditMode) {
+                $('#DisplayName').focus();
+            } else {
+                $('#RoleCode').focus();
+            }
 
+            
             $('#RoleCode').on('blur', function () {
-                var roleCodeVal = $(this).val();
+                if ($(this).prop('readonly')) return;
+
+                var roleCodeVal = $(this).val().trim();
                 var $valSpan = $('span[asp-validation-for="RoleCode"]');
 
                 if (roleCodeVal) {
@@ -208,7 +226,7 @@
             function checkFormDirtyState() {
                 var isDirty = false;
 
-                $form.find('input[type="text"], textarea').each(function () {
+                $form.find('input[type="text"]:not([readonly]), textarea').each(function () {
                     if ($(this).val().trim() !== '') {
                         isDirty = true;
                         return false;
@@ -251,7 +269,12 @@
                     $('span[asp-validation-for]').text('');
 
                     resetToCancelState();
-                    $('#RoleCode').focus();
+
+                    if (isEditMode) {
+                        $('#DisplayName').focus();
+                    } else {
+                        $('#RoleCode').focus();
+                    }
                 }
             });
 
