@@ -119,11 +119,11 @@
 }
 
 .alert-success-icon i {
-    color: #198754; /* Bootstrap success green */
+    color: #198754; 
 }
 
 .alert-danger-icon i {
-    color: #dc3545; /* Bootstrap danger red */
+    color: #dc3545; 
 }
 
 #alertOkButton {
