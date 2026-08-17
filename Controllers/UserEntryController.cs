@@ -36,7 +36,6 @@ namespace CKM_ManagementSystem.Controllers
             Console.WriteLine($"TempImageName: {model.TempImageName}");
             Console.WriteLine($"ImageUrl: {model.ImageUrl}");
 
-            // 1. New image uploaded
             if (model.ImageFile != null)
             {
                 string tempFolder = Path.Combine(
@@ -64,14 +63,9 @@ namespace CKM_ManagementSystem.Controllers
                 }
 
                 model.TempImageName = tempFileName;
-
-                // Important:
-                // The browser submitted an empty TempImageName,
-                // so remove the old ModelState value.
                 ModelState.Remove(nameof(model.TempImageName));
             }
 
-            // 2. ImageUrl is based on existing temp image
             if (!string.IsNullOrEmpty(model.TempImageName))
             {
                 model.ImageUrl =
@@ -80,7 +74,6 @@ namespace CKM_ManagementSystem.Controllers
                 ModelState.Remove(nameof(model.ImageUrl));
             }
 
-            // 3. Validation
             if (!ModelState.IsValid)
             {
                 await PopulateDropdownsAsync(
@@ -91,11 +84,9 @@ namespace CKM_ManagementSystem.Controllers
                 return View(model);
             }
 
-            // 4. Create User
             int errorCode =
                 await _userEntryBL.CreateUserAsync(model);
 
-            // 5. DB errors
             if (errorCode == 1)
             {
                 ModelState.AddModelError(
@@ -132,7 +123,6 @@ namespace CKM_ManagementSystem.Controllers
                 );
             }
 
-            // 6. DB failed → KEEP TEMP IMAGE
             if (!ModelState.IsValid)
             {
                 await PopulateDropdownsAsync(
@@ -143,7 +133,6 @@ namespace CKM_ManagementSystem.Controllers
                 return View(model);
             }
 
-            // 7. DB success → TEMP → USERS
             if (!string.IsNullOrEmpty(model.TempImageName))
             {
                 string tempFolder = Path.Combine(
