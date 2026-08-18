@@ -27,23 +27,6 @@ namespace CKM_ManagementSystem.Controllers.Password
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
-            Console.WriteLine("=== CHANGE PASSWORD POST ===");
-
-            Console.WriteLine($"StaffCode = [{model.StaffCode}]");
-            Console.WriteLine($"CurrentPassword = [{model.CurrentPassword}]");
-            Console.WriteLine($"NewPassword = [{model.NewPassword}]");
-            Console.WriteLine($"ConfirmPassword = [{model.ConfirmPassword}]");
-
-            foreach (var item in ModelState)
-            {
-                Console.WriteLine(
-                    $"KEY = {item.Key}, " +
-                    $"VALUE = [{item.Value?.AttemptedValue}], " +
-                    $"ERROR = {string.Join(" | ", item.Value?.Errors.Select(e => e.ErrorMessage) ?? [])}"
-                );
-            }
-
-            Console.WriteLine($"ModelState.IsValid = {ModelState.IsValid}");
             if (!ModelState.IsValid)
             {
                 return View("~/Views/Password/ChangePassword.cshtml", model);

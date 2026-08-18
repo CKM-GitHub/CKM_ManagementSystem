@@ -1,6 +1,7 @@
 ﻿using CKM_ManagementSystem.DL.Interface;
 using CKM_ManagementSystem.Models.ViewModels.Password;
 using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace CKM_ManagementSystem.DL
 {
@@ -19,10 +20,17 @@ namespace CKM_ManagementSystem.DL
         {
             SqlParameter staffCode = new SqlParameter("@StaffCode", model.StaffCode);
             SqlParameter newpassword = new SqlParameter("@NewPassword", model.NewPassword);
-
-            return await ExecuteNonQueryAsync("sp_ChangePassword",
+            SqlParameter returnValue =
+            new SqlParameter("@ReturnValue", SqlDbType.Int)
+            {
+                Direction = ParameterDirection.ReturnValue
+            };  
+            await ExecuteNonQueryAsync("sp_ChangePassword",
                 staffCode, 
-                newpassword);
+                newpassword,
+                returnValue);
+
+            return (int)returnValue.Value;
         }
     }
 }

@@ -18,18 +18,20 @@ namespace CKM_ManagementSystem.BL
 
         public async Task<int> ChangePasswordAsync(ChangePasswordViewModel model)
         {
-            Console.WriteLine("=== BL START ===");
-            Console.WriteLine($"StaffCode: {model.StaffCode}");
-            Console.WriteLine($"CurrentPassword: {model.CurrentPassword}");
-            Console.WriteLine($"NewPassword: {model.NewPassword}");
-
 
             if (string.IsNullOrWhiteSpace(model.StaffCode) ||
-               string.IsNullOrWhiteSpace(model.CurrentPassword) ||
-               string.IsNullOrWhiteSpace(model.NewPassword))
+            string.IsNullOrWhiteSpace(model.CurrentPassword) ||
+            string.IsNullOrWhiteSpace(model.NewPassword) ||
+            string.IsNullOrWhiteSpace(model.ConfirmPassword))
             {
-                return 3; 
+                return 3;
             }
+
+            if (model.NewPassword != model.ConfirmPassword)
+            {
+                return 4;
+            }
+
             string? currentPassword = await _changePasswordDL.GetCurrentPasswordAsync(model.StaffCode);
 
             if (currentPassword == null)
