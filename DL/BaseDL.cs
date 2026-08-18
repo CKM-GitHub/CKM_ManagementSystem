@@ -93,5 +93,45 @@ namespace CKM_ManagementSystem.DL
                 }
             }
         }
+        public async Task<int> ExecuteNonQueryAsync(
+        string storedProcedureName,
+        params SqlParameter[] parameters)
+        {
+            using SqlConnection connection =
+                new SqlConnection(_connectionString);
+
+            await connection.OpenAsync();
+
+            using SqlCommand command =
+                new SqlCommand(storedProcedureName, connection);
+
+            command.CommandType = CommandType.StoredProcedure;
+
+            if (parameters != null && parameters.Length > 0)
+            {
+                ChangeToDBNull(parameters);
+                command.Parameters.AddRange(parameters);
+            }
+            return await command.ExecuteNonQueryAsync();
+        }
+        public async Task<string?> ExecuteScalarAsync(string storedProcedureName,params SqlParameter[] parameters)
+        {
+            using SqlConnection conn = new SqlConnection(_connectionString);
+
+            await conn.OpenAsync();
+
+            using SqlCommand command = new SqlCommand(storedProcedureName, conn);
+
+            command.CommandType = CommandType.StoredProcedure;
+
+            if(parameters != null && parameters.Length > 0)
+            {
+                ChangeToDBNull(parameters);
+                command.Parameters.AddRange(parameters);
+            }
+            object? result = await command.ExecuteScalarAsync();
+
+            return result == null || result == DBNull.Value ? null : result.ToString();
+        }
     }
 }

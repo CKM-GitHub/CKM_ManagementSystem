@@ -3,7 +3,9 @@ using CKM_ManagementSystem.Services;
 using CKM_ManagementSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using CKM_ManagementSystem.BL;
+using CKM_ManagementSystem.BL.Interface;
 using CKM_ManagementSystem.DL;
+using CKM_ManagementSystem.DL.Interface;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -17,6 +19,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<BaseDL>();
 builder.Services.AddScoped<DepartmentBL>();
+builder.Services.AddScoped<IChangePasswordBL, ChangePasswordBL>();
+builder.Services.AddScoped<IChangePasswordDL, ChangePasswordDL>();
 
 var app = builder.Build();
 
