@@ -93,5 +93,20 @@ namespace CKM_ManagementSystem.DL
                 }
             }
         }
+
+        public object? ExecuteScalarObject(string storedProcedureName, params SqlParameter[] parameters)
+        {
+            using SqlConnection connection = new SqlConnection(_connectionString);
+            connection.Open();
+            using SqlCommand command = new SqlCommand(storedProcedureName, connection);
+            command.CommandType = CommandType.StoredProcedure;
+            if(parameters != null && parameters.Length > 0)
+            {
+                ChangeToDBNull(parameters);
+                command.Parameters.AddRange(parameters);
+            }
+            object? result = command.ExecuteScalar();
+            return (result == DBNull.Value) ? null : result;
+        }
     }
 }

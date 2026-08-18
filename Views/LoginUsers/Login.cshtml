@@ -1,0 +1,61 @@
+﻿@model CKM_ManagementSystem.Models.ViewModels.LoginUser.LoginRequest
+
+@{
+    ViewData["Title"] = "Login";
+}
+<div class="login-body" data-error="@ViewBag.ErrorMessage">
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
+                <div class="login-card p-4 p-sm-5">
+                    <div class="d-flex align-items-center justify-content-center mb-4">
+                        <img src="~/images/system_img/login_logo.png" alt="CKM Logo" class="logo-img" onerror="this.style.display='none'" />
+                    </div>
+                    <h3 class="login-title fw-bold mb-1">Sign In</h3>
+                    <p class="login-subtitle text-muted mb-4">Welcome back! Please sign in to contiue.</p>
+                    
+                    <form asp-controller="LoginUsers" asp-action="Login" method="post">
+                        <input type="hidden" asp-for="Staff_Code" />
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-secondary small">Email</label>
+                            <div class="input-group custom-input-group">
+                                <span class="input-group-text input-group-text-custom">
+                                    <i class="fa-regular fa-envelope"></i>
+                                </span>
+                                <input asp-for="Email" type="email" class="form-control form-control-custom" placeholder="Enter your email" required>
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold text-secondary small">Password</label>
+                            <div class="input-group custom-input-group">
+                                <span class="input-group-text input-group-text-custom">
+                                    <i class="fa-solid fa-lock"></i>
+                                </span>
+                                <input asp-for="Password" type="password" id="passwordInput" class="form-control form-control-custom password-input-custom" placeholder="Enter your password" required />
+                                <span class="input-group-text password-toggle-custom">
+                                    <i class="fa-regular fa-eye" id="toggleIcon"></i>
+                                </span>
+                            </div>
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-primary-custom w-100">Sign In</button>
+                    </form>
+                    <div class="copyright-text text-center mt-4">
+                        &copy; 2026 CKM Management System. All rights reserved.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Styles {
+    <link rel="stylesheet" href="~/css/Login.css" />
+    <link rel="stylesheet" href="~/css/sweetalert2.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+}
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/Login.js" asp-append-version="true"></script>
+    <script src="~/js/sweetalert2.all.min.js" asp-append-version="true"></script>
+}

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CKM_ManagementSystem")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6ff78cee36b9bc335d8c6a64d705452b82ef49ce")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7ae020dfae89c9bc86410ec790ac643ba40298f8")]
 [assembly: System.Reflection.AssemblyProductAttribute("CKM_ManagementSystem")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CKM_ManagementSystem")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
