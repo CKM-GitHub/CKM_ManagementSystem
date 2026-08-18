@@ -58,7 +58,11 @@ namespace CKM_ManagementSystem.Controllers.Password
                         "",
                         "Invalid password information.");
                     break;
-
+                case 4:
+                    ModelState.AddModelError(
+                        "NewPassword",
+                        "New password must be different from the current password.");
+                    break;
                 default:
                       TempData["ErrorMessage"] =
                       "Failed to change password";

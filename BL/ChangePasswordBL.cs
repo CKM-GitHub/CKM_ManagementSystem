@@ -27,10 +27,10 @@ namespace CKM_ManagementSystem.BL
                 return 3;
             }
 
-            if (model.NewPassword != model.ConfirmPassword)
-            {
-                return 4;
-            }
+          //  if (model.NewPassword != model.ConfirmPassword)
+          //  {
+            //    return 4;
+        //    }
 
             string? currentPassword = await _changePasswordDL.GetCurrentPasswordAsync(model.StaffCode);
 
@@ -52,6 +52,10 @@ namespace CKM_ManagementSystem.BL
             if (result == PasswordVerificationResult.Failed)
             {
                 return 2;
+            }
+            if (model.CurrentPassword == model.NewPassword)
+            {
+                return 4;
             }
             model.NewPassword = _passwordHasher.HashPassword(user, model.NewPassword);
 
