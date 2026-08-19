@@ -1,5 +1,7 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace CKM_ManagementSystem.DL
 {
@@ -47,11 +49,11 @@ namespace CKM_ManagementSystem.DL
 
                 return "true";
             }
-            catch
+            catch (Exception ex)
             {
                 transaction.Rollback();
 
-                return "false";
+                return "Error: " + ex.Message;
             }
         }
 
@@ -78,6 +80,32 @@ namespace CKM_ManagementSystem.DL
             object? result = command.ExecuteScalar();
 
             return Convert.ToInt32(result);
+        }
+
+        public DataTable SelectData(
+            string storedProcedureName,
+            params SqlParameter[] parameters)
+        {
+            DataTable dt = new DataTable();
+
+            using SqlConnection connection =
+                new SqlConnection(_connectionString);
+
+            using SqlCommand command =
+                new SqlCommand(storedProcedureName, connection);
+
+            command.CommandType = CommandType.StoredProcedure;
+
+            if (parameters != null && parameters.Length > 0)
+            {
+                ChangeToDBNull(parameters);
+                command.Parameters.AddRange(parameters);
+            }
+
+            using SqlDataAdapter adapter = new SqlDataAdapter(command);
+            adapter.Fill(dt);
+
+            return dt;
         }
 
         private static void ChangeToDBNull(
