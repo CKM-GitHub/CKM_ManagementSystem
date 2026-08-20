@@ -12,9 +12,81 @@ namespace CKM_ManagementSystem.DL
 
         public BaseDL(IConfiguration configuration)
         {
-            _connectionString = configuration.GetConnectionString("DefaultConnection")
-                                ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+            _connectionString =
+                configuration.GetConnectionString("DefaultConnection")
+                ?? throw new InvalidOperationException(
+                    "DefaultConnection was not found.");
             _commandTimeout = 30;
+        }
+
+        public string InsertUpdateDeleteData(string storedProcedureName, params SqlParameter[] parameters)
+        {
+            using SqlConnection connection = new SqlConnection(_connectionString);
+
+            connection.Open();
+
+            using SqlTransaction transaction = connection.BeginTransaction();
+
+            using SqlCommand command = new SqlCommand(storedProcedureName, connection, transaction);
+
+            command.CommandType = CommandType.StoredProcedure;
+
+            if (parameters != null && parameters.Length > 0)
+            {
+                command.Parameters.AddRange(NormalizeParameters(parameters));
+            }
+
+            try
+            {
+                command.ExecuteNonQuery();
+                transaction.Commit();
+
+                return "true";
+            }
+            catch
+            {
+                transaction.Rollback();
+
+                return "false";
+            }
+        }
+
+        public async Task<bool> ExecuteAsync(string storedProcedure, params SqlParameter[] parameters)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            using var command = new SqlCommand(storedProcedure, connection);
+
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandTimeout = _commandTimeout;
+
+            if (parameters != null && parameters.Length > 0)
+            {
+                command.Parameters.AddRange(NormalizeParameters(parameters));
+
+            }
+            await connection.OpenAsync();
+            await command.ExecuteNonQueryAsync();
+
+            return true;
+        }
+
+        public int ExecuteScalar(string storedProcedureName, params SqlParameter[] parameters)
+        {
+            using SqlConnection connection = new SqlConnection(_connectionString);
+            connection.Open();
+
+            using SqlCommand command = new SqlCommand(storedProcedureName, connection);
+
+            command.CommandType = CommandType.StoredProcedure;
+
+            if (parameters != null && parameters.Length > 0)
+            {
+                command.Parameters.AddRange(NormalizeParameters(parameters));
+            }
+
+            object? result = command.ExecuteScalar();
+
+            return Convert.ToInt32(result);
         }
 
         public async Task<DataTable> SelectDataTableAsync(string storedProcedure, params SqlParameter[] parameters)
@@ -48,26 +120,7 @@ namespace CKM_ManagementSystem.DL
             return JsonSerializer.Serialize(rows);
         }
 
-        public async Task<bool> ExecuteAsync(string storedProcedure, params SqlParameter[] parameters){
-            using var connection = new SqlConnection(_connectionString);
-            using var command = new SqlCommand( storedProcedure, connection);
-
-            command.CommandType = CommandType.StoredProcedure;
-            command.CommandTimeout= _commandTimeout;
-
-            if(parameters != null && parameters.Length > 0)
-            {
-                command.Parameters.AddRange (NormalizeParameters(parameters));
-
-            }
-            await connection.OpenAsync();
-            await command.ExecuteNonQueryAsync();
-
-            return true;
-        }
-
-
-        private  SqlParameter[] NormalizeParameters(SqlParameter[] parameters)
+        private SqlParameter[] NormalizeParameters(SqlParameter[] parameters)
         {
             foreach (var parameter in parameters)
             {
@@ -78,7 +131,6 @@ namespace CKM_ManagementSystem.DL
             }
             return parameters;
         }
-
 
     }
 }

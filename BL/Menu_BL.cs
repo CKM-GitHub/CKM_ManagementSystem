@@ -2,7 +2,7 @@
 using System.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Mvc.Rendering;
-namespace CKM_ManagementSystem.MenuBL
+namespace CKM_ManagementSystem.BL
 {
     public class Menu_BL : BaseDL
     {
