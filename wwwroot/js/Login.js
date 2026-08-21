@@ -34,9 +34,8 @@
         }).then(() => {
             $('#Email').val('');
             $('#passwordInput').val('');
-
             $('#passwordInput').attr('type', 'password');
-            $('#toogleIcon')
+            $('#toggleIcon')
                 .removeClass('fa-eye-slash')
                 .addClass('fa-eye');
         });
