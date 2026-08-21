@@ -151,27 +151,27 @@
         @if (TempData["SuccessMessage"] != null)
         {
             <text>
-                    Swal.fire({
-                        title: 'အောင်မြင်ပါသည်!',
-                        text: '@Html.Raw(TempData["SuccessMessage"])',
-                        icon: 'success',
-                        confirmButtonColor: '#635bff',
-                        timer: 2500
-                    });
+                        Swal.fire({
+                            title: 'Success!',
+                            text: '@Html.Raw(TempData["SuccessMessage"])',
+                            icon: 'success',
+                            confirmButtonColor: '#635bff',
+                            timer: 2500
+                        });
             </text>
         }
         });
 
         function deleteRole(roleCode) {
             Swal.fire({
-                title: 'သေချာပါသလား?',
-                text: "ဒီ Role ကို ဖျက်ပစ်ရန် သေချာပါသလား?",
+                title: 'Are you sure?',
+                text: "Are you sure you want to delete this role?",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#ef4444',
                 cancelButtonColor: '#64748b',
-                confirmButtonText: 'ဖျက်ပါမည်',
-                cancelButtonText: 'မဖျက်တော့ပါ'
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
             }).then((result) => {
                 if (result.isConfirmed) {
                     var token = $('input[name="__RequestVerificationToken"]').val();
@@ -187,23 +187,23 @@
                             if (res.success) {
                                 Swal.fire({
                                     icon: 'success',
-                                    title: 'ဖျက်ပြီးပါပြီ!',
-                                    text: res.message || 'Role ကို အောင်မြင်စွာ ဖျက်ပြီးပါပြီ။',
+                                    title: 'Deleted!',
+                                    text: res.message || 'Role has been deleted successfully.',
                                     timer: 1500,
                                     showConfirmButton: false
                                 }).then(() => {
                                     location.reload();
                                 });
                             } else {
-                                Swal.fire('မအောင်မြင်ပါ!', res.message || 'Role ကို ဖျက်၍ မရနိုင်ပါ။', 'error');
+                                Swal.fire('Failed!', res.message || 'Failed to delete the role.', 'error');
                             }
                         },
                         error: function (xhr, status, error) {
-                            var errMsg = "စနစ်အတွင်း အမှားအယွင်း ရှိနေပါသည်: " + error;
+                            var errMsg = "A system error occurred: " + error;
                             if (xhr.responseJSON && xhr.responseJSON.message) {
                                 errMsg = xhr.responseJSON.message;
                             }
-                            Swal.fire('အမှားအယွင်းရှိပါသည်!', errMsg, 'error');
+                            Swal.fire('Error!', errMsg, 'error');
                         }
                     });
                 }

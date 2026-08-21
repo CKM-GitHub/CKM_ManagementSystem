@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CKM_ManagementSystem.Models.ViewModels;
 using CKM_ManagementSystem.Models.ViewModels.Roles;
 using CKM_ManagementSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -26,24 +25,14 @@ namespace CKM_ManagementSystem.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> RoleEntry(string? roleCode)
-        public async Task<IActionResult> RoleEntry(string code = null)
+        public async Task<IActionResult> RoleEntry(string? code = null)
         {
-            var model = new RoleEntryViewModel();
-
-            if (!string.IsNullOrEmpty(roleCode))
             var model = new RoleEntryViewModel();
             bool isEdit = !string.IsNullOrEmpty(code);
             ViewBag.IsEdit = isEdit;
 
             if (isEdit)
             {
-                
-            }
-            else
-            {
-                model.MenuPermissions = await _roleService.GetMenuPermissionsAsync();
-            }
                 model = await _roleService.GetRoleByCodeSPAsync(code);
                 if (model == null)
                 {
@@ -69,22 +58,10 @@ namespace CKM_ManagementSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveRole(RoleEntryViewModel model, bool isEdit = false)
         {
-           
             if (!ModelState.IsValid)
             {
-                var errors = ModelState.Values.SelectMany(v => v.Errors)
-                                              .Select(e => e.ErrorMessage)
-                                              .FirstOrDefault();
-                return Json(new { success = false, message = errors ?? "Validation failed." });
-            ViewBag.IsEdit = isEdit;
-
-            if (!ModelState.IsValid)
-            {
-                if (model.MenuPermissions == null || !model.MenuPermissions.Any())
-                {
-                    model.MenuPermissions = await _roleService.GetMenuPermissionsAsync(isEdit ? model.RoleCode : null);
-                }
-                return View("RoleEntry", model);
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                return Json(new { success = false, message = string.Join(" ", errors) });
             }
 
             if (!isEdit)
@@ -92,12 +69,7 @@ namespace CKM_ManagementSystem.Controllers
                 bool isDuplicate = await _roleService.CheckDuplicateRoleCodeAsync(model.RoleCode);
                 if (isDuplicate)
                 {
-                    ModelState.AddModelError("RoleCode", "ဒီ Role Code မှာ ရှိပြီးသား ဖြစ်နေပါသည်။");
-                    if (model.MenuPermissions == null || !model.MenuPermissions.Any())
-                    {
-                        model.MenuPermissions = await _roleService.GetMenuPermissionsAsync();
-                    }
-                    return View("RoleEntry", model);
+                    return Json(new { success = false, message = "This Role Code already exists." });
                 }
             }
             else
@@ -106,45 +78,24 @@ namespace CKM_ManagementSystem.Controllers
                 if (existingRole != null)
                 {
                     var existingPermissions = await _roleService.GetMenuPermissionsAsync(model.RoleCode);
-
                     bool isDataChanged = IsRoleDataChanged(existingRole, existingPermissions, model);
 
                     if (!isDataChanged)
                     {
-                        return RedirectToAction("RoleList");
+                        
+                        return Json(new { success = true, message = "No changes were made." });
                     }
                 }
             }
 
             try
             {
-               
                 await _roleService.SaveRoleWithPermissionsAsync(model);
-
-                
                 return Json(new { success = true });
-                TempData["SuccessMessage"] = isEdit
-                    ? "Role အချက်အလက်များကို အောင်မြင်စွာ ပြင်ဆင်ပြီးပါပြီ။"
-                    : "Role သစ်ကို အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ။";
-
-                return RedirectToAction("RoleList");
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = "Data သိမ်းဆည်းရာတွင် အမှားအယွင်း ရှိနေပါသည်: " + ex.Message });
-            }
-        }
-
-        [HttpGet]
-        public IActionResult RoleList()
-        {
-            return View();
-                ModelState.AddModelError("", "Data သိမ်းဆည်းရာတွင် အမှားအယွင်း ရှိနေပါသည်: " + ex.Message);
-                if (model.MenuPermissions == null || !model.MenuPermissions.Any())
-                {
-                    model.MenuPermissions = await _roleService.GetMenuPermissionsAsync(isEdit ? model.RoleCode : null);
-                }
-                return View("RoleEntry", model);
+                return Json(new { success = false, message = "Data save error: " + ex.Message });
             }
         }
 
@@ -154,7 +105,7 @@ namespace CKM_ManagementSystem.Controllers
         {
             if (string.IsNullOrEmpty(roleCode))
             {
-                return Json(new { success = false, message = "Role Code မရှိပါ။" });
+                return Json(new { success = false, message = "Role Code is missing." });
             }
 
             try
@@ -164,7 +115,7 @@ namespace CKM_ManagementSystem.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = "စနစ်အတွင်း အမှားအယွင်း ဖြစ်ပေါ်နေပါသည်: " + ex.Message });
+                return Json(new { success = false, message = "System error: " + ex.Message });
             }
         }
 

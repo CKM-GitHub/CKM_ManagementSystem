@@ -30,7 +30,7 @@ namespace CKM_ManagementSystem.BL
 
             if (int.TryParse(statusObj.ToString(), out int val))
             {
-                // Status 1 = Active, 0 သို့မဟုတ် 2 = Inactive
+                
                 return val == 1;
             }
 
@@ -262,8 +262,8 @@ namespace CKM_ManagementSystem.BL
                     END
                     ELSE
                     BEGIN
-                        INSERT INTO UserRoles (ID, Role_Code, Role_Name, Description, Status, Created_Date)
-                        VALUES (NEWID(), @RoleCode, @RoleName, @Description, @Status, GETDATE())
+                        INSERT INTO UserRoles (Role_Code, Role_Name, Description, Status, Created_Date)
+                        VALUES (@RoleCode, @RoleName, @Description, @Status, GETDATE())
                     END";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -356,13 +356,12 @@ namespace CKM_ManagementSystem.BL
             var role = await GetRoleByCodeSPAsync(roleCode);
             if (role == null)
             {
-                return (false, "Role မရှိပါ။");
+                return (false, "Role not found.");
             }
 
-           
             if (role.Status)
             {
-                return (false, "Active ဖြစ်နေသော Role ကိုဖျက်လို့မရပါ");
+                return (false, "Cannot delete an active role.");
             }
 
             using (SqlConnection conn = new SqlConnection(_connectionString))
@@ -387,12 +386,12 @@ namespace CKM_ManagementSystem.BL
                         }
 
                         transaction.Commit();
-                        return (true, "Role ကို အောင်မြင်စွာ ဖျက်ပြီးပါပြီ။");
+                        return (true, "Role deleted successfully.");
                     }
                     catch (Exception ex)
                     {
                         transaction.Rollback();
-                        return (false, "Role ဖျက်ရာတွင် အမှားအယွင်း ရှိနေပါသည်: " + ex.Message);
+                        return (false, "An error occurred while deleting the role: " + ex.Message);
                     }
                 }
             }

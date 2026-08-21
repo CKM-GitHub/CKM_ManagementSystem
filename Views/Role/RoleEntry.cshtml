@@ -1,9 +1,6 @@
 ﻿@model CKM_ManagementSystem.Models.ViewModels.Roles.RoleEntryViewModel
 
 @{
-    ViewData["Title"] = "User Role Entry";
-    
-    bool isEditMode = Model != null && !string.IsNullOrEmpty(Model.RoleCode);
     bool isEdit = ViewBag.IsEdit ?? false;
     ViewData["Title"] = isEdit ? "User Role Edit" : "User Role Entry";
 }
@@ -16,7 +13,6 @@
 
         <h2 class="role-entry-title">@(isEdit ? "User Role Edit" : "User Role Entry")</h2>
 
-        <form id="roleForm">
         <form asp-action="SaveRole" method="post" id="roleForm">
             <input type="hidden" name="isEdit" value="@(isEdit ? "true" : "false")" />
 
@@ -24,17 +20,16 @@
 
             <div class="mb-3">
                 <label class="form-label-custom">Role Code</label>
-                <input asp-for="RoleCode" id="RoleCode" class="form-control" placeholder="e.g., role code" maxlength="20" autofocus readonly="@(isEditMode ? "readonly" : null)" />
-                <span asp-validation-for="RoleCode" id="valRoleCode" class="text-danger small"></span>
                 @if (isEdit)
                 {
                     <input asp-for="RoleCode" id="RoleCode" class="form-control" readonly />
+                    <input type="hidden" asp-for="RoleCode" />
                 }
                 else
                 {
                     <input asp-for="RoleCode" id="RoleCode" class="form-control" placeholder="e.g., role code" maxlength="20" autofocus />
                 }
-                <span asp-validation-for="RoleCode" class="text-danger small"></span>
+                <span asp-validation-for="RoleCode" id="valRoleCode" class="text-danger small"></span>
             </div>
 
             <div class="mb-3">
@@ -140,26 +135,14 @@
 
             <div class="row g-2 pt-2">
                 <div class="col-6">
-                    @if (isEditMode)
-                    {
-                        
-                        <a href="@Url.Action("RoleList", "Role")" class="btn btn-outline-secondary w-100 py-2 text-center text-decoration-none">
-                            Cancel
-                        </a>
-                    }
-                    else
-                    {
-                        
-                        <button type="button" id="btnClear" class="btn btn-outline-secondary w-100 py-2">
-                            Clear
-                        </button>
-                    }
+                    <a href="@Url.Action("RoleList", "Role")" id="btnCancel" class="btn btn-outline-secondary w-100 py-2 text-center text-decoration-none">
+                        @(isEdit ? "Cancel" : "Clear")
+                    </a>
                 </div>
                 <div class="col-6">
                     <button type="submit" id="btnRegister" class="btn btn-register w-100 py-2">
-                        @(isEditMode ? "Update" : "Register")
+                        @(isEdit ? "Update" : "Register")
                     </button>
-                    <button type="submit" id="btnSubmit" class="btn btn-register w-100 py-2">@(isEdit ? "Update" : "Register")</button>
                 </div>
             </div>
 
@@ -173,39 +156,33 @@
 
     <script>
         $(document).ready(function () {
-            var isEditMode = $('#RoleCode').prop('readonly');
+            var isEditMode = @(isEdit ? "true" : "false");
 
-            $('#RoleCode').focus();
-
-
-                   $('#RoleCode').on('blur', function () {
-            var roleCodeVal = $(this).val();
-            var $valSpan = $('#valRoleCode');
             if (isEditMode) {
                 $('#DisplayName').focus();
             } else {
                 $('#RoleCode').focus();
             }
 
-            
+           
             $('#RoleCode').on('blur', function () {
-                if ($(this).prop('readonly')) return;
+                if (isEditMode) return;
 
                 var roleCodeVal = $(this).val().trim();
-                var $valSpan = $('span[asp-validation-for="RoleCode"]');
+                var $valSpan = $('#valRoleCode');
 
-            if (roleCodeVal && !@isEditMode.ToString().ToLower()) {
-                $.post('/Role/CheckDuplicateCode', { roleCode: roleCodeVal }, function (res) {
-                    if (res.isDuplicate) {
-                        $valSpan.text('This Role Code already exists.');
-                    } else {
-                        if ($valSpan.text() === 'This Role Code already exists.') {
-                            $valSpan.text('');
+                if (roleCodeVal) {
+                    $.post('/Role/CheckDuplicateCode', { roleCode: roleCodeVal }, function (res) {
+                        if (res.isDuplicate) {
+                            $valSpan.text('This Role Code already exists.');
+                        } else {
+                            if ($valSpan.text() === 'This Role Code already exists.') {
+                                $valSpan.text('');
+                            }
                         }
-                    }
-                });
-            }
-        });
+                    });
+                }
+            });
 
            
             $('.parent-menu-row input[type="checkbox"]').on('change', function () {
@@ -225,6 +202,7 @@
                 }
             });
 
+            
             $('.child-menu-row input[type="checkbox"]').on('change', function () {
                 var $childRow = $(this).closest('tr');
                 var parentId = $childRow.data('parent-id');
@@ -244,22 +222,23 @@
                 }
             });
 
-           
-            $('#btnClear').on('click', function () {
-                $('#roleForm')[0].reset();
-                $('span.text-danger').text('');
-                $('#statusActive').prop('checked', true);
-                $('#RoleCode').focus();
+            
+            $('#btnCancel').on('click', function (e) {
+                if (!isEditMode) {
+                    e.preventDefault();
+                    $('#roleForm')[0].reset();
+                    $('span.text-danger').text('');
+                    $('#statusActive').prop('checked', true);
+                    $('#RoleCode').focus();
+                }
             });
 
-           
             $('#roleForm').on('submit', function (e) {
                 e.preventDefault();
 
                 if (!$(this).valid()) return;
 
                 let formData = $(this).serialize();
-
                 $('#btnRegister').prop('disabled', true);
 
                 $.ajax({
@@ -268,21 +247,12 @@
                     data: formData,
                     success: function (response) {
                         $('#btnRegister').prop('disabled', false);
-            function checkFormDirtyState() {
-                var isDirty = false;
-
-                $form.find('input[type="text"]:not([readonly]), textarea').each(function () {
-                    if ($(this).val().trim() !== '') {
-                        isDirty = true;
-                        return false;
-                    }
-                });
 
                         if (response.success) {
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Success!',
-                                text: 'Registration is complete.',
+                                text: isEditMode ? 'Role updated successfully.' : 'Registration is complete.',
                                 confirmButtonText: 'OK'
                             }).then((result) => {
                                 if (result.isConfirmed) {
@@ -297,61 +267,17 @@
                             });
                         }
                     },
-                    error: function () {
+                    error: function (xhr) {
                         $('#btnRegister').prop('disabled', false);
+                        let errorMsg = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'An error occurred while processing your request.';
                         Swal.fire({
                             icon: 'error',
                             title: 'System Error',
-                            text: 'An error occurred while processing your request.'
+                            text: errorMsg
                         });
                     }
                 });
             });
-                if (!isDirty) {
-                    $form.find('input[type="checkbox"]').each(function () {
-                        if ($(this).is(':checked')) {
-                            isDirty = true;
-                            return false;
-                        }
-                    });
-                }
-
-                if (isDirty) {
-                    $dynamicBtn
-                        .text('Clear')
-                        .removeClass('btn-outline-secondary')
-                        .addClass('btn-clear')
-                        .removeAttr('href');
-                } else {
-                    resetToCancelState();
-                }
-            }
-
-            function resetToCancelState() {
-                $dynamicBtn
-                    .text('Cancel')
-                    .removeClass('btn-clear')
-                    .addClass('btn-outline-secondary')
-                    .attr('href', '/Role/RoleList');
-            }
-
-            $dynamicBtn.on('click', function (e) {
-                if ($(this).text().trim() === 'Clear') {
-                    e.preventDefault();
-
-                    $form[0].reset();
-                    $('span[asp-validation-for]').text('');
-
-                    resetToCancelState();
-
-                    if (isEditMode) {
-                        $('#DisplayName').focus();
-                    } else {
-                        $('#RoleCode').focus();
-                    }
-                }
-            });
-
         });
     </script>
 }
