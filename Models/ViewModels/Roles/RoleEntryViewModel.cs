@@ -5,15 +5,15 @@ namespace CKM_ManagementSystem.Models.ViewModels.Roles
 {
     public class RoleEntryViewModel
     {
-        [Required(ErrorMessage = "Role Code ဖြည့်ရန် လိုအပ်ပါသည်။")]
-        [StringLength(20, ErrorMessage = "Role Code သည် စာလုံးရေ 20 ထက် မပိုရပါ။")]
+        [Required(ErrorMessage = "Role Code is required.")]
+        [StringLength(20, ErrorMessage = "Role Code cannot exceed 20 characters.")]
         public string RoleCode { get; set; }
 
-        [Required(ErrorMessage = "Display Name ဖြည့်ရန် လိုအပ်ပါသည်။")]
-        [StringLength(50, ErrorMessage = "Display Name သည် စာလုံးရေ 50 ထက် မပိုရပါ။")]
+        [Required(ErrorMessage = "Display Name is required.")]
+        [StringLength(50, ErrorMessage = "Display Name cannot exceed 50 characters.")]
         public string DisplayName { get; set; }
 
-        [StringLength(250, ErrorMessage = "Description သည် စာလုံးရေ 250 ထက် မပိုရပါ။")]
+        [StringLength(250, ErrorMessage = "Description cannot exceed 250 characters.")]
         public string? Description { get; set; }
 
         public bool Status { get; set; } = true;

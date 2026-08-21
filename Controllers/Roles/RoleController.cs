@@ -26,14 +26,24 @@ namespace CKM_ManagementSystem.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> RoleEntry(string? roleCode)
         public async Task<IActionResult> RoleEntry(string code = null)
         {
+            var model = new RoleEntryViewModel();
+
+            if (!string.IsNullOrEmpty(roleCode))
             var model = new RoleEntryViewModel();
             bool isEdit = !string.IsNullOrEmpty(code);
             ViewBag.IsEdit = isEdit;
 
             if (isEdit)
             {
+                
+            }
+            else
+            {
+                model.MenuPermissions = await _roleService.GetMenuPermissionsAsync();
+            }
                 model = await _roleService.GetRoleByCodeSPAsync(code);
                 if (model == null)
                 {
@@ -59,6 +69,13 @@ namespace CKM_ManagementSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveRole(RoleEntryViewModel model, bool isEdit = false)
         {
+           
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage)
+                                              .FirstOrDefault();
+                return Json(new { success = false, message = errors ?? "Validation failed." });
             ViewBag.IsEdit = isEdit;
 
             if (!ModelState.IsValid)
@@ -101,8 +118,11 @@ namespace CKM_ManagementSystem.Controllers
 
             try
             {
+               
                 await _roleService.SaveRoleWithPermissionsAsync(model);
 
+                
+                return Json(new { success = true });
                 TempData["SuccessMessage"] = isEdit
                     ? "Role အချက်အလက်များကို အောင်မြင်စွာ ပြင်ဆင်ပြီးပါပြီ။"
                     : "Role သစ်ကို အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ။";
@@ -111,6 +131,14 @@ namespace CKM_ManagementSystem.Controllers
             }
             catch (Exception ex)
             {
+                return Json(new { success = false, message = "Data သိမ်းဆည်းရာတွင် အမှားအယွင်း ရှိနေပါသည်: " + ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult RoleList()
+        {
+            return View();
                 ModelState.AddModelError("", "Data သိမ်းဆည်းရာတွင် အမှားအယွင်း ရှိနေပါသည်: " + ex.Message);
                 if (model.MenuPermissions == null || !model.MenuPermissions.Any())
                 {
