@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using CKM_ManagementSystem.Models.ViewModels.Roles;
 using CKM_ManagementSystem.Services.Interfaces;
@@ -15,19 +16,23 @@ namespace CKM_ManagementSystem.Controllers
             _roleService = roleService;
         }
 
-       
         [HttpGet]
-        public async Task<IActionResult> RoleEntry()
+        public async Task<IActionResult> RoleEntry(string? roleCode)
         {
-            var model = new RoleEntryViewModel
+            var model = new RoleEntryViewModel();
+
+            if (!string.IsNullOrEmpty(roleCode))
             {
-                MenuPermissions = await _roleService.GetMenuPermissionsAsync()
-            };
+                
+            }
+            else
+            {
+                model.MenuPermissions = await _roleService.GetMenuPermissionsAsync();
+            }
 
             return View(model);
         }
 
-        
         [HttpPost]
         public async Task<IActionResult> CheckDuplicateCode(string roleCode)
         {
@@ -35,47 +40,36 @@ namespace CKM_ManagementSystem.Controllers
             return Json(new { isDuplicate = isDuplicate });
         }
 
-       
         [HttpPost]
         public async Task<IActionResult> SaveRole(RoleEntryViewModel model)
         {
+           
             if (!ModelState.IsValid)
             {
-                
-                if (model.MenuPermissions == null || !model.MenuPermissions.Any())
-                {
-                    model.MenuPermissions = await _roleService.GetMenuPermissionsAsync();
-                }
-                return View("RoleEntry", model);
-            }
-
-            bool isDuplicate = await _roleService.CheckDuplicateRoleCodeAsync(model.RoleCode);
-            if (isDuplicate)
-            {
-                ModelState.AddModelError("RoleCode", "ဒီ Role Code မှာ ရှိပြီးသား ဖြစ်နေပါသည်။");
-                if (model.MenuPermissions == null || !model.MenuPermissions.Any())
-                {
-                    model.MenuPermissions = await _roleService.GetMenuPermissionsAsync();
-                }
-                return View("RoleEntry", model);
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage)
+                                              .FirstOrDefault();
+                return Json(new { success = false, message = errors ?? "Validation failed." });
             }
 
             try
             {
+               
                 await _roleService.SaveRoleWithPermissionsAsync(model);
 
-                TempData["SuccessMessage"] = "Role သစ်ကို အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ။";
-                return RedirectToAction("RoleList");
+                
+                return Json(new { success = true });
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", "Data သိမ်းဆည်းရာတွင် အမှားအယွင်း ရှိနေပါသည်: " + ex.Message);
-                if (model.MenuPermissions == null || !model.MenuPermissions.Any())
-                {
-                    model.MenuPermissions = await _roleService.GetMenuPermissionsAsync();
-                }
-                return View("RoleEntry", model);
+                return Json(new { success = false, message = "Data သိမ်းဆည်းရာတွင် အမှားအယွင်း ရှိနေပါသည်: " + ex.Message });
             }
+        }
+
+        [HttpGet]
+        public IActionResult RoleList()
+        {
+            return View();
         }
     }
 }
