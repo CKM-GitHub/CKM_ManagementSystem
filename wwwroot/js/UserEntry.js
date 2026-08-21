@@ -24,11 +24,21 @@ document.getElementById("clearBtn").addEventListener("click", function () {
 
     form.reset();
 
-    form.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]').forEach(input => { input.value = ""; });
+    form.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]').forEach(input => { input.value = "";});
 
     form.querySelectorAll("select").forEach(select => {
         select.selectedIndex = 0;
     });
+
+    $(form).validate().resetForm();
+
+    form.querySelectorAll("span[data-valmsg-for]").forEach(span => {
+        span.textContent = "";
+        span.classList.remove("field-validation-error");
+        span.classList.add("field-validation-valid");
+    });
+
+    form.querySelectorAll(".input-validation-error").forEach(input => {input.classList.remove("input-validation-error");});
 
     document.getElementById("genderMale").checked = true;
     document.getElementById("genderFemale").checked = false;
