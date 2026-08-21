@@ -73,7 +73,7 @@ namespace CKM_ManagementSystem.BL
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 await conn.OpenAsync();
-                string query = "SELECT COUNT(1) FROM UserRoles WHERE RoleCode = @RoleCode";
+                string query = "SELECT COUNT(1) FROM UserRoles WHERE Role_Code = @RoleCode";
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@RoleCode", roleCode ?? (object)DBNull.Value);

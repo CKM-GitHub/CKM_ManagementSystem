@@ -161,23 +161,23 @@
 
             $('#RoleCode').focus();
 
-            
-            $('#RoleCode').on('blur', function () {
-                var roleCodeVal = $(this).val();
-                var $valSpan = $('#valRoleCode');
 
-                if (roleCodeVal && !@isEditMode.ToString().ToLower()) {
-                    $.post('/Role/CheckDuplicateCode', { roleCode: roleCodeVal }, function (res) {
-                        if (res.isDuplicate) {
-                            $valSpan.text('ဒီ Role Code မှာ ရှိပြီးသား ဖြစ်နေပါသည်။');
-                        } else {
-                            if ($valSpan.text() === 'ဒီ Role Code မှာ ရှိပြီးသား ဖြစ်နေပါသည်။') {
-                                $valSpan.text('');
-                            }
+                   $('#RoleCode').on('blur', function () {
+            var roleCodeVal = $(this).val();
+            var $valSpan = $('#valRoleCode');
+
+            if (roleCodeVal && !@isEditMode.ToString().ToLower()) {
+                $.post('/Role/CheckDuplicateCode', { roleCode: roleCodeVal }, function (res) {
+                    if (res.isDuplicate) {
+                        $valSpan.text('This Role Code already exists.');
+                    } else {
+                        if ($valSpan.text() === 'This Role Code already exists.') {
+                            $valSpan.text('');
                         }
-                    });
-                }
-            });
+                    }
+                });
+            }
+        });
 
            
             $('.parent-menu-row input[type="checkbox"]').on('change', function () {
