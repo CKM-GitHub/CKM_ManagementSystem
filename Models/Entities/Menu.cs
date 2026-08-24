@@ -2,10 +2,10 @@
 {
     public class Menu
     {
-        public int MenuID { get; set; }
-        public string MenuName { get; set; }
-        public string ActionName { get; set; }
-        public string ControllerName { get; set; }
+        public int MenuID { get; set; } 
+        public string MenuName { get; set; } = string.Empty;
+        public string ActionName { get; set; } = string.Empty;
+        public string ControllerName { get; set; } = string.Empty;
         public string? MenuIcon {  get; set; }
         public int DisplayOrder {  get; set; }
         public int? ParentMenuId { get; set; }

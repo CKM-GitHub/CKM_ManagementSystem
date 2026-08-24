@@ -38,18 +38,34 @@
     padding: 0.6rem;
     border-radius: 6px;
     border: none;
+
 }
-.btn-clear {
-    background-color: #5a6268;
-    color: #ffffff;
-    border: none;
-    padding: 0.6rem;
-    border-radius: 6px;
+.btn-clear, .btn-cancel {
+    background-color: #5a6268 !important;
+    color: #ffffff !important;
+    border: none !important;
+    padding: 0.6rem !important;
+    border-radius: 6px !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
-.btn-clear:hover {
-    background-color: #6c757d;
-    color: #ffffff;
+.btn-clear:hover, .btn-cancel:hover {
+    background-color: #6c757d !important;
+    color: #ffffff !important;
+}
+.btn-warning{
+    background-color: #ffc107 !important;
+    color: #ffffff !important;
+    padding: 0.6rem !important;
+    border-radius: 6px !important;
+    border: none !important;
+}
+.btn-warning:hover{
+    background-color: #e0a800 !important;
+    color: #ffffff !important;
 }
 
 .custom-modal-popup {

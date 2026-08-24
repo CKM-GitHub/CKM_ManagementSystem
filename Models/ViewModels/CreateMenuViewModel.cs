@@ -5,6 +5,8 @@ namespace CKM_ManagementSystem.Models.ViewModels
 {
     public class CreateMenuViewModel
     {
+        public int? MenuID { get; set; }
+
         [Required(ErrorMessage = "Display Text is required.")]
         [StringLength(100, ErrorMessage ="Display Text cannot exceed 100 characters.")]
         public string DisplayText { get; set; } = string.Empty;

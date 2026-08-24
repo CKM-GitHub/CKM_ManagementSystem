@@ -3,6 +3,7 @@ using System.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using CKM_ManagementSystem.Models.ViewModels;
 
 namespace CKM_ManagementSystem.MenuBL
 {
@@ -223,13 +224,13 @@ namespace CKM_ManagementSystem.MenuBL
             };
         }
 
-        public async Task<List<MenuListItem>> GetMenuListAsync(string? searchTerm, int? parentMenuId, bool? statusFilter=null)
+        public async Task<List<MenuListItem>> GetMenuListAsync(string? searchTerm, int? parentMenuId, bool? statusFilters=null)
         {
             var parameters = new[]
             {
                 new SqlParameter("@SearchTerm", string.IsNullOrWhiteSpace(searchTerm) ? DBNull.Value : searchTerm),
                 new SqlParameter("@ParentMenuId", (object?)parentMenuId ?? DBNull.Value),
-                new SqlParameter("@StatusFilters", (object?)statusFilter ?? DBNull.Value)
+                new SqlParameter("@StatusFilters", (object?)statusFilters ?? DBNull.Value)
             };
 
             DataTable dt = await SelectDataTableAsync("sp_GetMenuList", parameters);
@@ -274,7 +275,7 @@ namespace CKM_ManagementSystem.MenuBL
 
         public async Task<List<SelectListItem>> GetParentMenuListAsync()
         {
-            var allMenus = await GetMenuListAsync(searchTerm: null, parentMenuId: null, statusFilter: true);
+            var allMenus = await GetMenuListAsync(searchTerm: null, parentMenuId: null, statusFilters: true);
             var parentMenus = allMenus
                 .Where(m => m.ParentMenuId == null || m.ParentMenuId == 0) 
                 .Select(m => new SelectListItem
@@ -291,20 +292,7 @@ namespace CKM_ManagementSystem.MenuBL
             public string StatusMessage { get; set; } = string.Empty;
 
         }
-        public class MenuListItem
-        {
-            public int MenuID { get; set; }
-            public string MenuName { get; set; } = string.Empty;
-            public string? IconClass { get; set; }
-            public string ControllerName { get; set; } = string.Empty;
-            public string ActionName { get; set; } = string.Empty;
-            public string Route { get; set; } = string.Empty;
-
-            public int? ParentMenuId { get; set; }
-            public string ParentMenuName { get; set; } = "Main Menu";
-            public int DisplayOrder { get; set; }
-            public bool Status { get; set; }
-        }
+        
     
     }
 }

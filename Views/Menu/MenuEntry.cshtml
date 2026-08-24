@@ -1,13 +1,16 @@
 ﻿@model CKM_ManagementSystem.Models.ViewModels.CreateMenuViewModel
 @{
-    ViewData["Title"] = "Menu Entry";
+    bool isEdit = Model?.MenuID.HasValue == true && Model.MenuID > 0;
+    ViewData["Title"] = isEdit ? "Menu Edit" : "Menu Entry";
 }
 <div class="container py-4">
     <div class="row justify-content-center">
         <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
             <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
                 <div class="card-header bg-white border-0 pt-4 pb-2 text-center">
-                    <h4 class="fw-bold text-dark mb-0">Menu Entry</h4>
+                    <h4 class="fw-bold text-dark mb-0">
+                        @(Model?.MenuID.HasValue == true && Model.MenuID > 0 ? "Menu Edit" : "Menu Entry")
+                    </h4>
                 </div>
                 <div class="card-body p-4">
              
@@ -27,7 +30,8 @@
                     </div>
 
                     <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
-                    <form asp-action = "MenuEntry" method="post" id="menuForm">
+                    <form method="post" id="menuForm">
+                        <input type="hidden" asp-for="MenuID" />
                         <div class="mb-3">
                             <label asp-for="DisplayText" class="form-label fw-semibold text-secondary small">Display Text</label>
                             <input asp-for="DisplayText" class="form-control" placeholder="e.g. , Register User" maxlength="150"  />
@@ -67,7 +71,7 @@
 
                         <div class="mb-3">
                             <label asp-for="ParentMenuId" class="form-label fw-semibold text-secondary small">Parent Menu</label>
-                            <select asp-for="ParentMenuId" asp-items="Model.ParentMenuList" class="form-select" id="ParentMenu" disabled>
+                            <select asp-for="ParentMenuId" asp-items="Model?.ParentMenuList" class="form-select" id="ParentMenu" disabled>
                                 <option value="0">None (Root Level)</option>
                             </select>
                             <input type = "hidden" id="hiddenParentMenu" name="ParentMenuId" value="0" />
@@ -93,10 +97,20 @@
                         </div>
                         <div class="row g-2 pt-2">
                             <div class="col-6">
-                                <button type="reset" id="btnClear" class="btn btn-clear btn-outline-secondary w-100 fw-bold">Clear</button>
+                                @if(isEdit)
+                                {
+                                    <a asp-controller="Menu" asp-action="MenuListView" class="btn btn-cancel w-100 fw-bold">
+                                        Cancel
+                                    </a>
+                                } else
+                                {
+                                    <button type="reset" id="btnClear" class="btn btn-clear w-100 fw-bold">Clear</button>
+                                }
                             </div>
                             <div class="col-6">
-                                <button type="submit" id="btnRegister" class="btn btn-success w-100 fw-bold">Register</button>
+                                <button type="submit" id="btnRegister" class="btn @(isEdit ? "btn-warning" : "btn-success") w-100 fw-bold">
+                                    @(isEdit ? "Update" : "Register")
+                                </button>
                             </div>
                         </div>
                     </form>

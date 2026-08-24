@@ -1,23 +1,59 @@
-﻿
-$(document).ready(function () {
-    if (typeof successMessage !== 'undefined' && successMessage !== '') {
-        var modalElement = document.getElementById('successModal');
-
-        if (modalElement) {
-            var successModal = new bootstrap.Modal(modalElement);
-            successModal.show();
+﻿$(document).ready(function () {
+    function setFocusToSearch() {
+        const $searchInput = $('#searchTermInput');
+        if ($searchInput.length) {
+            setTimeout(() => {
+                $searchInput.focus();
+                const strLength = $searchInput.val().length;
+                if (strLength > 0) {
+                    $searchInput[0].setSelectionRange(strLength, strLength);
+                }
+            }, 100)
         }
     }
+    setFocusToSearch();
 
+    if (typeof successMessage !== 'undefined' && successMessage !== '') {
+        Swal.fire({
+            title: 'Successfully!!',
+            text: successMessage,
+            icon: undefined,
+            iconHtml: '<i class="bi bi-check-circle-fill text-success"></i>',
+            confirmButtonText: 'OK',
+            customClass: {
+                popup: 'custom-modal-popup',
+                title: 'custom-modal-title',
+                htmlContainer: 'custom-modal-text',
+                actions: 'swal-single-buttons',
+                confirmButton: 'custom-modal-btn custom-modal-btn-success',
+                icon: 'custom-swal-icon'
+            },
+            didClose: () => {
+                setFocusToSearch();
+            }
+        });
+    } else if (typeof errorMessage !== 'undefined' && errorMessage !== '') {
+        Swal.fire({
+            icon: 'error',
+            title: 'Failed',
+            text: errorMessage,
+            buttonsStyling: false,
+            customClass: {
+                popup: 'custom-modal-popup',
+                title: 'custom-modal-title',
+                htmlContainer: 'custom-modal-text',
+                confirmButton: 'custom-modal-btn custom-modal-btn-confirm'
+            },
+            didClose: () => {
+                setFocusToSearch();
+            }
+        });
+    }
+    
     $(document).on('click', '.delete-btn', function (e) {
         e.preventDefault();
-
-        const menuId = $(this).data('menuId');
-        const token = $('#antiForgeryForm input[name="__RequestVerificationToken"]').val();
-        const deleteUrl = '/Menu/DeleteMenu';
-        if (!menuId) {
-            return;
-        }
+        const $form = $(this).closest('.delete-form');
+     
         Swal.fire({
             title: 'Are you sure?',
             text: "Are you sure you want to delete this menu?",
@@ -31,8 +67,12 @@ $(document).ready(function () {
                 popup: 'custom-modal-popup',
                 title: 'custom-modal-title',
                 htmlContainer: 'custom-modal-text',
-                confirmButton: 'btn btn-danger custom-modal-btn me-2 ',
-                cancelButton: 'btn btn-secondary custom-modal-btn'
+                actions: 'swal-two-buttons',
+                confirmButton: 'custom-modal-btn custom-modal-btn-confirm ',
+                cancelButton: 'custom-modal-btn custom-modal-btn-cancel'
+            },
+            didClose: () => {
+                setFocusToSearch();
             }
         }).then((result) => {
             if (result.isConfirmed) {
@@ -50,63 +90,7 @@ $(document).ready(function () {
                         Swal.showLoading();
                     }
                 });
-                $.ajax({
-                    url: deleteUrl,
-                    type: 'POST',
-                    data: { menuId: menuId },
-                    headers: {
-                        'RequestVerificationToken': token
-                    },
-                    success: function (data) {
-                        if (data.success) {
-                            Swal.fire({
-                                title: 'Deleted Successfully!!',
-                                text: data.message,
-                                icon: undefined,
-                                iconHtml: '<i class="bi bi-check-circle-fill text-success"></i>',
-                                confirmButtonText: 'OK',
-                                customClass: {
-                                    popup: 'custom-modal-popup',
-                                    title: 'custom-modal-title',
-                                    htmlContainer: 'custom-modal-text',
-                                    confirmButton: 'custom-modal-btn',
-                                    icon: 'custom-swal-icon'
-                                }
-                            }).then(() => {
-                                location.reload();
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Failed',
-                                text: data.message,
-                                buttonsStyling: false,
-                                customClass: {
-                                    popup: 'custom-modal-popup',
-                                    title: 'custom-modal-title',
-                                    htmlContainer: 'custom-modal-text',
-                                    confirmButton: 'custom-modal-btn'
-                                }
-                            });
-                        }
-                    },
-                    error: function () {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error!',
-                            text: 'Something went wrong on the server.',
-                            confirmButtonText: 'OK',
-                            buttonsStyling: false,
-                            customClass: {
-                                popup: 'custom-modal-popup',
-                                title: 'custom-modal-title',
-                                htmlContainer: 'custom-modal-text',
-                                confirmButton: 'custom-modall-btn'
-                            }
-                        });
-                    }
-
-                });
+                $form.submit();
             }
         });
     });

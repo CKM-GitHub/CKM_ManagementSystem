@@ -1,5 +1,4 @@
-﻿
-$(document).ready(function () {
+﻿$(document).ready(function () {
     const $menuForm = $('#menuForm');
     const $displayText = $('#DisplayText');
     const $parentMenu = $('#ParentMenu');
@@ -41,7 +40,7 @@ $(document).ready(function () {
                 validator.element(firstInvalidInput);
                 $(firstInvalidInput).focus();
             }
-            return flase;
+            return false;
         }
     });
     function toggleParentMenu() {
