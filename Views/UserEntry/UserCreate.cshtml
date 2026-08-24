@@ -24,9 +24,16 @@
                                 @TempData["SuccessMessage"]
                             </p>
                         </div>
-
                         <div class="modal-footer border-0 justify-content-center">
                             <a type="button" class="btn btn-success px-4" asp-controller="UserList" asp-action="UserList">OK</a>
+                            @if(ViewBag.Source?.ToString() == "list")
+                            {
+                                <a class="btn btn-success px-4" asp-controller="UserList" asp-action="UserList">OK</a>
+                            }
+                            else
+                            {
+                                <a class="btn btn-success px-4" asp-controller="UserEntry" asp-action="UserCreate">OK</a>
+                            }
                         </div>
                     </div>
                 </div>
@@ -79,7 +86,7 @@
                         <div class="row align-items-center">
                             <label asp-for="StaffCode" class="col-sm-4 col-form-label fw-medium text-secondary"></label>
                             <div class="col-sm-8">
-                                <input type="text" asp-for="StaffCode" class="form-control rounded-3 py-2" placeholder="e.g. CKM-0001" >
+                                <input type="text" asp-for="StaffCode" class="form-control rounded-3 py-2" placeholder="e.g. CKM-0001" autofocus>
                                 <span asp-validation-for="StaffCode" class="text-danger small"></span>
                             </div>
                         </div>

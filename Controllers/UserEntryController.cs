@@ -19,8 +19,10 @@ namespace CKM_ManagementSystem.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> UserCreate()
+        public async Task<IActionResult> UserCreate(string? source)
         {
+            ViewBag.Source = source;
+
             var model = new UserCreateViewModel();
 
             await PopulateDropdownsAsync();
@@ -29,7 +31,7 @@ namespace CKM_ManagementSystem.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UserCreate(UserCreateViewModel model)
+        public async Task<IActionResult> UserCreate(UserCreateViewModel model,string? source)
         {
             if (model.ImageFile != null)
             {
@@ -167,7 +169,8 @@ namespace CKM_ManagementSystem.Controllers
 
             return RedirectToAction(
                 "UserCreate",
-                "UserEntry"
+                "UserEntry",
+                new { source = source }
             );
         }
 
