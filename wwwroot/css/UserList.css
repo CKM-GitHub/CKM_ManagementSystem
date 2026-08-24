@@ -40,19 +40,19 @@
     padding: 4px 12px;
 }
 
-    .badge-status::before {
-        content: "•";
-        margin-right: 4px;
-        font-size: 18px;
-    }
+.badge-status::before {
+    content: "•";
+    margin-right: 4px;
+    font-size: 18px;
+}    
 
-    .badge-status.active::before {
-        color: #10b981;
-    }
+.badge-status.active::before {
+    color: #10b981;
+}
 
-    .badge-status.inactive::before {
-        color: #9ca3af;
-    }
+.badge-status.inactive::before {
+    color: #9ca3af;
+}
 
 .w-5 {
     width: 5%;
@@ -132,7 +132,7 @@
     min-width: 120px;
 }
 
-    #alertOkButton:hover {
-        background-color: #5c636a;
-        color: white;
-    }
+#alertOkButton:hover {
+    background-color: #5c636a;
+    color: white;
+}
