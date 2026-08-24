@@ -35,5 +35,20 @@ namespace CKM_ManagementSystem.Services
         {
             return await _roleBL.GetRoleListPagedAsync(pageNumber, pageSize, searchKeyword, status);
         }
+
+        public async Task<RoleEntryViewModel?> GetRoleByCodeAsync(string roleCode)
+        {
+            return await _roleBL.GetRoleByCodeAsync(roleCode);
+        }
+
+        public async Task<bool> IsRoleActiveAsync(string roleCode)
+        {
+            return await _roleBL.IsRoleActiveAsync(roleCode);
+        }
+
+        public async Task<(bool Success, string Message)> DeleteRoleAsync(string roleCode)
+        {
+            return await _roleBL.DeleteRoleAsync(roleCode);
+        }
     }
 }

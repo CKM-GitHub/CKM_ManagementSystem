@@ -1,73 +1,204 @@
 ﻿@model CKM_ManagementSystem.Models.ViewModels.Roles.RoleEntryViewModel
 
 @{
-    ViewData["Title"] = "User Role Entry";
-    bool isEditMode = Model != null && !string.IsNullOrEmpty(Model.RoleCode);
+    bool isEdit = ViewBag.IsEdit ?? (!string.IsNullOrEmpty(Model?.RoleCode));
+    ViewData["Title"] = isEdit ? "Edit User Role" : "User Role Entry";
 }
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <link rel="stylesheet" href="~/css/role-entry.css" asp-append-version="true" />
 
-<div class="role-entry-container">
-    <h2>@(isEditMode ? "Edit User Role" : "User Role Entry")</h2>
+<div class="role-entry-card">
+    <h2 class="role-entry-title">@(isEdit ? "Edit User Role" : "User Role Entry")</h2>
 
-    <form asp-action="SaveRole" method="post" id="roleEntryForm">
+    <form id="roleForm" method="post">
         @Html.AntiForgeryToken()
 
-        <div class="form-group mb-3">
-            <label asp-for="RoleCode" class="form-label">Role Code</label>
-            <input asp-for="RoleCode" class="form-control" readonly="@(isEditMode ? "readonly" : null)" />
-            <span asp-validation-for="RoleCode" class="text-danger"></span>
+        <div class="mb-3">
+            <label asp-for="RoleCode" class="form-label-custom">Role Code <span class="text-danger">*</span></label>
+            <input asp-for="RoleCode"
+                   id="txtRoleCode"
+                   class="form-control"
+                   placeholder="e.g., role code"
+                   readonly="@(isEdit ? "readonly" : null)" />
+            <span asp-validation-for="RoleCode" class="text-danger small"></span>
+            <span id="roleCodeError" class="text-danger small d-none">This Role Code already exists.</span>
         </div>
 
-        <div class="form-group mb-3">
-            <label asp-for="DisplayName" class="form-label">Display Name</label>
-            <input asp-for="DisplayName" class="form-control" />
-            <span asp-validation-for="DisplayName" class="text-danger"></span>
+        <div class="mb-3">
+            <label asp-for="DisplayName" class="form-label-custom">Display Name <span class="text-danger">*</span></label>
+            <input asp-for="DisplayName" class="form-control" placeholder="e.g., Admin" />
+            <span asp-validation-for="DisplayName" class="text-danger small"></span>
         </div>
 
-        <div class="form-group mb-3">
-            <label asp-for="Description" class="form-label">Description</label>
-            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
-            <span asp-validation-for="Description" class="text-danger"></span>
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label-custom">Description</label>
+            <textarea asp-for="Description" class="form-control" rows="3" placeholder="e.g., Description..."></textarea>
+            <span asp-validation-for="Description" class="text-danger small"></span>
         </div>
 
-        <div class="form-check mb-3">
-            <input asp-for="Status" class="form-check-input" type="checkbox" />
-            <label asp-for="Status" class="form-check-label">Is Active</label>
+        <div class="mb-3">
+            <label class="form-label-custom d-block">Status</label>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" asp-for="Status" value="true" id="statusActive" checked="@(Model?.Status == true || !isEdit)" />
+                <label class="form-check-label" for="statusActive">Active</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" asp-for="Status" value="false" id="statusInactive" checked="@(Model?.Status == false)" />
+                <label class="form-check-label" for="statusInactive">Inactive</label>
+            </div>
         </div>
 
-        <h4>Menu Permissions</h4>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Menu Name</th>
-                    <th>Read</th>
-                    <th>Write</th>
-                    <th>Delete</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (Model != null && Model.MenuPermissions != null)
-                {
-                    for (int i = 0; i < Model.MenuPermissions.Count; i++)
-                    {
+        <div class="mb-4">
+            <label class="form-label-custom d-block">Menu Group Permissions</label>
+            <div class="permissions-table-wrapper">
+                <table class="table permissions-table mb-0 align-middle">
+                    <thead>
                         <tr>
-                            <td>
-                                @Html.HiddenFor(m => m.MenuPermissions[i].MenuId)
-                                @Html.HiddenFor(m => m.MenuPermissions[i].MenuName)
-                                @Model.MenuPermissions[i].MenuName
-                            </td>
-                            <td>@Html.CheckBoxFor(m => m.MenuPermissions[i].CanRead)</td>
-                            <td>@Html.CheckBoxFor(m => m.MenuPermissions[i].CanWrite)</td>
-                            <td>@Html.CheckBoxFor(m => m.MenuPermissions[i].CanDelete)</td>
+                            <th>Menu Structure</th>
+                            <th class="text-center" style="width: 250px;">Allowed Actions</th>
                         </tr>
-                    }
-                }
-            </tbody>
-        </table>
+                    </thead>
+                    <tbody>
+                        @if (Model?.MenuPermissions != null && Model.MenuPermissions.Count > 0)
+                        {
+                            for (int i = 0; i < Model.MenuPermissions.Count; i++)
+                            {
+                                bool isParent = Model.MenuPermissions[i].ParentId == null;
+                                <tr class="@(isParent ? "parent-menu-row" : "")">
+                                    <td class="@(!isParent ? "submenu-indent" : "")">
+                                        <input type="hidden" name="MenuPermissions[@i].MenuId" value="@Model.MenuPermissions[i].MenuId" />
+                                        <input type="hidden" name="MenuPermissions[@i].MenuName" value="@Model.MenuPermissions[i].MenuName" />
+                                        <input type="hidden" name="MenuPermissions[@i].ParentId" value="@Model.MenuPermissions[i].ParentId" />
 
-        <button type="submit" class="btn btn-primary">Save</button>
-        <a asp-action="RoleList" class="btn btn-secondary">Back to List</a>
+                                        @if (!isParent)
+                                        {
+                                            <span>└ </span>
+                                        }
+                                        @Model.MenuPermissions[i].MenuName
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="form-check form-check-inline me-2">
+                                            <input class="form-check-input permission-checkbox" type="checkbox" name="MenuPermissions[@i].CanRead" value="true" @(Model.MenuPermissions[i].CanRead ? "checked" : "") id="read_@i" />
+                                            <label class="form-check-label small" for="read_@i">Read</label>
+                                        </div>
+                                        <div class="form-check form-check-inline me-2">
+                                            <input class="form-check-input permission-checkbox" type="checkbox" name="MenuPermissions[@i].CanWrite" value="true" @(Model.MenuPermissions[i].CanWrite ? "checked" : "") id="write_@i" />
+                                            <label class="form-check-label small" for="write_@i">Write</label>
+                                        </div>
+                                        <div class="form-check form-check-inline me-0">
+                                            <input class="form-check-input permission-checkbox" type="checkbox" name="MenuPermissions[@i].CanDelete" value="true" @(Model.MenuPermissions[i].CanDelete ? "checked" : "") id="delete_@i" />
+                                            <label class="form-check-label small" for="delete_@i">Delete</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="2" class="text-center py-3 text-muted">No menu items available.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row g-3 mt-4">
+            <div class="col-6">
+                @if (isEdit)
+                {
+                    <a asp-action="RoleList" class="btn btn-clear w-100 py-2 text-center d-block">Cancel</a>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-clear w-100 py-2" id="btnClear">Clear</button>
+                }
+            </div>
+            <div class="col-6">
+                <button type="submit" class="btn btn-register w-100 py-2 fw-semibold" id="btnSave">
+                    @(isEdit ? "Update" : "Register")
+                </button>
+            </div>
+        </div>
     </form>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        $(document).ready(function () {
+            var isEdit = @(isEdit.ToString().ToLower());
+
+            $("#btnClear").on("click", function () {
+                $("#roleForm")[0].reset();
+                $(".permission-checkbox").prop("checked", false);
+                $("#statusActive").prop("checked", true);
+                $("#roleCodeError").addClass("d-none");
+                $("#btnSave").prop("disabled", false);
+            });
+
+            $("#txtRoleCode").on("blur", function () {
+                if (isEdit) return;
+
+                var roleCode = $(this).val().trim();
+                if (roleCode !== "") {
+                    $.ajax({
+                        url: '@Url.Action("CheckDuplicateCode", "Role")',
+                        type: 'POST',
+                        data: { roleCode: roleCode },
+                        success: function (res) {
+                            if (res.isDuplicate) {
+                                $("#roleCodeError").removeClass("d-none");
+                                $("#btnSave").prop("disabled", true);
+                            } else {
+                                $("#roleCodeError").addClass("d-none");
+                                $("#btnSave").prop("disabled", false);
+                            }
+                        }
+                    });
+                }
+            });
+
+            $("#roleForm").on("submit", function (e) {
+                e.preventDefault();
+
+                if (!$(this).valid()) return;
+
+                var formData = $(this).serialize();
+
+                $.ajax({
+                    url: '@Url.Action("SaveRole", "Role")?isEdit=' + isEdit,
+                    type: 'POST',
+                    data: formData,
+                    success: function (res) {
+                        if (res.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: res.message
+                            }).then(() => {
+                                window.location.href = '@Url.Action("RoleList", "Role")';
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: res.message
+                            });
+                        }
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'An unexpected error occurred.'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

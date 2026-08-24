@@ -30,7 +30,6 @@ namespace CKM_ManagementSystem.BL
 
             if (int.TryParse(statusObj.ToString(), out int val))
             {
-                
                 return val == 1;
             }
 
@@ -47,7 +46,7 @@ namespace CKM_ManagementSystem.BL
             return await GetRoleListPagedSPAsync(pageNumber, pageSize, searchKeyword, status);
         }
 
-        public async Task<List<MenuPermissionViewModel>> GetMenuPermissionsAsync(string roleCode = null)
+        public async Task<List<MenuPermissionViewModel>> GetMenuPermissionsAsync(string? roleCode = null)
         {
             return await GetMenuPermissionsSPAsync(roleCode);
         }
@@ -74,6 +73,17 @@ namespace CKM_ManagementSystem.BL
                     );
                 }
             }
+        }
+
+        public async Task<RoleEntryViewModel?> GetRoleByCodeAsync(string roleCode)
+        {
+            return await GetRoleByCodeSPAsync(roleCode);
+        }
+
+        public async Task<bool> IsRoleActiveAsync(string roleCode)
+        {
+            var role = await GetRoleByCodeSPAsync(roleCode);
+            return role != null && role.Status;
         }
 
         public async Task<(bool Success, string Message)> DeleteRoleAsync(string roleCode)
@@ -136,9 +146,9 @@ namespace CKM_ManagementSystem.BL
                             {
                                 result.Roles.Add(new RoleEntryViewModel
                                 {
-                                    RoleCode = reader["RoleCode"].ToString(),
-                                    DisplayName = reader["DisplayName"] != DBNull.Value ? reader["DisplayName"].ToString() : string.Empty,
-                                    Description = reader["Description"] != DBNull.Value ? reader["Description"].ToString() : string.Empty,
+                                    RoleCode = reader["RoleCode"].ToString() ?? string.Empty,
+                                    DisplayName = reader["DisplayName"] != DBNull.Value ? reader["DisplayName"].ToString() ?? string.Empty : string.Empty,
+                                    Description = reader["Description"] != DBNull.Value ? reader["Description"].ToString() ?? string.Empty : string.Empty,
                                     Status = ParseStatus(reader["Status"])
                                 });
                             }
@@ -170,7 +180,7 @@ namespace CKM_ManagementSystem.BL
             return await CheckDuplicateRoleCodeSPAsync(roleCode);
         }
 
-        public async Task<List<MenuPermissionViewModel>> GetMenuPermissionsSPAsync(string roleCode = null)
+        public async Task<List<MenuPermissionViewModel>> GetMenuPermissionsSPAsync(string? roleCode = null)
         {
             var list = new List<MenuPermissionViewModel>();
 
@@ -231,7 +241,7 @@ namespace CKM_ManagementSystem.BL
                             list.Add(new MenuPermissionViewModel
                             {
                                 MenuId = Convert.ToInt32(reader["MenuId"]),
-                                MenuName = reader["MenuName"].ToString(),
+                                MenuName = reader["MenuName"].ToString() ?? string.Empty,
                                 ParentId = reader["ParentId"] == DBNull.Value ? null : (int?)Convert.ToInt32(reader["ParentId"]),
                                 CanRead = Convert.ToBoolean(reader["CanRead"]),
                                 CanWrite = Convert.ToBoolean(reader["CanWrite"]),
@@ -312,9 +322,9 @@ namespace CKM_ManagementSystem.BL
             }
         }
 
-        public async Task<RoleEntryViewModel> GetRoleByCodeSPAsync(string roleCode)
+        public async Task<RoleEntryViewModel?> GetRoleByCodeSPAsync(string roleCode)
         {
-            RoleEntryViewModel role = null;
+            RoleEntryViewModel? role = null;
 
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
@@ -339,9 +349,9 @@ namespace CKM_ManagementSystem.BL
                         {
                             role = new RoleEntryViewModel
                             {
-                                RoleCode = reader["RoleCode"].ToString(),
-                                DisplayName = reader["DisplayName"] != DBNull.Value ? reader["DisplayName"].ToString() : string.Empty,
-                                Description = reader["Description"] != DBNull.Value ? reader["Description"].ToString() : string.Empty,
+                                RoleCode = reader["RoleCode"].ToString() ?? string.Empty,
+                                DisplayName = reader["DisplayName"] != DBNull.Value ? reader["DisplayName"].ToString() ?? string.Empty : string.Empty,
+                                Description = reader["Description"] != DBNull.Value ? reader["Description"].ToString() ?? string.Empty : string.Empty,
                                 Status = ParseStatus(reader["Status"])
                             };
                         }
