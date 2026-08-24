@@ -16,7 +16,6 @@ body {
     justify-content: center;
     padding: 40px 20px;
     box-sizing: border-box;
-    background: linear-gradient( 110deg, #182e63 0%, #203d80 55%, #3159ad 100% 55%, #3159ad 100% );
 }
 
 .department-entry-card {

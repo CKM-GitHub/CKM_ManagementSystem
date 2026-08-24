@@ -21,6 +21,12 @@ builder.Services.AddScoped<BaseDL>();
 builder.Services.AddScoped<DepartmentBL>();
 builder.Services.AddScoped<IChangePasswordBL, ChangePasswordBL>();
 builder.Services.AddScoped<IChangePasswordDL, ChangePasswordDL>();
+builder.Services.AddAuthentication("MyCookieAuth").AddCookie("MyCookieAuth", options =>
+{
+    options.Cookie.Name = "CKM_AuthCookie";
+    options.LoginPath = "/LoginUsers/Login";
+    options.ExpireTimeSpan = TimeSpan.FromHours(8);
+});
 
 var app = builder.Build();
 

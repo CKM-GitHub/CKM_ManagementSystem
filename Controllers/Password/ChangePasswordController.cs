@@ -1,9 +1,12 @@
 ﻿using CKM_ManagementSystem.BL.Interface;
 using CKM_ManagementSystem.Models.ViewModels.Password;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CKM_ManagementSystem.Controllers.Password
 {
+    [Authorize]
     [Route("Password")]
     public class ChangePasswordController : Controller
     {
@@ -70,6 +73,15 @@ namespace CKM_ManagementSystem.Controllers.Password
             }
             return View("~/Views/Password/ChangePassword.cshtml", model);
 
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync("MyCookieAuth");
+
+            return RedirectToAction("Login","LoginUsers");
         }
     }
 }
