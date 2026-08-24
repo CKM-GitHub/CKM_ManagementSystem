@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 using CKM_ManagementSystem.Models.ViewModels.Roles;
 using CKM_ManagementSystem.Services.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 
-namespace CKM_ManagementSystem.Controllers
+namespace CKM_ManagementSystem.Controllers.Roles
 {
     public class RoleController : Controller
     {
@@ -18,131 +16,44 @@ namespace CKM_ManagementSystem.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> RoleList(int pageNumber = 1, int pageSize = 10, string searchKeyword = "", int? status = null)
-        {
-            var model = await _roleService.GetRoleListPagedAsync(pageNumber, pageSize, searchKeyword, status);
-            return View(model);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> RoleEntry(string? code = null)
+        public async Task<IActionResult> RoleEntry(string? roleCode)
         {
             var model = new RoleEntryViewModel();
-            bool isEdit = !string.IsNullOrEmpty(code);
-            ViewBag.IsEdit = isEdit;
 
-            if (isEdit)
+            if (!string.IsNullOrEmpty(roleCode))
             {
-                model = await _roleService.GetRoleByCodeSPAsync(code);
-                if (model == null)
-                {
-                    return NotFound();
-                }
-                model.MenuPermissions = await _roleService.GetMenuPermissionsAsync(code);
-            }
-            else
-            {
-                model.MenuPermissions = await _roleService.GetMenuPermissionsAsync();
+                model.RoleCode = roleCode;
             }
 
+            model.MenuPermissions = await _roleService.GetMenuPermissionsAsync(roleCode);
             return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CheckDuplicateCode(string roleCode)
-        {
-            bool isDuplicate = await _roleService.CheckDuplicateRoleCodeAsync(roleCode);
-            return Json(new { isDuplicate = isDuplicate });
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> SaveRole(RoleEntryViewModel model, bool isEdit = false)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveRole([FromBody] RoleEntryViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
-                return Json(new { success = false, message = string.Join(" ", errors) });
-            }
-
-            if (!isEdit)
-            {
-                bool isDuplicate = await _roleService.CheckDuplicateRoleCodeAsync(model.RoleCode);
-                if (isDuplicate)
-                {
-                    return Json(new { success = false, message = "This Role Code already exists." });
-                }
-            }
-            else
-            {
-                var existingRole = await _roleService.GetRoleByCodeSPAsync(model.RoleCode);
-                if (existingRole != null)
-                {
-                    var existingPermissions = await _roleService.GetMenuPermissionsAsync(model.RoleCode);
-                    bool isDataChanged = IsRoleDataChanged(existingRole, existingPermissions, model);
-
-                    if (!isDataChanged)
-                    {
-                        
-                        return Json(new { success = true, message = "No changes were made." });
-                    }
-                }
+                return Json(new { success = false, message = "Invalid data submitted." });
             }
 
             try
             {
                 await _roleService.SaveRoleWithPermissionsAsync(model);
-                return Json(new { success = true });
+                return Json(new { success = true, message = "Registration is complete." });
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = "Data save error: " + ex.Message });
+                return Json(new { success = false, message = "An error occurred while saving data: " + ex.Message });
             }
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteRole(string roleCode)
+        [HttpGet]
+        public async Task<IActionResult> RoleList(int pageNumber = 1, int pageSize = 10, string? searchKeyword = null, int? status = null)
         {
-            if (string.IsNullOrEmpty(roleCode))
-            {
-                return Json(new { success = false, message = "Role Code is missing." });
-            }
-
-            try
-            {
-                var (success, message) = await _roleService.DeleteRoleAsync(roleCode);
-                return Json(new { success = success, message = message });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = "System error: " + ex.Message });
-            }
-        }
-
-        private bool IsRoleDataChanged(RoleEntryViewModel existing, List<MenuPermissionViewModel> existingPermissions, RoleEntryViewModel newModel)
-        {
-            if ((existing.DisplayName ?? "").Trim() != (newModel.DisplayName ?? "").Trim()) return true;
-            if ((existing.Description ?? "").Trim() != (newModel.Description ?? "").Trim()) return true;
-            if (existing.Status != newModel.Status) return true;
-
-            if (existingPermissions != null && newModel.MenuPermissions != null)
-            {
-                foreach (var newPerm in newModel.MenuPermissions)
-                {
-                    var oldPerm = existingPermissions.FirstOrDefault(p => p.MenuId == newPerm.MenuId);
-                    if (oldPerm != null)
-                    {
-                        if (oldPerm.CanRead != newPerm.CanRead ||
-                            oldPerm.CanWrite != newPerm.CanWrite ||
-                            oldPerm.CanDelete != newPerm.CanDelete)
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            return false;
+            var model = await _roleService.GetRoleListPagedAsync(pageNumber, pageSize, searchKeyword, status);
+            return View(model);
         }
     }
 }
