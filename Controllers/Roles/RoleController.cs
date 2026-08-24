@@ -23,7 +23,8 @@ namespace CKM_ManagementSystem.Controllers
 
             if (!string.IsNullOrEmpty(roleCode))
             {
-                
+                model.RoleCode = roleCode;
+                model.MenuPermissions = await _roleService.GetMenuPermissionsAsync(roleCode);
             }
             else
             {
@@ -41,9 +42,8 @@ namespace CKM_ManagementSystem.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveRole(RoleEntryViewModel model)
+        public async Task<IActionResult> SaveRole(RoleEntryViewModel model, bool isEdit = false)
         {
-           
             if (!ModelState.IsValid)
             {
                 var errors = ModelState.Values.SelectMany(v => v.Errors)
@@ -54,15 +54,18 @@ namespace CKM_ManagementSystem.Controllers
 
             try
             {
-               
                 await _roleService.SaveRoleWithPermissionsAsync(model);
 
-                
-                return Json(new { success = true });
+                return Json(new
+                {
+                    success = true,
+                    isEdit = isEdit,
+                    message = "Registration is complete."
+                });
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = "Data သိမ်းဆည်းရာတွင် အမှားအယွင်း ရှိနေပါသည်: " + ex.Message });
+                return Json(new { success = false, message = "An error occurred while saving data: " + ex.Message });
             }
         }
 

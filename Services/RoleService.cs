@@ -15,9 +15,9 @@ namespace CKM_ManagementSystem.Services
             _roleBL = roleBL;
         }
 
-        public async Task<List<MenuPermissionViewModel>> GetMenuPermissionsAsync()
+        public async Task<List<MenuPermissionViewModel>> GetMenuPermissionsAsync(string? roleCode = null)
         {
-            return await _roleBL.GetMenuPermissionsAsync();
+            return await _roleBL.GetMenuPermissionsAsync(roleCode);
         }
 
         public async Task<bool> CheckDuplicateRoleCodeAsync(string roleCode)

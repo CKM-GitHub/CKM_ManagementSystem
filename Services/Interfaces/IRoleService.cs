@@ -6,8 +6,7 @@ namespace CKM_ManagementSystem.Services.Interfaces
 {
     public interface IRoleService
     {
-        Task<List<MenuPermissionViewModel>> GetMenuPermissionsAsync();
-
+        Task<List<MenuPermissionViewModel>> GetMenuPermissionsAsync(string? roleCode = null);
         Task<bool> CheckDuplicateRoleCodeAsync(string roleCode);
         Task SaveRoleWithPermissionsAsync(RoleEntryViewModel model);
     }

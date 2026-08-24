@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "User Role Entry";
-    
+
     bool isEditMode = Model != null && !string.IsNullOrEmpty(Model.RoleCode);
 }
 
@@ -128,14 +128,12 @@
                 <div class="col-6">
                     @if (isEditMode)
                     {
-                        
                         <a href="@Url.Action("RoleList", "Role")" class="btn btn-outline-secondary w-100 py-2 text-center text-decoration-none">
                             Cancel
                         </a>
                     }
                     else
                     {
-                        
                         <button type="button" id="btnClear" class="btn btn-outline-secondary w-100 py-2">
                             Clear
                         </button>
@@ -161,25 +159,23 @@
 
             $('#RoleCode').focus();
 
+            $('#RoleCode').on('blur', function () {
+                var roleCodeVal = $(this).val();
+                var $valSpan = $('#valRoleCode');
 
-                   $('#RoleCode').on('blur', function () {
-            var roleCodeVal = $(this).val();
-            var $valSpan = $('#valRoleCode');
-
-            if (roleCodeVal && !@isEditMode.ToString().ToLower()) {
-                $.post('/Role/CheckDuplicateCode', { roleCode: roleCodeVal }, function (res) {
-                    if (res.isDuplicate) {
-                        $valSpan.text('This Role Code already exists.');
-                    } else {
-                        if ($valSpan.text() === 'This Role Code already exists.') {
-                            $valSpan.text('');
+                if (roleCodeVal && !@isEditMode.ToString().ToLower()) {
+                    $.post('/Role/CheckDuplicateCode', { roleCode: roleCodeVal }, function (res) {
+                        if (res.isDuplicate) {
+                            $valSpan.text('This Role Code already exists.');
+                        } else {
+                            if ($valSpan.text() === 'This Role Code already exists.') {
+                                $valSpan.text('');
+                            }
                         }
-                    }
-                });
-            }
-        });
+                    });
+                }
+            });
 
-           
             $('.parent-menu-row input[type="checkbox"]').on('change', function () {
                 var $parentRow = $(this).closest('tr');
                 var parentId = $parentRow.data('menu-id');
@@ -216,7 +212,6 @@
                 }
             });
 
-           
             $('#btnClear').on('click', function () {
                 $('#roleForm')[0].reset();
                 $('span.text-danger').text('');
@@ -224,13 +219,14 @@
                 $('#RoleCode').focus();
             });
 
-           
             $('#roleForm').on('submit', function (e) {
                 e.preventDefault();
 
                 if (!$(this).valid()) return;
 
                 let formData = $(this).serialize();
+                let isEditParam = "&isEdit=" + @isEditMode.ToString().ToLower();
+                formData += isEditParam;
 
                 $('#btnRegister').prop('disabled', true);
 
@@ -248,8 +244,13 @@
                                 text: 'Registration is complete.',
                                 confirmButtonText: 'OK'
                             }).then((result) => {
-                                if (result.isConfirmed) {
+                                if (response.isEdit) {
                                     window.location.href = '/Role/RoleList';
+                                } else {
+                                    $('#roleForm')[0].reset();
+                                    $('span.text-danger').text('');
+                                    $('#statusActive').prop('checked', true);
+                                    $('#RoleCode').focus();
                                 }
                             });
                         } else {
