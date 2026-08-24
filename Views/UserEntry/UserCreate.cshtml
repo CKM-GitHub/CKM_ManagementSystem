@@ -12,6 +12,7 @@
     <div class="card border-0 rounded-4 shadow p-5 bg-white w-100 user-entry-card">
         @if (TempData["SuccessMessage"] != null)
         {
+            var source = ViewBag.Source as string;
             <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-sm">
                     <div class="modal-content">
@@ -25,7 +26,6 @@
                             </p>
                         </div>
                         <div class="modal-footer border-0 justify-content-center">
-                            <a type="button" class="btn btn-success px-4" asp-controller="UserList" asp-action="UserList">OK</a>
                             @if(ViewBag.Source?.ToString() == "list")
                             {
                                 <a class="btn btn-success px-4" asp-controller="UserList" asp-action="UserList">OK</a>
