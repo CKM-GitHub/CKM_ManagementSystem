@@ -72,6 +72,13 @@ document.getElementById("clearBtn").addEventListener("click", function () {
     if (tempImage) {
         tempImage.value = "";
     }
+    const firstInput = form.querySelector(
+        'input[type="text"], input[type="email"], input[type="password"]'
+    );
+
+    if (firstInput) {
+        firstInput.focus();
+    }
 });
 
 document.addEventListener("DOMContentLoaded", function () {
