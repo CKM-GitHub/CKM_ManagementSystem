@@ -1,4 +1,5 @@
 ﻿using CKM_ManagementSystem.BL;
+using CKM_ManagementSystem.Models.ViewModels.MainMenu;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CKM_ManagementSystem.ViewComponents
@@ -20,8 +21,8 @@ namespace CKM_ManagementSystem.ViewComponents
             //testing
             if (string.IsNullOrWhiteSpace(staffCode)) 
             {
-                staffCode = "CKM-0001";
-            
+                return View("Default", (MainMenuViewModel?)null);
+
             }
             var menulist=_mainMenuBl.GetMainMenus(staffCode);
 
