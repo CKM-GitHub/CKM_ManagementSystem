@@ -157,13 +157,48 @@
     <script>
         $(document).ready(function () {
 
-            $('#RoleCode').focus();
+            var isEditMode = @isEditMode.ToString().ToLower();
 
-            $('#RoleCode').on('blur', function () {
+            if (!isEditMode) {
+                $('#RoleCode').focus();
+            }
+
+            $(document).on('input keyup paste', '#RoleCode', function () {
+                var $this = $(this);
+                setTimeout(function () {
+                    var cleanValue = $this.val().replace(/[^a-zA-Z0-9_-]/g, '');
+                    $this.val(cleanValue);
+                }, 0);
+            });
+
+            $('#roleForm').on('keydown', function (e) {
+                if (e.key === 'Enter' || e.keyCode === 13) {
+                    var targetNode = e.target.nodeName.toLowerCase();
+                    if (targetNode !== 'textarea') {
+                        e.preventDefault();
+
+                        if (e.target.id === 'RoleCode') {
+                            $('#DisplayName').focus();
+                        } else if (e.target.id === 'DisplayName') {
+                            $('#Description').focus();
+                        }
+                        return false;
+                    }
+                }
+            });
+
+            var $form = $("#roleForm");
+            if ($form.data('validator')) {
+                var validator = $form.data('validator');
+                validator.settings.onfocusout = false;
+                validator.settings.onkeyup = false;
+            }
+
+            $(document).on('blur', '#RoleCode', function () {
                 var roleCodeVal = $(this).val();
                 var $valSpan = $('#valRoleCode');
 
-                if (roleCodeVal && !@isEditMode.ToString().ToLower()) {
+                if (roleCodeVal && !isEditMode) {
                     $.post('/Role/CheckDuplicateCode', { roleCode: roleCodeVal }, function (res) {
                         if (res.isDuplicate) {
                             $valSpan.text('This Role Code already exists.');
@@ -224,8 +259,12 @@
 
                 if (!$(this).valid()) return;
 
+                if ($('#valRoleCode').text() === 'This Role Code already exists.') {
+                    return;
+                }
+
                 let formData = $(this).serialize();
-                let isEditParam = "&isEdit=" + @isEditMode.ToString().ToLower();
+                let isEditParam = "&isEdit=" + isEditMode;
                 formData += isEditParam;
 
                 $('#btnRegister').prop('disabled', true);

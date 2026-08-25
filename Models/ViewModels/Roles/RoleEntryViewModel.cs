@@ -7,6 +7,7 @@ namespace CKM_ManagementSystem.Models.ViewModels.Roles
     {
         [Required(ErrorMessage = "Role Code is required.")]
         [StringLength(20, ErrorMessage = "Role Code cannot exceed 20 characters.")]
+        [RegularExpression(@"^[a-zA-Z0-9_-]+$", ErrorMessage = "Special characters are not allowed in Role Code.")]
         public string RoleCode { get; set; }
 
         [Required(ErrorMessage = "Display Name is required.")]
