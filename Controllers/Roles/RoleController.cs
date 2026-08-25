@@ -38,8 +38,8 @@ namespace CKM_ManagementSystem.Controllers.Roles
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SaveRole([FromForm] RoleEntryViewModel model, [FromQuery] bool isEdit = false)
+        
+        public async Task<IActionResult> SaveRole([FromForm] RoleEntryViewModel model, bool isEdit = false)
         {
             if (!ModelState.IsValid)
             {
@@ -53,6 +53,7 @@ namespace CKM_ManagementSystem.Controllers.Roles
 
             try
             {
+                
                 if (!isEdit)
                 {
                     bool isDuplicate = await _roleService.CheckDuplicateRoleCodeAsync(model.RoleCode);
