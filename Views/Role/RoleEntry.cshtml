@@ -157,14 +157,48 @@
         $(document).ready(function () {
 
             var isEditMode = @isEditMode.ToString().ToLower();
+            var initialFormData = $('#roleForm').serialize();
 
             if (!isEditMode) {
                 $('#RoleCode').focus();
             }
 
-            var initialFormData = $('#roleForm').serialize();
+            // Special character restriction logic
+            $(document).on('input keyup paste', '#RoleCode', function () {
+                var $this = $(this);
+                setTimeout(function () {
+                    var cleanValue = $this.val().replace(/[^a-zA-Z0-9_-]/g, '');
+                    $this.val(cleanValue);
+                }, 0);
+            });
 
-            $('#RoleCode').on('blur', function () {
+            // Enter key navigation logic
+            $('#roleForm').on('keydown', function (e) {
+                if (e.key === 'Enter' || e.keyCode === 13) {
+                    var targetNode = e.target.nodeName.toLowerCase();
+                    if (targetNode !== 'textarea') {
+                        e.preventDefault();
+
+                        if (e.target.id === 'RoleCode') {
+                            $('#DisplayName').focus();
+                        } else if (e.target.id === 'DisplayName') {
+                            $('#Description').focus();
+                        }
+                        return false;
+                    }
+                }
+            });
+
+            // Validation Settings
+            var $form = $("#roleForm");
+            if ($form.data('validator')) {
+                var validator = $form.data('validator');
+                validator.settings.onfocusout = false;
+                validator.settings.onkeyup = false;
+            }
+
+            // Check Duplicate Role Code on Blur
+            $(document).on('blur', '#RoleCode', function () {
                 var roleCodeVal = $(this).val();
                 var $valSpan = $('#valRoleCode');
 
@@ -186,6 +220,7 @@
                 }
             });
 
+            // Checkbox Parent-Child Handlers
             $('.parent-menu-row input[type="checkbox"]').on('change', function () {
                 var $parentRow = $(this).closest('tr');
                 var parentId = $parentRow.data('menu-id');
@@ -222,6 +257,7 @@
                 }
             });
 
+            // Clear Button Handler
             $('#btnClear').on('click', function () {
                 $('#roleForm')[0].reset();
                 $('span.text-danger').text('');
@@ -229,6 +265,7 @@
                 $('#RoleCode').focus();
             });
 
+            // Form Submit Handler
             $('#roleForm').on('submit', function (e) {
                 e.preventDefault();
 
