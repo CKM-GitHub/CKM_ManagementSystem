@@ -1,0 +1,95 @@
+﻿@model List<CKM_ManagementSystem.Models.ViewModels.MainMenu.MainMenuViewModel>
+
+<div class="main-menu">
+
+    <div class="brand">
+        CKM
+    </div>
+
+    <nav class="menu-list">
+        @{
+            var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+            var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+        }
+        @foreach (var menu in Model)
+        {
+            if (menu.SubMenus != null && menu.SubMenus.Count > 0)
+            {
+                var collapseId = $"menu-{menu.MenuID}";
+
+                var hasActiveChild = menu.SubMenus.Any(subMenu =>
+                currentController == subMenu.ControllerName &&
+                currentAction == subMenu.ActionName);
+                <div class="menu-group">
+
+                    <button type="button"
+                            class="menu-parent @(hasActiveChild ? "parent-active":"")"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#@collapseId"
+                            aria-expanded="@(hasActiveChild?"true":"false")"
+                            aria-controls="@collapseId">
+
+                        <span class="menu-parent-left">
+
+                            @if (!string.IsNullOrWhiteSpace(menu.MenuIcon))
+                            {
+                                <i class="@menu.MenuIcon"></i>
+                            }
+
+                            <span>@menu.MenuName</span>
+
+                        </span>
+
+                        <i class="bi bi-chevron-down"></i>
+
+                    </button>
+
+                    <div class="collapse submenu @(hasActiveChild?"show":"")"
+                         id="@collapseId">
+
+                        @foreach (var subMenu in menu.SubMenus)
+                        {
+                            var isActive =
+                            currentController == subMenu.ControllerName &&
+                            currentAction == subMenu.ActionName;
+
+                            <a asp-controller="@subMenu.ControllerName"
+                               asp-action="@subMenu.ActionName"
+                               class="submenu-link @(isActive ? "active" : "")">
+
+                                @if (!string.IsNullOrWhiteSpace(subMenu.MenuIcon))
+                                {
+                                    <i class="@subMenu.MenuIcon"></i>
+                                }
+
+                                <span>@subMenu.MenuName</span>
+                            </a>
+                        }
+
+                    </div>
+
+                </div>
+            }
+            else
+            {
+                var isActive =
+                currentController == menu.ControllerName &&
+                currentAction == menu.ActionName;
+
+                <a asp-controller="@menu.ControllerName"
+                   asp-action="@menu.ActionName"
+                   class="menu-link @(isActive ? "active" : "")">
+
+                    @if (!string.IsNullOrWhiteSpace(menu.MenuIcon))
+                    {
+                        <i class="@menu.MenuIcon"></i>
+                    }
+
+                    <span>@menu.MenuName</span>
+                </a>
+            }
+        }
+
+    </nav>
+
+</div>

@@ -93,5 +93,30 @@ namespace CKM_ManagementSystem.DL
                 }
             }
         }
+        public DataTable GetData(
+            string storedProcedureName,
+            params SqlParameter[] parameters)
+
+        {
+            using SqlConnection connection = new SqlConnection(_connectionString);
+
+            using SqlCommand command = new SqlCommand(storedProcedureName, connection);
+
+            command.CommandType = CommandType.StoredProcedure;
+
+            if(parameters != null && parameters.Length > 0)
+            {
+
+                ChangeToDBNull(parameters);
+                command.Parameters.AddRange(parameters);
+            }
+
+            using SqlDataAdapter adapter = new SqlDataAdapter(command);
+
+            DataTable dataTable = new DataTable();
+
+            adapter.Fill(dataTable);
+            return dataTable;
+        }
     }
 }
