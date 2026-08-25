@@ -62,7 +62,8 @@
                             {
                                 for (int i = 0; i < Model.MenuPermissions.Count; i++)
                                 {
-                                    bool isParent = Model.MenuPermissions[i].ParentId == null;
+                                    // ParentId မရှိပါက သို့မဟုတ် 0 ဖြစ်ပါက Parent Menu ဟု သတ်မှတ်ပါသည်
+                                    bool isParent = !Model.MenuPermissions[i].ParentId.HasValue || Model.MenuPermissions[i].ParentId == 0;
 
                                     bool isLastSubmenu = false;
                                     if (!isParent)
@@ -74,7 +75,7 @@
 
                                     <tr class="@(isParent ? "parent-menu-row" : "child-menu-row")"
                                         data-menu-id="@Model.MenuPermissions[i].MenuId"
-                                        data-parent-id="@Model.MenuPermissions[i].ParentId">
+                                        data-parent-id="@(Model.MenuPermissions[i].ParentId ?? 0)">
 
                                         <input type="hidden" name="MenuPermissions[@i].MenuId" value="@Model.MenuPermissions[i].MenuId" />
                                         <input type="hidden" name="MenuPermissions[@i].MenuName" value="@Model.MenuPermissions[i].MenuName" />
@@ -211,7 +212,8 @@
                 }
             });
 
-            $('.parent-menu-row input[type="checkbox"]').on('change', function () {
+            
+            $(document).on('change', '.parent-menu-row input[type="checkbox"]', function () {
                 var $parentRow = $(this).closest('tr');
                 var parentId = $parentRow.data('menu-id');
                 var isChecked = $(this).is(':checked');
@@ -228,7 +230,8 @@
                 }
             });
 
-            $('.child-menu-row input[type="checkbox"]').on('change', function () {
+            
+            $(document).on('change', '.child-menu-row input[type="checkbox"]', function () {
                 var $childRow = $(this).closest('tr');
                 var parentId = $childRow.data('parent-id');
 
@@ -280,7 +283,7 @@
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Success!',
-                                text: 'Registration is complete.',
+                                text: response.message || 'Registration is complete.',
                                 confirmButtonText: 'OK'
                             }).then((result) => {
                                 if (response.isEdit) {
