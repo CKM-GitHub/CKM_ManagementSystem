@@ -1,12 +1,5 @@
-<<<<<<< HEAD
 bin/
 obj/
 .vs/
-
 *.user
 *.suo
-=======
-.vs/ 
-bin/
-obj/
->>>>>>> 154be8bc4522457bd0f21ab7bf703548d00e2133
