@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Login";
 }
-<div class="login-body" data-error="@ViewBag.ErrorMessage">
+<div class="login-body" data-error="@ViewBag.ErrorMessage" data-success-title="@ViewBag.SuccessTitle" data-success-message="@ViewBag.SuccessMessage">
     <div class="container-fluid">
         <div class="row justify-content-center">
             <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
@@ -14,7 +14,7 @@
                     <h3 class="login-title fw-bold mb-1">Sign In</h3>
                     <p class="login-subtitle text-muted mb-4">Welcome back! Please sign in to contiue.</p>
                     
-                    <form asp-controller="LoginUsers" asp-action="Login" method="post">
+                    <form asp-controller="LoginUsers" asp-action="Login" id="loginForm" method="post">
                         <input type="hidden" asp-for="Staff_Code" />
                         <div class="mb-3">
                             <label class="form-label fw-semibold text-secondary small">Email</label>
@@ -22,7 +22,7 @@
                                 <span class="input-group-text input-group-text-custom">
                                     <i class="fa-regular fa-envelope"></i>
                                 </span>
-                                <input asp-for="Email" type="email" class="form-control form-control-custom" placeholder="Enter your email" required>
+                                <input asp-for="Email" type="email" id="emailInput" class="form-control form-control-custom" placeholder="Enter your email" required>
                             </div>
                             <span asp-validation-for="Email" class="text-danger small"></span>
                         </div>

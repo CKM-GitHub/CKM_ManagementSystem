@@ -20,7 +20,7 @@ namespace CKM_ManagementSystem.Controllers.LoginUser
         }
         [AllowAnonymous]
         [HttpGet]
-        public IActionResult Login(string? staffCode)
+        public IActionResult Login()
         {
             return View();
         }
@@ -44,13 +44,22 @@ namespace CKM_ManagementSystem.Controllers.LoginUser
                 (
                     claims, "MyCookieAuth"
                 );
+
+                var claimsPrincipal =
+                   new ClaimsPrincipal(cliamsIdentity);
+
+
                 await HttpContext.SignInAsync
                 (
-                    "MyCookieAuth", new ClaimsPrincipal(cliamsIdentity)
+                    "MyCookieAuth", new ClaimsPrincipal(claimsPrincipal)
                 );
-                return Content($"Login Success! Logged in as: {result.UserEmail}, Staff Code: {result.Staff_Code}");
+                ViewBag.SuccessTitle = "Login successfully!";
+                ViewBag.SuccessMessage = $"Login Success! Logged in as: {result.UserEmail}, Staff Code: {result.Staff_Code}";
+                return View(model);
             }
             ViewBag.ErrorMessage = result.Message;
+
+            model.Password = string.Empty;
             return View(model);
         }
 

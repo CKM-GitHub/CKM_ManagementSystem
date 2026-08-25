@@ -31,7 +31,7 @@ public partial class User
 
     public DateTime? DeletedDate { get; set; }
 
-    public virtual Department DepartmentCodeNavigation { get; set; } = null!;
+    //public virtual Department DepartmentCodeNavigation { get; set; } = null!;
 
-    public virtual UserRole RoleCodeNavigation { get; set; } = null!;
+    //public virtual UserRole RoleCodeNavigation { get; set; } = null!;
 }
