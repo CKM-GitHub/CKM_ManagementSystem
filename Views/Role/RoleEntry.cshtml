@@ -163,7 +163,6 @@
                 $('#RoleCode').focus();
             }
 
-            // Special character restriction logic
             $(document).on('input keyup paste', '#RoleCode', function () {
                 var $this = $(this);
                 setTimeout(function () {
@@ -172,7 +171,6 @@
                 }, 0);
             });
 
-            // Enter key navigation logic
             $('#roleForm').on('keydown', function (e) {
                 if (e.key === 'Enter' || e.keyCode === 13) {
                     var targetNode = e.target.nodeName.toLowerCase();
@@ -189,7 +187,6 @@
                 }
             });
 
-            // Validation Settings
             var $form = $("#roleForm");
             if ($form.data('validator')) {
                 var validator = $form.data('validator');
@@ -197,7 +194,6 @@
                 validator.settings.onkeyup = false;
             }
 
-            // Check Duplicate Role Code on Blur
             $(document).on('blur', '#RoleCode', function () {
                 var roleCodeVal = $(this).val();
                 var $valSpan = $('#valRoleCode');
@@ -220,7 +216,6 @@
                 }
             });
 
-            // Checkbox Parent-Child Handlers
             $('.parent-menu-row input[type="checkbox"]').on('change', function () {
                 var $parentRow = $(this).closest('tr');
                 var parentId = $parentRow.data('menu-id');
@@ -257,7 +252,6 @@
                 }
             });
 
-            // Clear Button Handler
             $('#btnClear').on('click', function () {
                 $('#roleForm')[0].reset();
                 $('span.text-danger').text('');
@@ -265,7 +259,6 @@
                 $('#RoleCode').focus();
             });
 
-            // Form Submit Handler
             $('#roleForm').on('submit', function (e) {
                 e.preventDefault();
 
