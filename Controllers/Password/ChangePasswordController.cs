@@ -17,12 +17,20 @@ namespace CKM_ManagementSystem.Controllers.Password
             _changePasswordBL = changePasswordBL;
         }
         [HttpGet("ChangePassword")]
-        public IActionResult ChangePassword(string StaffCode)
+        public IActionResult ChangePassword()
         {
+            var staffCode = HttpContext.Session.GetString("StaffCode");          
+
+            if (string.IsNullOrEmpty(staffCode))
+            {
+                return RedirectToAction("Login","LoginUsers");
+            }
+
             var model = new ChangePasswordViewModel
             {
-                StaffCode = StaffCode
+                StaffCode = staffCode,
             };
+
             return View("~/Views/Password/ChangePassword.cshtml", model);
         }
 
@@ -30,6 +38,13 @@ namespace CKM_ManagementSystem.Controllers.Password
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
+            var staffCode = HttpContext.Session.GetString("StaffCode");
+            if (string.IsNullOrEmpty(staffCode))
+            {
+                return RedirectToAction("Login", "LoginUsers");
+            }
+
+            model.StaffCode = staffCode;
             if (!ModelState.IsValid)
             {
                 return View("~/Views/Password/ChangePassword.cshtml", model);
@@ -40,9 +55,7 @@ namespace CKM_ManagementSystem.Controllers.Password
             {
                 case 0:
                     TempData["SuccessMessage"] = "Password changed successfully";
-                    return RedirectToAction(
-                        "ChangePassword",
-                        new { StaffCode = model.StaffCode });
+                    return RedirectToAction("ChangePassword");
 
                 case 1:
                     ModelState.AddModelError(
