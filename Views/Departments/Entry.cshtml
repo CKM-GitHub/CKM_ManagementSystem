@@ -123,14 +123,33 @@
 
                 <div class="button-row">
 
-                    <button type="button" class="btn-clear" id="btnClear">Clear </button>
-                    <button type="submit"
-                            class="btn-register">
-                        Register
-                    </button>
+                    @if (string.IsNullOrWhiteSpace(Model.OriginalDepartmentCode))
+                    {
+                        <button type="button"
+                                class="btn-clear"
+                                id="btnClear">
+                            Clear
+                        </button>
+
+                        <button type="submit"
+                                class="btn-register">
+                            Register
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn-clear"
+                                 onclick="window.location.href='@Url.Action("Index", "Departments")'">
+                            Cancel
+                        </button>
+
+                        <button type="submit"
+                                class="btn-register">
+                            Update
+                        </button>
+                    }
 
                 </div>
-
             </form>
             @if (TempData["SuccessMessage"] != null)
             {

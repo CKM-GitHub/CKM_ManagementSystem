@@ -125,7 +125,6 @@ body {
     display: flex;
     gap: 10px;
 }
-
 .btn-clear,
 .btn-register {
     flex: 1;
@@ -137,6 +136,10 @@ body {
     color: #ffffff;
     cursor: pointer;
     transition: opacity 0.2s ease, transform 0.1s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
 }
 
 .btn-clear {
