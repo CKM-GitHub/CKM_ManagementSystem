@@ -8,7 +8,7 @@ namespace CKM_ManagementSystem.Models.ViewModels.Departments
 
         [Required(ErrorMessage = "Department Code is required.")]
         [StringLength( 30,ErrorMessage = "Department Code cannot exceed 30 characters.")]
-            
+        [RegularExpression("^[A-Za-z0-9-]+$", ErrorMessage = "Department Code can only contain letters, numbers, and hyphens.")]
         [Display(Name = "Department Code")]
         public string DepartmentCode { get; set; } = string.Empty;
 
