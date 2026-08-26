@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CKM_ManagementSystem.BL;
 using CKM_ManagementSystem.Models.Entities;
+using CKM_ManagementSystem.Models.ViewModels;
 using CKM_ManagementSystem.Models.ViewModels.Roles;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,11 +20,11 @@ namespace CKM_ManagementSystem.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> RoleList(int pageNumber = 1, int pageSize = 10, string searchKey = "")
+        public async Task<IActionResult> RoleList(int pageNumber = 1, int pageSize = 10, string searchKey = "", int? status = null)
         {
             try
             {
-                var pagedResult = await _roleBL.GetRoleListPagedAsync(pageNumber, pageSize, searchKey);
+                var pagedResult = await _roleBL.GetRoleListPagedAsync(pageNumber, pageSize, searchKey, status);
                 return View(pagedResult);
             }
             catch (Exception ex)
@@ -41,22 +42,37 @@ namespace CKM_ManagementSystem.Controllers
                 MenuPermissions = new List<RolePermissionViewModel>()
             };
 
+            List<MenuPermissionViewModel> rawPermissions;
+
             if (!string.IsNullOrEmpty(roleCode))
             {
                 var role = await _roleBL.GetRoleByCodeAsync(roleCode);
                 if (role != null)
                 {
                     model.RoleCode = role.RoleCode;
-                    model.DisplayName = role.RoleName;
+                    model.DisplayName = role.DisplayName;
                     model.Description = role.Description;
                     model.Status = role.Status;
                 }
 
-                model.MenuPermissions = await _roleBL.GetMenuPermissionsAsync(roleCode);
+                rawPermissions = await _roleBL.GetMenuPermissionsAsync(roleCode);
             }
             else
             {
-                model.MenuPermissions = await _roleBL.GetMenuPermissionsAsync(null);
+                rawPermissions = await _roleBL.GetMenuPermissionsAsync(null);
+            }
+
+            if (rawPermissions != null)
+            {
+                model.MenuPermissions = rawPermissions.Select(p => new RolePermissionViewModel
+                {
+                    MenuId = p.MenuId,
+                    MenuName = p.MenuName,
+                    ParentId = p.ParentId,
+                    CanRead = p.CanRead,
+                    CanWrite = p.CanWrite,
+                    CanDelete = p.CanDelete
+                }).ToList();
             }
 
             model.MenuPermissions = SortMenuHierarchy(model.MenuPermissions);
@@ -111,7 +127,7 @@ namespace CKM_ManagementSystem.Controllers
                 string result;
                 if (isEdit)
                 {
-                    result = await _roleBL.Role_UpdateAsync(role, permissions);
+                    result = _roleBL.Role_Update(role, permissions);
                 }
                 else
                 {
@@ -119,7 +135,7 @@ namespace CKM_ManagementSystem.Controllers
                     {
                         return Json(new { success = false, message = "This Role Code already exists." });
                     }
-                    result = await _roleBL.Role_InsertAsync(role, permissions);
+                    result = _roleBL.Role_Insert(role, permissions);
                 }
 
                 if (result == "true" || result == "1")
@@ -147,8 +163,8 @@ namespace CKM_ManagementSystem.Controllers
         {
             try
             {
-                bool result = await _roleBL.DeleteRoleAsync(roleCode);
-                return Json(new { success = result });
+                var result = await _roleBL.DeleteRoleAsync(roleCode);
+                return Json(new { success = result.Success, message = result.Message });
             }
             catch (Exception ex)
             {
