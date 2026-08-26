@@ -1,4 +1,4 @@
-﻿const imageUpload = document.getElementById("image-upload");       // Drr ka Image preview 
+﻿const imageUpload = document.getElementById("image-upload");       // Drr ka Image preview
 const avatarPreview = document.getElementById("avatar-preview");
 const defaultIcon = document.getElementById("default-icon");
 
@@ -13,6 +13,19 @@ imageUpload.addEventListener("change", function () {
         avatarPreview.classList.add("d-none");
         defaultIcon.classList.remove("d-none");
     }
+});
+
+document.querySelectorAll("input").forEach((input, index, inputs) => {
+    input.addEventListener("keydown", function (e) {
+        if (e.key == "Enter") {
+            e.preventDefault(); 
+            const nextInput = inputs[index + 1];
+
+            if (nextInput) {
+                nextInput.focus();
+            }
+        }
+    })
 });
 
 document.getElementById("clearBtn").addEventListener("click", function () {
