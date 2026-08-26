@@ -1,5 +1,8 @@
-﻿@{
+﻿@model CKM_ManagementSystem.Models.ViewModels.Projects.ProjectEntryViewModel
+@{
     Layout = null;
+    bool isEditMode = Model != null && !string.IsNullOrEmpty(Model.ProjectCode);
+    ViewData["Title"] = isEditMode ? "Edit Project" : "Create New Project";
 }
 
 <!DOCTYPE html>
@@ -7,11 +10,11 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Create New Project</title>
+    <title>@ViewData["Title"]</title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-    <link rel="stylesheet" href="~/css/project-entry.css" />
+    <link rel="stylesheet" href="~/css/project-entry.css" asp-append-version="true" />
 </head>
 <body class="project-entry-bg">
 
@@ -24,21 +27,26 @@
                         <div class="d-inline-flex align-items-center justify-content-center bg-primary text-white rounded-3 mb-3 folder-icon-box" style="width: 48px; height: 48px;">
                             <i class="bi bi-folder-fill fs-2"></i>
                         </div>
-                        <h3 class="fw-bold text-dark mb-1">Create New Project</h3>
-                        <p class="text-muted small">Set up the basic information for your new project to get started.</p>
+                        <h3 class="fw-bold text-dark mb-1">@(isEditMode ? "Edit Project Details" : "Create New Project")</h3>
+                        <p class="text-muted small">
+                            @(isEditMode ? "Update existing project information and system configuration." : "Set up the basic information for your new project to get started.")
+                        </p>
                     </div>
 
                     <form id="projectForm">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3 small"></div>
 
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold text-dark">Project Code <span class="text-danger">*</span></label>
-                                <input type="text" id="ProjectCode" name="ProjectCode" class="form-control rounded-3 py-2" placeholder="Enter project Code" required />
+                                <input asp-for="ProjectCode" id="ProjectCode" class="form-control rounded-3 py-2" placeholder="Enter project code" maxlength="20" autofocus readonly="@(isEditMode ? "readonly" : null)" />
+                                <span asp-validation-for="ProjectCode" id="valProjectCode" class="text-danger small"></span>
                                 <div class="form-text text-muted form-help-text">Choose a clear and unique code for your project.</div>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold text-dark">Project Name <span class="text-danger">*</span></label>
-                                <input type="text" id="ProjectName" name="ProjectName" class="form-control rounded-3 py-2" placeholder="Enter project name" required />
+                                <input asp-for="ProjectName" id="ProjectName" class="form-control rounded-3 py-2" placeholder="Enter project name" maxlength="100" />
+                                <span asp-validation-for="ProjectName" class="text-danger small"></span>
                                 <div class="form-text text-muted form-help-text">Choose a clear and unique name for your project.</div>
                             </div>
                         </div>
@@ -46,43 +54,41 @@
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold text-dark">Project Manager <span class="text-danger">*</span></label>
-                                <select id="ProjectManagerId" name="ProjectManagerId" class="form-select rounded-3 py-2 text-muted" required>
+                                <select asp-for="ProjectManagerId" id="ProjectManagerId" asp-items="@(ViewBag.Managers as List<SelectListItem>)" class="form-select rounded-3 py-2">
                                     <option value="" selected disabled>Select project manager</option>
-                                    @if (ViewBag.Managers != null)
-                                    {
-                                        foreach (var manager in ViewBag.Managers)
-                                        {
-                                            <option value="@manager.StaffCode" class="text-dark">@manager.Name</option>
-                                        }
-                                    }
                                 </select>
+                                <span asp-validation-for="ProjectManagerId" class="text-danger small"></span>
                                 <div class="form-text text-muted form-help-text">Choose the person who will be responsible for this project.</div>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold text-dark">Project Git Link</label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-white border-end-0 text-muted rounded-start-3"><i class="bi bi-link-45deg fs-5"></i></span>
-                                    <input type="url" id="GitRepositoryUrl" name="GitRepositoryUrl" class="form-control border-start-0 rounded-end-3 py-2" placeholder="Enter repository URL (e.g., https://github.com/company/...)" />
+                                    <input asp-for="GitRepositoryUrl" id="GitRepositoryUrl" class="form-control border-start-0 rounded-end-3 py-2" placeholder="Enter repository URL (e.g., https://github.com/company/...)" />
                                 </div>
+                                <span asp-validation-for="GitRepositoryUrl" class="text-danger small"></span>
                                 <div class="form-text text-muted form-help-text">Provide the repository link for this project.</div>
                             </div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label fw-semibold text-dark">Description</label>
-                            <textarea id="Description" name="Description" class="form-control rounded-3" rows="3" placeholder="Enter project description"></textarea>
+                            <textarea asp-for="Description" id="Description" class="form-control rounded-3" rows="3" placeholder="Enter project description" maxlength="250"></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
                             <div class="form-text text-muted form-help-text">Provide a brief overview of the project, its goals, and objectives.</div>
                         </div>
 
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold text-dark">Start Date <span class="text-danger">*</span></label>
-                                <input type="date" id="StartDate" name="StartDate" class="form-control rounded-3 py-2 text-muted" required />
+                                <input asp-for="StartDate" type="date" id="StartDate" class="form-control rounded-3 py-2" value="@Model?.StartDate.ToString("yyyy-MM-dd")" />
+                                <span asp-validation-for="StartDate" class="text-danger small"></span>
                                 <div class="form-text text-muted form-help-text">When the project will begin.</div>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold text-dark">Target End Date <span class="text-danger">*</span></label>
-                                <input type="date" id="EndDate" name="EndDate" class="form-control rounded-3 py-2 text-muted" required />
+                                <input asp-for="EndDate" type="date" id="EndDate" class="form-control rounded-3 py-2" value="@Model?.EndDate.ToString("yyyy-MM-dd")" />
+                                <span asp-validation-for="EndDate" class="text-danger small"></span>
                                 <div class="form-text text-muted form-help-text">Expected completion date.</div>
                             </div>
                         </div>
@@ -93,19 +99,33 @@
                             </div>
                             <div class="col-auto ms-4">
                                 <div class="form-check form-check-inline me-3">
-                                    <input class="form-check-input" type="radio" name="Status" id="statusActive" value="Active" checked>
+                                    <input class="form-check-input" type="radio" asp-for="Status" value="Active" id="statusActive" checked />
                                     <label class="form-check-label fw-medium" for="statusActive">Active</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="Status" id="statusInactive" value="Inactive">
+                                    <input class="form-check-input" type="radio" asp-for="Status" value="Inactive" id="statusInactive" />
                                     <label class="form-check-label fw-medium" for="statusInactive">Inactive</label>
                                 </div>
                             </div>
                         </div>
 
                         <div class="d-flex justify-content-end gap-2 pt-2">
-                            <button type="button" id="btnClear" class="btn btn-light border rounded-3 px-4 fw-medium text-secondary">Clear</button>
-                            <button type="submit" id="btnCreate" class="btn btn-primary rounded-3 px-4 fw-medium">+ Create Project</button>
+                            @if (isEditMode)
+                            {
+                                <a href="@Url.Action("ProjectList", "Project")" class="btn btn-light border rounded-3 px-4 fw-medium text-secondary text-decoration-none">
+                                    Cancel
+                                </a>
+                            }
+                            else
+                            {
+                                <button type="button" id="btnClear" class="btn btn-light border rounded-3 px-4 fw-medium text-secondary">
+                                    Clear
+                                </button>
+                            }
+
+                            <button type="submit" id="btnRegister" class="btn btn-primary rounded-3 px-4 fw-medium">
+                                @(isEditMode ? "Update Project" : "+ Create Project")
+                            </button>
                         </div>
                     </form>
 
@@ -116,94 +136,140 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@4.0.0/dist/jquery.validate.unobtrusive.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         $(document).ready(function () {
 
-            $('#ProjectCode').focus();
+            var isEditMode = @isEditMode.ToString().ToLower();
 
-            $('#btnClear').click(function () {
+            if (!isEditMode) {
+                $('#ProjectCode').focus();
+            }
+
+            $(document).on('input keyup paste', '#ProjectCode', function () {
+                var $this = $(this);
+                setTimeout(function () {
+                    var cleanValue = $this.val().replace(/[^a-zA-Z0-9_-]/g, '');
+                    $this.val(cleanValue);
+                }, 0);
+            });
+
+            $('#projectForm').on('keydown', function (e) {
+                if (e.key === 'Enter' || e.keyCode === 13) {
+                    var targetNode = e.target.nodeName.toLowerCase();
+                    if (targetNode !== 'textarea') {
+                        e.preventDefault();
+
+                        if (e.target.id === 'ProjectCode') {
+                            $('#ProjectName').focus();
+                        } else if (e.target.id === 'ProjectName') {
+                            $('#ProjectManagerId').focus();
+                        } else if (e.target.id === 'ProjectManagerId') {
+                            $('#GitRepositoryUrl').focus();
+                        } else if (e.target.id === 'GitRepositoryUrl') {
+                            $('#StartDate').focus();
+                        } else if (e.target.id === 'StartDate') {
+                            $('#EndDate').focus();
+                        }
+                        return false;
+                    }
+                }
+            });
+
+            var $form = $("#projectForm");
+            if ($form.data('validator')) {
+                var validator = $form.data('validator');
+                validator.settings.onfocusout = false;
+                validator.settings.onkeyup = false;
+            }
+
+            $(document).on('blur', '#ProjectCode', function () {
+                var projectCodeVal = $(this).val().trim();
+                var $valSpan = $('#valProjectCode');
+
+                if (projectCodeVal && !isEditMode) {
+                    $.post('/Project/CheckDuplicateCode', { projectCode: projectCodeVal }, function (res) {
+                        if (res.isDuplicate) {
+                            $valSpan.text('This Project Code already exists.');
+                        } else {
+                            if ($valSpan.text() === 'This Project Code already exists.') {
+                                $valSpan.text('');
+                            }
+                        }
+                    });
+                }
+            });
+
+            $('#btnClear').on('click', function () {
                 $('#projectForm')[0].reset();
+                $('span.text-danger').text('');
                 $('#statusActive').prop('checked', true);
                 $('#ProjectCode').focus();
             });
 
-            $('#projectForm').submit(function (e) {
+            $('#projectForm').on('submit', function (e) {
                 e.preventDefault();
 
-                let code = $('#ProjectCode').val().trim();
-                let name = $('#ProjectName').val().trim();
-                let manager = $('#ProjectManagerId').val();
-                let startVal = $('#StartDate').val();
-                let endVal = $('#EndDate').val();
+                if (!$(this).valid()) return;
 
-                if (!code || !name || !manager || !startVal || !endVal) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Required Field',
-                        text: 'Please fill in all required fields.'
-                    });
+                if ($('#valProjectCode').text() === 'This Project Code already exists.') {
                     return;
                 }
 
-                let startDate = new Date(startVal);
-                let endDate = new Date(endVal);
+                var startDate = new Date($('#StartDate').val());
+                var endDate = new Date($('#EndDate').val());
 
-                if (startDate >= endDate) {
+                if (endDate < startDate) {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Invalid Date Range',
-                        text: 'Start Date must be earlier than Target End Date.'
+                        text: 'Target End Date cannot be earlier than Start Date.'
                     });
                     return;
                 }
 
-                let formData = {
-                    ProjectCode: code,
-                    ProjectName: name,
-                    ProjectManagerId: manager,
-                    GitRepositoryUrl: $('#GitRepositoryUrl').val().trim(),
-                    Description: $('#Description').val().trim(),
-                    StartDate: startVal,
-                    TargetEndDate: endVal, 
-                    EndDate: endVal,
-                    Status: $('input[name="Status"]:checked').val()
-                };
+                let formData = $(this).serialize();
+                formData += "&isEdit=" + isEditMode;
 
-                $('#btnCreate').prop('disabled', true).text('Saving...');
+                var $btn = $('#btnRegister');
+                var originalBtnText = $btn.text();
+                $btn.prop('disabled', true).text('Saving...');
 
                 $.ajax({
-                    url: '/Project/CreateProject',
+                    url: '/Project/SaveProject',
                     type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(formData),
+                    data: formData,
                     success: function (response) {
-                        $('#btnCreate').prop('disabled', false).html('+ Create Project');
+                        $btn.prop('disabled', false).text(originalBtnText);
 
                         if (response.success) {
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Success!',
-                                text: response.message,
+                                text: response.message || 'Saving completed successfully.',
                                 confirmButtonText: 'OK'
-                            }).then(() => {
-                                $('#btnClear').click();
+                            }).then((result) => {
+                                if (response.isEdit) {
+                                    window.location.href = '/Project/ProjectList';
+                                } else {
+                                    $('#btnClear').click();
+                                }
                             });
                         } else {
                             Swal.fire({
                                 icon: 'error',
-                                title: 'Error Details',
-                                text: response.message
+                                title: 'Error',
+                                text: response.message || 'Operation failed.'
                             });
                         }
                     },
                     error: function (xhr) {
-                        $('#btnCreate').prop('disabled', false).html('+ Create Project');
+                        $btn.prop('disabled', false).text(originalBtnText);
 
                         let errorMsg = 'An error occurred while processing your request.';
-
-                        
                         if (xhr.responseJSON && xhr.responseJSON.message) {
                             errorMsg = xhr.responseJSON.message;
                         } else if (xhr.responseText) {
@@ -218,6 +284,7 @@
                     }
                 });
             });
+
         });
     </script>
 </body>

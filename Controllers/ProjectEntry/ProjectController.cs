@@ -1,50 +1,71 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CKM_ManagementSystem.Models.ViewModels.Projects;
-using CKM_ManagementSystem.Services;
+using CKM_ManagementSystem.BL;
 
-namespace CKM_ManagementSystem.Controllers.ProjectEntry
+namespace CKM_ManagementSystem.Controllers
 {
     public class ProjectController : Controller
     {
-        private readonly ProjectService _projectService;
+        private readonly ProjectBL _projectBL;
 
-        public ProjectController(ProjectService projectService)
+        
+        public ProjectController(ProjectBL projectBL)
         {
-            _projectService = projectService;
+            _projectBL = projectBL;
         }
 
         [HttpGet]
-        [ActionName("ProjectEntry")]
-        public IActionResult ProjectEntry()
+        public IActionResult ProjectEntry(string id)
         {
-            ViewBag.Managers = _projectService.GetActiveManagers();
-            return View("~/Views/Project/ProjectEntry.cshtml");
+            var model = new ProjectEntryViewModel();
+
+            if (!string.IsNullOrEmpty(id))
+            {
+                model = _projectBL.GetProjectById(id);
+            }
+
+            ViewBag.Managers = _projectBL.GetActiveManagers();
+            return View("~/Views/Project/ProjectEntry.cshtml", model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateProject([FromBody] ProjectEntryViewModel model)
+        public IActionResult CheckDuplicateCode(string projectCode)
+        {
+            bool isDuplicate = _projectBL.IsDuplicateProjectCode(projectCode);
+            return Json(new { isDuplicate });
+        }
+
+        [HttpPost]
+        public IActionResult SaveProject(ProjectEntryViewModel model, bool isEdit)
         {
             if (!ModelState.IsValid)
             {
-                return Json(new { success = false, message = "Invalid data submitted. Please check the fields." });
+                return Json(new { success = false, message = "Invalid data submitted. Please check mandatory fields." });
             }
 
             try
             {
-                var (isSuccess, message) = await _projectService.SaveProjectAsync(model);
+                string errorMessage;
+                bool isSuccess = _projectBL.SaveProject(model, isEdit, out errorMessage);
 
                 if (isSuccess)
                 {
-                    return Json(new { success = true, message = message });
+                    string msg = isEdit ? "Project updated successfully." : "Project registered successfully.";
+                    return Json(new { success = true, isEdit = isEdit, message = msg });
                 }
 
-              
-                return Json(new { success = false, message = message });
+                return Json(new { success = false, message = errorMessage });
             }
             catch (Exception ex)
             {
                 return Json(new { success = false, message = "Controller Error: " + ex.Message });
             }
+        }
+
+        [HttpGet]
+        public IActionResult ProjectList()
+        {
+            return View("~/Views/Project/ProjectList.cshtml");
         }
     }
 }

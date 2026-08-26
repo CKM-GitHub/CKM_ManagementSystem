@@ -17,8 +17,13 @@ namespace CKM_ManagementSystem.DL
                     "DefaultConnection was not found.");
         }
 
+        private static CommandType GetCommandType(string commandText)
+        {
+            return commandText.Trim().Contains(" ") ? CommandType.Text : CommandType.StoredProcedure;
+        }
+
         public string InsertUpdateDeleteData(
-            string storedProcedureName,
+            string commandText,
             params SqlParameter[] parameters)
         {
             using SqlConnection connection =
@@ -30,11 +35,11 @@ namespace CKM_ManagementSystem.DL
                 connection.BeginTransaction();
 
             using SqlCommand command = new SqlCommand(
-                storedProcedureName,
+                commandText,
                 connection,
                 transaction);
 
-            command.CommandType = CommandType.StoredProcedure;
+            command.CommandType = GetCommandType(commandText);
 
             if (parameters != null && parameters.Length > 0)
             {
@@ -58,7 +63,7 @@ namespace CKM_ManagementSystem.DL
         }
 
         public int ExecuteScalar(
-            string storedProcedureName,
+            string commandText,
             params SqlParameter[] parameters)
         {
             using SqlConnection connection =
@@ -67,9 +72,9 @@ namespace CKM_ManagementSystem.DL
             connection.Open();
 
             using SqlCommand command =
-                new SqlCommand(storedProcedureName, connection);
+                new SqlCommand(commandText, connection);
 
-            command.CommandType = CommandType.StoredProcedure;
+            command.CommandType = GetCommandType(commandText);
 
             if (parameters != null && parameters.Length > 0)
             {
@@ -83,7 +88,7 @@ namespace CKM_ManagementSystem.DL
         }
 
         public DataTable SelectData(
-            string storedProcedureName,
+            string commandText,
             params SqlParameter[] parameters)
         {
             DataTable dt = new DataTable();
@@ -92,9 +97,9 @@ namespace CKM_ManagementSystem.DL
                 new SqlConnection(_connectionString);
 
             using SqlCommand command =
-                new SqlCommand(storedProcedureName, connection);
+                new SqlCommand(commandText, connection);
 
-            command.CommandType = CommandType.StoredProcedure;
+            command.CommandType = GetCommandType(commandText);
 
             if (parameters != null && parameters.Length > 0)
             {
