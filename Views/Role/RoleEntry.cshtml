@@ -1,5 +1,4 @@
 ﻿@model CKM_ManagementSystem.Models.ViewModels.Roles.RoleEntryViewModel
-
 @{
     bool isEditMode = Model != null && !string.IsNullOrEmpty(Model.RoleCode);
     ViewData["Title"] = isEditMode ? "Edit User Role" : "User Role Entry";
@@ -61,6 +60,7 @@
                             {
                                 for (int i = 0; i < Model.MenuPermissions.Count; i++)
                                 {
+
                                     bool isParent = !Model.MenuPermissions[i].ParentId.HasValue || Model.MenuPermissions[i].ParentId == 0;
 
                                     bool isLastSubmenu = false;
@@ -155,18 +155,11 @@
 
     <script>
         $(document).ready(function () {
+
             var isEditMode = @isEditMode.ToString().ToLower();
-            var initialFormData = $('#roleForm').serialize();
 
             if (!isEditMode) {
                 $('#RoleCode').focus();
-            }
-
-            var $form = $("#roleForm");
-            if ($form.data('validator')) {
-                var validator = $form.data('validator');
-                validator.settings.onfocusout = false;
-                validator.settings.onkeyup = false;
             }
 
             $(document).on('input keyup paste', '#RoleCode', function () {
@@ -193,27 +186,30 @@
                 }
             });
 
+            var $form = $("#roleForm");
+            if ($form.data('validator')) {
+                var validator = $form.data('validator');
+                validator.settings.onfocusout = false;
+                validator.settings.onkeyup = false;
+            }
+
             $(document).on('blur', '#RoleCode', function () {
                 var roleCodeVal = $(this).val();
                 var $valSpan = $('#valRoleCode');
 
                 if (roleCodeVal && !isEditMode) {
-                    $.ajax({
-                        url: '/Role/CheckDuplicateCode',
-                        type: 'POST',
-                        data: { roleCode: roleCodeVal },
-                        success: function (res) {
-                            if (res.isDuplicate) {
-                                $valSpan.text('This Role Code already exists.');
-                            } else {
-                                if ($valSpan.text() === 'This Role Code already exists.') {
-                                    $valSpan.text('');
-                                }
+                    $.post('/Role/CheckDuplicateCode', { roleCode: roleCodeVal }, function (res) {
+                        if (res.isDuplicate) {
+                            $valSpan.text('This Role Code already exists.');
+                        } else {
+                            if ($valSpan.text() === 'This Role Code already exists.') {
+                                $valSpan.text('');
                             }
                         }
                     });
                 }
             });
+
 
             $(document).on('change', '.parent-menu-row input[type="checkbox"]', function () {
                 var $parentRow = $(this).closest('tr');
@@ -231,6 +227,7 @@
                         .prop('checked', isChecked);
                 }
             });
+
 
             $(document).on('change', '.child-menu-row input[type="checkbox"]', function () {
                 var $childRow = $(this).closest('tr');
@@ -267,14 +264,9 @@
                     return;
                 }
 
-                var currentFormData = $(this).serialize();
-
-                if (isEditMode && initialFormData === currentFormData) {
-                    window.location.href = '/Role/RoleList';
-                    return;
-                }
-
-                let formData = currentFormData + "&isEdit=" + isEditMode;
+                let formData = $(this).serialize();
+                let isEditParam = "&isEdit=" + isEditMode;
+                formData += isEditParam;
 
                 $('#btnRegister').prop('disabled', true);
 
@@ -289,17 +281,16 @@
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Success!',
-                                text: response.message || 'Operation completed successfully.',
+                                text: response.message || 'Registration is complete.',
                                 confirmButtonText: 'OK'
                             }).then((result) => {
-                                if (isEditMode) {
+                                if (response.isEdit) {
                                     window.location.href = '/Role/RoleList';
                                 } else {
                                     $('#roleForm')[0].reset();
                                     $('span.text-danger').text('');
                                     $('#statusActive').prop('checked', true);
                                     $('#RoleCode').focus();
-                                    initialFormData = $('#roleForm').serialize();
                                 }
                             });
                         } else {
@@ -310,22 +301,17 @@
                             });
                         }
                     },
-                    error: function (xhr, status, error) {
+                    error: function () {
                         $('#btnRegister').prop('disabled', false);
-
-                        var errorMsg = 'An error occurred while processing your request.';
-                        if (xhr.responseJSON && xhr.responseJSON.message) {
-                            errorMsg = xhr.responseJSON.message;
-                        }
-
                         Swal.fire({
                             icon: 'error',
-                            title: 'System Error (' + xhr.status + ')',
-                            text: errorMsg
+                            title: 'System Error',
+                            text: 'An error occurred while processing your request.'
                         });
                     }
                 });
             });
+
         });
     </script>
 }

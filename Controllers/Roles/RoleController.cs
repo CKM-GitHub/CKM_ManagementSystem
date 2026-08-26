@@ -3,11 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using CKM_ManagementSystem.BL;
 using CKM_ManagementSystem.Models.Entities;
 using CKM_ManagementSystem.Models.ViewModels.Roles;
+using CKM_ManagementSystem.Models.ViewModels;
 
-namespace CKM_ManagementSystem.Controllers.Roles
+namespace CKM_ManagementSystem.Controllers
 {
     public class RoleController : Controller
     {
@@ -18,35 +20,58 @@ namespace CKM_ManagementSystem.Controllers.Roles
             _roleBL = roleBL;
         }
 
-        [HttpGet]
-        public IActionResult RoleEntry(string? roleCode)
-        {
-            var model = new RoleEntryViewModel
-            {
-                MenuPermissions = new List<RolePermissionViewModel>()
-            };
+        #region Role List Action Methods
 
-            bool isEdit = !string.IsNullOrEmpty(roleCode);
+        [HttpGet]
+        public async Task<IActionResult> RoleList(int pageNumber = 1, int pageSize = 10, string searchKeyword = "", int? status = null)
+        {
+            try
+            {
+                var pagedResult = await _roleBL.GetRoleListPagedAsync(pageNumber, pageSize, searchKeyword, status);
+                return View(pagedResult);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = ex.Message;
+                return View(new RoleListPagedViewModel());
+            }
+        }
+
+        #endregion
+
+        #region Role Entry & Edit Actions
+
+        [HttpGet]
+        public async Task<IActionResult> RoleEntry(string? code)
+        {
+            bool isEdit = !string.IsNullOrEmpty(code);
+            RoleEntryViewModel model;
 
             if (isEdit)
             {
-                DataTable dtRole = _roleBL.GetRoleByCode(roleCode!);
-                if (dtRole != null && dtRole.Rows.Count > 0)
+                var existingRole = await _roleBL.GetRoleByCodeAsync(code!);
+
+                if (existingRole != null)
                 {
-                    DataRow row = dtRole.Rows[0];
-                    model.RoleCode = row["Role_Code"]?.ToString() ?? "";
-                    model.DisplayName = row["Role_Name"]?.ToString() ?? "";
-                    model.Description = row["Description"]?.ToString() ?? "";
-                    model.Status = row["Status"] != DBNull.Value && Convert.ToBoolean(row["Status"]);
+                    model = existingRole;
+                }
+                else
+                {
+                    model = new RoleEntryViewModel();
                 }
 
-                DataTable dtPermissions = _roleBL.GetRolePermissionsByCode(roleCode!);
-                model.MenuPermissions = MapDataTableToPermissions(dtPermissions);
+                var permissions = await _roleBL.GetMenuPermissionsAsync(code);
+                model.MenuPermissions = MapToRolePermissions(permissions);
             }
             else
             {
-                DataTable dtMenus = _roleBL.GetAllMenus();
-                model.MenuPermissions = MapDataTableToPermissions(dtMenus);
+                model = new RoleEntryViewModel
+                {
+                    MenuPermissions = new List<RolePermissionViewModel>()
+                };
+
+                var permissions = await _roleBL.GetMenuPermissionsAsync(null);
+                model.MenuPermissions = MapToRolePermissions(permissions);
             }
 
             model.MenuPermissions = SortMenuHierarchy(model.MenuPermissions);
@@ -56,14 +81,14 @@ namespace CKM_ManagementSystem.Controllers.Roles
         }
 
         [HttpPost]
-        public IActionResult CheckDuplicateCode(string roleCode)
+        public async Task<IActionResult> CheckDuplicateCode(string roleCode)
         {
             if (string.IsNullOrWhiteSpace(roleCode))
             {
                 return Json(new { isDuplicate = false });
             }
 
-            bool isDuplicate = _roleBL.IsRoleCodeDuplicate(roleCode);
+            bool isDuplicate = await _roleBL.CheckDuplicateRoleCodeSPAsync(roleCode);
             return Json(new { isDuplicate = isDuplicate });
         }
 
@@ -140,7 +165,42 @@ namespace CKM_ManagementSystem.Controllers.Roles
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> DeleteRole(string roleCode)
+        {
+            if (string.IsNullOrWhiteSpace(roleCode))
+            {
+                return Json(new { success = false, message = "Invalid Role Code." });
+            }
+
+            var result = await _roleBL.DeleteRoleAsync(roleCode);
+            return Json(new { success = result.Success, message = result.Message });
+        }
+
+        #endregion
+
         #region Helper Methods
+
+        private List<RolePermissionViewModel> MapToRolePermissions(List<MenuPermissionViewModel> srcList)
+        {
+            var list = new List<RolePermissionViewModel>();
+            if (srcList != null)
+            {
+                foreach (var item in srcList)
+                {
+                    list.Add(new RolePermissionViewModel
+                    {
+                        MenuId = item.MenuId,
+                        MenuName = item.MenuName,
+                        ParentId = item.ParentId,
+                        CanRead = item.CanRead,
+                        CanWrite = item.CanWrite,
+                        CanDelete = item.CanDelete
+                    });
+                }
+            }
+            return list;
+        }
 
         private static List<RolePermissionViewModel> SortMenuHierarchy(List<RolePermissionViewModel> rawList)
         {
@@ -148,13 +208,11 @@ namespace CKM_ManagementSystem.Controllers.Roles
                 return new List<RolePermissionViewModel>();
 
             var sortedList = new List<RolePermissionViewModel>();
-
             var mainMenus = rawList.Where(m => m.ParentId == null || m.ParentId == 0).ToList();
 
             foreach (var main in mainMenus)
             {
                 sortedList.Add(main);
-
                 var subMenus = rawList.Where(m => m.ParentId == main.MenuId).ToList();
                 sortedList.AddRange(subMenus);
             }
@@ -166,38 +224,6 @@ namespace CKM_ManagementSystem.Controllers.Roles
             }
 
             return sortedList;
-        }
-
-        private static List<RolePermissionViewModel> MapDataTableToPermissions(DataTable dt)
-        {
-            var list = new List<RolePermissionViewModel>();
-            if (dt != null)
-            {
-                foreach (DataRow row in dt.Rows)
-                {
-                    int? parentId = null;
-
-                    if (row.Table.Columns.Contains("ParentMenuId") && row["ParentMenuId"] != DBNull.Value)
-                    {
-                        parentId = Convert.ToInt32(row["ParentMenuId"]);
-                    }
-                    else if (row.Table.Columns.Contains("ParentId") && row["ParentId"] != DBNull.Value)
-                    {
-                        parentId = Convert.ToInt32(row["ParentId"]);
-                    }
-
-                    list.Add(new RolePermissionViewModel
-                    {
-                        MenuId = row.Table.Columns.Contains("MenuId") ? Convert.ToInt32(row["MenuId"]) : 0,
-                        MenuName = row.Table.Columns.Contains("MenuName") ? row["MenuName"]?.ToString() ?? "" : "",
-                        ParentId = parentId,
-                        CanRead = row.Table.Columns.Contains("CanRead") && Convert.ToBoolean(row["CanRead"]),
-                        CanWrite = row.Table.Columns.Contains("CanWrite") && Convert.ToBoolean(row["CanWrite"]),
-                        CanDelete = row.Table.Columns.Contains("CanDelete") && Convert.ToBoolean(row["CanDelete"])
-                    });
-                }
-            }
-            return list;
         }
 
         #endregion

@@ -4,14 +4,21 @@ using CKM_ManagementSystem.DL;
 var builder = WebApplication.CreateBuilder(args);
 
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "";
+
 builder.Services.AddControllersWithViews();
 
-
 builder.Services.AddScoped<BaseDL>();
-builder.Services.AddScoped<RoleBL>();
+
+
+builder.Services.AddScoped<RoleBL>(provider =>
+    new RoleBL(
+        provider.GetRequiredService<BaseDL>(),
+        connectionString
+    )
+);
 
 var app = builder.Build();
-
 
 if (!app.Environment.IsDevelopment())
 {
