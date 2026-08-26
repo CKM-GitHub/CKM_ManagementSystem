@@ -1,7 +1,5 @@
 using CKM_ManagementSystem.BL;
-using CKM_ManagementSystem.BL.Interface;
 using CKM_ManagementSystem.DL;
-using CKM_ManagementSystem.DL.Interface;
 using CKM_ManagementSystem.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,8 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<IUserEntryBL, UserEntryBL>();
-builder.Services.AddScoped<IUserEntryDL, UserEntryDL>();
+builder.Services.AddScoped<BaseDL>();
+builder.Services.AddScoped<UserEntryBL>();
 
 builder.Services.AddDbContext<CkmManagementSystemContext>(options =>
    options.UseSqlServer(

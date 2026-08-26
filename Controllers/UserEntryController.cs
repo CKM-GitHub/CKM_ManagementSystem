@@ -1,4 +1,4 @@
-﻿using CKM_ManagementSystem.BL.Interface;
+﻿using CKM_ManagementSystem.BL;
 using CKM_ManagementSystem.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -8,11 +8,11 @@ namespace CKM_ManagementSystem.Controllers
     public class UserEntryController : Controller
     {
         private readonly IWebHostEnvironment _environment;
-        private readonly IUserEntryBL _userEntryBL;
+        private readonly UserEntryBL _userEntryBL;
 
         public UserEntryController(
             IWebHostEnvironment environment,
-            IUserEntryBL userEntryBL)
+            UserEntryBL userEntryBL)
         {
             _environment = environment;
             _userEntryBL = userEntryBL;
