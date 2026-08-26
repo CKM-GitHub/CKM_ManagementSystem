@@ -13,7 +13,6 @@
                     </h4>
                 </div>
                 <div class="card-body p-4">
-             
                     <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered modal-sm">
                             <div class="modal-content custom-modal-popup">
@@ -59,11 +58,11 @@
                             <label class="col-sm-4 form-label fw-semibold text-secondary small d-block">Menu Type</label>
                             <div class="col-sm-8 d-flex gap-3">
                                 <div class="form-check">
-                                    <input asp-for="MenuType" class="form-check-input" type="radio"  id="typeParent" value="Parent" checked />
+                                    <input asp-for="MenuType" class="form-check-input" type="radio"  id="typeParent" disabled="@isEdit" value="Parent" checked />
                                     <label class="form-check-label" for="typeParent">Parent Menu</label>
                                 </div>
                                 <div class="form-check">
-                                    <input asp-for="MenuType" class="form-check-input" type="radio"  id="typeSub" value="Sub"  />
+                                    <input asp-for="MenuType" class="form-check-input" type="radio"  id="typeSub" value="Sub" disabled="@isEdit" />
                                     <label class="form-check-label" for="typeSub">Sub Menu</label>
                                 </div>
                             </div>
@@ -74,7 +73,14 @@
                             <select asp-for="ParentMenuId" asp-items="Model?.ParentMenuList" class="form-select" id="ParentMenu" disabled>
                                 <option value="0">None (Root Level)</option>
                             </select>
-                            <input type = "hidden" id="hiddenParentMenu" name="ParentMenuId" value="0" />
+                            @if(isEdit){
+                                <input type="hidden" name="ParentMenuId" value="@(Model?.ParentMenuId ?? 0)" />
+                            }
+                            else
+                            {
+                                <input type="hidden" id="hiddenParentMenu" name="ParentMenuId" value="0" />
+                            }
+                            <!-- <input type = "hidden" id="hiddenParentMenu" name="ParentMenuId" value="0" /> -->
                             <span asp-validation-for="ParentMenuId" class="text-danger small"></span>
                         </div>
                         <div class="mb-3">
@@ -124,6 +130,7 @@
     <script src="~/js/menu-entry.js" asp-append-version="true"></script>
     <script src="~/lib/sweetalert2/dist/sweetalert2.all.min.js"></script>
     <script>
+        var isEditMode = @isEdit.ToString().ToLower();
         var successMessage = '@(TempData["SuccessMessage"] ?? "")';
     </script>
 }
