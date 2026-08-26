@@ -47,7 +47,6 @@ namespace CKM_ManagementSystem.Controllers
                 model.MenuPermissions = MapDataTableToPermissions(dtMenus);
             }
 
-            
             model.MenuPermissions = SortMenuHierarchy(model.MenuPermissions);
 
             return View(model);
@@ -111,7 +110,7 @@ namespace CKM_ManagementSystem.Controllers
                     result = _roleBL.Role_Insert(role, permissions);
                 }
 
-                if (result == "true")
+                if (result == "true" || result == "1")
                 {
                     return Json(new
                     {
@@ -137,28 +136,31 @@ namespace CKM_ManagementSystem.Controllers
             return View();
         }
 
-        
         private static List<RolePermissionViewModel> SortMenuHierarchy(List<RolePermissionViewModel> rawList)
         {
+            if (rawList == null || !rawList.Any())
+                return new List<RolePermissionViewModel>();
+
             var sortedList = new List<RolePermissionViewModel>();
 
-            
-            var mainMenus = rawList.Where(m => m.ParentId == null || m.ParentId == 0).ToList();
+            var mainMenus = rawList.Where(m => m.ParentId == null || m.ParentId == 0)
+                                   .OrderBy(m => m.MenuId)
+                                   .ToList();
 
             foreach (var main in mainMenus)
             {
                 sortedList.Add(main);
 
-                
-                var subMenus = rawList.Where(m => m.ParentId == main.MenuId).ToList();
+                var subMenus = rawList.Where(m => m.ParentId == main.MenuId)
+                                      .OrderBy(m => m.MenuId)
+                                      .ToList();
                 sortedList.AddRange(subMenus);
             }
 
-            
             var orphanMenus = rawList.Except(sortedList).ToList();
             if (orphanMenus.Any())
             {
-                sortedList.AddRange(orphanMenus);
+                sortedList.AddRange(orphanMenus.OrderBy(m => m.MenuId));
             }
 
             return sortedList;
@@ -173,7 +175,6 @@ namespace CKM_ManagementSystem.Controllers
                 {
                     int? parentId = null;
 
-                    
                     if (row.Table.Columns.Contains("ParentMenuId") && row["ParentMenuId"] != DBNull.Value)
                     {
                         parentId = Convert.ToInt32(row["ParentMenuId"]);
