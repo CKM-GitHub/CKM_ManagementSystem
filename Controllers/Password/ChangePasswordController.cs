@@ -1,30 +1,48 @@
-﻿using CKM_ManagementSystem.BL.Interface;
-using CKM_ManagementSystem.Models.ViewModels.Password;
+﻿using CKM_ManagementSystem.Models.ViewModels.Password;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using CKM_ManagementSystem.BL;
 
 namespace CKM_ManagementSystem.Controllers.Password
 {
-    [Authorize]
+   // [Authorize]
     [Route("Password")]
     public class ChangePasswordController : Controller
     {
-        private readonly IChangePasswordBL _changePasswordBL;
+        private readonly ChangePasswordBL _changePasswordBL;
 
-        public ChangePasswordController(IChangePasswordBL changePasswordBL)
+        public ChangePasswordController(ChangePasswordBL changePasswordBL)
         {
             _changePasswordBL = changePasswordBL;
         }
+        /*
+        [HttpGet("TestBL")]
+        public async Task<IActionResult> TestBL()
+        {
+            var model = new ChangePasswordViewModel
+            {
+                StaffCode = "CKM-0041",
+                CurrentPassword = "TestUser41-1",
+                NewPassword = "TestUser41",
+                ConfirmPassword = "TestUser41-1"
+            };
+
+            int result = await _changePasswordBL.ChangePasswordAsync(model);
+
+            return Content($"Result Code: {result}");
+        }  */
+        
         [HttpGet("ChangePassword")]
         public IActionResult ChangePassword()
         {
+            HttpContext.Session.SetString("StaffCode", "CKM-0042"); // Test code *///// if want change password , TestUserxx-1 or TestUserxx (TestUser42)
             var staffCode = HttpContext.Session.GetString("StaffCode");          
 
             if (string.IsNullOrEmpty(staffCode))
             {
                 return RedirectToAction("Login","LoginUsers");
-            }
+            } 
 
             var model = new ChangePasswordViewModel
             {
@@ -32,8 +50,9 @@ namespace CKM_ManagementSystem.Controllers.Password
             };
 
             return View("~/Views/Password/ChangePassword.cshtml", model);
-        }
+        }  
 
+        
         [HttpPost("ChangePassword")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
@@ -42,9 +61,9 @@ namespace CKM_ManagementSystem.Controllers.Password
             if (string.IsNullOrEmpty(staffCode))
             {
                 return RedirectToAction("Login", "LoginUsers");
-            }
+            } 
 
-            model.StaffCode = staffCode;
+            model.StaffCode = staffCode; 
             if (!ModelState.IsValid)
             {
                 return View("~/Views/Password/ChangePassword.cshtml", model);

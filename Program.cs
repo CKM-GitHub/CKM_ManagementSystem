@@ -3,9 +3,7 @@ using CKM_ManagementSystem.Services;
 using CKM_ManagementSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using CKM_ManagementSystem.BL;
-using CKM_ManagementSystem.BL.Interface;
 using CKM_ManagementSystem.DL;
-using CKM_ManagementSystem.DL.Interface;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -15,12 +13,19 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 // 2. IDepartmentService 
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<BaseDL>();
 builder.Services.AddScoped<DepartmentBL>();
-builder.Services.AddScoped<IChangePasswordBL, ChangePasswordBL>();
-builder.Services.AddScoped<IChangePasswordDL, ChangePasswordDL>();
+builder.Services.AddScoped<ChangePasswordBL>();
 builder.Services.AddAuthentication("MyCookieAuth").AddCookie("MyCookieAuth", options =>
 {
     options.Cookie.Name = "CKM_AuthCookie";
@@ -29,6 +34,8 @@ builder.Services.AddAuthentication("MyCookieAuth").AddCookie("MyCookieAuth", opt
 });
 
 var app = builder.Build();
+
+app.UseSession();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
