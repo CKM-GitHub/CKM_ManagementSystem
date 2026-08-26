@@ -61,7 +61,7 @@
                             {
                                 for (int i = 0; i < Model.MenuPermissions.Count; i++)
                                 {
-                                    bool isParent = Model.MenuPermissions[i].ParentId == null;
+                                    bool isParent = !Model.MenuPermissions[i].ParentId.HasValue || Model.MenuPermissions[i].ParentId == 0;
 
                                     bool isLastSubmenu = false;
                                     if (!isParent)
@@ -73,7 +73,7 @@
 
                                     <tr class="@(isParent ? "parent-menu-row" : "child-menu-row")"
                                         data-menu-id="@Model.MenuPermissions[i].MenuId"
-                                        data-parent-id="@Model.MenuPermissions[i].ParentId">
+                                        data-parent-id="@(Model.MenuPermissions[i].ParentId ?? 0)">
 
                                         <input type="hidden" name="MenuPermissions[@i].MenuId" value="@Model.MenuPermissions[i].MenuId" />
                                         <input type="hidden" name="MenuPermissions[@i].MenuName" value="@Model.MenuPermissions[i].MenuName" />
@@ -155,12 +155,18 @@
 
     <script>
         $(document).ready(function () {
-
             var isEditMode = @isEditMode.ToString().ToLower();
             var initialFormData = $('#roleForm').serialize();
 
             if (!isEditMode) {
                 $('#RoleCode').focus();
+            }
+
+            var $form = $("#roleForm");
+            if ($form.data('validator')) {
+                var validator = $form.data('validator');
+                validator.settings.onfocusout = false;
+                validator.settings.onkeyup = false;
             }
 
             $(document).on('input keyup paste', '#RoleCode', function () {
@@ -187,13 +193,6 @@
                 }
             });
 
-            var $form = $("#roleForm");
-            if ($form.data('validator')) {
-                var validator = $form.data('validator');
-                validator.settings.onfocusout = false;
-                validator.settings.onkeyup = false;
-            }
-
             $(document).on('blur', '#RoleCode', function () {
                 var roleCodeVal = $(this).val();
                 var $valSpan = $('#valRoleCode');
@@ -216,7 +215,7 @@
                 }
             });
 
-            $('.parent-menu-row input[type="checkbox"]').on('change', function () {
+            $(document).on('change', '.parent-menu-row input[type="checkbox"]', function () {
                 var $parentRow = $(this).closest('tr');
                 var parentId = $parentRow.data('menu-id');
                 var isChecked = $(this).is(':checked');
@@ -233,7 +232,7 @@
                 }
             });
 
-            $('.child-menu-row input[type="checkbox"]').on('change', function () {
+            $(document).on('change', '.child-menu-row input[type="checkbox"]', function () {
                 var $childRow = $(this).closest('tr');
                 var parentId = $childRow.data('parent-id');
 
@@ -327,7 +326,6 @@
                     }
                 });
             });
-
         });
     </script>
 }

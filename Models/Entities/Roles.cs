@@ -35,4 +35,13 @@ namespace CKM_ManagementSystem.Models.Entities
         [Column("Deleted_Date")]
         public DateTime? DeletedDate { get; set; }
     }
+
+    public class RolePermission
+    {
+        public string RoleCode { get; set; } = string.Empty;
+        public int MenuId { get; set; }
+        public bool CanRead { get; set; }
+        public bool CanWrite { get; set; }
+        public bool CanDelete { get; set; }
+    }
 }

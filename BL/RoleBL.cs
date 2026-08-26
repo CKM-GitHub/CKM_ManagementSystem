@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Threading.Tasks;
+using CKM_ManagementSystem.DL;
+using CKM_ManagementSystem.Models.Entities;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using CKM_ManagementSystem.Models.ViewModels;
@@ -11,13 +12,16 @@ namespace CKM_ManagementSystem.BL
 {
     public class RoleBL
     {
-        private readonly string _connectionString;
+        private readonly BaseDL bdl;
 
-        public RoleBL(IConfiguration configuration)
+        public RoleBL(BaseDL baseDL)
         {
-            _connectionString = configuration.GetConnectionString("DefaultConnection");
+            bdl = baseDL;
         }
 
+        public string Role_Insert(Roles role, List<RolePermission> permissions)
+        {
+            DataTable dtPermissions = ConvertPermissionsToDataTable(permissions);
         #region Helper Methods
 
         private bool ParseStatus(object statusObj)
@@ -41,6 +45,11 @@ namespace CKM_ManagementSystem.BL
 
         #region Service Wrapper Methods
 
+            SqlParameter paramPermissions = new SqlParameter("@Permissions", SqlDbType.Structured)
+            {
+                TypeName = "dbo.RolePermissionType",
+                Value = dtPermissions
+            };
         public async Task<RoleListPagedViewModel> GetRoleListPagedAsync(int pageNumber, int pageSize, string searchKeyword, int? status)
         {
             return await GetRoleListPagedSPAsync(pageNumber, pageSize, searchKeyword, status);
@@ -51,30 +60,36 @@ namespace CKM_ManagementSystem.BL
             return await GetMenuPermissionsSPAsync(roleCode);
         }
 
-        public async Task<bool> CheckDuplicateRoleCodeAsync(string roleCode)
-        {
-            return await CheckDuplicateRoleCodeSPAsync(roleCode);
-        }
-
-        public async Task SaveRoleWithPermissionsAsync(RoleEntryViewModel model)
-        {
-            await SaveRoleInfoSPAsync(model);
-
-            if (model.MenuPermissions != null && model.MenuPermissions.Count > 0)
+            SqlParameter[] sqlprms =
             {
-                foreach (var perm in model.MenuPermissions)
-                {
-                    await SaveRolePermissionSPAsync(
-                        model.RoleCode,
-                        perm.MenuId,
-                        perm.CanRead,
-                        perm.CanWrite,
-                        perm.CanDelete
-                    );
-                }
-            }
+                new SqlParameter("@Role_Code", (object)role.RoleCode ?? string.Empty),
+                new SqlParameter("@Role_Name", (object)role.RoleName ?? string.Empty),
+                new SqlParameter("@Description", (object)role.Description ?? DBNull.Value),
+                new SqlParameter("@Status", role.Status),
+                paramPermissions
+            };
+
+            return bdl.InsertUpdateDeleteData("sp_SaveRoleInfo", sqlprms);
         }
 
+        public string Role_Update(Roles role, List<RolePermission> permissions)
+        {
+            DataTable dtPermissions = ConvertPermissionsToDataTable(permissions);
+
+            SqlParameter paramPermissions = new SqlParameter("@Permissions", SqlDbType.Structured)
+            {
+                TypeName = "dbo.RolePermissionType",
+                Value = dtPermissions
+            };
+
+            SqlParameter[] sqlprms =
+            {
+                new SqlParameter("@Role_Code", (object)role.RoleCode ?? string.Empty),
+                new SqlParameter("@Role_Name", (object)role.RoleName ?? string.Empty),
+                new SqlParameter("@Description", (object)role.Description ?? DBNull.Value),
+                new SqlParameter("@Status", role.Status),
+                paramPermissions
+            };
         public async Task<RoleEntryViewModel?> GetRoleByCodeAsync(string roleCode)
         {
             return await GetRoleByCodeSPAsync(roleCode);
@@ -157,6 +172,7 @@ namespace CKM_ManagementSystem.BL
                 }
             }
 
+            return bdl.InsertUpdateDeleteData("sp_SaveRoleInfo", sqlprms);
             return result;
         }
 
@@ -175,8 +191,10 @@ namespace CKM_ManagementSystem.BL
             }
         }
 
+        public bool IsRoleCodeDuplicate(string roleCode)
         public async Task<bool> CheckRoleExistsSPAsync(string roleCode)
         {
+            SqlParameter[] sqlprms =
             return await CheckDuplicateRoleCodeSPAsync(roleCode);
         }
 
@@ -186,10 +204,15 @@ namespace CKM_ManagementSystem.BL
 
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                await conn.OpenAsync();
+                new SqlParameter("@RoleCode", (object)roleCode ?? string.Empty)
+            };
 
-                string query;
+            object result = bdl.ExecuteScalar("sp_CheckDuplicateRoleCode", sqlprms);
 
+            if (result != null && result != DBNull.Value)
+            {
+                return Convert.ToInt32(result) > 0;
+            }
                 if (string.IsNullOrEmpty(roleCode))
                 {
                     query = @"
@@ -227,13 +250,13 @@ namespace CKM_ManagementSystem.BL
                             m.MenuID";
                 }
 
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                {
-                    if (!string.IsNullOrEmpty(roleCode))
-                    {
-                        cmd.Parameters.AddWithValue("@RoleCode", roleCode);
-                    }
+            return false;
+        }
 
+        public DataTable GetRoleList()
+        {
+            return bdl.SelectData("sp_GetRoleList");
+        }
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
@@ -254,10 +277,12 @@ namespace CKM_ManagementSystem.BL
             return list;
         }
 
-        public async Task<bool> SaveRoleInfoSPAsync(RoleEntryViewModel model)
+        public DataTable GetRoleByCode(string roleCode)
         {
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            SqlParameter[] sqlprms =
             {
+                new SqlParameter("@RoleCode", (object)roleCode ?? string.Empty)
+            };
                 await conn.OpenAsync();
 
                 string query = @"
@@ -276,6 +301,8 @@ namespace CKM_ManagementSystem.BL
                         VALUES (@RoleCode, @RoleName, @Description, @Status, GETDATE())
                     END";
 
+            return bdl.SelectData("sp_GetRoleByCode", sqlprms);
+        }
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@RoleCode", model.RoleCode ?? (object)DBNull.Value);
@@ -289,8 +316,12 @@ namespace CKM_ManagementSystem.BL
             }
         }
 
-        public async Task<bool> SaveRolePermissionSPAsync(string roleCode, int menuId, bool canRead, bool canWrite, bool canDelete)
+        public DataTable GetRolePermissionsByCode(string roleCode)
         {
+            SqlParameter[] sqlprms =
+            {
+                new SqlParameter("@RoleCode", (object)roleCode ?? string.Empty)
+            };
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 await conn.OpenAsync();
@@ -316,16 +347,23 @@ namespace CKM_ManagementSystem.BL
                     cmd.Parameters.AddWithValue("@CanWrite", canWrite);
                     cmd.Parameters.AddWithValue("@CanDelete", canDelete);
 
+            return bdl.SelectData("sp_SaveRolePermission", sqlprms);
                     int rows = await cmd.ExecuteNonQueryAsync();
                     return rows > 0;
                 }
             }
         }
 
+        public DataTable GetAllMenus()
         public async Task<RoleEntryViewModel?> GetRoleByCodeSPAsync(string roleCode)
         {
+            return bdl.SelectData("sp_GetMenuList");
+        }
             RoleEntryViewModel? role = null;
 
+        private static DataTable ConvertPermissionsToDataTable(List<RolePermission> permissions)
+        {
+            DataTable dt = GetEmptyPermissionsTable();
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 await conn.OpenAsync();
@@ -343,6 +381,16 @@ namespace CKM_ManagementSystem.BL
                 {
                     cmd.Parameters.AddWithValue("@RoleCode", roleCode ?? (object)DBNull.Value);
 
+            if (permissions != null && permissions.Count > 0)
+            {
+                foreach (var item in permissions)
+                {
+                    dt.Rows.Add(
+                        item.MenuId,
+                        item.CanRead,
+                        item.CanWrite,
+                        item.CanDelete
+                    );
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         if (await reader.ReadAsync())
@@ -358,9 +406,19 @@ namespace CKM_ManagementSystem.BL
                     }
                 }
             }
-            return role;
+
+            return dt;
         }
 
+        private static DataTable GetEmptyPermissionsTable()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("MenuId", typeof(int));
+            dt.Columns.Add("CanRead", typeof(bool));
+            dt.Columns.Add("CanWrite", typeof(bool));
+            dt.Columns.Add("CanDelete", typeof(bool));
+            return dt;
+        }
         public async Task<(bool Success, string Message)> DeleteRoleSPAsync(string roleCode)
         {
             var role = await GetRoleByCodeSPAsync(roleCode);
