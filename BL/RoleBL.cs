@@ -89,12 +89,16 @@ namespace CKM_ManagementSystem.BL
                 new SqlParameter("@RoleCode", (object)roleCode ?? string.Empty)
             };
 
-            return bdl.SelectData("sp_GetRolePermission", sqlprms);
+            DataTable dt = bdl.SelectData("sp_GetRolePermission", sqlprms);
+            StandardizeMenuColumns(dt);
+            return dt;
         }
 
         public DataTable GetAllMenus()
         {
-            return bdl.SelectData("sp_GetMenuList");
+            DataTable dt = bdl.SelectData("sp_GetMenuList");
+            StandardizeMenuColumns(dt);
+            return dt;
         }
 
         public bool IsRoleCodeDuplicate(string roleCode)
@@ -391,6 +395,21 @@ namespace CKM_ManagementSystem.BL
         #endregion
 
         #region Private Helper Methods
+
+        private static void StandardizeMenuColumns(DataTable dt)
+        {
+            if (dt == null) return;
+
+            if (dt.Columns.Contains("ParentMenuId") && !dt.Columns.Contains("ParentId"))
+            {
+                dt.Columns["ParentMenuId"].ColumnName = "ParentId";
+            }
+
+            if (dt.Columns.Contains("MenuID") && !dt.Columns.Contains("MenuId"))
+            {
+                dt.Columns["MenuID"].ColumnName = "MenuId";
+            }
+        }
 
         private bool ParseStatus(object statusObj)
         {
