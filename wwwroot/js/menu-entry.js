@@ -8,6 +8,14 @@ $(document).ready(function () {
     const $typeParent = $('#typeParent');
     const $statusActive = $('#statusActive');
 
+    const validator = $menuForm.validate();
+    validator.settings.onfocusout = false;
+    validator.settings.onclick = false;
+    validator.settings.onkeyup = function (element) {
+        if ($(element).hasClass('input-validation-error') || $(element).hasClass('error')) {
+            this.element(element);
+        }
+    };
     if (typeof successMessage !== 'undefined' && successMessage !== '') {
         const modalElement = document.getElementById('successModal');
         if (modalElement) {
@@ -24,11 +32,39 @@ $(document).ready(function () {
         }, 100);
         
     }
-
+    $menuForm.on('keydown', ':input', function (e) {
+        if (e.key !== 'Enter') {
+            return;
+        }
+        const $current = $(this);
+        if ($current.is(':submit') || $current.is('textarea')) {
+            return;
+        }
+        e.preventDefault();
+        const isCurrentRequired = $current.prop('required') || $current.data('val-required') !== undefined || $current.hasClass('required');
+        if (isCurrentRequired && !validator.element($current)) {
+            $current.focus();
+            return;
+        }
+        const $allInputs = $menuForm.find(':input:visible:not(:disabled)')
+            .filter(function () {
+                return this.type !== 'hidden' && this.type !== 'submit' && this.type !== 'button' && this.type !== 'radio';
+            });
+        const currentIndex = $allInputs.index($current);
+        if (currentIndex !== -1) {
+            const $nextRequired = $allInputs.slice(currentIndex + 1).filter(function () {
+                return $(this).prop('required') || $(this).data('val-required') !== undefined || $(this).hasClass('required');
+            }).first();
+            if ($nextRequired.length > 0) {
+                $nextRequired.focus();
+            } else if (currentIndex < $allInputs.length - 1) {
+                $allInputs.eq(currentIndex + 1).focus();
+            }
+        }
+    });
     $menuForm.on('submit', function (e) {
         if ($menuForm.valid && !$menuForm.valid()) {
             e.preventDefault();
-            const validator = $menuForm.validate();
             const $invalidInputs = $menuForm.find(':input').filter(function () {
                 return !validator.element(this);
             });
@@ -84,8 +120,8 @@ $(document).ready(function () {
             $typeParent.prop('checked', true);
             $statusActive.prop('checked', true);
 
+            validator.resetForm();
             if ($menuForm.data('validator')) {
-                $menuForm.data('validator').resetForm();
                 $menuForm.find('.field-validation-error')
                     .removeClass('field-validation-error')
                     .addClass('field-validation-valid')
