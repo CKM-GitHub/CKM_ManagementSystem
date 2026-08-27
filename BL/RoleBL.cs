@@ -255,10 +255,8 @@ namespace CKM_ManagementSystem.BL
                         FROM Menus m
                         WHERE m.Deleted_Date IS NULL
                         ORDER BY 
-                            COALESCE(m.ParentMenuId, m.MenuID),
-                            CASE WHEN m.ParentMenuId IS NULL THEN 0 ELSE 1 END,
-                            m.DisplayOrder,
-                            m.MenuID";
+                            m.DisplayOrder ASC, 
+                            m.MenuID ASC";
                 }
                 else
                 {
@@ -275,10 +273,8 @@ namespace CKM_ManagementSystem.BL
                             AND p.Role_Code = @RoleCode
                         WHERE m.Deleted_Date IS NULL
                         ORDER BY 
-                            COALESCE(m.ParentMenuId, m.MenuID),
-                            CASE WHEN m.ParentMenuId IS NULL THEN 0 ELSE 1 END,
-                            m.DisplayOrder,
-                            m.MenuID";
+                            m.DisplayOrder ASC, 
+                            m.MenuID ASC";
                 }
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))

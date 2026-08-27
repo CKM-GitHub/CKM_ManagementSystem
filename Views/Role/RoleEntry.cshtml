@@ -58,58 +58,78 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @if (Model != null && Model.MenuPermissions != null && Model.MenuPermissions.Count > 0)
+                            @if (Model?.MenuPermissions != null && Model.MenuPermissions.Count > 0)
                             {
-                                for (int i = 0; i < Model.MenuPermissions.Count; i++)
+                                var rootMenus = Model.MenuPermissions
+                                .Where(m => !m.ParentId.HasValue || m.ParentId == 0)
+                                .ToList();
+
+                                foreach (var root in rootMenus)
                                 {
-                                    var currentMenu = Model.MenuPermissions[i];
-                                    bool isParent = !currentMenu.ParentId.HasValue || currentMenu.ParentId == 0;
+                                    int rootIndex = Model.MenuPermissions.IndexOf(root);
+                                    var children = Model.MenuPermissions
+                                    .Where(m => m.ParentId == root.MenuId)
+                                    .ToList();
 
-                                    bool isLastSubmenu = false;
-                                    if (!isParent)
-                                    {
-                                        var currentParentId = currentMenu.ParentId;
-                                        isLastSubmenu = (i == Model.MenuPermissions.Count - 1) ||
-                                        (Model.MenuPermissions[i + 1].ParentId != currentParentId);
-                                    }
-
-                                    <tr class="@(isParent ? "parent-menu-row" : "child-menu-row")"
-                                        data-menu-id="@currentMenu.MenuId"
-                                        data-parent-id="@(currentMenu.ParentId ?? 0)">
-
-                                        <input type="hidden" asp-for="MenuPermissions[i].MenuId" />
-                                        <input type="hidden" asp-for="MenuPermissions[i].MenuName" />
-                                        <input type="hidden" asp-for="MenuPermissions[i].ParentId" />
+                                    <tr class="parent-menu-row fw-bold" data-menu-id="@root.MenuId" data-parent-id="0">
+                                        <input type="hidden" name="MenuPermissions[@rootIndex].MenuId" value="@root.MenuId" />
+                                        <input type="hidden" name="MenuPermissions[@rootIndex].MenuName" value="@root.MenuName" />
+                                        <input type="hidden" name="MenuPermissions[@rootIndex].ParentId" value="@root.ParentId" />
 
                                         <td style="padding-left: 1.5rem;">
-                                            @if (isParent)
-                                            {
-                                                <span class="fw-bold text-dark">@currentMenu.MenuName</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="text-muted me-2 font-monospace ms-3">@(isLastSubmenu ? "└─" : "├─")</span>
-                                                <span class="text-secondary">@currentMenu.MenuName</span>
-                                            }
+                                            <span class="fw-bold text-dark">@root.MenuName</span>
                                         </td>
-
                                         <td>
                                             <div class="d-flex justify-content-center gap-3">
                                                 <div class="form-check form-check-inline mb-0 me-0">
-                                                    <input class="form-check-input chk-read" type="checkbox" asp-for="MenuPermissions[i].CanRead" id="read_@i">
-                                                    <label class="form-check-label small" for="read_@i">Read</label>
+                                                    <input class="form-check-input chk-read" type="checkbox" name="MenuPermissions[@rootIndex].CanRead" value="true" id="read_@rootIndex" @(root.CanRead ? "checked" : "") />
+                                                    <label class="form-check-label small" for="read_@rootIndex">Read</label>
                                                 </div>
                                                 <div class="form-check form-check-inline mb-0 me-0">
-                                                    <input class="form-check-input chk-write" type="checkbox" asp-for="MenuPermissions[i].CanWrite" id="write_@i">
-                                                    <label class="form-check-label small" for="write_@i">Write</label>
+                                                    <input class="form-check-input chk-write" type="checkbox" name="MenuPermissions[@rootIndex].CanWrite" value="true" id="write_@rootIndex" @(root.CanWrite ? "checked" : "") />
+                                                    <label class="form-check-label small" for="write_@rootIndex">Write</label>
                                                 </div>
                                                 <div class="form-check form-check-inline mb-0 me-0">
-                                                    <input class="form-check-input chk-delete" type="checkbox" asp-for="MenuPermissions[i].CanDelete" id="delete_@i">
-                                                    <label class="form-check-label small" for="delete_@i">Delete</label>
+                                                    <input class="form-check-input chk-delete" type="checkbox" name="MenuPermissions[@rootIndex].CanDelete" value="true" id="delete_@rootIndex" @(root.CanDelete ? "checked" : "") />
+                                                    <label class="form-check-label small" for="delete_@rootIndex">Delete</label>
                                                 </div>
                                             </div>
                                         </td>
                                     </tr>
+
+                                    for (int c = 0; c < children.Count; c++)
+                                    {
+                                        var child = children[c];
+                                        int childIndex = Model.MenuPermissions.IndexOf(child);
+                                        bool isLastChild = (c == children.Count - 1);
+
+                                        <tr class="child-menu-row" data-menu-id="@child.MenuId" data-parent-id="@root.MenuId">
+                                            <input type="hidden" name="MenuPermissions[@childIndex].MenuId" value="@child.MenuId" />
+                                            <input type="hidden" name="MenuPermissions[@childIndex].MenuName" value="@child.MenuName" />
+                                            <input type="hidden" name="MenuPermissions[@childIndex].ParentId" value="@child.ParentId" />
+
+                                            <td style="padding-left: 1.5rem;">
+                                                <span class="text-muted me-2 font-monospace ms-3">@(isLastChild ? "└─" : "├─")</span>
+                                                <span class="text-secondary">@child.MenuName</span>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex justify-content-center gap-3">
+                                                    <div class="form-check form-check-inline mb-0 me-0">
+                                                        <input class="form-check-input chk-read" type="checkbox" name="MenuPermissions[@childIndex].CanRead" value="true" id="read_@childIndex" @(child.CanRead ? "checked" : "") />
+                                                        <label class="form-check-label small" for="read_@childIndex">Read</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline mb-0 me-0">
+                                                        <input class="form-check-input chk-write" type="checkbox" name="MenuPermissions[@childIndex].CanWrite" value="true" id="write_@childIndex" @(child.CanWrite ? "checked" : "") />
+                                                        <label class="form-check-label small" for="write_@childIndex">Write</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline mb-0 me-0">
+                                                        <input class="form-check-input chk-delete" type="checkbox" name="MenuPermissions[@childIndex].CanDelete" value="true" id="delete_@childIndex" @(child.CanDelete ? "checked" : "") />
+                                                        <label class="form-check-label small" for="delete_@childIndex">Delete</label>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
                                 }
                             }
                             else

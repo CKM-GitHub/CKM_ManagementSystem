@@ -38,7 +38,6 @@ namespace CKM_ManagementSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> RoleEntry(string? code, string? roleCode)
         {
-            
             string? targetCode = !string.IsNullOrEmpty(code) ? code : roleCode;
 
             var model = new RoleEntryViewModel
@@ -67,9 +66,11 @@ namespace CKM_ManagementSystem.Controllers
                 rawPermissions = await _roleBL.GetMenuPermissionsAsync(null);
             }
 
-            if (rawPermissions != null)
+            if (rawPermissions != null && rawPermissions.Any())
             {
-                model.MenuPermissions = rawPermissions.Select(p => new RolePermissionViewModel
+                var sortedPermissions = SortMenuHierarchy(rawPermissions);
+
+                model.MenuPermissions = sortedPermissions.Select(p => new RolePermissionViewModel
                 {
                     MenuId = p.MenuId,
                     MenuName = p.MenuName,
@@ -156,6 +157,46 @@ namespace CKM_ManagementSystem.Controllers
             catch (Exception ex)
             {
                 return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        private List<MenuPermissionViewModel> SortMenuHierarchy(List<MenuPermissionViewModel> rawList)
+        {
+            if (rawList == null || !rawList.Any())
+                return new List<MenuPermissionViewModel>();
+
+            var sortedList = new List<MenuPermissionViewModel>();
+
+            
+            var rootMenus = rawList
+                .Where(m => !m.ParentId.HasValue || m.ParentId == 0)
+                .ToList();
+
+            
+            foreach (var root in rootMenus)
+            {
+                AddMenuAndChildren(root, rawList, sortedList);
+            }
+
+           
+            var addedIds = sortedList.Select(x => x.MenuId).ToHashSet();
+            var orphanMenus = rawList.Where(m => !addedIds.Contains(m.MenuId)).ToList();
+            sortedList.AddRange(orphanMenus);
+
+            return sortedList;
+        }
+
+        private void AddMenuAndChildren(MenuPermissionViewModel parent, List<MenuPermissionViewModel> allMenus, List<MenuPermissionViewModel> result)
+        {
+            result.Add(parent);
+
+            var children = allMenus
+                .Where(m => m.ParentId.HasValue && m.ParentId.Value == parent.MenuId)
+                .ToList();
+
+            foreach (var child in children)
+            {
+                AddMenuAndChildren(child, allMenus, result);
             }
         }
     }
