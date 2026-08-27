@@ -37,11 +37,11 @@
             <div class="mb-4 d-flex align-items-center">
                 <label class="form-label-custom mb-0 me-4">Status</label>
                 <div class="form-check form-check-inline mb-0 me-3">
-                    <input class="form-check-input" type="radio" asp-for="Status" value="true" id="statusActive" checked />
+                    <input class="form-check-input" type="radio" asp-for="Status" value="true" id="statusActive" checked="@(Model?.Status ?? true)" />
                     <label class="form-check-label fw-semibold small text-dark" for="statusActive">Active</label>
                 </div>
                 <div class="form-check form-check-inline mb-0">
-                    <input class="form-check-input" type="radio" asp-for="Status" value="false" id="statusInactive" />
+                    <input class="form-check-input" type="radio" asp-for="Status" value="false" id="statusInactive" checked="@(Model?.Status == false)" />
                     <label class="form-check-label fw-semibold small text-dark" for="statusInactive">Inactive</label>
                 </div>
             </div>
@@ -62,34 +62,35 @@
                             {
                                 for (int i = 0; i < Model.MenuPermissions.Count; i++)
                                 {
-                                    // ParentId မရှိပါက သို့မဟုတ် 0 ဖြစ်ပါက Parent Menu ဟု သတ်မှတ်ပါသည်
-                                    bool isParent = !Model.MenuPermissions[i].ParentId.HasValue || Model.MenuPermissions[i].ParentId == 0;
+                                    var currentMenu = Model.MenuPermissions[i];
+
+                                    bool isParent = !currentMenu.ParentId.HasValue || currentMenu.ParentId == 0;
 
                                     bool isLastSubmenu = false;
                                     if (!isParent)
                                     {
-                                        var currentParentId = Model.MenuPermissions[i].ParentId;
+                                        var currentParentId = currentMenu.ParentId;
                                         isLastSubmenu = (i == Model.MenuPermissions.Count - 1) ||
                                         (Model.MenuPermissions[i + 1].ParentId != currentParentId);
                                     }
 
                                     <tr class="@(isParent ? "parent-menu-row" : "child-menu-row")"
-                                        data-menu-id="@Model.MenuPermissions[i].MenuId"
-                                        data-parent-id="@(Model.MenuPermissions[i].ParentId ?? 0)">
+                                        data-menu-id="@currentMenu.MenuId"
+                                        data-parent-id="@(currentMenu.ParentId ?? 0)">
 
-                                        <input type="hidden" name="MenuPermissions[@i].MenuId" value="@Model.MenuPermissions[i].MenuId" />
-                                        <input type="hidden" name="MenuPermissions[@i].MenuName" value="@Model.MenuPermissions[i].MenuName" />
-                                        <input type="hidden" name="MenuPermissions[@i].ParentId" value="@Model.MenuPermissions[i].ParentId" />
+                                        <input type="hidden" asp-for="MenuPermissions[i].MenuId" />
+                                        <input type="hidden" asp-for="MenuPermissions[i].MenuName" />
+                                        <input type="hidden" asp-for="MenuPermissions[i].ParentId" />
 
                                         <td style="padding-left: 1.5rem;">
                                             @if (isParent)
                                             {
-                                                <span class="fw-bold text-dark">@Model.MenuPermissions[i].MenuName</span>
+                                                <span class="fw-bold text-dark">@currentMenu.MenuName</span>
                                             }
                                             else
                                             {
-                                                <span class="text-muted me-2 font-monospace">@(isLastSubmenu ? "└─" : "├─")</span>
-                                                <span class="text-secondary">@Model.MenuPermissions[i].MenuName</span>
+                                                <span class="text-muted me-2 font-monospace ms-3">@(isLastSubmenu ? "└─" : "├─")</span>
+                                                <span class="text-secondary">@currentMenu.MenuName</span>
                                             }
                                         </td>
 
@@ -212,7 +213,6 @@
                 }
             });
 
-            
             $(document).on('change', '.parent-menu-row input[type="checkbox"]', function () {
                 var $parentRow = $(this).closest('tr');
                 var parentId = $parentRow.data('menu-id');
@@ -230,7 +230,6 @@
                 }
             });
 
-            
             $(document).on('change', '.child-menu-row input[type="checkbox"]', function () {
                 var $childRow = $(this).closest('tr');
                 var parentId = $childRow.data('parent-id');

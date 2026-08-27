@@ -77,11 +77,6 @@ namespace CKM_ManagementSystem.BL
             return false;
         }
 
-        public DataTable GetRoleList()
-        {
-            return bdl.SelectData("sp_GetRoleList");
-        }
-
         public DataTable GetRoleByCode(string roleCode)
         {
             SqlParameter[] sqlprms =
@@ -99,12 +94,31 @@ namespace CKM_ManagementSystem.BL
                 new SqlParameter("@RoleCode", (object)roleCode ?? string.Empty)
             };
 
-            return bdl.SelectData("sp_SaveRolePermission", sqlprms);
+            DataTable dt = bdl.SelectData("sp_GetRolePermission", sqlprms);
+            StandardizeMenuColumns(dt);
+            return dt;
         }
 
         public DataTable GetAllMenus()
         {
-            return bdl.SelectData("sp_GetMenuList");
+            DataTable dt = bdl.SelectData("sp_GetMenuList");
+            StandardizeMenuColumns(dt);
+            return dt;
+        }
+
+        private static void StandardizeMenuColumns(DataTable dt)
+        {
+            if (dt == null) return;
+
+            if (dt.Columns.Contains("ParentMenuId") && !dt.Columns.Contains("ParentId"))
+            {
+                dt.Columns["ParentMenuId"].ColumnName = "ParentId";
+            }
+
+            if (dt.Columns.Contains("MenuID") && !dt.Columns.Contains("MenuId"))
+            {
+                dt.Columns["MenuID"].ColumnName = "MenuId";
+            }
         }
 
         private static DataTable ConvertPermissionsToDataTable(List<RolePermission> permissions)

@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 using CKM_ManagementSystem.BL;
 using CKM_ManagementSystem.Models.Entities;
 using CKM_ManagementSystem.Models.ViewModels.Roles;
-using Microsoft.AspNetCore.Mvc;
 
 namespace CKM_ManagementSystem.Controllers
 {
@@ -19,183 +19,129 @@ namespace CKM_ManagementSystem.Controllers
         }
 
         [HttpGet]
-        public IActionResult RoleEntry(string? roleCode)
+        public IActionResult RoleEntry(string? id)
         {
-            var model = new RoleEntryViewModel
-            {
-                MenuPermissions = new List<RolePermissionViewModel>()
-            };
+            var model = new RoleEntryViewModel();
+            List<RolePermissionViewModel> rawPermissions = new List<RolePermissionViewModel>();
 
-            if (!string.IsNullOrEmpty(roleCode))
+            if (!string.IsNullOrEmpty(id))
             {
-                DataTable dtRole = _roleBL.GetRoleByCode(roleCode);
+               
+                DataTable dtRole = _roleBL.GetRoleByCode(id);
                 if (dtRole != null && dtRole.Rows.Count > 0)
                 {
                     DataRow row = dtRole.Rows[0];
-                    model.RoleCode = row["Role_Code"]?.ToString() ?? "";
-                    model.DisplayName = row["Role_Name"]?.ToString() ?? "";
-                    model.Description = row["Description"]?.ToString() ?? "";
+                    model.RoleCode = row["Role_Code"]?.ToString() ?? string.Empty;
+                    model.DisplayName = row["Role_Name"]?.ToString() ?? string.Empty;
+                    model.Description = row["Description"] != DBNull.Value ? row["Description"]?.ToString() : null;
                     model.Status = row["Status"] != DBNull.Value && Convert.ToBoolean(row["Status"]);
                 }
 
-                DataTable dtPermissions = _roleBL.GetRolePermissionsByCode(roleCode);
-                model.MenuPermissions = MapDataTableToPermissions(dtPermissions);
+                DataTable dtPermissions = _roleBL.GetRolePermissionsByCode(id);
+                rawPermissions = MapDataTableToMenuPermissionList(dtPermissions);
             }
             else
             {
+                
                 DataTable dtMenus = _roleBL.GetAllMenus();
-                model.MenuPermissions = MapDataTableToPermissions(dtMenus);
+                rawPermissions = MapDataTableToMenuPermissionList(dtMenus);
             }
 
-            model.MenuPermissions = SortMenuHierarchy(model.MenuPermissions);
+           
+            model.MenuPermissions = SortMenuHierarchy(rawPermissions);
 
             return View(model);
         }
 
         [HttpPost]
-        public IActionResult CheckDuplicateCode(string roleCode)
-        {
-            bool isDuplicate = _roleBL.IsRoleCodeDuplicate(roleCode);
-            return Json(new { isDuplicate = isDuplicate });
-        }
-
-        [HttpPost]
-        public IActionResult SaveRole(RoleEntryViewModel model, bool isEdit = false)
+        [ValidateAntiForgeryToken]
+        public IActionResult RoleEntry(RoleEntryViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                var errors = ModelState.Values.SelectMany(v => v.Errors)
-                                              .Select(e => e.ErrorMessage)
-                                              .FirstOrDefault();
-                return Json(new { success = false, message = errors ?? "Validation failed." });
+                return View(model);
             }
 
-            try
+            var role = new Roles
             {
-                Roles role = new Roles
-                {
-                    RoleCode = model.RoleCode,
-                    RoleName = model.DisplayName,
-                    Description = model.Description,
-                    Status = model.Status
-                };
+                RoleCode = model.RoleCode,
+                RoleName = model.DisplayName,
+                Description = model.Description,
+                Status = model.Status
+            };
 
-                List<RolePermission> permissions = new List<RolePermission>();
-                if (model.MenuPermissions != null)
-                {
-                    foreach (var p in model.MenuPermissions)
-                    {
-                        permissions.Add(new RolePermission
-                        {
-                            RoleCode = model.RoleCode,
-                            MenuId = p.MenuId,
-                            CanRead = p.CanRead,
-                            CanWrite = p.CanWrite,
-                            CanDelete = p.CanDelete
-                        });
-                    }
-                }
-
-                string result;
-                if (isEdit)
-                {
-                    result = _roleBL.Role_Update(role, permissions);
-                }
-                else
-                {
-                    if (_roleBL.IsRoleCodeDuplicate(model.RoleCode))
-                    {
-                        return Json(new { success = false, message = "This Role Code already exists." });
-                    }
-                    result = _roleBL.Role_Insert(role, permissions);
-                }
-
-                if (result == "true" || result == "1")
-                {
-                    return Json(new
-                    {
-                        success = true,
-                        isEdit = isEdit,
-                        message = isEdit ? "Update is complete." : "Registration is complete."
-                    });
-                }
-                else
-                {
-                    return Json(new { success = false, message = result });
-                }
-            }
-            catch (Exception ex)
+            var permissions = model.MenuPermissions.Select(p => new RolePermission
             {
-                return Json(new { success = false, message = "An error occurred while saving data: " + ex.Message });
+                MenuId = p.MenuId,
+                CanRead = p.CanRead,
+                CanWrite = p.CanWrite,
+                CanDelete = p.CanDelete
+            }).ToList();
+
+            string result = _roleBL.Role_Insert(role, permissions);
+
+            if (result.Equals("SUCCESS", StringComparison.OrdinalIgnoreCase) || result.Contains("successfully", StringComparison.OrdinalIgnoreCase))
+            {
+                TempData["SuccessMessage"] = "Role saved successfully.";
+                return RedirectToAction("RoleList");
             }
+
+            ViewBag.ErrorMessage = result;
+            return View(model);
         }
 
-        [HttpGet]
-        public IActionResult RoleList()
+        private List<RolePermissionViewModel> MapDataTableToMenuPermissionList(DataTable dt)
         {
-            return View();
+            var list = new List<RolePermissionViewModel>();
+            if (dt == null) return list;
+
+            foreach (DataRow row in dt.Rows)
+            {
+                int? parentId = null;
+                if (dt.Columns.Contains("ParentId") && row["ParentId"] != DBNull.Value)
+                {
+                    int parsedParentId = Convert.ToInt32(row["ParentId"]);
+                    if (parsedParentId > 0) parentId = parsedParentId;
+                }
+
+                list.Add(new RolePermissionViewModel
+                {
+                    MenuId = Convert.ToInt32(row["MenuId"]),
+                    MenuName = row["MenuName"]?.ToString() ?? string.Empty,
+                    ParentId = parentId,
+                    CanRead = dt.Columns.Contains("CanRead") && row["CanRead"] != DBNull.Value && Convert.ToBoolean(row["CanRead"]),
+                    CanWrite = dt.Columns.Contains("CanWrite") && row["CanWrite"] != DBNull.Value && Convert.ToBoolean(row["CanWrite"]),
+                    CanDelete = dt.Columns.Contains("CanDelete") && row["CanDelete"] != DBNull.Value && Convert.ToBoolean(row["CanDelete"])
+                });
+            }
+
+            return list;
         }
 
-        private static List<RolePermissionViewModel> SortMenuHierarchy(List<RolePermissionViewModel> rawList)
+        private List<RolePermissionViewModel> SortMenuHierarchy(List<RolePermissionViewModel> rawList)
         {
-            if (rawList == null || !rawList.Any())
-                return new List<RolePermissionViewModel>();
+            if (rawList == null || !rawList.Any()) return new List<RolePermissionViewModel>();
 
             var sortedList = new List<RolePermissionViewModel>();
 
-            var mainMenus = rawList.Where(m => m.ParentId == null || m.ParentId == 0)
-                                   .OrderBy(m => m.MenuId)
-                                   .ToList();
+           
+            var mainMenus = rawList.Where(m => !m.ParentId.HasValue || m.ParentId.Value == 0).ToList();
 
-            foreach (var main in mainMenus)
+            foreach (var mainMenu in mainMenus)
             {
-                sortedList.Add(main);
+                sortedList.Add(mainMenu);
 
-                var subMenus = rawList.Where(m => m.ParentId == main.MenuId)
-                                      .OrderBy(m => m.MenuId)
-                                      .ToList();
+               
+                var subMenus = rawList.Where(m => m.ParentId.HasValue && m.ParentId.Value == mainMenu.MenuId).ToList();
                 sortedList.AddRange(subMenus);
             }
 
-            var orphanMenus = rawList.Except(sortedList).ToList();
-            if (orphanMenus.Any())
-            {
-                sortedList.AddRange(orphanMenus.OrderBy(m => m.MenuId));
-            }
+            
+            var addedIds = sortedList.Select(s => s.MenuId).ToHashSet();
+            var orphanMenus = rawList.Where(m => !addedIds.Contains(m.MenuId)).ToList();
+            sortedList.AddRange(orphanMenus);
 
             return sortedList;
-        }
-
-        private static List<RolePermissionViewModel> MapDataTableToPermissions(DataTable dt)
-        {
-            var list = new List<RolePermissionViewModel>();
-            if (dt != null)
-            {
-                foreach (DataRow row in dt.Rows)
-                {
-                    int? parentId = null;
-
-                    if (row.Table.Columns.Contains("ParentMenuId") && row["ParentMenuId"] != DBNull.Value)
-                    {
-                        parentId = Convert.ToInt32(row["ParentMenuId"]);
-                    }
-                    else if (row.Table.Columns.Contains("ParentId") && row["ParentId"] != DBNull.Value)
-                    {
-                        parentId = Convert.ToInt32(row["ParentId"]);
-                    }
-
-                    list.Add(new RolePermissionViewModel
-                    {
-                        MenuId = row.Table.Columns.Contains("MenuId") ? Convert.ToInt32(row["MenuId"]) : 0,
-                        MenuName = row.Table.Columns.Contains("MenuName") ? row["MenuName"].ToString() ?? "" : "",
-                        ParentId = parentId,
-                        CanRead = row.Table.Columns.Contains("CanRead") && Convert.ToBoolean(row["CanRead"]),
-                        CanWrite = row.Table.Columns.Contains("CanWrite") && Convert.ToBoolean(row["CanWrite"]),
-                        CanDelete = row.Table.Columns.Contains("CanDelete") && Convert.ToBoolean(row["CanDelete"])
-                    });
-                }
-            }
-            return list;
         }
     }
 }
