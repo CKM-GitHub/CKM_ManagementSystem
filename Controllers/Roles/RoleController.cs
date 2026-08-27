@@ -36,8 +36,11 @@ namespace CKM_ManagementSystem.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> RoleEntry(string? roleCode)
+        public async Task<IActionResult> RoleEntry(string? code, string? roleCode)
         {
+            
+            string? targetCode = !string.IsNullOrEmpty(code) ? code : roleCode;
+
             var model = new RoleEntryViewModel
             {
                 MenuPermissions = new List<RolePermissionViewModel>()
@@ -45,18 +48,19 @@ namespace CKM_ManagementSystem.Controllers
 
             List<MenuPermissionViewModel> rawPermissions;
 
-            if (!string.IsNullOrEmpty(roleCode))
+            if (!string.IsNullOrEmpty(targetCode))
             {
-                var role = await _roleBL.GetRoleByCodeAsync(roleCode);
+                var role = await _roleBL.GetRoleByCodeAsync(targetCode);
                 if (role != null)
                 {
                     model.RoleCode = role.RoleCode;
                     model.DisplayName = role.DisplayName;
                     model.Description = role.Description;
                     model.Status = role.Status;
+                    model.IsEdit = true;
                 }
 
-                rawPermissions = await _roleBL.GetMenuPermissionsAsync(roleCode);
+                rawPermissions = await _roleBL.GetMenuPermissionsAsync(targetCode);
             }
             else
             {
@@ -69,14 +73,12 @@ namespace CKM_ManagementSystem.Controllers
                 {
                     MenuId = p.MenuId,
                     MenuName = p.MenuName,
-                    ParentId = p.ParentId,
+                    ParentId = (p.ParentId.HasValue && p.ParentId.Value > 0) ? p.ParentId : null,
                     CanRead = p.CanRead,
                     CanWrite = p.CanWrite,
                     CanDelete = p.CanDelete
                 }).ToList();
             }
-
-            model.MenuPermissions = SortMenuHierarchy(model.MenuPermissions);
 
             return View(model);
         }
@@ -94,7 +96,10 @@ namespace CKM_ManagementSystem.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View("RoleEntry", model);
+                var errors = string.Join(" | ", ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage));
+                return Json(new { success = false, message = errors });
             }
 
             var role = new Roles
@@ -105,17 +110,18 @@ namespace CKM_ManagementSystem.Controllers
                 Status = model.Status
             };
 
-            var permissions = model.MenuPermissions.Select(p => new RolePermission
+            var permissions = model.MenuPermissions?.Select(p => new RolePermission
             {
                 MenuId = p.MenuId,
                 CanRead = p.CanRead,
                 CanWrite = p.CanWrite,
                 CanDelete = p.CanDelete
-            }).ToList();
+            }).ToList() ?? new List<RolePermission>();
 
             string result;
+            bool isEditMode = isEdit || model.IsEdit;
 
-            if (isEdit)
+            if (isEditMode)
             {
                 result = _roleBL.Role_Update(role, permissions);
             }
@@ -128,14 +134,15 @@ namespace CKM_ManagementSystem.Controllers
                 result = _roleBL.Role_Insert(role, permissions);
             }
 
-            if (result.Equals("SUCCESS", StringComparison.OrdinalIgnoreCase) || result.Contains("successfully", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(result, "SUCCESS", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(result, "true", StringComparison.OrdinalIgnoreCase) ||
+                (result != null && result.Contains("successfully", StringComparison.OrdinalIgnoreCase)))
             {
-                TempData["SuccessMessage"] = "Role saved successfully.";
-                return RedirectToAction("RoleList");
+                string successMsg = isEditMode ? "Role updated successfully." : "Role registered successfully.";
+                return Json(new { success = true, message = successMsg });
             }
 
-            ViewBag.ErrorMessage = result;
-            return View("RoleEntry", model);
+            return Json(new { success = false, message = result });
         }
 
         [HttpPost]
@@ -151,62 +158,5 @@ namespace CKM_ManagementSystem.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
-
-        #region Helper Methods
-
-        private List<RolePermissionViewModel> MapDataTableToMenuPermissionList(DataTable dt)
-        {
-            var list = new List<RolePermissionViewModel>();
-            if (dt == null) return list;
-
-            foreach (DataRow row in dt.Rows)
-            {
-                int? parentId = null;
-                if (dt.Columns.Contains("ParentId") && row["ParentId"] != DBNull.Value)
-                {
-                    int parsedParentId = Convert.ToInt32(row["ParentId"]);
-                    if (parsedParentId > 0) parentId = parsedParentId;
-                }
-
-                list.Add(new RolePermissionViewModel
-                {
-                    MenuId = Convert.ToInt32(row["MenuId"]),
-                    MenuName = row["MenuName"]?.ToString() ?? string.Empty,
-                    ParentId = parentId,
-                    CanRead = dt.Columns.Contains("CanRead") && row["CanRead"] != DBNull.Value && Convert.ToBoolean(row["CanRead"]),
-                    CanWrite = dt.Columns.Contains("CanWrite") && row["CanWrite"] != DBNull.Value && Convert.ToBoolean(row["CanWrite"]),
-                    CanDelete = dt.Columns.Contains("CanDelete") && row["CanDelete"] != DBNull.Value && Convert.ToBoolean(row["CanDelete"])
-                });
-            }
-
-            return list;
-        }
-
-        private List<RolePermissionViewModel> SortMenuHierarchy(List<RolePermissionViewModel> rawList)
-        {
-            if (rawList == null || !rawList.Any()) return new List<RolePermissionViewModel>();
-
-            var sortedList = new List<RolePermissionViewModel>();
-
-            var mainMenus = rawList.Where(m => !m.ParentId.HasValue || m.ParentId.Value == 0).ToList();
-
-            foreach (var mainMenu in mainMenus)
-            {
-                sortedList.Add(mainMenu);
-
-                var subMenus = rawList.Where(m => m.ParentId.HasValue && m.ParentId.Value == mainMenu.MenuId).ToList();
-                sortedList.AddRange(subMenus);
-            }
-
-            var orphanMenus = rawList.Except(sortedList).OrderBy(m => m.MenuId).ToList();
-            if (orphanMenus.Any())
-            {
-                sortedList.AddRange(orphanMenus);
-            }
-
-            return sortedList;
-        }
-
-        #endregion
     }
 }

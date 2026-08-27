@@ -253,6 +253,7 @@ namespace CKM_ManagementSystem.BL
                             CAST(0 AS BIT) AS CanWrite,
                             CAST(0 AS BIT) AS CanDelete
                         FROM Menus m
+                        WHERE m.Deleted_Date IS NULL
                         ORDER BY 
                             COALESCE(m.ParentMenuId, m.MenuID),
                             CASE WHEN m.ParentMenuId IS NULL THEN 0 ELSE 1 END,
@@ -272,6 +273,7 @@ namespace CKM_ManagementSystem.BL
                         FROM Menus m
                         LEFT JOIN UserRolePermissions p ON m.MenuID = p.MenuID 
                             AND p.Role_Code = @RoleCode
+                        WHERE m.Deleted_Date IS NULL
                         ORDER BY 
                             COALESCE(m.ParentMenuId, m.MenuID),
                             CASE WHEN m.ParentMenuId IS NULL THEN 0 ELSE 1 END,

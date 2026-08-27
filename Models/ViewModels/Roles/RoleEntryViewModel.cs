@@ -19,6 +19,9 @@ namespace CKM_ManagementSystem.Models.ViewModels.Roles
 
         public bool Status { get; set; } = true;
 
+       
+        public bool IsEdit { get; set; } = false;
+
         public List<RolePermissionViewModel> MenuPermissions { get; set; } = new List<RolePermissionViewModel>();
     }
 

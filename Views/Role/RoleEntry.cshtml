@@ -1,6 +1,6 @@
 ﻿@model CKM_ManagementSystem.Models.ViewModels.Roles.RoleEntryViewModel
 @{
-    bool isEditMode = Model != null && !string.IsNullOrEmpty(Model.RoleCode);
+    bool isEditMode = Model != null && (!string.IsNullOrEmpty(Model.RoleCode) || Model.IsEdit);
     ViewData["Title"] = isEditMode ? "Edit User Role" : "User Role Entry";
 }
 
@@ -14,6 +14,7 @@
 
         <form id="roleForm">
             @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="IsEdit" id="IsEdit" value="@(isEditMode ? "true" : "false")" />
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3 small"></div>
 
             <div class="mb-3">
@@ -251,6 +252,7 @@
                 $('#roleForm')[0].reset();
                 $('span.text-danger').text('');
                 $('#statusActive').prop('checked', true);
+                $('.permissions-table input[type="checkbox"]').prop('checked', false);
                 $('#RoleCode').focus();
             });
 
@@ -263,16 +265,16 @@
                     return;
                 }
 
-                let formData = $(this).serialize();
-                let isEditParam = "&isEdit=" + isEditMode;
-                formData += isEditParam;
-
                 $('#btnRegister').prop('disabled', true);
+
+                let formData = $(this).serializeArray();
+                formData.push({ name: "isEdit", value: isEditMode });
+                formData.push({ name: "IsEdit", value: isEditMode });
 
                 $.ajax({
                     url: '/Role/SaveRole',
                     type: 'POST',
-                    data: formData,
+                    data: $.param(formData),
                     success: function (response) {
                         $('#btnRegister').prop('disabled', false);
 
@@ -280,16 +282,13 @@
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Success!',
-                                text: response.message || 'Registration is complete.',
+                                text: response.message || 'Operation completed successfully.',
                                 confirmButtonText: 'OK'
                             }).then((result) => {
                                 if (isEditMode) {
                                     window.location.href = '/Role/RoleList';
                                 } else {
-                                    $('#roleForm')[0].reset();
-                                    $('span.text-danger').text('');
-                                    $('#statusActive').prop('checked', true);
-                                    $('#RoleCode').focus();
+                                    $('#btnClear').trigger('click');
                                 }
                             });
                         } else {
