@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿document.addEventListener("DOMContentLoaded", function () {
 
     const departmentCode = document.getElementById("departmentCode");
@@ -58,11 +59,20 @@
     }
     const successModalElement =
         document.getElementById("successModal");
+=======
+﻿    document.addEventListener("DOMContentLoaded", function () {
 
-    if (successModalElement) {
-        const successModal =
-            new bootstrap.Modal(successModalElement);
+        const departmentCode = document.getElementById("departmentCode");
+        const departmentName = document.querySelector("[name='DepartmentName']");
+        const form = document.getElementById("departmentEntryForm");
+        const clearButton = document.getElementById("btnClear");
+        if (departmentCode) {
+            departmentCode.focus();
+>>>>>>> origin/main
 
+            departmentCode.addEventListener("keydown", function (event) {
+
+<<<<<<< HEAD
         successModalElement.addEventListener("hidden.bs.modal", function () {
             if (departmentCode.readOnly) {
                 departmentName.focus();
@@ -71,7 +81,58 @@
             }
 
         });
+=======
+                if (event.key === "Enter") {
+                    event.preventDefault();
+>>>>>>> origin/main
 
-        successModal.show();
-    }
-});
+                    if (departmentName) {
+                        departmentName.focus();
+                    }
+                }
+            });
+        }
+
+        if (clearButton && form) {
+            clearButton.addEventListener("click", function () {
+
+                form.reset();
+
+                document.querySelector("[name='DepartmentCode']").value = "";
+                document.querySelector("[name='DepartmentName']").value = "";
+                document.querySelector("[name='Description']").value = "";
+
+                const activeRadio = document.querySelector(
+                    "[name='Status'][value='true']"
+                );
+
+                if (activeRadio) {
+                    activeRadio.checked = true;
+                }
+
+                document.querySelectorAll(".validation-message")
+                    .forEach(s => s.textContent = "");
+
+                const summary = document.querySelector(".validation-summary");
+
+                if (summary) {
+                    summary.innerHTML = "";
+                }
+
+                departmentCode.focus();
+            });
+        }
+        const successModalElement =
+            document.getElementById("successModal");
+
+        if (successModalElement) {
+            const successModal =
+                new bootstrap.Modal(successModalElement);
+
+            successModalElement.addEventListener("hidden.bs.modal", function () {
+                departmentCode.focus();
+            });
+
+            successModal.show();
+        }
+    });
