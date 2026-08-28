@@ -58,7 +58,7 @@
                             <label class="col-sm-4 form-label fw-semibold text-secondary small d-block">Menu Type</label>
                             <div class="col-sm-8 d-flex gap-3">
                                 <div class="form-check">
-                                    <input asp-for="MenuType" class="form-check-input" type="radio"  id="typeParent" disabled="@isEdit" value="Parent" checked />
+                                    <input asp-for="MenuType" class="form-check-input" type="radio"  id="typeParent" disabled="@isEdit" value="Parent"  />
                                     <label class="form-check-label" for="typeParent">Parent Menu</label>
                                 </div>
                                 <div class="form-check">
@@ -70,18 +70,14 @@
 
                         <div class="mb-3">
                             <label asp-for="ParentMenuId" class="form-label fw-semibold text-secondary small">Parent Menu</label>
-                            <select asp-for="ParentMenuId" asp-items="Model?.ParentMenuList" class="form-select" id="ParentMenu" disabled>
-                                <option value="0">None (Root Level)</option>
+                            <select asp-for="ParentMenuId" asp-items="Model?.ParentMenuList" class="form-select" id="ParentMenu" disabled="@isEdit">
+                                <option value="" selected>None (Root Level)</option>
                             </select>
-                            @if(isEdit){
-                                <input type="hidden" name="ParentMenuId" value="@(Model?.ParentMenuId ?? 0)" />
-                            }
-                            else
-                            {
-                                <input type="hidden" id="hiddenParentMenu" name="ParentMenuId" value="0" />
+                           @if(isEdit){
+                                <input type="hidden" asp-for="ParentMenuId" />
                             }
                             <!-- <input type = "hidden" id="hiddenParentMenu" name="ParentMenuId" value="0" /> -->
-                            <span asp-validation-for="ParentMenuId" class="text-danger small"></span>
+                            <span asp-validation-for="ParentMenuId" class="text-danger small"></span> 
                         </div>
                         <div class="mb-3">
                             <label asp-for="DisplayOrder" class="form-label fw-semibold text-secondary small">Display Order</label>

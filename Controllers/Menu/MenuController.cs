@@ -59,7 +59,7 @@ namespace CKM_ManagementSystem.Controllers.Menu
         {
             var model = new CreateMenuViewModel
             {
-                ParentMenuList = await GetParentMenuListAsync()
+                ParentMenuList = await _menuBL.GetParentMenusForDropdownAsync()
             };
             if(MenuID.HasValue && MenuID > 0)
             {
@@ -77,6 +77,8 @@ namespace CKM_ManagementSystem.Controllers.Menu
                 model.DisplayOrder = menu.DisplayOrder;
                 model.ParentMenuId = menu.ParentMenuId;
                 model.Status = menu.Status;
+                model.IsSubMenu = menu.ParentMenuId.HasValue && menu.ParentMenuId > 0;
+                model.MenuType = model.IsSubMenu ? "Sub" : "Parent";
             }
             return View("MenuEntry", model);
         }
@@ -85,9 +87,15 @@ namespace CKM_ManagementSystem.Controllers.Menu
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> MenuEntry(CreateMenuViewModel model)
         {
+            bool isSubMenu = string.Equals(model.MenuType, "Sub", StringComparison.OrdinalIgnoreCase);
+            if (isSubMenu && (!model.ParentMenuId.HasValue || model.ParentMenuId <= 0))
+            {
+                ModelState.AddModelError("ParentMenuId", "Please Select Parent Menu.");
+            }
+
             if (!ModelState.IsValid)
             {
-                model.ParentMenuList = await GetParentMenuListAsync();
+                model.ParentMenuList = await _menuBL.GetParentMenusForDropdownAsync();
                 return View("MenuEntry", model);
             }
             try
@@ -109,6 +117,7 @@ namespace CKM_ManagementSystem.Controllers.Menu
                         model.IconClass,
                         model.DisplayOrder ?? 0,
                         parentMenuId,
+                        isSubMenu,
                         model.Status);
                     statusCode = result.StatusCode;
                     statusMessage = result.StatusMessage;
@@ -122,13 +131,18 @@ namespace CKM_ManagementSystem.Controllers.Menu
                         model.IconClass,
                         model.DisplayOrder ?? 0,
                         parentMenuId,
+                        isSubMenu,
                         model.Status);
                     statusCode = result.StatusCode;
                     statusMessage = result.StatusMessage;
                 }
                 if (statusCode == 0)
                 {
-                    if (statusMessage.Contains("display order", StringComparison.OrdinalIgnoreCase))
+                    if(statusMessage.Contains("Parent Menu", StringComparison.OrdinalIgnoreCase))
+                    {
+                        ModelState.AddModelError("ParentMenuId", statusMessage);
+                    }
+                    else if (statusMessage.Contains("display order", StringComparison.OrdinalIgnoreCase))
                     {
                         ModelState.AddModelError("DisplayOrder", statusMessage);
                     }
@@ -145,7 +159,7 @@ namespace CKM_ManagementSystem.Controllers.Menu
                     {
                         ModelState.AddModelError(string.Empty, statusMessage);
                     }
-                    model.ParentMenuList = await GetParentMenuListAsync();
+                    model.ParentMenuList = await _menuBL.GetParentMenusForDropdownAsync();
                     return View("MenuEntry", model);
                 }
                 TempData["SuccessMessage"] = statusMessage;
@@ -154,7 +168,7 @@ namespace CKM_ManagementSystem.Controllers.Menu
             catch (Exception ex)
             {
                 ModelState.AddModelError(string.Empty, "Error occurred: " + ex.Message);
-                model.ParentMenuList = await GetParentMenuListAsync();
+                model.ParentMenuList = await _menuBL.GetParentMenusForDropdownAsync();
                 return View("MenuEntry", model);
             }
 

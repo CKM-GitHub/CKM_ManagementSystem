@@ -19,6 +19,7 @@ namespace CKM_ManagementSystem.MenuBL
             string? menuIcon,
             int? displayOrder,
             int? parentMenuId,
+            bool isSubMenu,
             bool status)
         {
             if (string.IsNullOrWhiteSpace(menuName))
@@ -29,6 +30,14 @@ namespace CKM_ManagementSystem.MenuBL
                     StatusMessage = "Menu Name is required."
                 };
             }
+            if(isSubMenu && (!parentMenuId.HasValue || parentMenuId.Value <= 0))
+            {
+                return new MenuActionResult
+                {
+                    StatusCode = 0,
+                    StatusMessage = "Please select a Parent Menu."
+                };
+            }
             if (!displayOrder.HasValue || displayOrder.Value <0 || displayOrder.Value > 999)
             {
                 return new MenuActionResult
@@ -37,7 +46,8 @@ namespace CKM_ManagementSystem.MenuBL
                     StatusMessage = "Display Order must be a 3-digit number (eg. 000 to 999) ."
                 };
             }
-            
+            int? actualParentId = (parentMenuId.HasValue && parentMenuId.Value > 0) ? parentMenuId.Value : null;
+            bool calculatedIsSubMenu = actualParentId.HasValue;
             var statusCodeParam = new SqlParameter
             {
                 ParameterName = "@StatusCode",
@@ -59,6 +69,7 @@ namespace CKM_ManagementSystem.MenuBL
                 new SqlParameter ("@MenuIcon", string.IsNullOrWhiteSpace(menuIcon) ? DBNull.Value : menuIcon),
                 new SqlParameter ("@DisplayOrder", displayOrder.Value),
                 new SqlParameter ("@ParentMenuId", (object?)parentMenuId ?? DBNull.Value),
+                new SqlParameter("@IsSubMenu", calculatedIsSubMenu),
                 new SqlParameter("@Status", status),
                 statusCodeParam,
                 statusMessageParam
@@ -81,6 +92,7 @@ namespace CKM_ManagementSystem.MenuBL
             string? menuIcon,
             int? displayOrder,
             int? parentMenuId,
+            bool isSubMenu,
             bool status)
         {
             if (menuId <= 0)
@@ -99,6 +111,14 @@ namespace CKM_ManagementSystem.MenuBL
                     StatusMessage = "Menu Name is required."
                 };
             }
+            if(isSubMenu && (!parentMenuId.HasValue || parentMenuId.Value <= 0))
+            {
+                return new MenuActionResult
+                {
+                    StatusCode = 0,
+                    StatusMessage = "Please select a Parent Menu."
+                };
+            }
             if(!displayOrder.HasValue || displayOrder.Value < 0 || displayOrder.Value > 999)
             {
                 return new MenuActionResult
@@ -108,7 +128,7 @@ namespace CKM_ManagementSystem.MenuBL
                 };
 
             }
-          
+            int? actualParentId = (parentMenuId.HasValue && parentMenuId.Value > 0) ? parentMenuId.Value : null;
             var statusCodeParam = new SqlParameter
             {
                 ParameterName = "@StatusCode",
@@ -263,27 +283,37 @@ namespace CKM_ManagementSystem.MenuBL
             }
             return menuList;
         }
-        public async Task<List<MenuListItem>> GetParentMenusForDropdownAsync()
+        public async Task<List<SelectListItem>> GetParentMenusForDropdownAsync()
         {
-            var allMenus = await GetMenuListAsync(searchTerm: null, parentMenuId: null);
-            var parentMenus = allMenus
-                .Where(m => m.ParentMenuName == "Main Menu")
+            var allMenus = await GetMenuListAsync(searchTerm: null, parentMenuId: null, statusFilters: true);
+            return  allMenus
+                .Where(m => m.ParentMenuId == null || m.ParentMenuId == 0)
+                .Select(m => new SelectListItem
+                {
+                    Value = m.MenuID.ToString(),
+                    Text = m.MenuName
+                })
                 .ToList();
 
-            return parentMenus;
         }
 
         public async Task<List<SelectListItem>> GetParentMenuListAsync()
         {
-            var allMenus = await GetMenuListAsync(searchTerm: null, parentMenuId: null, statusFilters: true);
-            var parentMenus = allMenus
-                .Where(m => m.ParentMenuId == null || m.ParentMenuId == 0) 
-                .Select(m => new SelectListItem
-                {
-                    Value = m.MenuID.ToString(),
-                    Text = m.MenuName,
-                })
-                .ToList();
+            //var allMenus = await GetMenuListAsync(searchTerm: null, parentMenuId: null, statusFilters: true);
+            //var parentMenus = allMenus
+              //  .Where(m => m.ParentMenuId == null || m.ParentMenuId == 0) 
+                //.Select(m => new SelectListItem
+                //{
+                  //  Value = m.MenuID.ToString(),
+                    //Text = m.MenuName,
+                //})
+                //.ToList();
+            var parentMenus = await GetParentMenusForDropdownAsync();
+            parentMenus.Insert(0, new SelectListItem
+            {
+                Value = "-1",
+                Text = "Main Menu"
+            });
             return parentMenus;
         }
         public class MenuActionResult
