@@ -1,5 +1,4 @@
-﻿﻿
-.user-entry-card {
+﻿﻿.user-entry-card {
     max-width: 960px;
 }
 
@@ -12,6 +11,11 @@
     height: 160px;
     border-color: #cbd5e1 !important;
     border: 2px dashed #adb5bd !important;
+}
+
+#default-icon {
+    font-size: 42px;
+    color: #adb5bd;
 }
 
 .upload-btn {
@@ -43,28 +47,72 @@
     border-color: #cbd5e1;
 }
 
-    .status-radio:checked {
-        background-color: #2563eb;
-        border-color: #2563eb;
-    }
+.status-radio:checked {
+     background-color: #2563eb;
+     border-color: #2563eb;
+}   
+
+.terms-checkbox {
+    border-color: #cbd5e1;
+}
+
+.terms-checkbox:checked {
+    background-color: #2563eb;
+    border-color: #2563eb;
+}
 
 .form-actions {
     border-color: #f1f5f9 !important;
 }
 
-.cancel-btn {
+.clear-btn {
     background-color: #ffffff;
     border-color: #e2e8f0 !important;
 }
-.cancel-btn:hover {
-   background-color: #f8fafc;
-   border-color: #cbd5e1 !important;
+
+.clear-btn:hover {
+    background-color: #f8fafc;
+    border-color: #cbd5e1 !important;
+}
+
+.create-btn {
+    background-color: #0052cc;
+    border-color: #0052cc;
+}
+
+.create-btn:hover {
+    background-color: #0047b3;
+    border-color: #0047b3;
 }
 
 .form-control:focus,
 .form-select:focus {
     border-color: #2563eb;
     box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
+}
+
+#alertModal .modal-content {
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+#alertIcon i {
+    font-size: 4rem;
+}
+
+.alert-success-icon i {
+    color: #198754;
+}
+
+#alertOkButton {
+    background-color: #6c757d;
+    color: white;
+    min-width: 120px;
+}
+
+#alertOkButton:hover {
+    background-color: #5c636a;
+    color: white;
 }
 
 @media (max-width: 768px) {

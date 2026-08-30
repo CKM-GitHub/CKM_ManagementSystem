@@ -1,15 +1,22 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CKM_ManagementSystem.BL;
+using CKM_ManagementSystem.Models.ViewModels;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Reflection.Metadata.Ecma335;
-using CKM_ManagementSystem.BL.Interface;
 
 namespace CKM_ManagementSystem.Controllers
 {
     public class UserListController : Controller
     {
-        private readonly IUserListBL _userListBL;
-        public UserListController(IUserListBL userListBL)
+        private readonly UserListBL _userListBL;
+        private readonly UserUpdateBL _userUpdateBL;
+        private readonly IWebHostEnvironment _environment;
+
+        public UserListController(UserListBL userListBL, UserUpdateBL userUpdateBL, IWebHostEnvironment environment)
         {
             _userListBL = userListBL;
+            _userUpdateBL = userUpdateBL;
+            _environment = environment;
         }
         public async Task<IActionResult> UserList (
             string? searchText,
@@ -65,5 +72,132 @@ namespace CKM_ManagementSystem.Controllers
 
             return RedirectToAction("UserList");
         }
-    }
+        [HttpGet]
+        public async Task<IActionResult> UserUpdate(string StaffCode)
+        {
+            if (string.IsNullOrWhiteSpace(StaffCode))
+            {
+                TempData["ErrorMessage"] = "Fail";
+                return RedirectToAction("UserList", "UserList");
+            }
+            var model = await _userUpdateBL.GetUserByStaffCodeAsync(StaffCode);
+
+            if (model == null)
+            {
+                TempData["ErrorMessage"] = "User Not Found";
+                return RedirectToAction("UserList", "UserList");
+            }
+            var departments = await _userUpdateBL.GetDepartmentsAsync();
+            var roles = await _userUpdateBL.GetRolesAsync();
+
+            ViewBag.DepartmentList = new SelectList(
+            departments,
+            "DepartmentCode",
+            "DepartmentName",
+            model.DepartmentCode);
+
+            ViewBag.UserRoleList = new SelectList(
+             roles,
+             "RoleCode",
+             "RoleName",
+              model.RoleCode);
+
+            model.Mode = "Update";
+            return View("~/Views/UserList/UserCreate.cshtml", model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UserUpdate(UserCreateViewModel model)
+        {
+            model.Mode = "Update";
+
+            if (!ModelState.IsValid)
+            {
+                await loadDropdownAsync(model);
+
+                return View("~/Views/UserList/UserCreate.cshtml", model);
+            }
+
+            if (model.ImageFile != null)
+            {
+                model.ImageUrl = await SaveImageAsync(model.ImageFile);
+            }
+
+            int errorCode = await _userUpdateBL.UserUpdateAsync(model);
+
+            if (errorCode == 0)
+            {
+                TempData["SuccessMessage"] = "User Update Successfully";
+                return RedirectToAction("UserList", "UserList");
+            }
+
+            if (errorCode == 2)
+            {
+                ModelState.AddModelError(
+                    nameof(model.Email),
+                    "This Email already exists.");
+            }
+            else if (errorCode == 3)
+            {
+                ModelState.AddModelError(
+                    string.Empty,
+                    "User not found.");
+            }
+            else
+            {
+                ModelState.AddModelError(
+                    string.Empty,
+                    "User update failed.");
+            }
+
+            await loadDropdownAsync(model);
+
+            return View("~/Views/UserList/UserCreate.cshtml", model);
+        }
+        private async Task loadDropdownAsync(UserCreateViewModel model)
+        {
+            var departments = await _userUpdateBL.GetDepartmentsAsync();
+            var roles = await _userUpdateBL.GetRolesAsync();
+
+            ViewBag.DepartmentList = new SelectList(
+            departments,
+            "DepartmentCode",
+            "DepartmentName",
+            model.DepartmentCode);
+
+            ViewBag.UserRoleList = new SelectList(
+             roles,
+             "RoleCode",
+             "RoleName",
+              model.RoleCode);
+        }
+        private async Task<string?> SaveImageAsync(IFormFile? imageFile)
+        {
+            if (imageFile == null)
+            {
+                return null;
+            }
+
+            string imageFolder = Path.Combine(
+                _environment.WebRootPath,
+                "images",
+                "users");
+
+            Directory.CreateDirectory(imageFolder);
+
+            string fileName =
+                $"{Guid.NewGuid()}{Path.GetExtension(imageFile.FileName)}";
+
+            string filePath = Path.Combine(imageFolder, fileName);
+
+            using var stream = new FileStream(
+                filePath,
+                FileMode.Create);
+
+            await imageFile.CopyToAsync(stream);
+
+            return $"/images/users/{fileName}";
+        }
+    }    
+
 }

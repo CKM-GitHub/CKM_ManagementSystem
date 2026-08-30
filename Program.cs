@@ -1,16 +1,14 @@
 using CKM_ManagementSystem.BL;
 using CKM_ManagementSystem.DL;
-using CKM_ManagementSystem.BL.Interface;
-using CKM_ManagementSystem.DL.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<IUserListDL, UserListDL>();
-builder.Services.AddScoped<IUserListBL, UserListBL>();
-builder.Services.AddScoped<IUserUpdateDL, UserUpdateDL>();
-builder.Services.AddScoped<IUserUpdateBL, UserUpdateBL>();
+builder.Services.AddScoped<BaseDL>();
+builder.Services.AddScoped<UserEntryBL>();
+builder.Services.AddScoped<UserListBL>();
+builder.Services.AddScoped<UserUpdateBL>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

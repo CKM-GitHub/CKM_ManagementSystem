@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <Folder Include="Models\Entities\" />
+    <Folder Include="Views\UserEntry\" />
   </ItemGroup>
 
 </Project>
