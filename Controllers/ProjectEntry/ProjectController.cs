@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using CKM_ManagementSystem.Models.ViewModels.Projects;
 using CKM_ManagementSystem.BL;
+using CKM_ManagementSystem.Models.ViewModels.Projects;
 
 namespace CKM_ManagementSystem.Controllers
 {
@@ -8,64 +8,110 @@ namespace CKM_ManagementSystem.Controllers
     {
         private readonly ProjectBL _projectBL;
 
-        
+       
         public ProjectController(ProjectBL projectBL)
         {
             _projectBL = projectBL;
         }
 
-        [HttpGet]
-        public IActionResult ProjectEntry(string id)
+        private void BindDropdowns()
         {
-            var model = new ProjectEntryViewModel();
+            ViewBag.Managers = _projectBL.GetActiveManagers();
+            ViewBag.Departments = _projectBL.GetDepartments();
+        }
 
-            if (!string.IsNullOrEmpty(id))
+        [HttpGet]
+        public IActionResult ProjectEntry()
+        {
+            BindDropdowns();
+            var model = new ProjectEntryViewModel
             {
-                model = _projectBL.GetProjectById(id);
+                IsEdit = false
+            };
+            return View("ProjectEntry", model);
+        }
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            BindDropdowns();
+            var model = new ProjectEntryViewModel
+            {
+                IsEdit = false
+            };
+            return View("ProjectEntry", model);
+        }
+
+        [HttpGet]
+        public IActionResult Edit(string projectCode)
+        {
+            if (string.IsNullOrEmpty(projectCode))
+            {
+                return NotFound();
             }
 
-            ViewBag.Managers = _projectBL.GetActiveManagers();
-            return View("~/Views/Project/ProjectEntry.cshtml", model);
+            BindDropdowns();
+            var model = _projectBL.GetProjectById(projectCode);
+            if (model == null || string.IsNullOrEmpty(model.ProjectCode))
+            {
+                return NotFound();
+            }
+
+            model.IsEdit = true;
+            return View("ProjectEntry", model);
         }
 
         [HttpPost]
-        public IActionResult CheckDuplicateCode(string projectCode)
+        public IActionResult SearchProjectMembers(string searchText, string departmentCode)
+        {
+            var result = _projectBL.SearchProjectMembers(searchText, departmentCode);
+            return Json(result);
+        }
+
+        [HttpPost]
+        public IActionResult CheckDuplicateProjectCode(string projectCode)
         {
             bool isDuplicate = _projectBL.IsDuplicateProjectCode(projectCode);
-            return Json(new { isDuplicate });
+            return Json(new { isDuplicate = isDuplicate });
         }
 
         [HttpPost]
-        public IActionResult SaveProject(ProjectEntryViewModel model, bool isEdit)
+        public IActionResult CheckDuplicateProjectName(string projectName, string projectCode, bool isEdit)
         {
-            if (!ModelState.IsValid)
-            {
-                return Json(new { success = false, message = "Invalid data submitted. Please check mandatory fields." });
-            }
-
-            try
-            {
-                string errorMessage;
-                bool isSuccess = _projectBL.SaveProject(model, isEdit, out errorMessage);
-
-                if (isSuccess)
-                {
-                    string msg = isEdit ? "Project updated successfully." : "Project registered successfully.";
-                    return Json(new { success = true, isEdit = isEdit, message = msg });
-                }
-
-                return Json(new { success = false, message = errorMessage });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = "Controller Error: " + ex.Message });
-            }
+            string? codeToExclude = isEdit ? projectCode : null;
+            bool isDuplicate = _projectBL.IsDuplicateProjectName(projectName, codeToExclude);
+            return Json(new { isDuplicate = isDuplicate });
         }
 
-        [HttpGet]
-        public IActionResult ProjectList()
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult SaveProject([FromBody] ProjectEntryViewModel model)
         {
-            return View("~/Views/Project/ProjectList.cshtml");
+            if (model == null)
+            {
+                return Json(new { success = false, message = "Invalid project data." });
+            }
+
+            if (!model.IsEdit && string.IsNullOrWhiteSpace(model.ProjectCode))
+            {
+                return Json(new { success = false, message = "Project Code is required." });
+            }
+
+            if (model.EndDate < model.StartDate)
+            {
+                return Json(new { success = false, message = "Target End Date cannot be earlier than Start Date." });
+            }
+
+            string errorMessage;
+            bool isSuccess = _projectBL.SaveProject(model, model.IsEdit, out errorMessage);
+
+            if (isSuccess)
+            {
+                string msg = model.IsEdit ? "Project updated successfully!" : "Project created successfully!";
+                return Json(new { success = true, message = msg });
+            }
+
+            return Json(new { success = false, message = string.IsNullOrEmpty(errorMessage) ? "An error occurred while saving the project." : errorMessage });
         }
     }
 }

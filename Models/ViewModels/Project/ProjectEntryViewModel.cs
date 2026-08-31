@@ -1,35 +1,50 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace CKM_ManagementSystem.Models.ViewModels.Projects
 {
     public class ProjectEntryViewModel
     {
-        [Required(ErrorMessage = "Project Code is required.")]
-        [StringLength(20, ErrorMessage = "Project Code cannot exceed 20 characters.")]
+        [RegularExpression(@"^[a-zA-Z0-9\-_]+$", ErrorMessage = "Special characters are not allowed. Only letters, numbers, hyphens, and underscores.")]
         public string ProjectCode { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Project Name is required.")]
-        [StringLength(100, ErrorMessage = "Project Name cannot exceed 100 characters.")]
+        [RegularExpression(@"^[a-zA-Z0-9\s\-_]+$", ErrorMessage = "Special characters are not allowed in Project Name.")]
         public string ProjectName { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Please select a Project Manager.")]
+        [Required(ErrorMessage = "Project Manager is required.")]
         public string ProjectManagerId { get; set; } = string.Empty;
 
-        [Url(ErrorMessage = "Invalid Git Repository URL format.")]
         public string? GitRepositoryUrl { get; set; }
 
-        [StringLength(250, ErrorMessage = "Description cannot exceed 250 characters.")]
         public string? Description { get; set; }
 
         [Required(ErrorMessage = "Start Date is required.")]
-        [DataType(DataType.Date)]
-        public DateTime StartDate { get; set; } = DateTime.Today;
+        public DateTime? StartDate { get; set; }
 
         [Required(ErrorMessage = "Target End Date is required.")]
-        [DataType(DataType.Date)]
-        public DateTime EndDate { get; set; } = DateTime.Today.AddMonths(1);
+        public DateTime? EndDate { get; set; }
 
         public string Status { get; set; } = "Active";
+
+        public bool IsEdit { get; set; } = false;
+
+        public List<ProjectMemberViewModel> ProjectMembers { get; set; } = new List<ProjectMemberViewModel>();
+    }
+
+    public class ProjectMemberViewModel
+    {
+        public string Staff_Code { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string? Image_URL { get; set; }
+    }
+
+    public class ProjectMemberSearchViewModel
+    {
+        public string Staff_Code { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string? Image_URL { get; set; }
+        public string? Department_Name { get; set; }
     }
 }
