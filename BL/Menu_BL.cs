@@ -16,6 +16,7 @@ namespace CKM_ManagementSystem.BL
             string? menuIcon,
             int? displayOrder,
             int? parentMenuId,
+            bool isSubMenu,
             bool status)
         {
             if (string.IsNullOrWhiteSpace(menuName))
@@ -56,6 +57,7 @@ namespace CKM_ManagementSystem.BL
                 new SqlParameter ("@MenuIcon", string.IsNullOrWhiteSpace(menuIcon) ? DBNull.Value : menuIcon),
                 new SqlParameter ("@DisplayOrder", displayOrder.Value),
                 new SqlParameter ("@ParentMenuId", (object?)parentMenuId ?? DBNull.Value),
+                new SqlParameter ("@IsSubMenu", isSubMenu),
                 new SqlParameter("@Status", status),
                 statusCodeParam,
                 statusMessageParam

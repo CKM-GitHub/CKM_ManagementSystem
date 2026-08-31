@@ -26,7 +26,7 @@ namespace CKM_ManagementSystem.Models.ViewModels
         public int? DisplayOrder { get; set; }
 
         public string MenuType { get; set; } = "Parent";
-
+        public bool IsSubMenu { get; set; }
         public int? ParentMenuId { get; set; }
         public bool Status { get; set; } = true;
         public List<SelectListItem> ParentMenuList { get; set; } = new List<SelectListItem>();

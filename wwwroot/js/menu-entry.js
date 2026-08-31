@@ -3,7 +3,6 @@ $(document).ready(function () {
     const $menuForm = $('#menuForm');
     const $displayText = $('#DisplayText');
     const $parentMenu = $('#ParentMenu');
-    const $hiddenParentMenu = $('#hiddenParentMenu');
     const $displayOrder = $('#DisplayOrder');
     const $typeParent = $('#typeParent');
     const $statusActive = $('#statusActive');
@@ -28,7 +27,12 @@ $(document).ready(function () {
     }
     else {
         setTimeout(function () {
-            $displayText.focus();
+            const $firstError = $menuForm.find('.input-validation-error:visible, .error:visible').first();
+            if ($firstError.length > 0) {
+                $firstError.focus();
+            } else {
+                $displayText.focus();
+            }
         }, 100);
         
     }
@@ -63,32 +67,35 @@ $(document).ready(function () {
         }
     });
     $menuForm.on('submit', function (e) {
-        if ($menuForm.valid && !$menuForm.valid()) {
+        $parentMenu.prop('disabled', false);
+        $('input[name="MenuType"]').prop('disabled', false);
+        const selectedType = $('input[name="MenuType"]:checked').val();
+        if (selectedType === 'Sub' && ($parentMenu.val() === '0' || $parentMenu.val() === '')) {
             e.preventDefault();
-            const $invalidInputs = $menuForm.find(':input').filter(function () {
-                return !validator.element(this);
-            });
-            if ($invalidInputs.length > 0) {
-                $menuForm.find('.field-validation-error')
-                    .removeClass('field-validation-error')
-                    .addClass('field-validation-valid')
-                    .empty();
-                const firstInvalidInput = $invalidInputs.first()[0];
-                validator.element(firstInvalidInput);
-                $(firstInvalidInput).focus();
-            }
+            $parentMenu.addClass('input-validation-error');
+            $('.parent-menu-error').text('').removeClass('field-validation-valid')
+                .addClass('field-validation-error')
+                .text('Please select a Parent Menu.');
+            $parentMenu.focus();
             return false;
         }
+        if ($menuForm.valid && !$menuForm.valid()) {
+            e.preventDefault();
+            $menuForm.find('.input-validation-error').filter(":visible").first().focus();
+            return false;
+        }
+        $parentMenu.prop('disabled', false);
+        $('input[name="MenuType"]').prop('disabled', false);
     });
     function toggleParentMenu() {
         const selectedType = $('input[name="MenuType"]:checked').val();
         if (selectedType === 'Sub') {
             $parentMenu.prop('disabled', false).removeClass('bg-light');
-            $hiddenParentMenu.prop('disabled', true);
                 
         } else {
             $parentMenu.val('0').prop('disabled', true).addClass('bg-light');
-            $hiddenParentMenu.prop('disabled', false);
+            $parentMenu.removeClass('input-validation-error');
+            $('#parentMenuError').text('');
         }
     }
 
@@ -106,6 +113,17 @@ $(document).ready(function () {
     });
     $parentMenu.on('change', function () {
         revalidateDisplayOrder();
+        if ($(this).val() != '') {
+            $(this).removeClass('input-validation-error error');
+            $(this).closest('.mb-3, .form-group')
+                .find('.field-validation-error, span.text-danger')
+                .removeClass('field-validation-error')
+                .addClass('field-validation-valid')
+                .empty();
+        }
+        else if (validator) {
+            validator.element(this);
+        }
     });
     $displayOrder.on('keyup input change', function () {
         revalidateDisplayOrder();
