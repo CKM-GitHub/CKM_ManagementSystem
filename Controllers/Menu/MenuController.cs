@@ -21,36 +21,15 @@ namespace CKM_ManagementSystem.Controllers.Menu
         {
             int pageSize = 10;
 
-            var menuItems = await _menuBL.GetMenuListAsync(
+            var viewModel = await _menuBL.GetPagedMenuListAsync(
                 searchTerm,
                 selectedParentId,
-                statusFilters
+                statusFilters,
+                page,
+                pageSize
                 );
-            
-            int totalItems = menuItems.Count;
-            int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
 
-            if (page < 1) page = 1;
-            if (totalPages > 0 && page > totalPages) page = totalPages;
-
-            var pagedMenuItems = menuItems
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToList();
-
-            var viewModel = new MenuListViewModel
-            {
-                SearchTerm = searchTerm,
-                SelectedParentId = selectedParentId,
-                StatusFilters = statusFilters,
-                Menus = pagedMenuItems,
-                ParentMenuList = await GetParentMenuListAsync(),
-
-                CurrentPage = page,
-                TotalPages = totalPages,
-                TotalItems = totalItems,
-                PageSize = pageSize
-            };
+            viewModel.ParentMenuList = await GetParentMenuListAsync();
             return View(viewModel);
         }
 
@@ -100,7 +79,7 @@ namespace CKM_ManagementSystem.Controllers.Menu
             }
             try
             {
-                int? parentMenuId = model.ParentMenuId.HasValue && model.ParentMenuId > 0
+                int? parentMenuId = isSubMenu && model.ParentMenuId.HasValue && model.ParentMenuId > 0
                     ? model.ParentMenuId
                     : null;
 
@@ -162,8 +141,15 @@ namespace CKM_ManagementSystem.Controllers.Menu
                     model.ParentMenuList = await _menuBL.GetParentMenusForDropdownAsync();
                     return View("MenuEntry", model);
                 }
-                TempData["SuccessMessage"] = statusMessage;
-                return RedirectToAction(nameof(MenuListView));
+                if (statusCode == 1)
+                {
+                    TempData["SuccessMessage"] = statusMessage;
+                    model.ParentMenuList = await _menuBL.GetParentMenusForDropdownAsync();
+                    return View("MenuEntry", model);
+                }
+                ModelState.AddModelError(string.Empty, statusMessage ?? "Unexpected status returned");
+                model.ParentMenuList = await _menuBL.GetParentMenusForDropdownAsync();
+                return View("MenuEntry", model);
             }
             catch (Exception ex)
             {
@@ -177,7 +163,7 @@ namespace CKM_ManagementSystem.Controllers.Menu
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("DeleteMenu")]
-        public async Task<IActionResult> DeleteMenuAsync(int menuId)
+        public async Task<IActionResult> DeleteMenuAsync(int menuId, int page=1)
         {
             try
             {
@@ -196,7 +182,7 @@ namespace CKM_ManagementSystem.Controllers.Menu
             {
                 TempData["ErrorMessage"] = "Error occurred: " + ex.Message;
             }
-            return RedirectToAction(nameof(MenuListView));
+            return RedirectToAction(nameof(MenuListView), new {page = page});
         }
         private async Task<List<SelectListItem>> GetParentMenuListAsync()
         {

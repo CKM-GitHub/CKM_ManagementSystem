@@ -114,11 +114,12 @@
                                         }
                                     </td>
                                     <td class="text-center">
-                                        <a asp-controller="Menu" asp-action="MenuEntry" class="action-btn me-2" asp-route-menuId="@item.MenuID"><i class="bi bi-pencil-square"></i></a>
+                                        <a asp-controller="Menu" asp-action="MenuEntry" class="action-btn me-2 text-primary" asp-route-menuId="@item.MenuID"><i class="bi bi-pencil-square"></i></a>
                                         <form asp-controller="Menu" asp-action="DeleteMenu" method="post" class="d-inline delete-form">
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="menuId" value="@item.MenuID" />
-                                            <button type="submit" class="action-btn border-0 p-0 bg-transparent delete-btn text-secondary" title="Delete Menu"><i class="bi bi-trash"></i></button>
+                                            <input type = "hidden" name="page" value="@Model.CurrentPage" />
+                                            <button type="submit" class="action-btn border-0 p-0 bg-transparent delete-btn text-danger" title="Delete Menu"><i class="bi bi-trash"></i></button>
                                         </form>
                                     </td>
                             </tr>
@@ -144,7 +145,7 @@
                 <div class="footer-text">
                     @{
                         int startItem = Model.TotalItems == 0 ? 0 :((Model.CurrentPage -1) * Model.PageSize) + 1;
-                        int endItem = Math.Min(Model.CurrentPage * Model.PageSize, Model.TotalItems);
+                        int endItem = Model.TotalItems == 0 ? 0 : Math.Min(Model.CurrentPage * Model.PageSize, Model.TotalItems);
                     }
 
                     Showing @startItem-@endItem of @Model.TotalItems records

@@ -16,25 +16,42 @@
         }
     };
     if ($('.input-validation-error:visible').length > 0) {
-        $('.input-validation-error:visible').first().focus();
+        const $firstError = $('.input-validation-error:visible').first();
+        focusAtEnd($firstError);
     }
     else if (typeof successMessage !== 'undefined' && successMessage !== '') {
         const modalElement = document.getElementById('successModal');
         if (modalElement) {
             const successModal = new bootstrap.Modal(modalElement);
             successModal.show();
-            $(modalElement).on('hidden.bs.modal', function () {
-                $displayText.focus();
+            $(modalElement).find('.btn, [data-bs-dismiss="modal"]').one('click', function () {
+                window.location.assign(menuListUrl);
+            });
+            $(modalElement).on('hide.bs.modal', function () {
+                window.location.assign(menuListUrl);
             });
         }
     }
     else {
         setTimeout(function () {
-            $displayText.focus();
+            focusAtEnd($displayText);
         }, 100);
-        
     }
-
+    function focusAtEnd($input) {
+        if (!$input || $input.length === 0) return;
+        const element = $input[0];
+        $input.focus();
+        if (typeof element.selectionStart === "number") {
+            const valueLength = $input.val().length;
+            element.selectionStart = valueLength;
+            element.selectionEnd = valueLength;
+        } else if (typeof element.createTextRange !== "undefined") {
+            element.focus();
+            const range = element.createTextRange();
+            range.collapse(false);
+            range.select();
+        }
+    }
     $menuForm.on('keydown', ':input', function (e) {
         if (e.key !== 'Enter') {
             return
@@ -46,7 +63,7 @@
         e.preventDefault();
         const isCurrentRequired = $current.prop('required') || $current.data('val-required') !== undefined || $current.hasClass('required');
         if (isCurrentRequired && !validator.element($current)) {
-            $current.focus();
+            focusAtEnd($current);
             return;
         }
 
@@ -60,9 +77,9 @@
                 return $(this).prop('required') || $(this).data('val-required') !== undefined || $(this).hasClass('required');
             }).first();
             if ($nextRequired.length > 0) {
-                $nextRequired.focus();
+                focusAtEnd($nextRequired);
             } else if (currentIndex < $allInputs.length - 1) {
-                $allInputs.eq(currentIndex + 1).focus();
+                focusAtEnd($allInputs.eq(currentIndex + 1));
             } else {
                 $menuForm.submit();
             }
@@ -72,7 +89,8 @@
     $menuForm.on('submit', function (e) {
         if (!$menuForm.valid()) {
             e.preventDefault();
-            $menuForm.find('.input-validation-error, .error').filter(":visible").first().focus();
+            $menuForm.find('.input-validation-error, .error').filter(":visible").first();
+            focusAtEnd($firstError);
             return false;
         }
         $parentMenu.prop('disabled', false);
@@ -81,21 +99,15 @@
     function toggleParentMenu() {
         if (typeof isEditMode !== 'undefined' && isEditMode) {
             $parentMenu.prop('disabled', true).addClass('bg-light');
-            //$hiddenParentMenu.prop('disabled', true);
             return;
         }
         const selectedType = $('input[name="MenuType"]:checked').val();
 
         if (selectedType === 'Sub') {
             $parentMenu.prop('disabled', false).removeClass('bg-light');
-            //$hiddenParentMenu.prop('disabled', true);
-           
-                
         } else {
             $parentMenu.prop('disabled', true).addClass('bg-light');
-            $parentMenu.prop('selectedIndex', 0);
-            //$hiddenParentMenu.prop('disabled', false);
-            
+            $parentMenu.prop('selectedIndex', 0);            
         }
         
     }
@@ -148,7 +160,7 @@
             
             setTimeout(function () {
                 toggleParentMenu();
-                $displayText.focus();
+                focusAtEnd($displayText);
             }, 10);
     });
 }); 

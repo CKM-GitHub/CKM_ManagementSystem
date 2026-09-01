@@ -127,6 +127,7 @@
     <script>
         var isEditMode = @isEdit.ToString().ToLower();
         var successMessage = '@(TempData["SuccessMessage"] ?? "")';
+        var menuListUrl = '@Url.Action("MenuListView", "Menu")';
     </script>
 }
 @section Styles {

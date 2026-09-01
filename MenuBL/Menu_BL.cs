@@ -22,45 +22,14 @@ namespace CKM_ManagementSystem.MenuBL
             bool isSubMenu,
             bool status)
         {
-            if (string.IsNullOrWhiteSpace(menuName))
-            {
-                return new MenuActionResult
-                {
-                    StatusCode = 0,
-                    StatusMessage = "Menu Name is required."
-                };
-            }
-            if(isSubMenu && (!parentMenuId.HasValue || parentMenuId.Value <= 0))
-            {
-                return new MenuActionResult
-                {
-                    StatusCode = 0,
-                    StatusMessage = "Please select a Parent Menu."
-                };
-            }
-            if (!displayOrder.HasValue || displayOrder.Value <0 || displayOrder.Value > 999)
-            {
-                return new MenuActionResult
-                {
-                    StatusCode = 0,
-                    StatusMessage = "Display Order must be a 3-digit number (eg. 000 to 999) ."
-                };
-            }
+            var validationError = ValidateMenuInput(menuName, displayOrder, isSubMenu, parentMenuId);
+            if (validationError != null) return validationError;
+
             int? actualParentId = (parentMenuId.HasValue && parentMenuId.Value > 0) ? parentMenuId.Value : null;
             bool calculatedIsSubMenu = actualParentId.HasValue;
-            var statusCodeParam = new SqlParameter
-            {
-                ParameterName = "@StatusCode",
-                SqlDbType = SqlDbType.Int,
-                Direction = ParameterDirection.Output
-            };
-            var statusMessageParam = new SqlParameter
-            {
-                ParameterName = "@StatusMessage",
-                SqlDbType = SqlDbType.NVarChar,
-                Size = 250,
-                Direction = ParameterDirection.Output
-            };
+
+            var (statusCodeParam, statusMessageParam) = CreateOutputParameters();
+            
             var parameters = new[]
             {
                 new SqlParameter ("@MenuName", (object?)menuName ?? DBNull.Value),
@@ -76,12 +45,7 @@ namespace CKM_ManagementSystem.MenuBL
             };
             await ExecuteAsync("sp_CreateMenu", parameters);
 
-            return new MenuActionResult
-            {
-                StatusCode = statusCodeParam.Value != DBNull.Value
-                    ? Convert.ToInt32(statusCodeParam.Value) : 0,
-                StatusMessage = statusMessageParam.Value?.ToString() ?? string.Empty
-            };
+            return ParseActionResult(statusCodeParam, statusMessageParam);
         }
 
         public async Task<MenuActionResult> UpdateMenuAsync(
@@ -97,52 +61,13 @@ namespace CKM_ManagementSystem.MenuBL
         {
             if (menuId <= 0)
             {
-                return new MenuActionResult
-                {
-                    StatusCode = 0,
-                    StatusMessage = "Invalid Menu ID."
-                };
+               return InvalidResult("Invalid Menu ID");
             }
-            if (string.IsNullOrWhiteSpace(menuName))
-            {
-                return new MenuActionResult
-                {
-                    StatusCode = 0,
-                    StatusMessage = "Menu Name is required."
-                };
-            }
-            if(isSubMenu && (!parentMenuId.HasValue || parentMenuId.Value <= 0))
-            {
-                return new MenuActionResult
-                {
-                    StatusCode = 0,
-                    StatusMessage = "Please select a Parent Menu."
-                };
-            }
-            if(!displayOrder.HasValue || displayOrder.Value < 0 || displayOrder.Value > 999)
-            {
-                return new MenuActionResult
-                {
-                    StatusCode = 0,
-                    StatusMessage = "Display Order must be a 3-digit number (e.g 000 to 999)."
-                };
+            var validationError = ValidateMenuInput(menuName, displayOrder, isSubMenu, parentMenuId);
+            if (validationError != null) return validationError;
 
-            }
             int? actualParentId = (parentMenuId.HasValue && parentMenuId.Value > 0) ? parentMenuId.Value : null;
-            var statusCodeParam = new SqlParameter
-            {
-                ParameterName = "@StatusCode",
-                SqlDbType = SqlDbType.Int,
-                Direction = ParameterDirection.Output,
-            };
-
-            var statusMessageParam = new SqlParameter
-            {
-                ParameterName = "@StatusMessage",
-                SqlDbType = SqlDbType.NVarChar,
-                Size = 250,
-                Direction = ParameterDirection.Output
-            };
+            var (statusCodeParam, statusMessageParam) = CreateOutputParameters();
 
             var parameters = new[]
             {
@@ -159,12 +84,7 @@ namespace CKM_ManagementSystem.MenuBL
             };
             await ExecuteAsync("sp_Menu_Update", parameters);
 
-            return new MenuActionResult
-            {
-                StatusCode = statusCodeParam.Value != DBNull.Value
-                    ? Convert.ToInt32(statusCodeParam.Value) : 0,
-                StatusMessage = statusMessageParam.Value?.ToString() ?? string.Empty
-            };
+            return ParseActionResult(statusCodeParam, statusMessageParam);
         }
         public async Task<MenuListItem?> GetMenuByIdAsync(int menuId)
         {
@@ -176,56 +96,50 @@ namespace CKM_ManagementSystem.MenuBL
             DataTable dt = await SelectDataTableAsync("sp_Menu_GetById", parameters);
             if (dt == null || dt.Rows.Count == 0) return null;
 
-            DataRow row = dt.Rows[0];
-            string controllerName = row["ControllerName"] != DBNull.Value ? row["ControllerName"].ToString()! : string.Empty;
-            string actionName = row["ActionName"] != DBNull.Value ? row["ActionName"].ToString()! : string.Empty;
-
-            return new MenuListItem
+            return MapDataRowToMenuListItem(dt.Rows[0], dt.Columns);
+        }
+        public async Task<MenuListViewModel> GetPagedMenuListAsync(string? searchTerm, int? parentMenuId, bool? statusFilters = null, int page = 1, int pageSize = 10)
+        {
+            var totalCountParam = new SqlParameter
             {
-                MenuID = Convert.ToInt32(row["MenuID"]),
-                MenuName = row["MenuName"] != DBNull.Value ? row["MenuName"].ToString()! : string.Empty,
-                IconClass = row["MenuIcon"] != DBNull.Value ? row["MenuIcon"].ToString() : null,
-                ControllerName = controllerName,
-                ActionName = actionName,
-                Route = !string.IsNullOrEmpty(controllerName) && !string.IsNullOrEmpty(actionName)
-                        ? $"/{controllerName}/{actionName}".ToLower()
-                        : "#",
-                ParentMenuId = row["ParentMenuId"] != DBNull.Value ? Convert.ToInt32(row["ParentMenuId"]) : null,
-
-                ParentMenuName = dt.Columns.Contains("ParentMenuName") && row["ParentMenuName"] != DBNull.Value
-                                ? row["ParentMenuName"].ToString()!
-                                : "Main Menu",
-                DisplayOrder = row["DisplayOrder"] != DBNull.Value ? Convert.ToInt32(row["DisplayOrder"]) : 0,
-                Status = row["Status"] != DBNull.Value && Convert.ToBoolean(row["Status"])
-
+                ParameterName = "@TotalCount",
+                SqlDbType = SqlDbType.Int,
+                Direction = ParameterDirection.Output
+            };
+            var parameters = new[]
+            {
+                new SqlParameter("@SearchTerm", string.IsNullOrWhiteSpace(searchTerm) ? DBNull.Value : searchTerm),
+                new SqlParameter("@ParentMenuId", (object?)parentMenuId ?? DBNull.Value),
+                new SqlParameter("@StatusFilters", (object?)statusFilters ?? DBNull.Value),
+                new SqlParameter("@PageNumber", page),
+                new SqlParameter("@PageSize", pageSize),
+                totalCountParam
+            };
+            DataTable dt = await SelectDataTableAsync("sp_GetMenuList", parameters);
+            var menuList = dt.Rows.Cast<DataRow>()
+                    .Select(row => MapDataRowToMenuListItem(row, dt.Columns))
+                    .ToList();
+            int totalItems = (totalCountParam.Value != DBNull.Value) ? Convert.ToInt32(totalCountParam.Value) : 0;
+            return new MenuListViewModel
+            {
+                SearchTerm = searchTerm,
+                SelectedParentId = parentMenuId,
+                StatusFilters = statusFilters,
+                Menus = menuList,
+                CurrentPage = page,
+                TotalPages = (int)Math.Ceiling((double)totalItems / (pageSize > 0 ? pageSize:10)),
+                TotalItems = totalItems,
+                PageSize = pageSize,
             };
         }
-        
         public async Task<MenuActionResult> DeleteMenuAsync(int menuId)
         {
             if(menuId <= 0)
             {
-                return new MenuActionResult
-                {
-                    StatusCode = 0,
-                    StatusMessage = "Invalid Menu ID."
-                };
+                return InvalidResult("Invalid Menu ID.");
             }
 
-            var statusCodeParam = new SqlParameter
-            {
-                ParameterName = "@StatusCode",
-                SqlDbType = SqlDbType.Int,
-                Direction = ParameterDirection.Output,
-            };
-
-            var statusMessageParam = new SqlParameter
-            {
-                ParameterName = "@StatusMessage",
-                SqlDbType = SqlDbType.NVarChar,
-                Size = 250,
-                Direction = ParameterDirection.Output,
-            };
+            var (statusCodeParam, statusMessageParam) = CreateOutputParameters();
 
             var parameters = new[]
             {
@@ -236,52 +150,13 @@ namespace CKM_ManagementSystem.MenuBL
 
             await ExecuteAsync("sp_DeleteMenu", parameters);
 
-            return new MenuActionResult
-            {
-                StatusCode = statusCodeParam.Value != DBNull.Value
-                    ? Convert.ToInt32(statusCodeParam.Value) : 0,
-                StatusMessage = statusMessageParam.Value?.ToString() ?? string.Empty
-            };
+            return ParseActionResult(statusCodeParam, statusMessageParam);
         }
 
         public async Task<List<MenuListItem>> GetMenuListAsync(string? searchTerm, int? parentMenuId, bool? statusFilters=null)
         {
-            var parameters = new[]
-            {
-                new SqlParameter("@SearchTerm", string.IsNullOrWhiteSpace(searchTerm) ? DBNull.Value : searchTerm),
-                new SqlParameter("@ParentMenuId", (object?)parentMenuId ?? DBNull.Value),
-                new SqlParameter("@StatusFilters", (object?)statusFilters ?? DBNull.Value)
-            };
-
-            DataTable dt = await SelectDataTableAsync("sp_GetMenuList", parameters);
-            var menuList = new List<MenuListItem>();
-
-            foreach (DataRow row in dt.Rows)
-            {
-                string controllerName = row["ControllerName"] != DBNull.Value ? row["ControllerName"].ToString()! : string.Empty;
-                string actionName = row["ActionName"] != DBNull.Value ? row["ActionName"].ToString()! : string.Empty;
-
-                menuList.Add(new MenuListItem
-                {
-                    MenuID = Convert.ToInt32(row["MenuID"]),
-                    MenuName = row["MenuName"] != DBNull.Value ? row["MenuName"].ToString()! : string.Empty,
-                    IconClass = row["MenuIcon"] != DBNull.Value ? row["MenuIcon"].ToString() : null,
-
-                    ControllerName = controllerName,
-                    ActionName = actionName,
-                    Route = !string.IsNullOrEmpty(controllerName) && !string.IsNullOrEmpty(actionName)
-                             ? $"/{controllerName}/{actionName}".ToLower()
-                             : "#",
-                    ParentMenuId = dt.Columns.Contains("ParentMenuId") && row["ParentMenuId"] != DBNull.Value
-                                    ? Convert.ToInt32(row["ParentMenuId"])
-                                    :null,
-                    ParentMenuName = row["ParentMenuName"] != DBNull.Value ? row["ParentMenuName"].ToString()! : "Main Menu",
-                    DisplayOrder = row["DisplayOrder"] != DBNull.Value ? Convert.ToInt32(row["DisplayOrder"]) : 0,
-                    Status = row["Status"] != DBNull.Value && Convert.ToBoolean(row["Status"])
-                });
-
-            }
-            return menuList;
+            var result = await GetPagedMenuListAsync(searchTerm, parentMenuId, statusFilters, page: 1, pageSize: int.MaxValue);
+            return result.Menus;
         }
         public async Task<List<SelectListItem>> GetParentMenusForDropdownAsync()
         {
@@ -315,6 +190,63 @@ namespace CKM_ManagementSystem.MenuBL
                 Text = "Main Menu"
             });
             return parentMenus;
+        }
+
+       private MenuListItem MapDataRowToMenuListItem(DataRow row, DataColumnCollection columns)
+        {
+            string controllerName = row["ControllerName"] != DBNull.Value ? row["ControllerName"].ToString()! : string.Empty;
+            string actionName = row["ActionName"] != DBNull.Value ? row["ActionName"].ToString()! : string.Empty;
+
+            return new MenuListItem
+            {
+                MenuID = Convert.ToInt32(row["MenuID"]),
+                MenuName = row["MenuName"] != DBNull.Value ? row["MenuName"].ToString()! : string.Empty,
+                IconClass = row["MenuIcon"] != DBNull.Value ? row["MenuIcon"].ToString() : null,
+
+                ControllerName = controllerName,
+                ActionName = actionName,
+                Route = !string.IsNullOrEmpty(controllerName) && !string.IsNullOrEmpty(actionName)
+                         ? $"/{controllerName}/{actionName}".ToLower()
+                         : "#",
+                ParentMenuId = columns.Contains("ParentMenuId") && row["ParentMenuId"] != DBNull.Value
+                                ? Convert.ToInt32(row["ParentMenuId"])
+                                : null,
+                ParentMenuName = row["ParentMenuName"] != DBNull.Value ? row["ParentMenuName"].ToString()! : "Main Menu",
+                DisplayOrder = row["DisplayOrder"] != DBNull.Value ? Convert.ToInt32(row["DisplayOrder"]) : 0,
+                Status = row["Status"] != DBNull.Value && Convert.ToBoolean(row["Status"])
+            };
+        }
+        private MenuActionResult? ValidateMenuInput(string? menuName, int? displayOrder, bool isSubMenu, int? parentMenuId)
+        {
+            if(string.IsNullOrWhiteSpace(menuName)) return InvalidResult("Menu Name is required.");
+
+            if (isSubMenu && (!parentMenuId.HasValue || parentMenuId.Value <= 0)) 
+                return InvalidResult("Please select a Parent Menu.");
+
+            if (!displayOrder.HasValue || displayOrder.Value < 0 || displayOrder.Value > 999)
+                return InvalidResult("Display Order must be a 3-digit number (e.g., 000 to 999).");
+            return null;
+        }
+        private MenuActionResult InvalidResult(string message)
+        {
+            return new MenuActionResult
+            {
+                StatusCode = -1,
+                StatusMessage = message
+            };
+        }
+        private (SqlParameter statusCode, SqlParameter statusMessage) CreateOutputParameters()
+        {
+            return (
+                new SqlParameter("@StatusCode", SqlDbType.Int) { Direction = ParameterDirection.Output },
+                new SqlParameter("@StatusMessage", SqlDbType.NVarChar, 250) { Direction = ParameterDirection.Output }
+            );
+        }
+        private MenuActionResult ParseActionResult(SqlParameter statusCodeParam, SqlParameter statusMessageParam)
+        {
+            int statusCode = (statusCodeParam.Value != DBNull.Value) ? Convert.ToInt32(statusCodeParam.Value) : -1;
+            string statusMessage = (statusMessageParam.Value != DBNull.Value) ? statusMessageParam.Value.ToString()! : "Unknown Status";
+            return new MenuActionResult { StatusCode = statusCode, StatusMessage = statusMessage };
         }
         public class MenuActionResult
         {
