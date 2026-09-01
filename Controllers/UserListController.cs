@@ -2,6 +2,7 @@
 using CKM_ManagementSystem.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.Reflection.Metadata.Ecma335;
 
 namespace CKM_ManagementSystem.Controllers
@@ -113,6 +114,7 @@ namespace CKM_ManagementSystem.Controllers
 
             if (!ModelState.IsValid)
             {
+
                 await loadDropdownAsync(model);
 
                 return View("~/Views/UserList/UserCreate.cshtml", model);

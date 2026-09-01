@@ -2,17 +2,16 @@
 @section Scripts {
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-    <script src="~/js/UserEntry.js" asp-append-version="true"></script>
+    <script src="~/js/UserCreate.js" asp-append-version="true"></script>
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<link rel="stylesheet" href="~/css/UserEntry.css"/>
+<link rel="stylesheet" href="~/css/UserCreate.css"/>
 
 <div class="container d-flex justify-content-center align-items-center min-vh-100 py-5">
     <div class="card border-0 rounded-4 shadow p-5 bg-white w-100 user-entry-card">
         @if (TempData["SuccessMessage"] != null)
         {
-            var source = ViewBag.Source as string;
             <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-sm">
                     <div class="modal-content">
@@ -26,13 +25,13 @@
                             </p>
                         </div>
                         <div class="modal-footer border-0 justify-content-center">
-                            @if(ViewBag.Source?.ToString() == "list")
+                            @if(Model.Mode == "Entry")
                             {
                                 <a class="btn btn-success px-4" asp-controller="UserList" asp-action="UserList">OK</a>
                             }
                             else
                             {
-                                <a class="btn btn-success px-4" asp-controller="UserEntry" asp-action="UserCreate">OK</a>
+                                <a class="btn btn-success px-4" asp-controller="UserCreate" asp-action="UserCreate">OK</a>
                             }
                         </div>
                     </div>
@@ -50,11 +49,10 @@
             <h2 class="text-center fw-bold mb-0 user-entry-title">
                 @(Model.Mode == "Entry" ? "User Entry" : "User Update")
             </h2>
-
         </div>
         <form class="row g-4"
               method="post"
-              asp-controller="@(Model.Mode == "Entry" ? "UserEntry" : "UserList")"
+              asp-controller="@(Model.Mode == "Entry" ? "UserCreate" : "UserList")"
               asp-action="@(Model.Mode == "Entry" ? "UserCreate" : "UserUpdate")"
               enctype="multipart/form-data"
               id="UserForm">
@@ -296,8 +294,7 @@
                 {
                     <a asp-action="UserList" asp-controller="UserList" class="btn btn-light px-4 py-2 rounded-3 fw-medium text-secondary border cancel-btn">Cancel</a>
                     <button type="submit" class="btn btn-primary px-4 py-2 rounded-3 fw-medium create-btn">Update</button>
-                }
-                
+                }            
             </div>
         </form>
     </div>

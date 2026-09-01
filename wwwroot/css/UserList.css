@@ -75,18 +75,19 @@
 }
 
 .table-custom thead th {
-    height : 60px;
-    vertical-align: bottom;
-    border-bottom: 1px solid #dee2e6 !important;
-    font-weight: bold;
-    color: #6c757d; 
-    background-color: #f8f9fa; 
+     height: 60px;
+     border-radius: 12px;
+     vertical-align: bottom;
+     border-bottom: 1px solid #dee2e6 !important;
+     font-weight: bold;
+     color: #6c757d;
+     background-color: #f8f9fa;
 }
 
 .table-custom tbody td {
-    height : 55px;
-    border-bottom: 1px solid #e9ecef !important;
-    vertical-align: middle;
+     height: 55px;
+     border-bottom: 1px solid #e9ecef !important;
+     vertical-align: middle;
 }
 
 .empty-state {
@@ -135,4 +136,55 @@
 #alertOkButton:hover {
     background-color: #5c636a;
     color: white;
+}
+
+.search-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.search-input-with-icon {
+    padding-left: 38px;
+    color: #6c757d;
+    font-size: 0.875rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-control:hover,
+.form-select:hover {
+    border-color: #0d6efd;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.1rem rgba(13, 110, 253, 0.25);
+}
+.edit-icon {
+    margin-right: 6px;
+    color: #0d6efd;
+}
+
+.edit-icon:hover {
+    background-color: #e8f1ff;
+    color: #084298;
+}
+
+.delete-icon {
+    color: #dc3545;
+}
+
+.delete-icon:hover {
+    background-color: #fdeaea;
+    color: #a71d2a;
 }
