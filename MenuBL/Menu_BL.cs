@@ -36,7 +36,7 @@ namespace CKM_ManagementSystem.MenuBL
                 new SqlParameter ("@ActionName", (object?)actionName ?? DBNull.Value),
                 new SqlParameter ("@ControllerName",(object?)controllerName ?? DBNull.Value),
                 new SqlParameter ("@MenuIcon", string.IsNullOrWhiteSpace(menuIcon) ? DBNull.Value : menuIcon),
-                new SqlParameter ("@DisplayOrder", displayOrder.Value),
+                new SqlParameter ("@DisplayOrder", (object?)displayOrder ?? DBNull.Value),
                 new SqlParameter ("@ParentMenuId", (object?)parentMenuId ?? DBNull.Value),
                 new SqlParameter("@IsSubMenu", calculatedIsSubMenu),
                 new SqlParameter("@Status", status),
@@ -76,7 +76,7 @@ namespace CKM_ManagementSystem.MenuBL
                 new SqlParameter ("@ActionName", (object?)actionName ?? DBNull.Value),
                 new SqlParameter ("@ControllerName", (object?)controllerName ?? DBNull.Value),
                 new SqlParameter("@MenuIcon", string.IsNullOrWhiteSpace(menuIcon) ? DBNull.Value : menuIcon),
-                new SqlParameter("@DisplayOrder", displayOrder.Value),
+                new SqlParameter("@DisplayOrder", (object?)displayOrder ?? DBNull.Value),
                 new SqlParameter("@ParentMenuId", (object?)parentMenuId ?? DBNull.Value),
                 new SqlParameter("@Status", status),
                 statusCodeParam,
@@ -153,23 +153,19 @@ namespace CKM_ManagementSystem.MenuBL
             return ParseActionResult(statusCodeParam, statusMessageParam);
         }
 
-        public async Task<List<MenuListItem>> GetMenuListAsync(string? searchTerm, int? parentMenuId, bool? statusFilters=null)
-        {
-            var result = await GetPagedMenuListAsync(searchTerm, parentMenuId, statusFilters, page: 1, pageSize: int.MaxValue);
-            return result.Menus;
-        }
         public async Task<List<SelectListItem>> GetParentMenusForDropdownAsync()
         {
-            var allMenus = await GetMenuListAsync(searchTerm: null, parentMenuId: null, statusFilters: true);
-            return  allMenus
-                .Where(m => m.ParentMenuId == null || m.ParentMenuId == 0)
-                .Select(m => new SelectListItem
+            DataTable table = await SelectDataTableAsync("sp_GetParentMenusDropdown");
+            var selectList = new List<SelectListItem>();
+            foreach(DataRow row in table.Rows)
+            {
+                selectList.Add(new SelectListItem
                 {
-                    Value = m.MenuID.ToString(),
-                    Text = m.MenuName
-                })
-                .ToList();
-
+                    Value = row["MenuID"].ToString(),
+                    Text = row["MenuName"].ToString()
+                });
+            }
+            return selectList;
         }
 
         public async Task<List<SelectListItem>> GetParentMenuListAsync()
