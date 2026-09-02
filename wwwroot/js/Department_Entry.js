@@ -1,13 +1,21 @@
-<<<<<<< HEAD
-﻿document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
 
-    const departmentCode = document.getElementById("departmentCode");
-    const form = document.getElementById("departmentEntryForm");
-    const clearButton = document.getElementById("btnClear");
-    const departmentName = document.getElementById("DepartmentName");
-    const originalStatus =document.querySelector("[name='Status']:checked")?.value;
+    const departmentCode =
+        document.getElementById("departmentCode");
 
+    const departmentName =
+        document.getElementById("DepartmentName");
+
+    const form =
+        document.getElementById("departmentEntryForm");
+
+    const clearButton =
+        document.getElementById("btnClear");
+
+
+    // Initial focus
     if (departmentCode && departmentName) {
+
         if (departmentCode.readOnly) {
             departmentName.focus();
         } else {
@@ -15,124 +23,91 @@
         }
     }
 
+
+    if (departmentCode &&
+        departmentName &&
+        !departmentCode.readOnly) {
+
+        departmentCode.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (event.key === "Enter") {
+
+                    event.preventDefault();
+
+                    departmentName.focus();
+                }
+            }
+        );
+    }
+
+
+    
     if (clearButton && form) {
+
         clearButton.addEventListener("click", function () {
 
-            const isEditMode = departmentCode.readOnly;
+            form.reset();
 
-            if (!isEditMode) {
-                departmentCode.value = "";
-            }
+            departmentCode.value = "";
             departmentName.value = "";
 
-            const description = document.querySelector("[name='Description']");
+            const description =
+                document.querySelector("[name='Description']");
 
             if (description) {
                 description.value = "";
             }
-            if (originalStatus) {
-                const originalStatusRadio = document.querySelector(
-                    `[name='Status'][value='${originalStatus}']`
+
+            const activeRadio =
+                document.querySelector(
+                    "[name='Status'][value='true']"
                 );
 
-                if (originalStatusRadio) {
-                    originalStatusRadio.checked = true;
-                }
+            if (activeRadio) {
+                activeRadio.checked = true;
             }
 
-            document.querySelectorAll(".validation-message").forEach(function (message) {
-                message.textContent = "";
-            });
+            document
+                .querySelectorAll(".validation-message")
+                .forEach(function (message) {
+                    message.textContent = "";
+                });
 
-            const summary = document.querySelector(".validation-summary");
+            const summary =
+                document.querySelector(".validation-summary");
 
             if (summary) {
                 summary.innerHTML = "";
             }
 
-            if (isEditMode) {
-                departmentName.focus();
-            } else {
-                departmentCode.focus();
-            }
+            departmentCode.focus();
         });
     }
+
+
+    // Success Modal
     const successModalElement =
         document.getElementById("successModal");
-=======
-﻿    document.addEventListener("DOMContentLoaded", function () {
 
-        const departmentCode = document.getElementById("departmentCode");
-        const departmentName = document.querySelector("[name='DepartmentName']");
-        const form = document.getElementById("departmentEntryForm");
-        const clearButton = document.getElementById("btnClear");
-        if (departmentCode) {
-            departmentCode.focus();
->>>>>>> origin/main
+    if (successModalElement) {
 
-            departmentCode.addEventListener("keydown", function (event) {
+        const successModal =
+            new bootstrap.Modal(successModalElement);
 
-<<<<<<< HEAD
-        successModalElement.addEventListener("hidden.bs.modal", function () {
-            if (departmentCode.readOnly) {
-                departmentName.focus();
-            } else {
-                departmentCode.focus();
+        successModalElement.addEventListener(
+            "hidden.bs.modal",
+            function () {
+
+                if (departmentCode.readOnly) {
+                    departmentName.focus();
+                } else {
+                    departmentCode.focus();
+                }
             }
+        );
 
-        });
-=======
-                if (event.key === "Enter") {
-                    event.preventDefault();
->>>>>>> origin/main
-
-                    if (departmentName) {
-                        departmentName.focus();
-                    }
-                }
-            });
-        }
-
-        if (clearButton && form) {
-            clearButton.addEventListener("click", function () {
-
-                form.reset();
-
-                document.querySelector("[name='DepartmentCode']").value = "";
-                document.querySelector("[name='DepartmentName']").value = "";
-                document.querySelector("[name='Description']").value = "";
-
-                const activeRadio = document.querySelector(
-                    "[name='Status'][value='true']"
-                );
-
-                if (activeRadio) {
-                    activeRadio.checked = true;
-                }
-
-                document.querySelectorAll(".validation-message")
-                    .forEach(s => s.textContent = "");
-
-                const summary = document.querySelector(".validation-summary");
-
-                if (summary) {
-                    summary.innerHTML = "";
-                }
-
-                departmentCode.focus();
-            });
-        }
-        const successModalElement =
-            document.getElementById("successModal");
-
-        if (successModalElement) {
-            const successModal =
-                new bootstrap.Modal(successModalElement);
-
-            successModalElement.addEventListener("hidden.bs.modal", function () {
-                departmentCode.focus();
-            });
-
-            successModal.show();
-        }
-    });
+        successModal.show();
+    }
+});
