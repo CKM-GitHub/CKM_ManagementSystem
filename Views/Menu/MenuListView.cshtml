@@ -114,7 +114,7 @@
                                         }
                                     </td>
                                     <td class="text-center">
-                                        <a asp-controller="Menu" asp-action="MenuEntry" class="action-btn me-2 text-primary" asp-route-menuId="@item.MenuID"><i class="bi bi-pencil-square"></i></a>
+                                        <a asp-controller="Menu" asp-action="MenuEntry" class="action-btn me-2 text-primary" asp-route-menuId="@item.MenuID" asp-route-page =" @Model.CurrentPage" title="Edit Menu"><i class="bi bi-pencil-square"></i></a>
                                         <form asp-controller="Menu" asp-action="DeleteMenu" method="post" class="d-inline delete-form">
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="menuId" value="@item.MenuID" />

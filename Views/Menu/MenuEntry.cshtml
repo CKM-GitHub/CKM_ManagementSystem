@@ -29,7 +29,7 @@
                     </div>
 
                     <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
-                    <form method="post" id="menuForm">
+                    <form method="post" id="menuForm" asp-action="MenuEntry" asp-route-page ="@(ViewBag.CurrentPage ?? 1)">
                         <input type="hidden" asp-for="MenuID" />
                         <div class="mb-3">
                             <label asp-for="DisplayText" class="form-label fw-semibold text-secondary small">Display Text</label>
@@ -127,7 +127,8 @@
     <script>
         var isEditMode = @isEdit.ToString().ToLower();
         var successMessage = '@(TempData["SuccessMessage"] ?? "")';
-        var menuListUrl = '@Url.Action("MenuListView", "Menu")';
+        var currentPage = '@(ViewBag.CurrentPage ?? 1)';
+        var menuListUrl = '@Url.Action("MenuListView", "Menu", new {page = ViewBag.CurrentPage ?? 1})';
     </script>
 }
 @section Styles {

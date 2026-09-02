@@ -24,6 +24,9 @@
         if (modalElement) {
             const successModal = new bootstrap.Modal(modalElement);
             successModal.show();
+            const urlParams = new URLSearchParams(window.location.search);
+            const pageNum = urlParams.get('page') || 1;
+            const redirectUrl = menuListUrl + '?page=' + pageNum;
             $(modalElement).find('.btn, [data-bs-dismiss="modal"]').one('click', function () {
                 window.location.assign(menuListUrl);
             });

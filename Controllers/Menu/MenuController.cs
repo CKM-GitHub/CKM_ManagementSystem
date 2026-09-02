@@ -34,8 +34,9 @@ namespace CKM_ManagementSystem.Controllers.Menu
         }
 
         [HttpGet]
-        public async Task<IActionResult> MenuEntry(int? MenuID)
+        public async Task<IActionResult> MenuEntry(int? MenuID, int page=1)
         {
+            ViewBag.CurrentPage = page;
             var model = new CreateMenuViewModel
             {
                 ParentMenuList = await _menuBL.GetParentMenusForDropdownAsync()
@@ -64,8 +65,9 @@ namespace CKM_ManagementSystem.Controllers.Menu
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> MenuEntry(CreateMenuViewModel model)
+        public async Task<IActionResult> MenuEntry(CreateMenuViewModel model, int page=1)
         {
+            ViewBag.CurrentPage = page;
             bool isSubMenu = string.Equals(model.MenuType, "Sub", StringComparison.OrdinalIgnoreCase);
             if (isSubMenu && (!model.ParentMenuId.HasValue || model.ParentMenuId <= 0))
             {
