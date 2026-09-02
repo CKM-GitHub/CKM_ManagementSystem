@@ -5,6 +5,8 @@ using CKM_ManagementSystem.Models.Validation;
 namespace CKM_ManagementSystem.Models.ViewModels;
 public class UserCreateViewModel
 {
+    public string Mode { get; set; } = "Entry";
+
     [Required(ErrorMessage = "Staff Code is required")]
     [RegularExpression(@"^CKM-\d{4}$", ErrorMessage = "Staff Code must be in format CKM-XXXX (e.g., CKM-0001)")]  // Dr ka Code format check htar drr pr
     [Display(Name = "Staff Code")]                     // Dr ka label mr show me sarr pr  .  Under Code tway lae D a Taing pr be
@@ -19,15 +21,54 @@ public class UserCreateViewModel
     [Display(Name = "Email Address")]
     public string Email { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "Password is required")]
-    [StringLength(15, MinimumLength = 8, ErrorMessage = "Password must be between 8 and 15 characters")]  // Dr ka Password Count Check tr br
-    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$",
-        ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, and one number")]   // Dr ka format check tr pop nyi lay yrr
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        if (Mode == "Entry")
+        {
+            if (string.IsNullOrWhiteSpace(Password))
+            {
+                yield return new ValidationResult(
+                    "Password is required",
+                    new[] { nameof(Password) });
+            }
+            else
+            {
+                if (Password.Length < 8 || Password.Length > 15)
+                {
+
+                    yield return new ValidationResult(
+                    "Password must be between 8 and 15 characters",
+                    new[] { nameof(Password) });
+                }
+                if (!System.Text.RegularExpressions.Regex.IsMatch(Password,
+                    @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$"))
+                {
+                    yield return new ValidationResult(
+                        "Password must contain at least one uppercase letter, one lowercase letter, and one number",
+                        new[] { nameof(Password) }
+                    );
+                }
+                if (string.IsNullOrWhiteSpace(ConfirmPassword))
+                {
+                    yield return new ValidationResult(
+                        "Confirm Password is required",
+                        new[] { nameof(ConfirmPassword) }
+                    );
+                }
+                else if (Password != ConfirmPassword)
+                {
+                    yield return new ValidationResult(
+                        "Password and Confirm Password do not match",
+                        new[] { nameof(ConfirmPassword) }
+                    );
+                }
+            }
+        }
+    }
+
     [Display(Name = "Password")]
     public string Password { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "Confirm Password is required")]
-    [Compare("Password", ErrorMessage = "Password and Confirm Password do not match")]
     [Display(Name = "Confirm Password")]
     public string ConfirmPassword { get; set; } = string.Empty;
 
@@ -57,7 +98,6 @@ public class UserCreateViewModel
     public string? TempImageName { get; set; }
     public string? ImageUrl { get; set; }
 }
-
 
 
 

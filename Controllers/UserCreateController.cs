@@ -5,12 +5,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CKM_ManagementSystem.Controllers
 {
-    public class UserEntryController : Controller
+    public class UserCreateController : Controller
     {
         private readonly IWebHostEnvironment _environment;
         private readonly UserEntryBL _userEntryBL;
 
-        public UserEntryController(
+        public UserCreateController(
             IWebHostEnvironment environment,
             UserEntryBL userEntryBL)
         {
@@ -27,11 +27,12 @@ namespace CKM_ManagementSystem.Controllers
 
             await PopulateDropdownsAsync();
 
-            return View(model);
+            return View("~/Views/UserList/UserCreate.cshtml", model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> UserCreate(UserCreateViewModel model,string? source)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UserCreate(UserCreateViewModel model, string? source)
         {
             if (model.ImageFile != null)
             {
@@ -77,7 +78,7 @@ namespace CKM_ManagementSystem.Controllers
                     model.RoleCode
                 );
 
-                return View(model);
+                return View("~/Views/UserList/UserCreate.cshtml", model);
             }
 
             int errorCode =
@@ -126,7 +127,7 @@ namespace CKM_ManagementSystem.Controllers
                     model.RoleCode
                 );
 
-                return View(model);
+                return View("~/Views/UserList/UserCreate.cshtml", model);
             }
 
             if (!string.IsNullOrEmpty(model.TempImageName))
@@ -169,7 +170,7 @@ namespace CKM_ManagementSystem.Controllers
 
             return RedirectToAction(
                 "UserCreate",
-                "UserEntry",
+                "UserCreate",
                 new { source = source }
             );
         }
