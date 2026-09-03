@@ -51,23 +51,39 @@ namespace CKM_ManagementSystem.BL
         }
         public async Task<IEnumerable<Department>> GetDepartmentsAsync()
         {
-            return await _bdl.ExecuteReaderAsync(
-                "sp_GetDepartmentDropdown",
-                reader => new Department
-                {
-                    DepartmentCode = reader["Department_Code"]?.ToString() ?? string.Empty,
-                    DepartmentName = reader["Department_Name"]?.ToString() ?? string.Empty
-                });
+            DataTable table = _bdl.SelectDataTable(
+                "sp_GetDepartmentDropdown");
+
+            var departments = new List<Department>();
+
+            foreach (DataRow row in table.Rows)
+            {
+                departments.Add(
+                     new Department
+                     {
+                         DepartmentCode = row["Department_Code"]?.ToString() ?? string.Empty,
+                         DepartmentName = row["Department_Name"]?.ToString() ?? string.Empty
+                     });
+            } 
+            return await Task.FromResult(departments);
         }
         public async Task<IEnumerable<UserRole>> GetUserRolesAsync()
         {
-            return await _bdl.ExecuteReaderAsync(
-                "sp_GetRoleDropdown",
-                reader => new UserRole
-                {
-                    RoleCode = reader["Role_Code"]?.ToString() ?? string.Empty,
-                    RoleName = reader["Role_Name"]?.ToString() ?? string.Empty
-                });
+            DataTable table = _bdl.SelectDataTable(
+                "sp_GetRoleDropdown");
+
+            var roles = new List<UserRole>();
+
+            foreach (DataRow row in table.Rows)
+            {
+                roles.Add(
+                     new UserRole
+                     {
+                         RoleCode = row["Role_Code"]?.ToString() ?? string.Empty,
+                         RoleName = row["Role_Name"]?.ToString() ?? string.Empty
+                     });
+            }
+            return await Task.FromResult(roles);
         }
     }
 }

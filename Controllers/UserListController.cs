@@ -10,13 +10,11 @@ namespace CKM_ManagementSystem.Controllers
     public class UserListController : Controller
     {
         private readonly UserListBL _userListBL;
-        private readonly UserUpdateBL _userUpdateBL;
         private readonly IWebHostEnvironment _environment;
 
-        public UserListController(UserListBL userListBL, UserUpdateBL userUpdateBL, IWebHostEnvironment environment)
+        public UserListController(UserListBL userListBL, IWebHostEnvironment environment)
         {
             _userListBL = userListBL;
-            _userUpdateBL = userUpdateBL;
             _environment = environment;
         }
         public async Task<IActionResult> UserList (
@@ -81,15 +79,15 @@ namespace CKM_ManagementSystem.Controllers
                 TempData["ErrorMessage"] = "Fail";
                 return RedirectToAction("UserList", "UserList");
             }
-            var model = await _userUpdateBL.GetUserByStaffCodeAsync(StaffCode);
+            var model = await _userListBL.GetUserByStaffCodeAsync(StaffCode);
 
             if (model == null)
             {
                 TempData["ErrorMessage"] = "User Not Found";
                 return RedirectToAction("UserList", "UserList");
             }
-            var departments = await _userUpdateBL.GetDepartmentsAsync();
-            var roles = await _userUpdateBL.GetRolesAsync();
+            var departments = await _userListBL.GetDepartmentsAsync();
+            var roles = await _userListBL.GetRolesAsync();
 
             ViewBag.DepartmentList = new SelectList(
             departments,
@@ -125,7 +123,7 @@ namespace CKM_ManagementSystem.Controllers
                 model.ImageUrl = await SaveImageAsync(model.ImageFile);
             }
 
-            int errorCode = await _userUpdateBL.UserUpdateAsync(model);
+            int errorCode = await _userListBL.UserUpdateAsync(model);
 
             if (errorCode == 0)
             {
@@ -158,8 +156,8 @@ namespace CKM_ManagementSystem.Controllers
         }
         private async Task loadDropdownAsync(UserCreateViewModel model)
         {
-            var departments = await _userUpdateBL.GetDepartmentsAsync();
-            var roles = await _userUpdateBL.GetRolesAsync();
+            var departments = await _userListBL.GetDepartmentsAsync();
+            var roles = await _userListBL.GetRolesAsync();
 
             ViewBag.DepartmentList = new SelectList(
             departments,
@@ -201,5 +199,4 @@ namespace CKM_ManagementSystem.Controllers
             return $"/images/users/{fileName}";
         }
     }    
-
 }

@@ -8,7 +8,6 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<BaseDL>();
 builder.Services.AddScoped<UserEntryBL>();
 builder.Services.AddScoped<UserListBL>();
-builder.Services.AddScoped<UserUpdateBL>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

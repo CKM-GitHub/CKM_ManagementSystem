@@ -1,4 +1,5 @@
-﻿const imageUpload = document.getElementById("image-upload");       // Drr ka Image preview
+﻿
+const imageUpload = document.getElementById("image-upload");       // Drr ka Image preview
 const avatarPreview = document.getElementById("avatar-preview");
 const defaultIcon = document.getElementById("default-icon");
 

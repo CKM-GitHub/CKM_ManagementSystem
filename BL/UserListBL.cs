@@ -14,18 +14,52 @@ namespace CKM_ManagementSystem.BL
             _bdl = baseDL;
         }
         public async Task<PagedResponse<UserListViewModel>> GetUserListAsync(
-            string? searchText,
-            bool? status,
-            string? departmentCode,
-            string? roleCode,
-            int pageNumber = 1,
-            int pageSize = 10)
+        string? searchText,
+        bool? status,
+        string? departmentCode,
+        string? roleCode,
+        int pageNumber = 1,
+        int pageSize = 10)
         {
             if (pageNumber < 1)
                 pageNumber = 1;
 
             if (pageSize < 1 || pageSize > 100)
                 pageSize = 10;
+
+            int overallTotalCount = 0;
+            int overallActiveCount = 0;
+            int overallInactiveCount = 0;
+            int departmentCount = 0;
+            int totalCount = 0;
+
+            var users = new List<UserListViewModel>();
+            var departments = new List<DepartmentDropdownViewModel>();
+            var roles = new List<RoleDropdownViewModel>();
+
+            var headerErrorParam = new SqlParameter("@ErrorCode", SqlDbType.Int)
+            {
+                Direction = ParameterDirection.Output
+            };
+
+            DataTable headerTable = await _bdl.SelectDataTableAsync(
+                "sp_HeaderUserList",
+                headerErrorParam);
+
+            int headerErrorCode = headerErrorParam.Value != DBNull.Value
+                ? Convert.ToInt32(headerErrorParam.Value)
+                : 0;
+
+            if (headerErrorCode == 0 &&
+                headerTable.Rows.Count > 0)
+            {
+                DataRow row = headerTable.Rows[0];
+
+                overallTotalCount = Convert.ToInt32(row["TotalUsers"]);
+                overallActiveCount = Convert.ToInt32(row["ActiveUsers"]);
+                overallInactiveCount = Convert.ToInt32(row["InactiveUsers"]);
+                departmentCount = Convert.ToInt32(row["Departments"]);
+            }
 
             SqlParameter[] parameters =
             {
@@ -44,128 +78,74 @@ namespace CKM_ManagementSystem.BL
 
             parameters = parameters.Append(errorParam).ToArray();
 
-            var (
-                overallTotalCount,
-                overallActiveCount,
-                overallInactiveCount,
-                totalCount,
-                departmentCount,
-                users,
-                departments,
-                roles
-            ) =
-            await _bdl.ExecuteMultiResultReaderAsync(
+            DataSet dataSet = _bdl.SelectDataSet(
                 "sp_GetUserList",
-                async reader =>
-                {
-                    int overallTotalCount = 0;
-                    int overallActiveCount = 0;
-                    int overallInactiveCount = 0;
-                    int totalCount = 0;
-                    int departmentCount = 0;
-
-                    if (await reader.ReadAsync())
-                    {
-                        overallTotalCount = reader.GetInt32(reader.GetOrdinal("OverallTotalCount"));
-                        overallActiveCount = reader.GetInt32(reader.GetOrdinal("OverallActiveCount"));
-                        overallInactiveCount = reader.GetInt32(reader.GetOrdinal("OverallInactiveCount"));
-                        totalCount = reader.GetInt32(reader.GetOrdinal("TotalCount"));
-                        departmentCount = reader.GetInt32(reader.GetOrdinal("DepartmentCount"));
-                    }
-
-                    var users = new List<UserListViewModel>();
-
-                    if (await reader.NextResultAsync())
-                    {
-                        int staffCodeIdx = reader.GetOrdinal("Staff_Code");
-                        int nameIdx = reader.GetOrdinal("Name");
-                        int emailIdx = reader.GetOrdinal("Email");
-                        int imageUrlIdx = reader.GetOrdinal("Image_URL");
-                        int deptNameIdx = reader.GetOrdinal("Department_Name");
-                        int roleNameIdx = reader.GetOrdinal("Role_Name");
-                        int statusIdx = reader.GetOrdinal("Status");
-
-                        while (await reader.ReadAsync())
-                        {
-                            users.Add(new UserListViewModel
-                            {
-                                StaffCode = reader.IsDBNull(staffCodeIdx) ? string.Empty : reader.GetString(staffCodeIdx),
-                                Name = reader.IsDBNull(nameIdx) ? string.Empty : reader.GetString(nameIdx),
-                                Email = reader.IsDBNull(emailIdx) ? string.Empty : reader.GetString(emailIdx),
-                                ImageUrl = reader.IsDBNull(imageUrlIdx) ? string.Empty : reader.GetString(imageUrlIdx),
-                                DepartmentName = reader.IsDBNull(deptNameIdx) ? string.Empty : reader.GetString(deptNameIdx),
-                                RoleName = reader.IsDBNull(roleNameIdx) ? string.Empty : reader.GetString(roleNameIdx),
-                                Status = !reader.IsDBNull(statusIdx) && reader.GetBoolean(statusIdx)
-                            });
-                        }
-                    }
-
-                    var departments = new List<DepartmentDropdownViewModel>();
-
-                    if (await reader.NextResultAsync())
-                    {
-                        int deptCodeIdx = reader.GetOrdinal("Department_Code");
-                        int deptNameIdx = reader.GetOrdinal("Department_Name");
-
-                        while (await reader.ReadAsync())
-                        {
-                            departments.Add(new DepartmentDropdownViewModel
-                            {
-                                DepartmentCode = reader.IsDBNull(deptCodeIdx) ? string.Empty : reader.GetString(deptCodeIdx),
-                                DepartmentName = reader.IsDBNull(deptNameIdx) ? string.Empty : reader.GetString(deptNameIdx)
-                            });
-                        }
-                    }
-
-                    var roles = new List<RoleDropdownViewModel>();
-
-                    if (await reader.NextResultAsync())
-                    {
-                        int roleCodeIdx = reader.GetOrdinal("Role_Code");
-                        int roleNameIdx = reader.GetOrdinal("Role_Name");
-
-                        while (await reader.ReadAsync())
-                        {
-                            roles.Add(new RoleDropdownViewModel
-                            {
-                                RoleCode = reader.IsDBNull(roleCodeIdx) ? string.Empty : reader.GetString(roleCodeIdx),
-                                RoleName = reader.IsDBNull(roleNameIdx) ? string.Empty : reader.GetString(roleNameIdx)
-                            });
-                        }
-                    }
-
-                    return (
-                        overallTotalCount,
-                        overallActiveCount,
-                        overallInactiveCount,
-                        totalCount,
-                        departmentCount,
-                        users,
-                        departments,
-                        roles
-                    );
-                },
                 parameters);
 
             int errorCode = errorParam.Value != DBNull.Value
                 ? Convert.ToInt32(errorParam.Value)
                 : 0;
 
+            if (dataSet.Tables.Count > 0)
+            {
+                foreach (DataRow row in dataSet.Tables[0].Rows)
+                {
+                    users.Add(new UserListViewModel
+                    {
+                        StaffCode = row["Staff_Code"]?.ToString() ?? string.Empty,
+                        Name = row["Name"]?.ToString() ?? string.Empty,
+                        Email = row["Email"]?.ToString() ?? string.Empty,
+                        ImageUrl = row["Image_URL"]?.ToString() ?? string.Empty,
+                        DepartmentName = row["Department_Name"]?.ToString() ?? string.Empty,
+                        RoleName = row["Role_Name"]?.ToString() ?? string.Empty,
+                        Status = row["Status"] != DBNull.Value && Convert.ToBoolean(row["Status"])
+                    });
+                    if (totalCount == 0 && row["TotalCount"] != DBNull.Value)
+                    {
+                        totalCount = Convert.ToInt32(row["TotalCount"]);
+                    }
+                }
+            }
+
+            if (dataSet.Tables.Count > 1)
+            {
+                foreach (DataRow row in dataSet.Tables[1].Rows)
+                {
+                    departments.Add(new DepartmentDropdownViewModel
+                    {
+                        DepartmentCode = row["Department_Code"]?.ToString() ?? string.Empty,
+                        DepartmentName = row["Department_Name"]?.ToString() ?? string.Empty
+                    });
+                }
+            }
+
+            if (dataSet.Tables.Count > 2)
+            {
+                foreach (DataRow row in dataSet.Tables[2].Rows)
+                {
+                    roles.Add(new RoleDropdownViewModel
+                    {
+                        RoleCode = row["Role_Code"]?.ToString() ?? string.Empty,
+                        RoleName = row["Role_Name"]?.ToString() ?? string.Empty
+                    });
+                }
+            }
             var response = new PagedResponse<UserListViewModel>
             {
                 Data = users,
                 Departments = departments,
                 Roles = roles,
-                ErrorCode = errorCode,
+                ErrorCode = errorCode != 0
+                    ? errorCode
+                    : headerErrorCode,
                 OverallTotalCount = overallTotalCount,
                 OverallActiveCount = overallActiveCount,
                 OverallInactiveCount = overallInactiveCount,
-                TotalCount = totalCount,
                 DepartmentCount = departmentCount,
+                TotalCount = totalCount,
                 PageNumber = pageNumber,
                 PageSize = pageSize
             };
-
             return response;
         }
         public async Task<(int ErrorCode, string? UserName)> DeleteUserAsync(string staffCode)
@@ -195,64 +175,79 @@ namespace CKM_ManagementSystem.BL
 
             return (errorCode, userName);
         }
-    }
-    public class UserUpdateBL
-    {
-        private readonly BaseDL _bdl;
-
-        public UserUpdateBL(BaseDL baseDL)
-        {
-            _bdl = baseDL;
-        }
-        public async Task<UserCreateViewModel?> GetUserByStaffCodeAsync(string staffCode)
+    
+    public async Task<UserCreateViewModel?> GetUserByStaffCodeAsync(string staffCode)
         {
             if (string.IsNullOrWhiteSpace(staffCode))
                 return null;
 
             var parameters = new[]
             {
-                new SqlParameter("@Staff_Code", SqlDbType.NVarChar, 50) { Value = staffCode }
-            };
+            new SqlParameter("@Staff_Code", SqlDbType.NVarChar, 50)
+            {
+                Value = staffCode
+            }
+        };
 
-            var list = await _bdl.ExecuteReaderAsync(
+            DataTable table = await _bdl.SelectDataTableAsync(
                 "sp_GetUserByStaffCode",
-                reader => new UserCreateViewModel
-                {
-                    StaffCode = reader["Staff_Code"]?.ToString() ?? string.Empty,
-                    Name = reader["Name"]?.ToString() ?? string.Empty,
-                    Email = reader["Email"]?.ToString() ?? string.Empty,
-                    Gender = reader["Gender"]?.ToString() ?? string.Empty,
-                    DepartmentCode = reader["Department_Code"]?.ToString() ?? string.Empty,
-                    RoleCode = reader["Role_Code"]?.ToString() ?? string.Empty,
-                    Status = reader["Status"] != DBNull.Value && Convert.ToBoolean(reader["Status"]),
-                    ImageUrl = reader["Image_URL"]?.ToString() ?? string.Empty
-                },
                 parameters);
 
-            return list.FirstOrDefault();
+            if (table.Rows.Count == 0)
+                return null;
+
+            DataRow row = table.Rows[0];
+
+            return new UserCreateViewModel
+            {
+                StaffCode = row["Staff_Code"]?.ToString() ?? string.Empty,
+                Name = row["Name"]?.ToString() ?? string.Empty,
+                Email = row["Email"]?.ToString() ?? string.Empty,
+                Gender = row["Gender"]?.ToString() ?? string.Empty,
+                DepartmentCode = row["Department_Code"]?.ToString() ?? string.Empty,
+                RoleCode = row["Role_Code"]?.ToString() ?? string.Empty,
+                Status = row["Status"] != DBNull.Value &&Convert.ToBoolean(row["Status"]),
+                ImageUrl = row["Image_URL"]?.ToString() ?? string.Empty
+            };
         }
+
         public async Task<List<DepartmentDropdownViewModel>> GetDepartmentsAsync()
         {
-            return await _bdl.ExecuteReaderAsync(
-                "sp_GetDepartmentDropdown",
-                reader => new DepartmentDropdownViewModel
+            DataTable table = await _bdl.SelectDataTableAsync(
+                "sp_GetDepartmentDropdown");
+
+            var departments = new List<DepartmentDropdownViewModel>();
+
+            foreach (DataRow row in table.Rows)
+            {
+                departments.Add(new DepartmentDropdownViewModel
                 {
-                    DepartmentCode = reader["Department_Code"]?.ToString() ?? string.Empty,
-                    DepartmentName = reader["Department_Name"]?.ToString() ?? string.Empty
+                    DepartmentCode = row["Department_Code"]?.ToString() ?? string.Empty,
+                    DepartmentName = row["Department_Name"]?.ToString() ?? string.Empty
                 });
+            }
+
+            return departments;
         }
 
         public async Task<List<RoleDropdownViewModel>> GetRolesAsync()
         {
-            return await _bdl.ExecuteReaderAsync(
-                "sp_GetRoleDropdown",
-                reader => new RoleDropdownViewModel
-                {
-                    RoleCode = reader["Role_Code"]?.ToString() ?? string.Empty,
-                    RoleName = reader["Role_Name"]?.ToString() ?? string.Empty
-                });
-        }
+            DataTable table = await _bdl.SelectDataTableAsync(
+                "sp_GetRoleDropdown");
 
+            var roles = new List<RoleDropdownViewModel>();
+
+            foreach (DataRow row in table.Rows)
+            {
+                roles.Add(new RoleDropdownViewModel
+                {
+                    RoleCode = row["Role_Code"]?.ToString() ?? string.Empty,
+                    RoleName = row["Role_Name"]?.ToString() ?? string.Empty
+                });
+            }
+
+            return roles;
+        }
         public async Task<int> UserUpdateAsync(UserCreateViewModel model)
         {
             if (model == null)
@@ -276,8 +271,8 @@ namespace CKM_ManagementSystem.BL
                     Direction = ParameterDirection.Output
                 }
             };
-
             return await _bdl.ExecuteNonQueryWithErrorCodeAsync("sp_userUpdate", parameters);
         }
+
     }
 }
