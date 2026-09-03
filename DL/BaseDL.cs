@@ -33,6 +33,16 @@ namespace CKM_ManagementSystem.DL
             using var reader = await command.ExecuteReaderAsync();
             var table = new DataTable();
             table.Load(reader);
+            if(parameters != null)
+            {
+                for(int i = 0;i < parameters.Length; i++)
+                {
+                    if (parameters[i].Direction == ParameterDirection.Output || parameters[i].Direction == ParameterDirection.InputOutput)
+                    {
+                        parameters[i].Value = command.Parameters[parameters[i].ParameterName].Value;
+                    }
+                }
+            }
             return table;
         }
         public async Task<string> SelectJsonAsync(string storedProcedure, params SqlParameter[] parameters)
@@ -63,6 +73,17 @@ namespace CKM_ManagementSystem.DL
             await connection.OpenAsync();
             await command.ExecuteNonQueryAsync();
 
+            if(parameters != null)
+            {
+                for(int i = 0;i< parameters.Length; i++)
+                {
+                    if (parameters[i].Direction == ParameterDirection.Output || parameters[i].Direction == ParameterDirection.InputOutput)
+                    {
+                        parameters[i].Value = command.Parameters[parameters[i].ParameterName].Value;
+                    }
+                }
+            }
+
             return true;
         }
 
@@ -71,7 +92,11 @@ namespace CKM_ManagementSystem.DL
         {
             foreach (var parameter in parameters)
             {
-                if (parameter.Value == null || string.IsNullOrWhiteSpace(parameter.Value.ToString()))
+                if (parameter.Value == null)
+                {
+                    parameter.Value = DBNull.Value;
+                }
+                else if(parameter.Value is string str && string.IsNullOrWhiteSpace(str))
                 {
                     parameter.Value = DBNull.Value;
                 }

@@ -120,6 +120,8 @@ namespace CKM_ManagementSystem.MenuBL
                     .Select(row => MapDataRowToMenuListItem(row, dt.Columns))
                     .ToList();
             int totalItems = (totalCountParam.Value != DBNull.Value) ? Convert.ToInt32(totalCountParam.Value) : 0;
+
+            int validPageSize = pageSize > 0 ? pageSize : 10;
             return new MenuListViewModel
             {
                 SearchTerm = searchTerm,
@@ -127,7 +129,7 @@ namespace CKM_ManagementSystem.MenuBL
                 StatusFilters = statusFilters,
                 Menus = menuList,
                 CurrentPage = page,
-                TotalPages = (int)Math.Ceiling((double)totalItems / (pageSize > 0 ? pageSize:10)),
+                TotalPages = (int)Math.Ceiling((double)totalItems / validPageSize),
                 TotalItems = totalItems,
                 PageSize = pageSize,
             };
