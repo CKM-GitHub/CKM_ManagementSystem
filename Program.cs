@@ -1,6 +1,3 @@
-using CKM_ManagementSystem.Data;
-using CKM_ManagementSystem.Services;
-using CKM_ManagementSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using CKM_ManagementSystem.BL;
 using CKM_ManagementSystem.DL;
@@ -13,14 +10,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSession();
 
 
-// 1. DbContext Register 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // 2. IDepartmentService 
-builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<BaseDL>();
-builder.Services.AddScoped<DepartmentBL>();
 builder.Services.AddScoped<MainMenuBL>();
 
 var app = builder.Build();
