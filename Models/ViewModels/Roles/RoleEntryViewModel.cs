@@ -22,16 +22,14 @@ namespace CKM_ManagementSystem.Models.ViewModels.Roles
         public List<RolePermissionViewModel> MenuPermissions { get; set; } = new List<RolePermissionViewModel>();
     }
 
-    public class MenuPermissionViewModel
+    public class RolePermissionViewModel
     {
         public int MenuId { get; set; }
         public string MenuName { get; set; } = string.Empty;
         public int? ParentId { get; set; }
+        public int Level { get; set; } = 0; 
         public bool CanRead { get; set; }
         public bool CanWrite { get; set; }
         public bool CanDelete { get; set; }
     }
-
-    
-    public class RolePermissionViewModel : MenuPermissionViewModel { }
 }

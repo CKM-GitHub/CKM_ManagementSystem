@@ -2,24 +2,23 @@
 
 @{
     ViewData["Title"] = "User Role Entry";
-
     bool isEditMode = Model != null && !string.IsNullOrEmpty(Model.RoleCode);
 }
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <link rel="stylesheet" href="~/css/role-entry.css" asp-append-version="true" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
 <div class="container py-4">
-    <div class="role-entry-card position-relative">
+    <div class="role-entry-card">
 
-        <h2 class="role-entry-title">User Role Entry</h2>
+        <h4 class="role-entry-title">User Role Entry</h4>
 
-        <form id="roleForm">
+        <form id="roleForm" method="post" asp-action="RoleEntry" asp-controller="Role">
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3 small"></div>
 
             <div class="mb-3">
                 <label class="form-label-custom">Role Code</label>
-                <input asp-for="RoleCode" id="RoleCode" class="form-control" placeholder="e.g., Role Code" maxlength="20" autofocus readonly="@(isEditMode ? "readonly" : null)" />
+                <input asp-for="RoleCode" id="RoleCode" class="form-control" placeholder="e.g., MM" maxlength="20" autofocus readonly="@(isEditMode ? "readonly" : null)" />
                 <span asp-validation-for="RoleCode" id="valRoleCode" class="text-danger small"></span>
             </div>
 
@@ -47,14 +46,14 @@
             </div>
 
             <div class="mb-4">
-                <label class="form-label-custom">Menu Group Permissions</label>
+                <label class="form-label-custom mb-2">Menu Group Permissions</label>
 
-                <div class="permissions-table-wrapper">
-                    <table class="table permissions-table mb-0 align-middle">
-                        <thead>
+                <div class="table-responsive permissions-table-wrapper">
+                    <table class="table align-middle mb-0">
+                        <thead class="bg-light">
                             <tr>
-                                <th style="padding-left: 1.5rem;">Menu Structure</th>
-                                <th class="text-end" style="padding-right: 2.5rem; min-width: 260px;">Allowed Actions</th>
+                                <th style="padding-left: 1.5rem;" class="text-secondary small fw-bold">Menu Structure</th>
+                                <th class="text-end text-secondary small fw-bold" style="padding-right: 2.5rem; min-width: 260px;">Allowed Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -64,14 +63,27 @@
                                 {
                                     var currentMenu = Model.MenuPermissions[i];
 
-                                    bool isParent = !currentMenu.ParentId.HasValue || currentMenu.ParentId == 0;
+                                    bool isChild = currentMenu.ParentId.HasValue && currentMenu.ParentId.Value > 0 && currentMenu.ParentId.Value != currentMenu.MenuId;
+                                    bool isParent = !isChild;
 
                                     bool isLastSubmenu = false;
-                                    if (!isParent)
+                                    if (isChild)
                                     {
                                         var currentParentId = currentMenu.ParentId;
-                                        isLastSubmenu = (i == Model.MenuPermissions.Count - 1) ||
-                                        (Model.MenuPermissions[i + 1].ParentId != currentParentId);
+                                        bool hasNextChild = false;
+                                        for (int j = i + 1; j < Model.MenuPermissions.Count; j++)
+                                        {
+                                            var nextMenu = Model.MenuPermissions[j];
+                                            bool isNextChild = nextMenu.ParentId.HasValue && nextMenu.ParentId.Value > 0 && nextMenu.ParentId.Value != nextMenu.MenuId;
+
+                                            if (!isNextChild) break;
+                                            if (nextMenu.ParentId == currentParentId)
+                                            {
+                                                hasNextChild = true;
+                                                break;
+                                            }
+                                        }
+                                        isLastSubmenu = !hasNextChild;
                                     }
 
                                     <tr class="@(isParent ? "parent-menu-row" : "child-menu-row")"
@@ -81,33 +93,33 @@
                                         <input type="hidden" asp-for="MenuPermissions[i].MenuId" />
                                         <input type="hidden" asp-for="MenuPermissions[i].MenuName" />
                                         <input type="hidden" asp-for="MenuPermissions[i].ParentId" />
+                                        <input type="hidden" asp-for="MenuPermissions[i].Level" />
 
-                                        <td style="padding-left: 1.5rem;">
+                                        <td style="padding-left: @(isParent ? "1.5rem" : "2.5rem");">
                                             @if (isParent)
                                             {
-                                                <span class="fw-bold text-dark">@currentMenu.MenuName</span>
+                                                <span class="parent-menu-title fw-bold">@currentMenu.MenuName</span>
                                             }
                                             else
                                             {
-                                                <span class="text-muted me-2 font-monospace ms-3">@(isLastSubmenu ? "└─" : "├─")</span>
-                                                <span class="text-secondary">@currentMenu.MenuName</span>
+                                                <span class="tree-icon text-muted me-1">@(isLastSubmenu ? "└─" : "├─")</span>
+                                                <span class="child-menu-title">@currentMenu.MenuName</span>
                                             }
                                         </td>
 
-                                        
-                                        <td class="text-end" style="padding-right: 2rem;">
+                                        <td class="text-end" style="padding-right: 2.5rem;">
                                             <div class="d-inline-flex justify-content-end align-items-center">
                                                 <div class="form-check form-check-inline mb-0 me-0 text-start" style="width: 75px;">
                                                     <input class="form-check-input chk-read" type="checkbox" asp-for="MenuPermissions[i].CanRead" id="read_@i">
-                                                    <label class="form-check-label small ms-1" for="read_@i">Read</label>
+                                                    <label class="form-check-label @(isParent ? "fw-bold" : "") small ms-1" for="read_@i">Read</label>
                                                 </div>
                                                 <div class="form-check form-check-inline mb-0 me-0 text-start" style="width: 75px;">
                                                     <input class="form-check-input chk-write" type="checkbox" asp-for="MenuPermissions[i].CanWrite" id="write_@i">
-                                                    <label class="form-check-label small ms-1" for="write_@i">Write</label>
+                                                    <label class="form-check-label @(isParent ? "fw-bold" : "") small ms-1" for="write_@i">Write</label>
                                                 </div>
                                                 <div class="form-check form-check-inline mb-0 me-0 text-start" style="width: 75px;">
                                                     <input class="form-check-input chk-delete" type="checkbox" asp-for="MenuPermissions[i].CanDelete" id="delete_@i">
-                                                    <label class="form-check-label small ms-1" for="delete_@i">Delete</label>
+                                                    <label class="form-check-label @(isParent ? "fw-bold" : "") small ms-1" for="delete_@i">Delete</label>
                                                 </div>
                                             </div>
                                         </td>
@@ -143,7 +155,7 @@
                     }
                 </div>
                 <div class="col-6">
-                    <button type="submit" id="btnRegister" class="btn btn-register w-100 py-2">
+                    <button type="submit" id="btnRegister" class="btn btn-primary w-100 py-2">
                         @(isEditMode ? "Update" : "Register")
                     </button>
                 </div>
@@ -159,12 +171,76 @@
 
     <script>
         $(document).ready(function () {
-
             var isEditMode = @isEditMode.ToString().ToLower();
 
             if (!isEditMode) {
                 $('#RoleCode').focus();
             }
+
+            
+            $('#roleForm').on('submit', function (e) {
+                e.preventDefault();
+
+                var $form = $(this);
+
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: 'POST',
+                    data: $form.serialize(),
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire({
+                                title: 'Success!',
+                                text: response.message,
+                                icon: 'success',
+                                confirmButtonText: 'OK',
+                                confirmButtonColor: '#0d6efd'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    if (isEditMode) {
+                                        window.location.href = '@Url.Action("RoleList", "Role")';
+                                    } else {
+                                        $('#btnClear').click();
+                                    }
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: response.message,
+                                icon: 'error',
+                                confirmButtonColor: '#d33'
+                            });
+                        }
+                    },
+                    error: function () {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'An error occurred while saving.',
+                            icon: 'error',
+                            confirmButtonColor: '#d33'
+                        });
+                    }
+                });
+            });
+
+            
+            $('#roleForm input, #roleForm textarea').on('keydown', function (e) {
+                if (e.key === 'Enter' || e.keyCode === 13) {
+                    if ($(this).is(':checkbox') || $(this).is(':radio')) {
+                        return;
+                    }
+
+                    e.preventDefault();
+
+                    var inputs = $(this).closest('form').find('input:enabled:not([readonly]), textarea:enabled:not([readonly])');
+                    var index = inputs.index(this);
+
+                    if (index >= 0 && index < inputs.length - 1) {
+                        inputs.eq(index + 1).focus();
+                    }
+                }
+            });
 
             $(document).on('input keyup paste', '#RoleCode', function () {
                 var $this = $(this);
@@ -174,46 +250,7 @@
                 }, 0);
             });
 
-            $('#roleForm').on('keydown', function (e) {
-                if (e.key === 'Enter' || e.keyCode === 13) {
-                    var targetNode = e.target.nodeName.toLowerCase();
-                    if (targetNode !== 'textarea') {
-                        e.preventDefault();
-
-                        if (e.target.id === 'RoleCode') {
-                            $('#DisplayName').focus();
-                        } else if (e.target.id === 'DisplayName') {
-                            $('#Description').focus();
-                        }
-                        return false;
-                    }
-                }
-            });
-
-            var $form = $("#roleForm");
-            if ($form.data('validator')) {
-                var validator = $form.data('validator');
-                validator.settings.onfocusout = false;
-                validator.settings.onkeyup = false;
-            }
-
-            $(document).on('blur', '#RoleCode', function () {
-                var roleCodeVal = $(this).val();
-                var $valSpan = $('#valRoleCode');
-
-                if (roleCodeVal && !isEditMode) {
-                    $.post('/Role/CheckDuplicateCode', { roleCode: roleCodeVal }, function (res) {
-                        if (res.isDuplicate) {
-                            $valSpan.text('This Role Code already exists.');
-                        } else {
-                            if ($valSpan.text() === 'This Role Code already exists.') {
-                                $valSpan.text('');
-                            }
-                        }
-                    });
-                }
-            });
-
+           
             $(document).on('change', '.parent-menu-row input[type="checkbox"]', function () {
                 var $parentRow = $(this).closest('tr');
                 var parentId = $parentRow.data('menu-id');
@@ -231,6 +268,7 @@
                 }
             });
 
+            
             $(document).on('change', '.child-menu-row input[type="checkbox"]', function () {
                 var $childRow = $(this).closest('tr');
                 var parentId = $childRow.data('parent-id');
@@ -250,70 +288,13 @@
                 }
             });
 
+            
             $('#btnClear').on('click', function () {
                 $('#roleForm')[0].reset();
                 $('span.text-danger').text('');
                 $('#statusActive').prop('checked', true);
                 $('#RoleCode').focus();
             });
-
-            $('#roleForm').on('submit', function (e) {
-                e.preventDefault();
-
-                if (!$(this).valid()) return;
-
-                if ($('#valRoleCode').text() === 'This Role Code already exists.') {
-                    return;
-                }
-
-                let formData = $(this).serialize();
-                let isEditParam = "&isEdit=" + isEditMode;
-                formData += isEditParam;
-
-                $('#btnRegister').prop('disabled', true);
-
-                $.ajax({
-                    url: '/Role/SaveRole',
-                    type: 'POST',
-                    data: formData,
-                    success: function (response) {
-                        $('#btnRegister').prop('disabled', false);
-
-                        if (response.success) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success!',
-                                text: response.message || 'Registration is complete.',
-                                confirmButtonText: 'OK'
-                            }).then((result) => {
-                                if (response.isEdit) {
-                                    window.location.href = '/Role/RoleList';
-                                } else {
-                                    $('#roleForm')[0].reset();
-                                    $('span.text-danger').text('');
-                                    $('#statusActive').prop('checked', true);
-                                    $('#RoleCode').focus();
-                                }
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: response.message || 'Saving failed.'
-                            });
-                        }
-                    },
-                    error: function () {
-                        $('#btnRegister').prop('disabled', false);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'System Error',
-                            text: 'An error occurred while processing your request.'
-                        });
-                    }
-                });
-            });
-
         });
     </script>
 }
