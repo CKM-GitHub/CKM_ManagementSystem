@@ -19,7 +19,7 @@
 
             <div class="mb-3">
                 <label class="form-label-custom">Role Code</label>
-                <input asp-for="RoleCode" id="RoleCode" class="form-control" placeholder="e.g., role code" maxlength="20" autofocus readonly="@(isEditMode ? "readonly" : null)" />
+                <input asp-for="RoleCode" id="RoleCode" class="form-control" placeholder="e.g., Role Code" maxlength="20" autofocus readonly="@(isEditMode ? "readonly" : null)" />
                 <span asp-validation-for="RoleCode" id="valRoleCode" class="text-danger small"></span>
             </div>
 
@@ -54,7 +54,7 @@
                         <thead>
                             <tr>
                                 <th style="padding-left: 1.5rem;">Menu Structure</th>
-                                <th class="text-center" style="width: 250px;">Allowed Actions</th>
+                                <th class="text-end" style="padding-right: 2.5rem; min-width: 260px;">Allowed Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -94,19 +94,20 @@
                                             }
                                         </td>
 
-                                        <td>
-                                            <div class="d-flex justify-content-center gap-3">
-                                                <div class="form-check form-check-inline mb-0 me-0">
+                                        
+                                        <td class="text-end" style="padding-right: 2rem;">
+                                            <div class="d-inline-flex justify-content-end align-items-center">
+                                                <div class="form-check form-check-inline mb-0 me-0 text-start" style="width: 75px;">
                                                     <input class="form-check-input chk-read" type="checkbox" asp-for="MenuPermissions[i].CanRead" id="read_@i">
-                                                    <label class="form-check-label small" for="read_@i">Read</label>
+                                                    <label class="form-check-label small ms-1" for="read_@i">Read</label>
                                                 </div>
-                                                <div class="form-check form-check-inline mb-0 me-0">
+                                                <div class="form-check form-check-inline mb-0 me-0 text-start" style="width: 75px;">
                                                     <input class="form-check-input chk-write" type="checkbox" asp-for="MenuPermissions[i].CanWrite" id="write_@i">
-                                                    <label class="form-check-label small" for="write_@i">Write</label>
+                                                    <label class="form-check-label small ms-1" for="write_@i">Write</label>
                                                 </div>
-                                                <div class="form-check form-check-inline mb-0 me-0">
+                                                <div class="form-check form-check-inline mb-0 me-0 text-start" style="width: 75px;">
                                                     <input class="form-check-input chk-delete" type="checkbox" asp-for="MenuPermissions[i].CanDelete" id="delete_@i">
-                                                    <label class="form-check-label small" for="delete_@i">Delete</label>
+                                                    <label class="form-check-label small ms-1" for="delete_@i">Delete</label>
                                                 </div>
                                             </div>
                                         </td>
