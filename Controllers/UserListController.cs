@@ -62,7 +62,7 @@ namespace CKM_ManagementSystem.Controllers
             var result = await _userListBL.DeleteUserAsync(staffCode);
             if (result.ErrorCode == 0)
             {
-                   TempData["SuccessMessage"] = $"User Delete successfully! User : {result.UserName}  ";
+                return RedirectToAction("UserList");
             }
             else
             {
@@ -128,7 +128,7 @@ namespace CKM_ManagementSystem.Controllers
             if (errorCode == 0)
             {
                 TempData["SuccessMessage"] = "User Update Successfully";
-                return RedirectToAction("UserList", "UserList");
+                return RedirectToAction("UserCreate", "UserCreate");
             }
 
             if (errorCode == 2)

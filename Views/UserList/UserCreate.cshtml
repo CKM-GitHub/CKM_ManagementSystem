@@ -25,14 +25,7 @@
                             </p>
                         </div>
                         <div class="modal-footer border-0 justify-content-center">
-                            @if(Model.Mode == "Entry")
-                            {
-                                <a class="btn btn-success px-4" asp-controller="UserList" asp-action="UserList">OK</a>
-                            }
-                            else
-                            {
-                                <a class="btn btn-success px-4" asp-controller="UserCreate" asp-action="UserCreate">OK</a>
-                            }
+                              <a class="btn btn-success px-4" asp-controller="UserList" asp-action="UserList">OK</a>
                         </div>
                     </div>
                 </div>
@@ -183,7 +176,7 @@
                         <div class="row align-items-center">
                             <label asp-for="Name" class="col-sm-4 form-label fw-medium text-secondary mb-sm-0"></label>
                             <div class="col-sm-8">
-                                <input type="text" asp-for="Name" class="form-control rounded-3 py-2" placeholder="Enter full name" maxlength="100" >
+                                <input type="text" asp-for="Name" class="form-control rounded-3 py-2" placeholder="Enter full name" maxlength="100" title="Maximum 100 characters">
                                 <span asp-validation-for="Name" class="text-danger small"></span>
                             </div>
                         </div>
@@ -192,7 +185,7 @@
                         <div class="row align-items-center">
                             <label asp-for="Email" class="col-sm-4 form-label fw-medium text-secondary mb-sm-0"></label>
                             <div class="col-sm-8">
-                                <input type="email" asp-for="Email" class="form-control rounded-3 py-2" placeholder="Enter email address" maxlength="200" >
+                                <input type="email" asp-for="Email" class="form-control rounded-3 py-2" placeholder="Enter email address" maxlength="200" title="Maximum 200 characters">
                                 <span asp-validation-for="Email" class="text-danger small"></span>
                             </div>
                         </div>

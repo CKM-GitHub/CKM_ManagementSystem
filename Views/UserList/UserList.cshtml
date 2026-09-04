@@ -20,9 +20,8 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <link rel="stylesheet" href="~/css/UserList.css" />
-<script src="~/js/UserList.js"></script>
 
-<h2 class="text-center text-dark fw-bold mb-4">User Management</h2>
+<h1 class="text-center text-dark fw-bold mb-4 header-text">User Management</h1>
 <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3 mb-4">
     <div class="col">
         <div class="card h-100 shadow-sm p-3 d-flex flex-row align-items-center gap-3 border-0">
@@ -65,48 +64,57 @@
 
 <form method="get" asp-controller="UserList" asp-action="UserList" class="card shadow-sm p-3 mb-4 border-0">
     <div class="d-flex flex-wrap align-items-center gap-2 justify-content-between">
-        <div class="d-flex flex-wrap align-items-center gap-2 flex-grow-1">
-             <div class="search-wrapper">
-                 <i class="fas fa-search search-icon"></i>
-                 <input type="text" name="searchText" value="@currentSearch" class="form-control search-input-with-icon fixed-responsive-width" placeholder="Search users by name, email, or code...">
+        <div class="d-flex flex-wrap align-items-center gap-2 flex-grow-1 search-form-container">
+            <div class="search-wrapper">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" name="searchText" value="@currentSearch" class="form-control text-secondary small search-input-with-icon" placeholder="Search users by name, email, or code">
             </div>
-            <select name="departmentCode" class="form-select  text-secondary small" >
-                <option value="">All Departments</option>
-                @foreach (var dept in Model.Departments)
-                {
-                    var shortName = dept.DepartmentName.Length > 25 ?
-                       dept.DepartmentName.Substring(0, 22) + "..."
-                       : dept.DepartmentName;
-                    <option value="@dept.DepartmentCode" selected="@(ViewBag.DepartmentCode == dept.DepartmentCode ? "selected" : null)">
-                        @shortName
-                    </option>
-                }
-            </select>
-            <select name="roleCode" class="form-select text-secondary small" >
-                <option value="">All Roles</option>
-                @foreach (var role in Model.Roles)
-                {
-                    var shortName = role.RoleName.Length > 25 ?
-                    role.RoleName.Substring(0, 22) + "..."
-                    : role.RoleName;
-                    <option value="@role.RoleCode" selected="@(ViewBag.RoleCode == role.RoleCode ? "selected" : null)">
-                        @shortName
-                    </option>
-                }
-            </select>
-
-            <select name="status" class="form-select text-secondary small" style="width: auto; min-width: 120px;">
-                <option value="">All Status</option>
-                <option value="true" selected="@(currentStatus == true)">Active</option>
-                <option value="false" selected="@(currentStatus == false)">Inactive</option>
-            </select>
-
-            <button type="submit" class="btn btn-primary px-3"><i class="fas fa-search me-1"></i> Search User</button>
-         @* <a asp-action="UserList" class="btn btn-outline-secondary btn-sm px-3">Clear</a> *@
+            <div class="search-wrapper">
+                <select name="departmentCode" class="form-select  text-secondary small">
+                    <option value="">All Departments</option>
+                    @foreach (var dept in Model.Departments)
+                    {
+                        var shortName = dept.DepartmentName.Length > 25 ?
+                        dept.DepartmentName.Substring(0, 22) + "..."
+                        : dept.DepartmentName;
+                        <option value="@dept.DepartmentCode" selected="@(ViewBag.DepartmentCode == dept.DepartmentCode ? "selected" : null)">
+                            @shortName
+                        </option>
+                    }
+                </select>
+            </div>           
+            <div class="search-wrapper">
+                <select name="roleCode" class="form-select text-secondary small">
+                    <option value="">All Roles</option>
+                    @foreach (var role in Model.Roles)
+                    {
+                        var shortName = role.RoleName.Length > 25 ?
+                        role.RoleName.Substring(0, 22) + "..."
+                        : role.RoleName;
+                        <option value="@role.RoleCode" selected="@(ViewBag.RoleCode == role.RoleCode ? "selected" : null)">
+                            @shortName
+                        </option>
+                    }
+                </select>
+            </div>          
+            <div class="search-wrapper">
+                <select name="status" class="form-select text-secondary small">
+                    <option value="">All Status</option>
+                    <option value="true" selected="@(currentStatus == true)">Active</option>
+                    <option value="false" selected="@(currentStatus == false)">Inactive</option>
+                </select>
+            </div>         
+            <div class="search-btn">
+                <button type="submit" class="btn btn-primary px-3"><i class="fas fa-search me-1"></i> Search User</button>
+            </div>            
+            @* <a asp-action="UserList" class="btn btn-outline-secondary btn-sm px-3">Clear</a> *@
         </div>
-        <a class="btn btn-primary px-3" asp-controller="UserCreate" asp-action="UserCreate" asp-route-source="list"><i class="fas fa-plus me-1"></i> Add New User</a>
+        <div>
+            <a class="btn btn-primary px-3" asp-controller="UserCreate" asp-action="UserCreate" asp-route-source="list"><i class="fas fa-plus me-1"></i> Add New User</a>
+        </div>
+        
     </div>
-</form> 
+</form>
 @*
 @if (TempData["SuccessMessage"] != null)
 {
@@ -207,7 +215,7 @@
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <div class="rounded-circle border border-1 p-0 me-2">
-                                            <img src="@(string.IsNullOrEmpty(user.ImageUrl) ? "https://i.pravatar.cc/150?img=6" : user.ImageUrl)"
+                                            <img src="@(string.IsNullOrEmpty(user.ImageUrl) ? "https://api.dicebear.com/10.x/glyphs/svg" : user.ImageUrl)"
                                                  alt=""
                                                  class="rounded-circle"
                                                  width="34"
@@ -243,11 +251,10 @@
                                     <form asp-controller="UserList"
                                           asp-action="DeleteUser"
                                           method="post"
-                                          onsubmit="return confirm('ဖျက်မှာသေချာလား သူငယ်ချင်း ?');"
-                                          class="d-inline me-2">
+                                          class="d-inline me-2 delete-form">
                                         @Html.AntiForgeryToken()
                                         <input type="hidden" name="staffCode" value="@user.StaffCode" />
-                                        <button type="submit" class="p-0 border-0 bg-transparent delete-icon" title="Delete">
+                                        <button type="button" class="p-0 border-0 bg-transparent delete-icon" title="Delete">
                                             <i class="far fa-trash-can"></i>
                                         </button>
                                     </form>
@@ -260,7 +267,7 @@
             }
             else
             {
-                <tbody>
+                <tbody style="height : 550px;" class="rounded">
                     <tr>
                         <td colspan="8" class="empty-state">
                             <i class="fas fa-user-slash"></i>
@@ -300,3 +307,8 @@
         </div>
     }
 </div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/js/UserList.js"></script>
+}
