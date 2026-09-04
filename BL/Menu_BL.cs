@@ -80,7 +80,7 @@ namespace CKM_ManagementSystem.BL
                 new SqlParameter("@ParentMenuId", DBNull.Value),
                 new SqlParameter("@StatusFilters", true)
             };
-            DataTable dt = await SelectDataTableAsync("sp_GetMenuList", parmeters);
+            DataTable dt = await SelectDataTableAsync("sp_GetMenuList", null);
             var parentMenuList = new List<SelectListItem>();
             foreach (DataRow row in dt.Rows)
             {
