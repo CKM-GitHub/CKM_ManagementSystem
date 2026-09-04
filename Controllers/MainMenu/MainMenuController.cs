@@ -32,14 +32,13 @@ namespace CKM_ManagementSystem.Controllers.MainMenu
         [HttpGet]
         public IActionResult Profile()
         {
-            //string? staffCode = User.FindFirst("StaffCode")?.Value;
+            string? staffCode = User.FindFirst("StaffCode")?.Value;
 
-            //if (string.IsNullOrWhiteSpace(staffCode))
-            //{
-            //    return PartialView("Profile", (MainMenuViewModel?)null);
-            //}
+            if (string.IsNullOrWhiteSpace(staffCode))
+            {
+                return PartialView("Profile", (MainMenuViewModel?)null);
+            }
 
-            string staffCode = "CKM-0001";
 
             List<MainMenuViewModel>menuList=_mainMenuBL.GetMainMenus(staffCode);
 
