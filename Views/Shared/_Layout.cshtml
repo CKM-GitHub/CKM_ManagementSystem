@@ -14,11 +14,11 @@
 <body>
     <div class="app-shell">
         <aside class="sidebar">
-         @await Component.InvokeAsync("MainMenu")
+         <div id="mainMenuContainer"></div>
         </aside>
         <div class="main-area">
             <header class="topbar">
-                @await Component.InvokeAsync("Profile")
+              <div id="profileContainer"></div>
             </header>
             <main class="page-content">
                 @RenderBody()
@@ -26,6 +26,7 @@
         </div>
     </div>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/Main_Menu.js" asp-append-version="true"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)

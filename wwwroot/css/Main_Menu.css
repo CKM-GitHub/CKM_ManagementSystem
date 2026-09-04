@@ -8,11 +8,22 @@ body {
 body {
     overflow-x: hidden;
 }
+.brand_logo {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+}
 
+.logo-container {
+    display: flex;
+    align-items: center;
+    padding: 10px 4px;
+    height:70px;
+}
 .app-shell {
     display: flex;
     width: 100%;
-    min-height: 100vh;
+    min-height: 100vh;   
 }
 
 .sidebar {
@@ -25,9 +36,13 @@ body {
 }
 
 .main-area {
-    flex: 1;
-    min-width: 0;
     min-height: 100vh;
+    min-width:0;
+    background-image: url('/images/system_img/background_img.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    flex:1;
 }
 
 .topbar {
@@ -36,14 +51,13 @@ body {
     align-items: center;
     justify-content: flex-end;
     padding: 0 20px;
-    background-color: #1d3d7c;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background:transparent;
+    border-bottom:none;
 }
 
 .page-content {
     min-height: calc(100vh - 70px);
     padding: 30px;
-    background: linear-gradient(110deg, #19305f, #365fae);
     color: #ffffff;
 }
 
@@ -191,11 +205,18 @@ body {
     font-size: 13px;
     padding: 10px 15px;
 }
-
-    .profile-dropdown .dropdown-item:hover {
+.profile-dropdown .dropdown-item:hover {
         background-color: #2b2e33;
         color: #ffffff;
     }
+.profile-dropdown .logout-item {
+    color: red;
+}
+
+.profile-dropdown .dropdown-item.logout-item:hover {
+    color: red;
+}
+
 .menu-link.active,
 .submenu-link.active {
     background-color: #2b3444;

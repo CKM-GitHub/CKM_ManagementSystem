@@ -1,6 +1,24 @@
-﻿const menuParent = document.querySelector(".menu-parent");
-const submen = document.querySelector(".submenu");
+﻿document.addEventListener("DOMContentLoaded", function () {
 
-menuParent.addEventListener("click", function () {
-    submenu.classList.toggle("show");
+    const mainMenuContainer =
+        document.getElementById("mainMenuContainer");
+
+    if (mainMenuContainer) {
+        fetch("/MainMenu/Index")
+            .then(response => response.text())
+            .then(html => {
+                mainMenuContainer.innerHTML = html;
+            });
+    }
+    const profileContainer =
+        document.getElementById("profileContainer");
+
+    if (profileContainer) {
+        fetch("/MainMenu/Profile")
+            .then(response => response.text())
+            .then(html => {
+                profileContainer.innerHTML = html;
+            });
+    }
+
 });
