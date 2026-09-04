@@ -13,11 +13,13 @@ public class UserCreateViewModel
     public string StaffCode { get; set; } = string.Empty;   //.NET 8 mr ma pr ma phyit pr chin dl so "datatype.empty" enter pay ya pr dl , .NET 9 mr dop ma lo vu pop nyi lay yrr
 
     [Required(ErrorMessage = "Full Name is required")]
+    [StringLength(100)]
     [Display(Name = "Full Name")]
     public string Name { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Email Address is required")]
     [EmailAddress(ErrorMessage = "Invalid email format")]
+    [StringLength(200)]
     [Display(Name = "Email Address")]
     public string Email { get; set; } = string.Empty;
 

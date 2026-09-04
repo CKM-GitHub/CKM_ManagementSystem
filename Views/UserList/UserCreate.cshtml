@@ -183,7 +183,7 @@
                         <div class="row align-items-center">
                             <label asp-for="Name" class="col-sm-4 form-label fw-medium text-secondary mb-sm-0"></label>
                             <div class="col-sm-8">
-                                <input type="text" asp-for="Name" class="form-control rounded-3 py-2" placeholder="Enter full name">
+                                <input type="text" asp-for="Name" class="form-control rounded-3 py-2" placeholder="Enter full name" maxlength="100" >
                                 <span asp-validation-for="Name" class="text-danger small"></span>
                             </div>
                         </div>
@@ -192,7 +192,7 @@
                         <div class="row align-items-center">
                             <label asp-for="Email" class="col-sm-4 form-label fw-medium text-secondary mb-sm-0"></label>
                             <div class="col-sm-8">
-                                <input type="email" asp-for="Email" class="form-control rounded-3 py-2" placeholder="Enter email address">
+                                <input type="email" asp-for="Email" class="form-control rounded-3 py-2" placeholder="Enter email address" maxlength="200" >
                                 <span asp-validation-for="Email" class="text-danger small"></span>
                             </div>
                         </div>
@@ -237,8 +237,21 @@
                         <div class="row align-items-center">
                             <label asp-for="DepartmentCode" class="col-sm-4 form-label fw-medium text-secondary mb-sm-0"></label>
                             <div class="col-sm-8">
-                                <select asp-for="DepartmentCode" class="form-select rounded-3 py-2 text-secondary" asp-items="(SelectList)ViewBag.DepartmentList">
+                                <select asp-for="DepartmentCode" class="form-select rounded-3 py-2 text-secondary">
                                     <option value="">Select Department</option>
+                                    @if(ViewBag.DepartmentList != null)
+                                    {
+                                        foreach(SelectListItem item in ViewBag.DepartmentList)
+                                        {
+                                            var shortName = item.Text.Length > 25
+                                            ? item.Text.Substring(0, 22) + "..."
+                                            : item.Text;
+
+                                            <option value="@item.Value">
+                                                @shortName
+                                            </option>
+                                        }
+                                    }
                                 </select>
                                 <span asp-validation-for="DepartmentCode" class="text-danger small"></span>
                             </div>
@@ -248,8 +261,21 @@
                         <div class="row align-items-center">
                             <label asp-for="RoleCode" class="col-sm-4 form-label fw-medium text-secondary mb-sm-0"></label>
                             <div class="col-sm-8">
-                                <select asp-for="RoleCode" class="form-select rounded-3 py-2 text-secondary" asp-items="(SelectList)ViewBag.UserRoleList">
+                                <select asp-for="RoleCode" class="form-select rounded-3 py-2 text-secondary">
                                     <option value="">Select Role</option>
+                                    @if (ViewBag.UserRoleList != null)
+                                    {
+                                        foreach (SelectListItem item in ViewBag.UserRoleList)
+                                        {
+                                            var shortName = item.Text.Length > 25
+                                            ? item.Text.Substring(0, 22) + "..."
+                                            : item.Text;
+
+                                            <option value="@item.Value">
+                                                @shortName
+                                            </option>
+                                        }
+                                    }
                                 </select>
                                 <span asp-validation-for="RoleCode" class="text-danger small"></span>
                             </div>

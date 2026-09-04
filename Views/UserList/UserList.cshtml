@@ -66,29 +66,31 @@
 <form method="get" asp-controller="UserList" asp-action="UserList" class="card shadow-sm p-3 mb-4 border-0">
     <div class="d-flex flex-wrap align-items-center gap-2 justify-content-between">
         <div class="d-flex flex-wrap align-items-center gap-2 flex-grow-1">
-
-            <div class="input-group" style="max-width: 300px;">
-                <div class="search-wrapper">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" name="searchText" value="@currentSearch" class="form-control search-input-with-icon" placeholder="Search users by name, email, or code...">
-                </div>
+             <div class="search-wrapper">
+                 <i class="fas fa-search search-icon"></i>
+                 <input type="text" name="searchText" value="@currentSearch" class="form-control search-input-with-icon fixed-responsive-width" placeholder="Search users by name, email, or code...">
             </div>
-
-            <select name="departmentCode" class="form-select  text-secondary small" style="width: auto; min-width: 140px;">
+            <select name="departmentCode" class="form-select  text-secondary small" >
                 <option value="">All Departments</option>
                 @foreach (var dept in Model.Departments)
                 {
+                    var shortName = dept.DepartmentName.Length > 25 ?
+                       dept.DepartmentName.Substring(0, 22) + "..."
+                       : dept.DepartmentName;
                     <option value="@dept.DepartmentCode" selected="@(ViewBag.DepartmentCode == dept.DepartmentCode ? "selected" : null)">
-                        @dept.DepartmentName
+                        @shortName
                     </option>
                 }
             </select>
-            <select name="roleCode" class="form-select text-secondary small" style="width: auto; min-width: 120px;">
+            <select name="roleCode" class="form-select text-secondary small" >
                 <option value="">All Roles</option>
                 @foreach (var role in Model.Roles)
                 {
+                    var shortName = role.RoleName.Length > 25 ?
+                    role.RoleName.Substring(0, 22) + "..."
+                    : role.RoleName;
                     <option value="@role.RoleCode" selected="@(ViewBag.RoleCode == role.RoleCode ? "selected" : null)">
-                        @role.RoleName
+                        @shortName
                     </option>
                 }
             </select>
@@ -104,7 +106,7 @@
         </div>
         <a class="btn btn-primary px-3" asp-controller="UserCreate" asp-action="UserCreate" asp-route-source="list"><i class="fas fa-plus me-1"></i> Add New User</a>
     </div>
-</form>
+</form> 
 @*
 @if (TempData["SuccessMessage"] != null)
 {
@@ -211,13 +213,15 @@
                                                  width="34"
                                                  height="34">
                                         </div>
-                                        <span>@user.Name</span>
+                                        <span class="text-truncate">@user.Name</span>
                                     </div>
                                 </td>
                                 <td>@user.Email</td>
-                                <td>@user.DepartmentName</td>
                                 <td>
-                                    <span>@user.RoleName</span>
+                                    <div class="text-truncate">@user.DepartmentName</div>
+                                </td>
+                                <td>
+                                    <div class="text-truncate">@user.RoleName</div>
                                 </td>
                                 <td>
                                     @if (user.Status)
