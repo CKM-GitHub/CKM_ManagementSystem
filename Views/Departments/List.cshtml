@@ -23,7 +23,10 @@
           href="~/css/DepartmentList.css"
           asp-append-version="true" />
     <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+          href="~/css/Alert_Modal.css"
+          asp-append-version="true" />
+    <link rel="stylesheet"
+          href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
 </head>
 
 <body>
@@ -279,99 +282,42 @@
             </div>
 
         </div>
-        <div class="modal fade" id="deleteDepartmentModal" 
-            tabindex="-1" aria-labelledby="deleteDepartmentModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="deleteDepartmentModalLabel">
-                            Delete Department
-                        </h5>
-
-                        <button type="button" 
-                        class="btn-close" data-bs-dismiss="modal" 
-                        aria-label="Close">
-
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        Are you sure you want to delete this department?
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary"
-                            data-bs-dismiss="modal">
-                           No
-                        </button>
-
-                        <button type="button" class="btn btn-danger" 
-                            id="confirmDeleteDepartment">
-                            Yes, Delete
-                        </button>
-
-
-                    </div>
-                </div>
-            </div>
-
-        </div>
         @if (TempData["SuccessMessage"] != null)
         {
-            <div class="modal fade"
-                 id="successModal"
-                 tabindex="-1"
-                 aria-labelledby="successModalLabel"
-                 aria-hidden="true">
-
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-
-                        <div class="modal-header">
-                            <h5 class="modal-title"
-                                id="successModalLabel">
-                                Success
-                            </h5>
-
-                            <button type="button"
-                                    class="btn-close"
-                                    data-bs-dismiss="modal"
-                                    aria-label="Close">
-                            </button>
-                        </div>
-
-                        <div class="modal-body">
-                            @TempData["SuccessMessage"]
-                        </div>
-
-                        <div class="modal-footer">
-                            <button type="button"
-                                    class="btn btn-primary"
-                                    data-bs-dismiss="modal">
-                                OK
-                            </button>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
+            <input type="hidden"
+                   id="successMessage"
+                   value="@TempData["SuccessMessage"]" />
         }
-    </div>
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger mt-3"
-             role="alert">
-            @TempData["ErrorMessage"]
-        </div>
-    }
-    <form asp-controller="Departments" asp-action="Delete" method="post" id="deleteDepartmentForm" class="d-none">
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <input type="hidden"
+                   id="errorMessage"
+                   value="@TempData["ErrorMessage"]" />
+        }
+
+        <partial name="AlertModal" />
+
+    <form asp-controller="Departments" 
+    asp-action="Delete" 
+    method="post" 
+    id="deleteDepartmentForm" 
+    class="d-none">
+
      @Html.AntiForgeryToken()
      <input type="hidden" name="departmentCode" id="deleteDepartmentCode" />
     </form>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
 
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script src="~/js/DepartmentList.js" asp-append-version="true"></script>
+        <script src="~/js/Alert_Modal.js"
+                asp-append-version="true">
+        </script>
+
+        <script src="~/js/DepartmentList.js"
+                asp-append-version="true">
+        </script>
 </body>
 </html>

@@ -158,18 +158,18 @@ body {
 .btn-register {
     flex: 1;
     height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border: none;
     border-radius: 4px;
     font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
     font-size: 14px;
     font-weight: 600;
     color: #ffffff;
+    text-decoration: none;
     cursor: pointer;
     transition: opacity 0.2s ease, transform 0.1s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
 }
 
 .btn-clear {
@@ -182,15 +182,23 @@ body {
 
     .btn-clear:hover,
     .btn-register:hover {
+        color: #ffffff;
+        text-decoration: none;
         opacity: 0.9;
     }
 
     .btn-clear:active,
     .btn-register:active {
+        color: #ffffff;
+        text-decoration: none;
         transform: translateY(1px);
     }
 
-
+    .btn-clear:focus,
+    .btn-register:focus {
+        color: #ffffff;
+        text-decoration: none;
+    }
 /* Responsive */
 @media (max-width: 576px) {
 

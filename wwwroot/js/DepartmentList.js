@@ -1,30 +1,17 @@
-﻿
-    document.addEventListener("DOMContentLoaded", function () {
+﻿document.addEventListener("DOMContentLoaded", function () {
 
-        const deleteButtons =
-    document.querySelectorAll(".delete-icon");
-
-    const deleteModalElement =
-    document.getElementById("deleteDepartmentModal");
+    const deleteButtons =
+        document.querySelectorAll(".delete-icon");
 
     const deleteCodeInput =
-    document.getElementById("deleteDepartmentCode");
+        document.getElementById("deleteDepartmentCode");
 
     const deleteForm =
-    document.getElementById("deleteDepartmentForm");
+        document.getElementById("deleteDepartmentForm");
 
-    const confirmDeleteButton =
-    document.getElementById("confirmDeleteDepartment");
-
-    if (!deleteModalElement ||
-    !deleteCodeInput ||
-    !deleteForm ||
-    !confirmDeleteButton) {
-            return;
-        }
-
-    const deleteModal =
-    new bootstrap.Modal(deleteModalElement);
+    if (!deleteCodeInput || !deleteForm) {
+        return;
+    }
 
     deleteButtons.forEach(function (button) {
 
@@ -33,32 +20,45 @@
             const departmentCode =
                 button.dataset.departmentCode;
 
-            deleteCodeInput.value =
-                departmentCode ?? "";
+            if (!departmentCode) {
+                return;
+            }
 
-            deleteModal.show();
-        });
+            showDelete(
+                "Are you sure you want to delete this department?",
+                function () {
 
-        });
+                    deleteCodeInput.value =
+                        departmentCode;
 
-    confirmDeleteButton.addEventListener(
-    "click",
-    function () {
-
-                if (!deleteCodeInput.value) {
-                    return;
+                    deleteForm.submit();
                 }
+            );
 
-    confirmDeleteButton.disabled = true;
-    deleteForm.submit();
         });
-        const successModalElement =
-            document.getElementById("successModal");
 
-        if (successModalElement) {
-            const successModal =
-                new bootstrap.Modal(successModalElement);
-
-            successModal.show();
-        }
     });
+
+
+    const successMessage =
+        document.getElementById("successMessage");
+
+    if (successMessage) {
+
+        showSuccess(
+            successMessage.value
+        );
+    }
+
+
+    const errorMessage =
+        document.getElementById("errorMessage");
+
+    if (errorMessage) {
+
+        showError(
+            errorMessage.value
+        );
+    }
+
+});

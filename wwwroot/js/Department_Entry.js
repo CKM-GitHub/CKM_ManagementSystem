@@ -1,23 +1,54 @@
-﻿    document.addEventListener("DOMContentLoaded", function () {
+﻿document.addEventListener("DOMContentLoaded", function () {
 
-        const departmentCode = document.getElementById("departmentCode");
-        const departmentName = document.querySelector("[name='DepartmentName']");
-        const form = document.getElementById("departmentEntryForm");
-        const clearButton = document.getElementById("btnClear");
+    const departmentCode =
+        document.getElementById("departmentCode");
+
+    const departmentName =
+        document.querySelector("[name='DepartmentName']");
+
+    const form =
+        document.getElementById("departmentEntryForm");
+
+    const clearButton =
+        document.getElementById("btnClear");
+
+
+    const isEditMode =
+        departmentCode &&
+        departmentCode.hasAttribute("readonly");
+
+
+    if (isEditMode) {
+
+        if (departmentName) {
+            departmentName.focus();
+        }
+
+    }
+    else {
+
         if (departmentCode) {
+
             departmentCode.focus();
 
-            departmentCode.addEventListener("keydown", function (event) {
+            departmentCode.addEventListener(
+                "keydown",
+                function (event) {
 
-                if (event.key === "Enter") {
-                    event.preventDefault();
+                    if (event.key === "Enter") {
 
-                    if (departmentName) {
-                        departmentName.focus();
+                        event.preventDefault();
+
+                        if (departmentName) {
+                            departmentName.focus();
+                        }
                     }
                 }
-            });
+            );
         }
+
+    }
+           
 
         if (clearButton && form) {
             clearButton.addEventListener("click", function () {

@@ -1,11 +1,16 @@
 ﻿@using CKM_ManagementSystem.Models.ViewModels.Departments
 @model DepartmentEntryViewModel
-
 @{
     Layout = null;
-    ViewData["Title"] = "Department Entry";
-}
 
+    bool isEditMode =
+        !string.IsNullOrWhiteSpace(Model.DepartmentCode);
+
+    ViewData["Title"] =
+        isEditMode
+            ? "Department Edit"
+            : "Department Entry";
+}
 <!DOCTYPE html>
 
 <html lang="en">
@@ -43,12 +48,14 @@
         <div class="department-entry-card">
 
             <h2 class="department-entry-title">
-                Department Entry
+                @(isEditMode
+                    ? "Department Edit"
+                    : "Department Entry")
             </h2>
 
 
             <form asp-controller="Departments"
-                  asp-action="Entry"
+                  asp-action="@(isEditMode ? "Edit": "Entry")"
                   method="post"
                   id="departmentEntryForm">
 
@@ -64,7 +71,10 @@
                     <input asp-for="DepartmentCode"
                            id="departmentCode"
                            class="form-control"
-                           autocomplete="off" />
+                           autocomplete="off"
+                           readonly="@(
+                           isEditMode? "readonly" : null
+                           )" />
 
                     <span asp-validation-for="DepartmentCode"
                           class="validation-message">
@@ -139,19 +149,35 @@
 
                 <div class="button-row">
 
-                    <button type="button"
-                            class="btn-clear"
-                            id="btnClear">
-                        Clear
-                    </button>
+                    @if (isEditMode)
+                    {
+                        <input type="hidden" asp-for="OriginalDepartmentCode" />
+                        <a asp-controller="Departments"
+                           asp-action="Index"
+                           class="btn-clear">
+                            Cancel
+                        </a>
 
-                    <button type="submit"
-                            class="btn-register">
-                        Register
-                    </button>
+                        <button type="submit"
+                                class="btn-register">
+                            Update
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="button"
+                                class="btn-clear"
+                                id="btnClear">
+                            Clear
+                        </button>
+
+                        <button type="submit"
+                                class="btn-register">
+                            Register
+                        </button>
+                    }
 
                 </div>
-
             </form>
 
         </div>
@@ -186,4 +212,4 @@
 
 </body>
 
-</html>
+</html>3

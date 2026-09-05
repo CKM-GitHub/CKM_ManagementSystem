@@ -14,7 +14,9 @@
     border-radius: 50%;
     font-size: 30px;
 }
-
+#normalButtons .btn {
+    min-width: 90px;
+}
 .alert-success {
     color: #72c96b;
 }
