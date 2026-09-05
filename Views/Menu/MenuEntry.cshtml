@@ -2,6 +2,11 @@
 @{
     bool isEdit = Model?.MenuID.HasValue == true && Model.MenuID > 0;
     ViewData["Title"] = isEdit ? "Menu Edit" : "Menu Entry";
+    var pageNum = Context.Request.Query["page"].ToString();
+    if (string.IsNullOrEmpty(pageNum))
+    {
+        pageNum = ViewBag.CurrentPage?.ToString() ?? "1";
+    }
 }
 <div class="container py-4">
     <div class="row justify-content-center">
@@ -12,44 +17,49 @@
                         @(Model?.MenuID.HasValue == true && Model.MenuID > 0 ? "Menu Edit" : "Menu Entry")
                     </h4>
                 </div>
-                <div class="card-body p-4">
+                <div class="menu-page-shell p-4">
                     <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered modal-sm">
-                            <div class="modal-content custom-modal-popup">
-                                <div class="modal-body text-center p-4">
-                                    <div class="text-success mb-2">
-                                        <i class="bi bi-check-circle-fill display-4 text-emerald"></i>
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content custom-modal-popup text-center">
+                                <div class="swal-icon-wrapper mb-3">
+                                    <div class="custom-swal-icon swal-success" id="modalIcon">
+                                        <i class="bi bi-check-lg" id="modalIconItem"></i>
                                     </div>
-                                    <h5 class="custom-modal-title">Success!</h5>
-                                    <p class="custom-modal-text">@TempData["SuccessMessage"]</p>
-                                    <button type="button" class="btn custom-modal-btn w-100 mt-3" data-bs-dismiss="modal">OK</button>
+                                </div>
+                                <h3 class="custom-modal-title" id="modalTitle">Success!</h3>
+                                <p class="custom-modal-text" id="modalText">@TempData["SuccessMessage"]</p>
+                                <div class="d-flex justify-content-center w-100">
+                                    <button type="button" class="btn custom-modal-btn-confirm" id="btnModalConfirm" data-bs-dismiss="modal">OK</button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
-                    <form method="post" id="menuForm" asp-action="MenuEntry" asp-route-page ="@(ViewBag.CurrentPage ?? 1)">
+                    <form method="post" id="menuForm" asp-action="MenuEntry" asp-route-page ="@Context.Request.Query["page"]">
                         <input type="hidden" asp-for="MenuID" />
                         <div class="mb-3">
                             <label asp-for="DisplayText" class="form-label fw-semibold text-secondary small">Display Text</label>
-                            <input asp-for="DisplayText" class="form-control" placeholder="e.g. , Register User" maxlength="150"  />
+                            <input asp-for="DisplayText" class="form-control" placeholder="e.g. , Register User" maxlength="100"  />
                             <span asp-validation-for="DisplayText" class="text-danger small"></span>
+                            <small class="text-danger char-limit-msg d-none">Maximum 100 characters reached!</small>
                         </div>
                         <div class="mb-3">
                             <label asp-for="ActionName" class="form-label fw-semibold text-secondary small">Action Name(Form Name)</label>
-                            <input asp-for="ActionName" class="form-control" placeholder="e.g. , Register " maxlength="150" />
+                            <input asp-for="ActionName" class="form-control" placeholder="e.g. , Register " maxlength="100" />
                             <span asp-validation-for="ActionName" class="text-danger small"></span>
+                            <small class="text-danger char-limit-msg d-none">Maximum 100 characters reached!</small>
                         </div>
                         <div class="mb-3">
                             <label asp-for="ControllerName" class="form-label fw-semibold text-secondary small">Controller Name</label>
-                            <input asp-for="ControllerName" class="form-control" placeholder="e.g. , Account" maxlength="150" />
+                            <input asp-for="ControllerName" class="form-control" placeholder="e.g. , Account" maxlength="100" />
                             <span asp-validation-for="ControllerName" class="text-danger small"></span>
+                            <small class="text-danger char-limit-msg d-none">Maximum 100 characters reached!</small>
                         </div>
                         
                         <div class="mb-3">
                             <label asp-for="IconClass" class="form-label fw-semibold text-secondary small">Icon Class</label>
-                            <input asp-for="IconClass" class="form-control" placeholder="e.g. , fas fa-user-plus" maxlength="100" />
+                            <input asp-for="IconClass" class="form-control" placeholder="e.g. , fas fa-user-plus" maxlength="50" />
                             <span asp-validation-for="IconClass" class="text-danger small"></span>
                         </div>
                         
@@ -67,7 +77,7 @@
                                 </div>
                             </div>
                         </div>
-
+                        <input type="hidden" id="currentPageNum" name="currentPageNum" value="@pageNum" />
                         <div class="mb-3">
                             <label asp-for="ParentMenuId" class="form-label fw-semibold text-secondary small">Parent Menu</label>
                             <select asp-for="ParentMenuId" asp-items="Model?.ParentMenuList" class="form-select" id="ParentMenu" disabled="@isEdit">
@@ -100,7 +110,7 @@
                             <div class="col-6">
                                 @if(isEdit)
                                 {
-                                    <a asp-controller="Menu" asp-action="MenuListView" class="btn btn-cancel w-100 fw-bold">
+                                    <a asp-controller="Menu" asp-action="MenuListView" asp-route-page="@Context.Request.Query["page"]" class="btn btn-cancel w-100 fw-bold">
                                         Cancel
                                     </a>
                                 } else
@@ -127,8 +137,8 @@
     <script>
         var isEditMode = @isEdit.ToString().ToLower();
         var successMessage = '@(TempData["SuccessMessage"] ?? "")';
-        var currentPage = '@(ViewBag.CurrentPage ?? 1)';
-        var menuListUrl = '@Url.Action("MenuListView", "Menu", new {page = ViewBag.CurrentPage ?? 1})';
+        var currentPage = '@pageNum';
+        var menuListUrl = '@Url.Action("MenuListView", "Menu")';
     </script>
 }
 @section Styles {

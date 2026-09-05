@@ -24,7 +24,7 @@ namespace CKM_ManagementSystem.Models.ViewModels
         public string? IconClass { get; set; }
 
         [Required(ErrorMessage = "Display Order is required.")]
-        [Range(0, 999,  ErrorMessage = "Display Order must be between 000 and 999.")]
+        [Range(0, 999,  ErrorMessage = "Please enter numbers only between 000 and 999.")]
         public int? DisplayOrder { get; set; }
 
         public string MenuType { get; set; } = "Parent";

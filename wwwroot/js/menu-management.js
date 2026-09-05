@@ -17,16 +17,14 @@
         Swal.fire({
             title: 'Successfully!!',
             text: successMessage,
-            icon: undefined,
-            iconHtml: '<i class="bi bi-check-circle-fill text-success"></i>',
+            icon: 'success',
             confirmButtonText: 'OK',
+            buttonsStyling: false,
             customClass: {
                 popup: 'custom-modal-popup',
                 title: 'custom-modal-title',
                 htmlContainer: 'custom-modal-text',
-                actions: 'swal-single-buttons',
-                confirmButton: 'custom-modal-btn custom-modal-btn-success',
-                icon: 'custom-swal-icon'
+                confirmButton: 'custom-modal-btn custom-modal-btn-confirm',
             },
             didClose: () => {
                 setFocusToSearch();
@@ -35,8 +33,9 @@
     } else if (typeof errorMessage !== 'undefined' && errorMessage !== '') {
         Swal.fire({
             icon: 'error',
-            title: 'Failed',
+            title: 'Error!',
             text: errorMessage,
+            confirmButtonText: 'OK',
             buttonsStyling: false,
             customClass: {
                 popup: 'custom-modal-popup',
@@ -56,9 +55,8 @@
      
         Swal.fire({
             title: 'Are you sure?',
-            text: "Are you sure you want to delete this menu?",
+            text: "You won't be able to revert this!?",
             icon: 'warning',
-            iconColor: '#dc3545',
             showCancelButton: true,
             confirmButtonText: '<i class="bi bi-trash-fill me-1"></i> Yes, delete it!',
             cancelButtonText: '<i class="bi bi-x-lg me-1"></i> Cancel',
@@ -67,8 +65,7 @@
                 popup: 'custom-modal-popup',
                 title: 'custom-modal-title',
                 htmlContainer: 'custom-modal-text',
-                actions: 'swal-two-buttons',
-                confirmButton: 'custom-modal-btn custom-modal-btn-confirm ',
+                confirmButton: 'custom-modal-btn custom-modal-btn-success',
                 cancelButton: 'custom-modal-btn custom-modal-btn-cancel'
             },
             didClose: () => {

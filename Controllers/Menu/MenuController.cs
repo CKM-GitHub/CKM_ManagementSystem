@@ -146,6 +146,7 @@ namespace CKM_ManagementSystem.Controllers.Menu
                 if (statusCode == 1)
                 {
                     TempData["SuccessMessage"] = statusMessage;
+                    TempData["RedirectPage"] = page;
                     model.ParentMenuList = await _menuBL.GetParentMenusForDropdownAsync();
                     return View("MenuEntry", model);
                 }

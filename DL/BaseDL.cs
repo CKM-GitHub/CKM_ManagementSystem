@@ -30,19 +30,21 @@ namespace CKM_ManagementSystem.DL
                 command.Parameters.AddRange(NormalizeParameters(parameters));
             }
             await connection.OpenAsync();
-            using var reader = await command.ExecuteReaderAsync();
             var table = new DataTable();
-            table.Load(reader);
-            if(parameters != null)
+            using (var reader = await command.ExecuteReaderAsync())
             {
-                for(int i = 0;i < parameters.Length; i++)
+                table.Load(reader);
+            }
+                if (parameters != null)
                 {
-                    if (parameters[i].Direction == ParameterDirection.Output || parameters[i].Direction == ParameterDirection.InputOutput)
+                    for (int i = 0; i < parameters.Length; i++)
                     {
-                        parameters[i].Value = command.Parameters[parameters[i].ParameterName].Value;
+                        if (parameters[i].Direction == ParameterDirection.Output || parameters[i].Direction == ParameterDirection.InputOutput)
+                        {
+                            parameters[i].Value = command.Parameters[parameters[i].ParameterName].Value;
+                        }
                     }
                 }
-            }
             return table;
         }
         public async Task<string> SelectJsonAsync(string storedProcedure, params SqlParameter[] parameters)
