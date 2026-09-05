@@ -48,17 +48,20 @@
                 departmentCode.focus();
             });
         }
-        const successModalElement =
-            document.getElementById("successModal");
+        const successMessage = document.getElementById("successMessage");
 
-        if (successModalElement) {
-            const successModal =
-                new bootstrap.Modal(successModalElement);
+        if (successMessage) {
+            showSuccess(successMessage.value);
 
-            successModalElement.addEventListener("hidden.bs.modal", function () {
-                departmentCode.focus();
-            });
+            const alertModal = document.getElementById("alertModal");
 
-            successModal.show();
+            if (alertModal) {
+                alertModal.addEventListener(
+                    "hidden.bs.modal",
+                    function () {
+                        departmentCode.focus();
+                    }
+                );
+            }
         }
     });
