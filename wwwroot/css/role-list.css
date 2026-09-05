@@ -1,9 +1,8 @@
 ﻿body {
-    background: #1e40af; 
+    background: #1e40af;
     min-height: 100vh;
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
-
 
 .page-title {
     color: #ffffff;
@@ -14,7 +13,6 @@
     margin-bottom: 20px;
     letter-spacing: 0.5px;
 }
-
 
 .custom-card {
     background-color: #ffffff;
@@ -39,7 +37,6 @@
     gap: 10px;
     flex-wrap: wrap;
 }
-
 
 .search-input-group {
     position: relative;
@@ -114,11 +111,13 @@
         color: #ffffff;
     }
 
+/* Table Style & Fixed Layout */
 .role-table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
     margin-bottom: 0;
+    table-layout: fixed;
 }
 
     .role-table th {
@@ -136,11 +135,24 @@
         padding: 16px 10px;
         border-bottom: 1px solid #f3f4f6;
         vertical-align: middle;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .role-table tbody tr:hover {
         background-color: #f9fafb;
     }
+
+/* စာသားအရှည်များကို Ellipsis (...) လုပ်ပေးသည့် Class */
+.cell-truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    max-width: 100%;
+    vertical-align: middle;
+}
 
 .sort-icon {
     color: #d1d5db;
@@ -168,7 +180,6 @@
     display: inline-block;
 }
 
-
 .action-icon-btn {
     background: transparent;
     border: none;
@@ -194,7 +205,6 @@
     .action-delete:hover {
         color: #b91c1c;
     }
-
 
 .table-footer {
     display: flex;

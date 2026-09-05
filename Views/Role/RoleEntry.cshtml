@@ -6,32 +6,34 @@
 
 <link rel="stylesheet" href="~/css/role-entry.css" asp-append-version="true" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
 <div class="container py-4">
     <div class="role-entry-card">
 
         <h2 class="role-entry-title">@(isEditMode ? "Edit User Role" : "User Role Entry")</h2>
 
-        <form id="roleForm" method="post" asp-action="SaveRole" asp-controller="Role">
+        <form id="roleForm" action="@Url.Action("SaveRole", "Role")" method="post" onsubmit="return false;">
             @Html.AntiForgeryToken()
             <input type="hidden" asp-for="IsEdit" id="IsEdit" value="@(isEditMode ? "true" : "false")" />
-            <div asp-validation-summary="ModelOnly" class="text-danger mb-3 small"></div>
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3 small" id="generalError"></div>
 
             <div class="mb-3">
-                <label class="form-label-custom">Role Code</label>
+                <label class="form-label-custom" for="RoleCode">Role Code</label>
                 <input asp-for="RoleCode" id="RoleCode" class="form-control" placeholder="e.g., MM" maxlength="20" autofocus readonly="@(isEditMode ? "readonly" : null)" />
                 <span asp-validation-for="RoleCode" id="valRoleCode" class="text-danger small"></span>
             </div>
 
             <div class="mb-3">
-                <label class="form-label-custom">Display Name</label>
+                <label class="form-label-custom" for="DisplayName">Display Name</label>
                 <input asp-for="DisplayName" id="DisplayName" class="form-control" placeholder="e.g., Admin" maxlength="50" />
-                <span asp-validation-for="DisplayName" class="text-danger small"></span>
+                <span asp-validation-for="DisplayName" id="valDisplayName" class="text-danger small"></span>
             </div>
 
             <div class="mb-3">
-                <label class="form-label-custom">Description</label>
+                <label class="form-label-custom" for="Description">Description</label>
                 <textarea asp-for="Description" id="Description" class="form-control" rows="3" placeholder="e.g., Description..." maxlength="250"></textarea>
+                <span asp-validation-for="Description" id="valDescription" class="text-danger small"></span>
             </div>
 
             <div class="mb-4 d-flex align-items-center">
@@ -61,26 +63,24 @@
                             @if (Model?.MenuPermissions != null && Model.MenuPermissions.Count > 0)
                             {
                                 var rootMenus = Model.MenuPermissions
-                                    .Where(m => !m.ParentId.HasValue || m.ParentId == 0)
-                                    .ToList();
+                                .Where(m => !m.ParentId.HasValue || m.ParentId == 0)
+                                .ToList();
 
                                 foreach (var root in rootMenus)
                                 {
                                     int rootIndex = Model.MenuPermissions.IndexOf(root);
                                     var children = Model.MenuPermissions
-                                        .Where(m => m.ParentId == root.MenuId)
-                                        .ToList();
+                                    .Where(m => m.ParentId == root.MenuId)
+                                    .ToList();
 
-                                    @* Parent Menu Row *@
                                     <tr class="parent-menu-row fw-bold" data-menu-id="@root.MenuId" data-parent-id="0">
-                                        <input type="hidden" name="MenuPermissions[@rootIndex].MenuId" value="@root.MenuId" />
-                                        <input type="hidden" name="MenuPermissions[@rootIndex].MenuName" value="@root.MenuName" />
-                                        <input type="hidden" name="MenuPermissions[@rootIndex].ParentId" value="@root.ParentId" />
-
-                                        <td style="padding-left: 1.5rem;">
-                                            <span class="fw-bold text-dark">@root.MenuName</span>
+                                        <td>
+                                            <input type="hidden" name="MenuPermissions[@rootIndex].MenuId" value="@root.MenuId" />
+                                            <input type="hidden" name="MenuPermissions[@rootIndex].MenuName" value="@root.MenuName" />
+                                            <input type="hidden" name="MenuPermissions[@rootIndex].ParentId" value="@root.ParentId" />
+                                            <span class="fw-bold text-dark ps-3">@root.MenuName</span>
                                         </td>
-                                        <td class="text-end" style="padding-right: 2.5rem;">
+                                        <td class="text-end pe-4">
                                             <div class="d-inline-flex justify-content-end align-items-center gap-3">
                                                 <div class="form-check form-check-inline mb-0 me-0">
                                                     <input class="form-check-input chk-read" type="checkbox" name="MenuPermissions[@rootIndex].CanRead" value="true" id="read_@rootIndex" @(root.CanRead ? "checked" : "") />
@@ -98,7 +98,6 @@
                                         </td>
                                     </tr>
 
-                                    @* Child Menu Rows *@
                                     for (int c = 0; c < children.Count; c++)
                                     {
                                         var child = children[c];
@@ -106,15 +105,14 @@
                                         bool isLastChild = (c == children.Count - 1);
 
                                         <tr class="child-menu-row" data-menu-id="@child.MenuId" data-parent-id="@root.MenuId">
-                                            <input type="hidden" name="MenuPermissions[@childIndex].MenuId" value="@child.MenuId" />
-                                            <input type="hidden" name="MenuPermissions[@childIndex].MenuName" value="@child.MenuName" />
-                                            <input type="hidden" name="MenuPermissions[@childIndex].ParentId" value="@child.ParentId" />
-
                                             <td style="padding-left: 2.5rem;">
+                                                <input type="hidden" name="MenuPermissions[@childIndex].MenuId" value="@child.MenuId" />
+                                                <input type="hidden" name="MenuPermissions[@childIndex].MenuName" value="@child.MenuName" />
+                                                <input type="hidden" name="MenuPermissions[@childIndex].ParentId" value="@child.ParentId" />
                                                 <span class="text-muted me-2 font-monospace">@(isLastChild ? "└─" : "├─")</span>
                                                 <span class="text-secondary">@child.MenuName</span>
                                             </td>
-                                            <td class="text-end" style="padding-right: 2.5rem;">
+                                            <td class="text-end pe-4">
                                                 <div class="d-inline-flex justify-content-end align-items-center gap-3">
                                                     <div class="form-check form-check-inline mb-0 me-0">
                                                         <input class="form-check-input chk-read" type="checkbox" name="MenuPermissions[@childIndex].CanRead" value="true" id="read_@childIndex" @(child.CanRead ? "checked" : "") />
@@ -163,7 +161,7 @@
                     }
                 </div>
                 <div class="col-6">
-                    <button type="submit" id="btnRegister" class="btn btn-primary w-100 py-2">
+                    <button type="button" id="btnRegister" class="btn btn-primary w-100 py-2">
                         @(isEditMode ? "Update" : "Register")
                     </button>
                 </div>
@@ -174,45 +172,63 @@
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         $(document).ready(function () {
-            var isEditMode = @isEditMode.ToString().ToLower();
+            var isEditMode = @(isEditMode.ToString().ToLower());
+            var initialFormData = '';
 
             if (!isEditMode) {
                 $('#RoleCode').focus();
+            } else {
+                initialFormData = $('#roleForm').serialize();
             }
 
-            // Enter Key Navigation
-            $('#roleForm input, #roleForm textarea').on('keydown', function (e) {
-                if (e.key === 'Enter' || e.keyCode === 13) {
-                    if ($(this).is(':checkbox') || $(this).is(':radio')) {
-                        return;
-                    }
+            function clearValidationErrors() {
+                $('span.text-danger').text('');
+                $('#generalError').text('');
+            }
 
+            // 1. Enter Key တားဆီးခြင်းနှင့် အောက် Field သို့ Focus ရွှေ့ခြင်း
+            $(document).on('keydown', '#RoleCode, #DisplayName, #Description', function (e) {
+                if (e.which === 13 || e.keyCode === 13) {
                     e.preventDefault();
+                    e.stopPropagation();
 
-                    var inputs = $(this).closest('form').find('input:enabled:not([readonly]), textarea:enabled:not([readonly])');
-                    var index = inputs.index(this);
+                    var fields = [];
+                    if (!isEditMode) fields.push('#RoleCode');
+                    fields.push('#DisplayName');
+                    fields.push('#Description');
 
-                    if (index >= 0 && index < inputs.length - 1) {
-                        inputs.eq(index + 1).focus();
+                    var currentId = '#' + $(this).attr('id');
+                    var idx = fields.indexOf(currentId);
+
+                    if (idx !== -1 && idx < fields.length - 1) {
+                        $(fields[idx + 1]).focus();
                     }
+                    return false;
                 }
             });
 
-            // Restrict RoleCode characters
-            $(document).on('input keyup paste', '#RoleCode', function () {
-                var $this = $(this);
-                setTimeout(function () {
-                    var cleanValue = $this.val().replace(/[^a-zA-Z0-9_-]/g, '');
-                    $this.val(cleanValue);
-                }, 0);
+            // 2. Special Characters ရိုက်မရအောင် ကန့်သတ်ခြင်း (Real-time Filter)
+            $('#RoleCode').on('input keyup paste change', function () {
+                var val = $(this).val();
+                var clean = val.replace(/[^a-zA-Z0-9_-]/g, '');
+                if (val !== clean) {
+                    $(this).val(clean);
+                }
             });
 
-            // Parent Checkbox Toggle All Children
+            $('#DisplayName, #Description').on('input keyup paste change', function () {
+                var val = $(this).val();
+                var clean = val.replace(/[<>'";&]/g, '');
+                if (val !== clean) {
+                    $(this).val(clean);
+                }
+            });
+
+            // 3. Parent / Child Checkbox Permission Handling
             $(document).on('change', '.parent-menu-row input[type="checkbox"]', function () {
                 var $parentRow = $(this).closest('tr');
                 var parentId = $parentRow.data('menu-id');
@@ -230,7 +246,6 @@
                 }
             });
 
-            // Child Checkbox Update Parent
             $(document).on('change', '.child-menu-row input[type="checkbox"]', function () {
                 var $childRow = $(this).closest('tr');
                 var parentId = $childRow.data('parent-id');
@@ -250,27 +265,41 @@
                 }
             });
 
-            // Clear Button Handler
+            // 4. Clear Button Handling
             $('#btnClear').on('click', function () {
                 $('#roleForm')[0].reset();
-                $('span.text-danger').text('');
+                clearValidationErrors();
                 $('#statusActive').prop('checked', true);
                 $('.permissions-table input[type="checkbox"]').prop('checked', false);
-                $('#RoleCode').focus();
+                if (!isEditMode) {
+                    $('#RoleCode').focus();
+                } else {
+                    $('#DisplayName').focus();
+                }
             });
 
-            // AJAX Form Submission
-            $('#roleForm').on('submit', function (e) {
+          
+            $('#RoleCode, #DisplayName, #Description').on('input', function () {
+                var fieldId = $(this).attr('id');
+                $('[data-valmsg-for="' + fieldId + '"]').text('');
+            });
+
+            
+            $('#btnRegister').on('click', function (e) {
                 e.preventDefault();
+                executeSubmit();
+            });
 
-                var $form = $(this);
+            function executeSubmit() {
+                clearValidationErrors();
+                var $form = $('#roleForm');
 
-                if (typeof $form.valid === 'function' && !$form.valid()) {
-                    return;
-                }
-
-                if ($('#valRoleCode').text() === 'This Role Code already exists.') {
-                    return;
+                if (isEditMode) {
+                    var currentFormData = $form.serialize();
+                    if (initialFormData === currentFormData) {
+                        window.location.href = '@Url.Action("RoleList", "Role")';
+                        return;
+                    }
                 }
 
                 $('#btnRegister').prop('disabled', true);
@@ -284,40 +313,62 @@
 
                         if (response.success) {
                             Swal.fire({
-                                icon: 'success',
                                 title: 'Success!',
-                                text: response.message || 'Operation completed successfully.',
+                                text: response.message || (isEditMode ? "Role updated successfully." : "The new role has been created successfully."),
+                                icon: 'success',
                                 confirmButtonText: 'OK',
-                                confirmButtonColor: '#0d6efd'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    if (isEditMode) {
-                                        window.location.href = '@Url.Action("RoleList", "Role")';
-                                    } else {
-                                        $('#btnClear').trigger('click');
-                                    }
+                                confirmButtonColor: '#0d6efd',
+                                customClass: { popup: 'rounded-4 border-0 shadow' }
+                            }).then(function() {
+                                if (response.isEdit || isEditMode) {
+                                    window.location.href = response.redirectUrl || '@Url.Action("RoleList", "Role")';
+                                } else {
+                                    $('#btnClear').click();
                                 }
                             });
                         } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error!',
-                                text: response.message || 'Saving failed.',
-                                confirmButtonColor: '#d33'
-                            });
+                            if (response.errors && typeof response.errors === 'object') {
+                                var errorMessages = "";
+                                $.each(response.errors, function (key, message) {
+                                    $('[data-valmsg-for="' + key + '"]').text(message);
+                                    if (message) errorMessages += message + "<br>";
+                                });
+
+                                if (!errorMessages) errorMessages = "Please check the required fields.";
+
+                                Swal.fire({
+                                    title: 'Validation Error!',
+                                    html: errorMessages,
+                                    icon: 'warning',
+                                    confirmButtonText: 'OK',
+                                    confirmButtonColor: '#0d6efd',
+                                    customClass: { popup: 'rounded-4 border-0 shadow' }
+                                });
+                            } else if (response.message) {
+                                Swal.fire({
+                                    title: 'Warning!',
+                                    text: response.message,
+                                    icon: 'warning',
+                                    confirmButtonText: 'OK',
+                                    confirmButtonColor: '#0d6efd',
+                                    customClass: { popup: 'rounded-4 border-0 shadow' }
+                                });
+                            }
                         }
                     },
                     error: function () {
                         $('#btnRegister').prop('disabled', false);
                         Swal.fire({
-                            icon: 'error',
-                            title: 'System Error',
+                            title: 'Error!',
                             text: 'An error occurred while processing your request.',
-                            confirmButtonColor: '#d33'
+                            icon: 'error',
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#0d6efd',
+                            customClass: { popup: 'rounded-4 border-0 shadow' }
                         });
                     }
                 });
-            });
+            }
         });
     </script>
 }

@@ -15,8 +15,8 @@
     @Html.AntiForgeryToken()
 
     <div class="custom-card">
-        <form method="get" asp-action="RoleList" id="searchForm">
-            <input type="hidden" name="pageNumber" value="1" />
+        <form method="get" asp-action="RoleList" asp-controller="Role" id="searchForm">
+            <input type="hidden" name="pageNumber" id="pageNumberInput" value="@Model.PageNumber" />
             <div class="filter-container">
                 <div class="filter-left-group">
                     <div class="search-input-group">
@@ -36,7 +36,7 @@
                 </div>
 
                 <div>
-                    <a asp-action="RoleEntry" class="btn btn-add-role">
+                    <a asp-action="RoleEntry" asp-controller="Role" class="btn btn-add-role">
                         <i class="bi bi-plus-lg me-1"></i> Add New Role
                     </a>
                 </div>
@@ -50,8 +50,8 @@
                 <thead>
                     <tr>
                         <th style="width: 60px;">No.</th>
-                        <th>Code</th>
-                        <th>Role Name</th>
+                        <th style="width: 180px;">Code</th>
+                        <th style="width: 220px;">Role Name</th>
                         <th>Description</th>
                         <th style="width: 120px;">Status</th>
                         <th style="width: 120px; text-align: center;">Actions</th>
@@ -65,9 +65,25 @@
                         {
                             <tr>
                                 <td>@(index++)</td>
-                                <td class="fw-medium">@item.RoleCode</td>
-                                <td class="fw-semibold">@item.DisplayName</td>
-                                <td class="text-secondary">@item.Description</td>
+
+                                <td class="fw-medium">
+                                    <span class="table-text-truncate" title="@item.RoleCode">
+                                        @item.RoleCode
+                                    </span>
+                                </td>
+
+                                <td class="fw-semibold">
+                                    <span class="table-text-truncate" title="@item.DisplayName">
+                                        @item.DisplayName
+                                    </span>
+                                </td>
+
+                                <td class="text-secondary">
+                                    <span class="table-text-truncate" title="@item.Description">
+                                        @(string.IsNullOrWhiteSpace(item.Description) ? "-" : item.Description)
+                                    </span>
+                                </td>
+
                                 <td>
                                     @if (item.Status)
                                     {
@@ -79,16 +95,16 @@
                                     }
                                 </td>
                                 <td class="text-center align-middle">
-                                    <a asp-action="RoleEntry" asp-route-code="@item.RoleCode"
+                                    <a asp-action="RoleEntry" asp-controller="Role" asp-route-code="@item.RoleCode"
                                        class="text-primary text-decoration-none mx-2 shadow-none"
-                                       style="outline: none;" title="Edit">
+                                       style="outline: none;" title="Edit Role">
                                         <i class="bi bi-pencil-square" style="font-size: 1.15rem;"></i>
                                     </a>
 
                                     <button type="button"
                                             class="text-danger border-0 bg-transparent p-0 mx-2 shadow-none"
                                             style="outline: none;"
-                                            onclick="deleteRole('@item.RoleCode')" title="Delete">
+                                            onclick="deleteRole('@item.RoleCode')" title="Delete Role">
                                         <i class="bi bi-trash" style="font-size: 1.15rem;"></i>
                                     </button>
                                 </td>
@@ -117,9 +133,9 @@
             <nav aria-label="Page navigation">
                 <ul class="pagination pagination-sm mb-0">
                     <li class="page-item @(Model.PageNumber <= 1 ? "disabled" : "")">
-                        <a class="page-link" asp-action="RoleList" asp-route-pageNumber="@(Model.PageNumber - 1)" asp-route-searchKeyword="@Model.SearchKeyword" asp-route-status="@Model.Status">
+                        <button type="button" class="page-link" onclick="submitPagination(@(Model.PageNumber - 1))">
                             <i class="bi bi-chevron-left"></i>
-                        </a>
+                        </button>
                     </li>
 
                     @{
@@ -128,14 +144,14 @@
                     @for (int i = 1; i <= totalPagesToShow; i++)
                     {
                         <li class="page-item @(i == (Model.PageNumber == 0 ? 1 : Model.PageNumber) ? "active" : "")">
-                            <a class="page-link" asp-action="RoleList" asp-route-pageNumber="@i" asp-route-searchKeyword="@Model.SearchKeyword" asp-route-status="@Model.Status">@i</a>
+                            <button type="button" class="page-link" onclick="submitPagination(@i)">@i</button>
                         </li>
                     }
 
                     <li class="page-item @(Model.PageNumber >= totalPagesToShow ? "disabled" : "")">
-                        <a class="page-link" asp-action="RoleList" asp-route-pageNumber="@(Model.PageNumber + 1)" asp-route-searchKeyword="@Model.SearchKeyword" asp-route-status="@Model.Status">
+                        <button type="button" class="page-link" onclick="submitPagination(@(Model.PageNumber + 1))">
                             <i class="bi bi-chevron-right"></i>
-                        </a>
+                        </button>
                     </li>
                 </ul>
             </nav>
@@ -146,21 +162,10 @@
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        $(document).ready(function () {
-
-        @if (TempData["SuccessMessage"] != null)
-        {
-            <text>
-                        Swal.fire({
-                            title: 'Success!',
-                            text: '@Html.Raw(TempData["SuccessMessage"])',
-                            icon: 'success',
-                            confirmButtonColor: '#635bff',
-                            timer: 2500
-                        });
-            </text>
+        function submitPagination(pageNumber) {
+            $('#pageNumberInput').val(pageNumber);
+            $('#searchForm').submit();
         }
-        });
 
         function deleteRole(roleCode) {
             Swal.fire({
@@ -180,7 +185,7 @@
                         url: '@Url.Action("DeleteRole", "Role")',
                         type: 'POST',
                         data: {
-                            roleCode: roleCode,
+                            roleCode: roleCode, 
                             __RequestVerificationToken: token
                         },
                         success: function (res) {

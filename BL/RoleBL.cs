@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Threading.Tasks;
 using CKM_ManagementSystem.DL;
 using CKM_ManagementSystem.Models.Entities;
 using CKM_ManagementSystem.Models.ViewModels;
@@ -12,43 +11,29 @@ namespace CKM_ManagementSystem.BL
 {
     public class RoleBL
     {
-        private readonly BaseDL bdl;
-        private readonly string _connectionString;
+        private readonly BaseDL _bdl;
 
-        public RoleBL(BaseDL baseDL, string connectionString = "")
+        public RoleBL(BaseDL bdl)
         {
-            bdl = baseDL;
-            _connectionString = connectionString;
+            _bdl = bdl;
         }
 
-        #region Synchronous / Stored Procedure Methods (Legacy)
+        #region Role Save / Update / Get Standard SPs
 
         public string Role_Insert(Roles role, List<RolePermission> permissions)
         {
             DataTable dtPermissions = ConvertPermissionsToDataTable(permissions);
-
-            SqlParameter paramPermissions = new SqlParameter("@Permissions", SqlDbType.Structured)
-            {
-                TypeName = "dbo.RolePermissionType",
-                Value = dtPermissions
-            };
-
-            SqlParameter[] sqlprms =
-            {
-                new SqlParameter("@Role_Code", (object)role.RoleCode ?? string.Empty),
-                new SqlParameter("@Role_Name", (object)role.RoleName ?? string.Empty),
-                new SqlParameter("@Description", (object)role.Description ?? DBNull.Value),
-                new SqlParameter("@Status", role.Status),
-                paramPermissions
-            };
-
-            return bdl.InsertUpdateDeleteData("sp_SaveRoleInfo", sqlprms);
+            return SaveRoleInfo(role, dtPermissions);
         }
 
         public string Role_Update(Roles role, List<RolePermission> permissions)
         {
             DataTable dtPermissions = ConvertPermissionsToDataTable(permissions);
+            return SaveRoleInfo(role, dtPermissions);
+        }
 
+        private string SaveRoleInfo(Roles role, DataTable dtPermissions)
+        {
             SqlParameter paramPermissions = new SqlParameter("@Permissions", SqlDbType.Structured)
             {
                 TypeName = "dbo.RolePermissionType",
@@ -57,296 +42,173 @@ namespace CKM_ManagementSystem.BL
 
             SqlParameter[] sqlprms =
             {
-                new SqlParameter("@Role_Code", (object)role.RoleCode ?? string.Empty),
-                new SqlParameter("@Role_Name", (object)role.RoleName ?? string.Empty),
-                new SqlParameter("@Description", (object)role.Description ?? DBNull.Value),
+                new SqlParameter("@Role_Code", (object?)role.RoleCode ?? string.Empty),
+                new SqlParameter("@Role_Name", (object?)role.RoleName ?? string.Empty),
+                new SqlParameter("@Description", (object?)role.Description ?? DBNull.Value),
                 new SqlParameter("@Status", role.Status),
                 paramPermissions
             };
 
-            return bdl.InsertUpdateDeleteData("sp_SaveRoleInfo", sqlprms);
+            return _bdl.InsertUpdateDeleteData("sp_SaveRoleInfo", sqlprms);
         }
 
         public DataTable GetRoleList()
         {
-            return bdl.SelectData("sp_GetRoleList");
+            return _bdl.SelectData("sp_GetRoleList");
         }
 
         public DataTable GetRoleByCode(string roleCode)
         {
-            SqlParameter[] sqlprms =
-            {
-                new SqlParameter("@RoleCode", (object)roleCode ?? string.Empty)
-            };
-
-            return bdl.SelectData("sp_GetRoleByCode", sqlprms);
+            SqlParameter[] sqlprms = { new SqlParameter("@RoleCode", (object?)roleCode ?? string.Empty) };
+            return _bdl.SelectData("sp_GetRoleByCode", sqlprms);
         }
 
         public DataTable GetRolePermissionsByCode(string roleCode)
         {
-            SqlParameter[] sqlprms =
-            {
-                new SqlParameter("@RoleCode", (object)roleCode ?? string.Empty)
-            };
-
-            DataTable dt = bdl.SelectData("sp_GetRolePermission", sqlprms);
+            SqlParameter[] sqlprms = { new SqlParameter("@RoleCode", (object?)roleCode ?? string.Empty) };
+            DataTable dt = _bdl.SelectData("sp_GetRolePermission", sqlprms);
             StandardizeMenuColumns(dt);
             return dt;
         }
 
         public DataTable GetAllMenus()
         {
-            DataTable dt = bdl.SelectData("sp_GetMenuList");
+            DataTable dt = _bdl.SelectData("sp_GetMenuList");
             StandardizeMenuColumns(dt);
             return dt;
         }
 
         public bool IsRoleCodeDuplicate(string roleCode)
         {
-            SqlParameter[] sqlprms =
-            {
-                new SqlParameter("@RoleCode", (object)roleCode ?? string.Empty)
-            };
-
-            object result = bdl.ExecuteScalar("sp_CheckDuplicateRoleCode", sqlprms);
-
-            if (result != null && result != DBNull.Value)
-            {
-                return Convert.ToInt32(result) > 0;
-            }
-
-            return false;
+            SqlParameter[] sqlprms = { new SqlParameter("@RoleCode", (object?)roleCode ?? string.Empty) };
+            var scalarResult = _bdl.ExecuteScalar("sp_CheckDuplicateRoleCode", sqlprms);
+            int result = scalarResult != null ? Convert.ToInt32(scalarResult) : 0;
+            return result > 0;
         }
 
         #endregion
 
-        #region Async / Direct SQL Methods
+        #region Paging, Menu Permissions & Delete via Stored Procedures
 
-        public async Task<RoleListPagedViewModel> GetRoleListPagedAsync(int pageNumber, int pageSize, string searchKeyword, int? status)
+        public RoleListPagedViewModel GetRoleListPaged(int pageNumber, int pageSize, string searchKeyword, int? status)
         {
-            return await GetRoleListPagedSPAsync(pageNumber, pageSize, searchKeyword, status);
-        }
+            SqlParameter[] prmsCount = {
+                new SqlParameter("@SearchKeyword", string.IsNullOrWhiteSpace(searchKeyword) ? (object)DBNull.Value : searchKeyword),
+                new SqlParameter("@Status", status.HasValue ? (object)status.Value : DBNull.Value)
+            };
 
-        public async Task<List<MenuPermissionViewModel>> GetMenuPermissionsAsync(string? roleCode = null)
-        {
-            return await GetMenuPermissionsSPAsync(roleCode);
-        }
+            DataTable dtCount = _bdl.SelectData("sp_GetRoleList", prmsCount);
+            int totalRecords = dtCount != null ? dtCount.Rows.Count : 0;
 
-        public async Task<RoleEntryViewModel?> GetRoleByCodeAsync(string roleCode)
-        {
-            return await GetRoleByCodeSPAsync(roleCode);
-        }
+            SqlParameter[] prmsData = {
+                new SqlParameter("@SearchKeyword", string.IsNullOrWhiteSpace(searchKeyword) ? (object)DBNull.Value : searchKeyword),
+                new SqlParameter("@Status", status.HasValue ? (object)status.Value : DBNull.Value),
+                new SqlParameter("@Offset", (pageNumber - 1) * pageSize),
+                new SqlParameter("@PageSize", pageSize)
+            };
 
-        public async Task<bool> IsRoleActiveAsync(string roleCode)
-        {
-            var role = await GetRoleByCodeSPAsync(roleCode);
-            return role != null && role.Status;
-        }
+            DataTable dtData = _bdl.SelectData("sp_GetRoleListPaged", prmsData);
 
-        public async Task<(bool Success, string Message)> DeleteRoleAsync(string roleCode)
-        {
-            return await DeleteRoleSPAsync(roleCode);
-        }
+            var roles = new List<RoleEntryViewModel>();
+            if (dtData != null)
+            {
+                foreach (DataRow row in dtData.Rows)
+                {
+                    string code = dtData.Columns.Contains("RoleCode") ? row["RoleCode"]?.ToString() ?? ""
+                                : dtData.Columns.Contains("Role_Code") ? row["Role_Code"]?.ToString() ?? "" : "";
 
-        public async Task<RoleListPagedViewModel> GetRoleListPagedSPAsync(int pageNumber, int pageSize, string searchKeyword, int? status)
-        {
-            var result = new RoleListPagedViewModel
+                    string name = dtData.Columns.Contains("DisplayName") ? row["DisplayName"]?.ToString() ?? ""
+                                : dtData.Columns.Contains("Role_Name") ? row["Role_Name"]?.ToString() ?? "" : "";
+
+                    roles.Add(new RoleEntryViewModel
+                    {
+                        RoleCode = code,
+                        DisplayName = name,
+                        Description = dtData.Columns.Contains("Description") && row["Description"] != DBNull.Value ? row["Description"]?.ToString() ?? "" : "",
+                        Status = ParseStatus(row["Status"])
+                    });
+                }
+            }
+
+            return new RoleListPagedViewModel
             {
                 PageNumber = pageNumber,
                 PageSize = pageSize,
                 SearchKeyword = searchKeyword,
-                Status = status
+                Status = status,
+                TotalRecords = totalRecords,
+                Roles = roles
+            };
+        }
+
+        public List<MenuPermissionViewModel> GetMenuPermissions(string? roleCode = null)
+        {
+            SqlParameter[] prms = {
+                new SqlParameter("@RoleCode", string.IsNullOrEmpty(roleCode) ? (object)DBNull.Value : roleCode)
             };
 
-            using (SqlConnection conn = new SqlConnection(_connectionString))
-            {
-                await conn.OpenAsync();
-
-                string query = @"
-                    SELECT COUNT(1) 
-                    FROM UserRoles 
-                    WHERE (@SearchKeyword IS NULL OR Role_Code LIKE '%' + @SearchKeyword + '%' OR Role_Name LIKE '%' + @SearchKeyword + '%')
-                      AND (@Status IS NULL OR Status = @Status);
-
-                    SELECT 
-                        Role_Code AS RoleCode, 
-                        Role_Name AS DisplayName, 
-                        Description, 
-                        Status
-                    FROM UserRoles
-                    WHERE (@SearchKeyword IS NULL OR Role_Code LIKE '%' + @SearchKeyword + '%' OR Role_Name LIKE '%' + @SearchKeyword + '%')
-                      AND (@Status IS NULL OR Status = @Status)
-                    ORDER BY ISNULL(Updated_Date, Created_Date) DESC
-                    OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;";
-
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@SearchKeyword", string.IsNullOrWhiteSpace(searchKeyword) ? (object)DBNull.Value : searchKeyword);
-                    cmd.Parameters.AddWithValue("@Status", status.HasValue ? (object)status.Value : DBNull.Value);
-                    cmd.Parameters.AddWithValue("@Offset", (pageNumber - 1) * pageSize);
-                    cmd.Parameters.AddWithValue("@PageSize", pageSize);
-
-                    using (var reader = await cmd.ExecuteReaderAsync())
-                    {
-                        if (await reader.ReadAsync())
-                        {
-                            result.TotalRecords = Convert.ToInt32(reader[0]);
-                        }
-
-                        if (await reader.NextResultAsync())
-                        {
-                            while (await reader.ReadAsync())
-                            {
-                                result.Roles.Add(new RoleEntryViewModel
-                                {
-                                    RoleCode = reader["RoleCode"].ToString() ?? string.Empty,
-                                    DisplayName = reader["DisplayName"] != DBNull.Value ? reader["DisplayName"].ToString() ?? string.Empty : string.Empty,
-                                    Description = reader["Description"] != DBNull.Value ? reader["Description"].ToString() ?? string.Empty : string.Empty,
-                                    Status = ParseStatus(reader["Status"])
-                                });
-                            }
-                        }
-                    }
-                }
-            }
-
-            return result;
-        }
-
-        public async Task<bool> CheckDuplicateRoleCodeSPAsync(string roleCode)
-        {
-            using (SqlConnection conn = new SqlConnection(_connectionString))
-            {
-                await conn.OpenAsync();
-                string query = "SELECT COUNT(1) FROM UserRoles WHERE Role_Code = @RoleCode";
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@RoleCode", roleCode ?? (object)DBNull.Value);
-                    int count = Convert.ToInt32(await cmd.ExecuteScalarAsync());
-                    return count > 0;
-                }
-            }
-        }
-
-        public async Task<bool> CheckRoleExistsSPAsync(string roleCode)
-        {
-            return await CheckDuplicateRoleCodeSPAsync(roleCode);
-        }
-
-        public async Task<List<MenuPermissionViewModel>> GetMenuPermissionsSPAsync(string? roleCode = null)
-        {
+            DataTable dt = _bdl.SelectData("sp_GetMenuPermissions", prms);
             var list = new List<MenuPermissionViewModel>();
 
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            if (dt != null)
             {
-                await conn.OpenAsync();
+                foreach (DataRow row in dt.Rows)
+                {
+                    int menuId = row.Table.Columns.Contains("MenuId") ? Convert.ToInt32(row["MenuId"]) : Convert.ToInt32(row["MenuID"]);
 
-                string query;
-                if (string.IsNullOrEmpty(roleCode))
-                {
-                    query = @"
-                        SELECT 
-                            m.MenuID AS MenuId,
-                            m.MenuName,
-                            m.ParentMenuId AS ParentId,
-                            CAST(0 AS BIT) AS CanRead,
-                            CAST(0 AS BIT) AS CanWrite,
-                            CAST(0 AS BIT) AS CanDelete
-                        FROM Menus m
-                        WHERE m.Deleted_Date IS NULL
-                        ORDER BY 
-                            m.DisplayOrder ASC, 
-                            m.MenuID ASC";
-                }
-                else
-                {
-                    query = @"
-                        SELECT 
-                            m.MenuID AS MenuId,
-                            m.MenuName,
-                            m.ParentMenuId AS ParentId,
-                            ISNULL(p.CanRead, 0) AS CanRead,
-                            ISNULL(p.CanWrite, 0) AS CanWrite,
-                            ISNULL(p.CanDelete, 0) AS CanDelete
-                        FROM Menus m
-                        LEFT JOIN UserRolePermissions p ON m.MenuID = p.MenuID 
-                            AND p.Role_Code = @RoleCode
-                        WHERE m.Deleted_Date IS NULL
-                        ORDER BY 
-                            m.DisplayOrder ASC, 
-                            m.MenuID ASC";
-                }
-
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                {
-                    if (!string.IsNullOrEmpty(roleCode))
+                    int? parentId = null;
+                    if (row.Table.Columns.Contains("ParentId") && row["ParentId"] != DBNull.Value)
                     {
-                        cmd.Parameters.AddWithValue("@RoleCode", roleCode);
+                        parentId = Convert.ToInt32(row["ParentId"]);
+                    }
+                    else if (row.Table.Columns.Contains("ParentMenuId") && row["ParentMenuId"] != DBNull.Value)
+                    {
+                        parentId = Convert.ToInt32(row["ParentMenuId"]);
                     }
 
-                    using (var reader = await cmd.ExecuteReaderAsync())
+                    list.Add(new MenuPermissionViewModel
                     {
-                        while (await reader.ReadAsync())
-                        {
-                            list.Add(new MenuPermissionViewModel
-                            {
-                                MenuId = Convert.ToInt32(reader["MenuId"]),
-                                MenuName = reader["MenuName"].ToString() ?? string.Empty,
-                                ParentId = reader["ParentId"] == DBNull.Value ? null : (int?)Convert.ToInt32(reader["ParentId"]),
-                                CanRead = Convert.ToBoolean(reader["CanRead"]),
-                                CanWrite = Convert.ToBoolean(reader["CanWrite"]),
-                                CanDelete = Convert.ToBoolean(reader["CanDelete"])
-                            });
-                        }
-                    }
+                        MenuId = menuId,
+                        MenuName = row["MenuName"]?.ToString() ?? string.Empty,
+                        ParentId = parentId,
+                        CanRead = row["CanRead"] != DBNull.Value && Convert.ToBoolean(row["CanRead"]),
+                        CanWrite = row["CanWrite"] != DBNull.Value && Convert.ToBoolean(row["CanWrite"]),
+                        CanDelete = row["CanDelete"] != DBNull.Value && Convert.ToBoolean(row["CanDelete"])
+                    });
                 }
             }
+
             return list;
         }
 
-        public async Task<RoleEntryViewModel?> GetRoleByCodeSPAsync(string roleCode)
+        public RoleEntryViewModel? GetRoleByCodeViewModel(string roleCode)
         {
-            RoleEntryViewModel? role = null;
+            DataTable dt = GetRoleByCode(roleCode);
+            if (dt == null || dt.Rows.Count == 0) return null;
 
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            DataRow row = dt.Rows[0];
+
+            string code = dt.Columns.Contains("RoleCode") ? row["RoleCode"]?.ToString() ?? ""
+                        : dt.Columns.Contains("Role_Code") ? row["Role_Code"]?.ToString() ?? "" : "";
+
+            string name = dt.Columns.Contains("DisplayName") ? row["DisplayName"]?.ToString() ?? ""
+                        : dt.Columns.Contains("Role_Name") ? row["Role_Name"]?.ToString() ?? "" : "";
+
+            string desc = dt.Columns.Contains("Description") && row["Description"] != DBNull.Value
+                        ? row["Description"]?.ToString() ?? "" : "";
+
+            return new RoleEntryViewModel
             {
-                await conn.OpenAsync();
-
-                string query = @"
-                    SELECT 
-                        Role_Code AS RoleCode, 
-                        Role_Name AS DisplayName, 
-                        Description, 
-                        Status
-                    FROM UserRoles 
-                    WHERE Role_Code = @RoleCode";
-
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@RoleCode", roleCode ?? (object)DBNull.Value);
-
-                    using (var reader = await cmd.ExecuteReaderAsync())
-                    {
-                        if (await reader.ReadAsync())
-                        {
-                            role = new RoleEntryViewModel
-                            {
-                                RoleCode = reader["RoleCode"].ToString() ?? string.Empty,
-                                DisplayName = reader["DisplayName"] != DBNull.Value ? reader["DisplayName"].ToString() ?? string.Empty : string.Empty,
-                                Description = reader["Description"] != DBNull.Value ? reader["Description"].ToString() ?? string.Empty : string.Empty,
-                                Status = ParseStatus(reader["Status"])
-                            };
-                        }
-                    }
-                }
-            }
-
-            return role;
+                RoleCode = code,
+                DisplayName = name,
+                Description = desc,
+                Status = dt.Columns.Contains("Status") ? ParseStatus(row["Status"]) : false
+            };
         }
 
-        public async Task<(bool Success, string Message)> DeleteRoleSPAsync(string roleCode)
+        public (bool Success, string Message) DeleteRole(string roleCode)
         {
-            var role = await GetRoleByCodeSPAsync(roleCode);
+            var role = GetRoleByCodeViewModel(roleCode);
             if (role == null)
             {
                 return (false, "Role not found.");
@@ -357,48 +219,34 @@ namespace CKM_ManagementSystem.BL
                 return (false, "Cannot delete an active role.");
             }
 
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            SqlParameter[] prms = { new SqlParameter("@RoleCode", (object?)roleCode ?? DBNull.Value) };
+            string result = _bdl.InsertUpdateDeleteData("sp_DeleteRole", prms);
+
+            if (string.IsNullOrEmpty(result) || result.Equals("true", StringComparison.OrdinalIgnoreCase) || result == "1")
             {
-                await conn.OpenAsync();
-                using (SqlTransaction transaction = conn.BeginTransaction())
-                {
-                    try
-                    {
-                        string deletePermsQuery = "DELETE FROM UserRolePermissions WHERE Role_Code = @RoleCode";
-                        using (SqlCommand cmdPerm = new SqlCommand(deletePermsQuery, conn, transaction))
-                        {
-                            cmdPerm.Parameters.AddWithValue("@RoleCode", roleCode ?? (object)DBNull.Value);
-                            await cmdPerm.ExecuteNonQueryAsync();
-                        }
-
-                        string deleteRoleQuery = "DELETE FROM UserRoles WHERE Role_Code = @RoleCode";
-                        using (SqlCommand cmdRole = new SqlCommand(deleteRoleQuery, conn, transaction))
-                        {
-                            cmdRole.Parameters.AddWithValue("@RoleCode", roleCode ?? (object)DBNull.Value);
-                            await cmdRole.ExecuteNonQueryAsync();
-                        }
-
-                        transaction.Commit();
-                        return (true, "Role deleted successfully.");
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        return (false, "An error occurred while deleting the role: " + ex.Message);
-                    }
-                }
+                return (true, "Role deleted successfully.");
             }
+
+            return (false, "An error occurred while deleting the role: " + result);
         }
 
         #endregion
 
-        #region Private Helper Methods
+        #region Private Helpers
+
+        private static bool ParseStatus(object? statusObj)
+        {
+            if (statusObj == null || statusObj == DBNull.Value) return false;
+            if (statusObj is bool b) return b;
+            if (int.TryParse(statusObj.ToString(), out int val)) return val == 1;
+            string str = statusObj.ToString()!.Trim();
+            return str.Equals("true", StringComparison.OrdinalIgnoreCase) || str == "1";
+        }
 
         private static void StandardizeMenuColumns(DataTable dt)
         {
             if (dt == null) return;
 
-            
             string[] possibleParentCols = { "ParentMenuId", "Parent_Menu_Id", "ParentMenuID", "Parent_Menu_ID" };
             foreach (var colName in possibleParentCols)
             {
@@ -409,7 +257,6 @@ namespace CKM_ManagementSystem.BL
                 }
             }
 
-            
             string[] possibleMenuCols = { "MenuID", "Menu_Id", "Menu_ID" };
             foreach (var colName in possibleMenuCols)
             {
@@ -419,23 +266,6 @@ namespace CKM_ManagementSystem.BL
                     break;
                 }
             }
-        }
-
-        private bool ParseStatus(object statusObj)
-        {
-            if (statusObj == null || statusObj == DBNull.Value)
-                return false;
-
-            if (statusObj is bool b)
-                return b;
-
-            if (int.TryParse(statusObj.ToString(), out int val))
-            {
-                return val == 1;
-            }
-
-            string str = statusObj.ToString().Trim();
-            return str.Equals("true", StringComparison.OrdinalIgnoreCase) || str == "1";
         }
 
         private static DataTable ConvertPermissionsToDataTable(List<RolePermission> permissions)

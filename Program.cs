@@ -1,24 +1,19 @@
 using CKM_ManagementSystem.BL;
 using CKM_ManagementSystem.DL;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "";
-
 builder.Services.AddControllersWithViews();
 
+
 builder.Services.AddScoped<BaseDL>();
-
-
-builder.Services.AddScoped<RoleBL>(provider =>
-    new RoleBL(
-        provider.GetRequiredService<BaseDL>(),
-        connectionString
-    )
-);
+builder.Services.AddScoped<RoleBL>();
 
 var app = builder.Build();
+
 
 if (!app.Environment.IsDevelopment())
 {
