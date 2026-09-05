@@ -247,3 +247,10 @@
         cursor: not-allowed;
         background-color: #f9fafb;
     }
+.desc-truncate {
+    max-width: 250px; 
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis;
+    display: block;
+}

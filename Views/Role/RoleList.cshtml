@@ -46,15 +46,15 @@
 
     <div class="custom-card">
         <div class="table-responsive">
-            <table class="role-table">
+            <table class="role-table" style="table-layout: fixed; width: 100%;">
                 <thead>
                     <tr>
                         <th style="width: 60px;">No.</th>
-                        <th style="width: 180px;">Code</th>
-                        <th style="width: 220px;">Role Name</th>
-                        <th>Description</th>
-                        <th style="width: 120px;">Status</th>
-                        <th style="width: 120px; text-align: center;">Actions</th>
+                        <th style="width: 140px;">Code</th>
+                        <th style="width: 180px;">Role Name</th>
+                        <th style="width: 250px;">Description</th>
+                        <th style="width: 110px;">Status</th>
+                        <th style="width: 110px; text-align: center;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -185,7 +185,7 @@
                         url: '@Url.Action("DeleteRole", "Role")',
                         type: 'POST',
                         data: {
-                            roleCode: roleCode, 
+                            roleCode: roleCode,
                             __RequestVerificationToken: token
                         },
                         success: function (res) {

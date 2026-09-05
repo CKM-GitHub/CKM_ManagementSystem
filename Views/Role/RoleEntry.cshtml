@@ -190,7 +190,6 @@
                 $('#generalError').text('');
             }
 
-            // 1. Enter Key တားဆီးခြင်းနှင့် အောက် Field သို့ Focus ရွှေ့ခြင်း
             $(document).on('keydown', '#RoleCode, #DisplayName, #Description', function (e) {
                 if (e.which === 13 || e.keyCode === 13) {
                     e.preventDefault();
@@ -211,7 +210,6 @@
                 }
             });
 
-            // 2. Special Characters ရိုက်မရအောင် ကန့်သတ်ခြင်း (Real-time Filter)
             $('#RoleCode').on('input keyup paste change', function () {
                 var val = $(this).val();
                 var clean = val.replace(/[^a-zA-Z0-9_-]/g, '');
@@ -228,7 +226,6 @@
                 }
             });
 
-            // 3. Parent / Child Checkbox Permission Handling
             $(document).on('change', '.parent-menu-row input[type="checkbox"]', function () {
                 var $parentRow = $(this).closest('tr');
                 var parentId = $parentRow.data('menu-id');
@@ -265,7 +262,6 @@
                 }
             });
 
-            // 4. Clear Button Handling
             $('#btnClear').on('click', function () {
                 $('#roleForm')[0].reset();
                 clearValidationErrors();
@@ -278,13 +274,11 @@
                 }
             });
 
-          
             $('#RoleCode, #DisplayName, #Description').on('input', function () {
                 var fieldId = $(this).attr('id');
                 $('[data-valmsg-for="' + fieldId + '"]').text('');
             });
 
-            
             $('#btnRegister').on('click', function (e) {
                 e.preventDefault();
                 executeSubmit();
@@ -328,44 +322,17 @@
                             });
                         } else {
                             if (response.errors && typeof response.errors === 'object') {
-                                var errorMessages = "";
                                 $.each(response.errors, function (key, message) {
                                     $('[data-valmsg-for="' + key + '"]').text(message);
-                                    if (message) errorMessages += message + "<br>";
-                                });
-
-                                if (!errorMessages) errorMessages = "Please check the required fields.";
-
-                                Swal.fire({
-                                    title: 'Validation Error!',
-                                    html: errorMessages,
-                                    icon: 'warning',
-                                    confirmButtonText: 'OK',
-                                    confirmButtonColor: '#0d6efd',
-                                    customClass: { popup: 'rounded-4 border-0 shadow' }
                                 });
                             } else if (response.message) {
-                                Swal.fire({
-                                    title: 'Warning!',
-                                    text: response.message,
-                                    icon: 'warning',
-                                    confirmButtonText: 'OK',
-                                    confirmButtonColor: '#0d6efd',
-                                    customClass: { popup: 'rounded-4 border-0 shadow' }
-                                });
+                                $('#generalError').text(response.message);
                             }
                         }
                     },
                     error: function () {
                         $('#btnRegister').prop('disabled', false);
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'An error occurred while processing your request.',
-                            icon: 'error',
-                            confirmButtonText: 'OK',
-                            confirmButtonColor: '#0d6efd',
-                            customClass: { popup: 'rounded-4 border-0 shadow' }
-                        });
+                        $('#generalError').text('An error occurred while processing your request.');
                     }
                 });
             }
