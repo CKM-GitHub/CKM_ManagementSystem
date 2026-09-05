@@ -42,9 +42,21 @@ $(document).ready(function () {
         const modalElement = document.getElementById('successModal');
         if (modalElement) {
             const successModal = new bootstrap.Modal(modalElement);
-            successModal.show();
-            $(modalElement).on('hidden.bs.modal', function () {
-                $displayText.focus();
+            Swal.fire({
+                icon: 'success',
+                title: 'Successfully!!',
+                text: successMessage,
+                confirmButtonText: 'OK',
+                buttonStyling: false,
+                customClass: {
+                    popup: 'custom-modal-popup',
+                    title: 'custom-modal-title',
+                    htmlContainer: 'custom-modal-text',
+                    confirmButton: 'custom-modal-btn custom-modal-btn-confirm'
+                },
+                didClose: () => {
+                    $displayText.focus();
+                }
             });
         }
     }
@@ -73,20 +85,38 @@ $(document).ready(function () {
             $current.focus();
             return;
         }
-        const $allInputs = $menuForm.find(':input:visible:not(:disabled)')
-            .filter(function () {
-                return this.type !== 'hidden' && this.type !== 'submit' && this.type !== 'button' && this.type !== 'radio';
-            });
+        const selectedType = $('input[name="MenuType"]:checked').val();
+        if (selectedType === 'Sub' && ($parentMenu.val() === '0' || $parentMenu.val() === '' || $parentMenu.val() === null)) {
+            $parentMenu.addClass('input-validation-error');
+            $('.parent-menu-error, #parentMenuError')
+                .removeClass('field-validation-valid')
+                .addClass('field-validation-error')
+                .text('Please select a Parent Menu.');
+            $parentMenu.focus();
+            return;
+        }
+        const $allInputs = $menuForm.find(':input:visible:not(:disabled)').filter(function () {
+            return this.type !== 'hidden' && this.type !== 'submit' && this.type !== 'button' && this.type !=='radio' && this.type !== 'reset';
+        })
+        .filter(function () {
+            return this.type !== 'hidden' && this.type !== 'submit' && this.type !== 'button' && this.type !== 'radio';
+        });
         const currentIndex = $allInputs.index($current);
-        if (currentIndex !== -1) {
-            const $nextRequired = $allInputs.slice(currentIndex + 1).filter(function () {
-                return $(this).prop('required') || $(this).data('val-required') !== undefined || $(this).hasClass('required');
-            }).first();
-            if ($nextRequired.length > 0) {
-                $nextRequired.focus();
-            } else if (currentIndex < $allInputs.length - 1) {
-                $allInputs.eq(currentIndex + 1).focus();
+        let $nextInput = null;
+        for (let i = currentIndex + 1; i < $allInputs.length; i++) {
+            const $candidate = $allInputs.eq(i);
+            const isRequired = $candidate.prop('required') || $candidate.data('val-required') !== undefined || $candidate.hasClass('required');
+            const isEmpty = $.trim($candidate.val()) === '';
+            if (isRequired && isEmpty) {
+                $nextInput = $candidate;
+                break;
             }
+        }
+        
+        if ($nextInput) {
+            $nextInput.focus();
+        } else {
+            $menuForm.submit();
         }
     });
     $menuForm.on('submit', function (e) {
@@ -103,7 +133,7 @@ $(document).ready(function () {
                         $el.closest('.mb-3, .form-group, div')
                             .find('.field-validation-error')
                             .removeClass('field-validation-error')
-                            .addClass('field-validaion-valid')
+                            .addClass('field-validation-valid')
                             .empty();
                     });
                 }
@@ -123,6 +153,21 @@ $(document).ready(function () {
             $parentMenu.focus();
             return false;
         }
+        Swal.fire({
+            title: 'Saving...',
+            text: 'Please wait a moment',
+            allowOutsideClick: false,
+            buttonsStyling: false,
+            customClass: {
+                popup: 'custom-modal-popup',
+                title: 'custom-modal-title',
+                htmlContainer: 'custom-modal-text'
+            },
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        return true;
         //if ($menuForm.valid && !$menuForm.valid()) {
           //  e.preventDefault();
             //$menuForm.find('.input-validation-error').filter(":visible").first().focus();
@@ -139,7 +184,7 @@ $(document).ready(function () {
         } else {
             $parentMenu.val('0').prop('disabled', true).addClass('bg-light');
             $parentMenu.removeClass('input-validation-error');
-            $('#parentMenuError').text('');
+            $('.parent-menu-error').text('');
         }
     }
 
@@ -187,7 +232,7 @@ $(document).ready(function () {
         }
     });
 
-    $displayOrder.on('input keypress', function (e) {
+    $displayOrder.on('input', function (e) {
         const $input = $(this);
         const val = $input.val();
         const $msg = $input.siblings('.char-limit-msg');
@@ -196,7 +241,7 @@ $(document).ready(function () {
             $msg.removeClass('d-none').text('Please enter numbers only (0-9)!');
             return;
         }
-        if (val.length >= 3) {
+        if (val.length > 3) {
             $input.addClass('border-danger');
             $msg.removeClass('d-none').text('Display Order cannot exceed 3 digits!');
         }
