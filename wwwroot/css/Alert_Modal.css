@@ -1,0 +1,48 @@
+﻿.alert-modal-content {
+    border: none;
+    border-radius: 8px;
+}
+
+.alert-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid;
+    border-radius: 50%;
+    font-size: 30px;
+}
+
+.alert-success {
+    color: #72c96b;
+}
+
+.alert-error {
+    color: #ff6666;
+}
+
+.alert-delete {
+    color: #ff6666;
+}
+
+.alert-title {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.alert-message {
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+#deleteButtons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+    #deleteButtons.d-none {
+        display: none !important;
+    }
