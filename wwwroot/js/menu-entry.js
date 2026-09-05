@@ -3,12 +3,34 @@ $(document).ready(function () {
     const $menuForm = $('#menuForm');
     const $displayText = $('#DisplayText');
     const $parentMenu = $('#ParentMenu');
-    const $hiddenParentMenu = $('#hiddenParentMenu');
     const $displayOrder = $('#DisplayOrder');
     const $typeParent = $('#typeParent');
     const $statusActive = $('#statusActive');
 
-    const validator = $menuForm.validate();
+    const validator = $menuForm.validate({
+        showErrors: function (errorMap, errorList) {
+            this.defaultShowErrors();
+            if (errorList.length > 0) {
+                const firstError = errorList[0];
+                const $firstEl = $(firstError.element);
+                const errorClass = this.settings.errorClass;
+                setTimeout(function () {
+                    for (let i = 1; i < errorList.length; i++) {
+                        const el = errorList[i].element;
+                        const $el = $(el);
+                        $el.removeClass(errorClass);
+                        $el.closest('.mb-3 , .form-group, div')
+                            .find('.field-validation-error')
+                            .removeClass('field-validation-error')
+                            .addClass('field-validation-valid')
+                            .empty();
+                    }
+                    $firstEl.addClass('input-validation-error').focus();
+                }, 0);
+            }
+            
+        }
+    });
     validator.settings.onfocusout = false;
     validator.settings.onclick = false;
     validator.settings.onkeyup = function (element) {
@@ -28,7 +50,12 @@ $(document).ready(function () {
     }
     else {
         setTimeout(function () {
-            $displayText.focus();
+            const $firstError = $menuForm.find('.input-validation-error:visible, .error:visible').first();
+            if ($firstError.length > 0) {
+                $firstError.focus();
+            } else {
+                $displayText.focus();
+            }
         }, 100);
         
     }
@@ -63,32 +90,56 @@ $(document).ready(function () {
         }
     });
     $menuForm.on('submit', function (e) {
-        if ($menuForm.valid && !$menuForm.valid()) {
+        $parentMenu.prop('disabled', false);
+        $('input[name="MenuType"]').prop('disabled', false);
+        if (!$menuForm.valid()) {
             e.preventDefault();
-            const $invalidInputs = $menuForm.find(':input').filter(function () {
-                return !validator.element(this);
-            });
-            if ($invalidInputs.length > 0) {
-                $menuForm.find('.field-validation-error')
-                    .removeClass('field-validation-error')
-                    .addClass('field-validation-valid')
-                    .empty();
-                const firstInvalidInput = $invalidInputs.first()[0];
-                validator.element(firstInvalidInput);
-                $(firstInvalidInput).focus();
-            }
+            setTimeout(function () {
+                const $invalidInputs = $menuForm.find('.input-validation-error:visible, :input.error:visible');
+                if ($invalidInputs.length > 1) {
+                    $invalidInputs.slice(1).each(function () {
+                        const $el = $(this);
+                        $el.removeClass('input-validation-error error');
+                        $el.closest('.mb-3, .form-group, div')
+                            .find('.field-validation-error')
+                            .removeClass('field-validation-error')
+                            .addClass('field-validaion-valid')
+                            .empty();
+                    });
+                }
+                if ($invalidInputs.length > 0) {
+                    $invalidInputs.first().focus();
+                }
+            }, 10);
             return false;
         }
+        const selectedType = $('input[name="MenuType"]:checked').val();
+        if (selectedType === 'Sub' && ($parentMenu.val() === '0' || $parentMenu.val() === '')) {
+            e.preventDefault();
+            $parentMenu.addClass('input-validation-error');
+            $('.parent-menu-error').text('').removeClass('field-validation-valid')
+                .addClass('field-validation-error')
+                .text('Please select a Parent Menu.');
+            $parentMenu.focus();
+            return false;
+        }
+        //if ($menuForm.valid && !$menuForm.valid()) {
+          //  e.preventDefault();
+            //$menuForm.find('.input-validation-error').filter(":visible").first().focus();
+            //return false;
+        //}
+        //$parentMenu.prop('disabled', false);
+        //$('input[name="MenuType"]').prop('disabled', false);
     });
     function toggleParentMenu() {
         const selectedType = $('input[name="MenuType"]:checked').val();
         if (selectedType === 'Sub') {
             $parentMenu.prop('disabled', false).removeClass('bg-light');
-            $hiddenParentMenu.prop('disabled', true);
                 
         } else {
             $parentMenu.val('0').prop('disabled', true).addClass('bg-light');
-            $hiddenParentMenu.prop('disabled', false);
+            $parentMenu.removeClass('input-validation-error');
+            $('#parentMenuError').text('');
         }
     }
 
@@ -106,12 +157,54 @@ $(document).ready(function () {
     });
     $parentMenu.on('change', function () {
         revalidateDisplayOrder();
+        if ($(this).val() != '') {
+            $(this).removeClass('input-validation-error error');
+            $(this).closest('.mb-3, .form-group')
+                .find('.field-validation-error, span.text-danger')
+                .removeClass('field-validation-error')
+                .addClass('field-validation-valid')
+                .empty();
+        }
+        else if (validator) {
+            validator.element(this);
+        }
     });
     $displayOrder.on('keyup input change', function () {
         revalidateDisplayOrder();
     });
     
-   
+    $('.limit-input').on('input keyup', function () {
+        const $input = $(this);
+        const maxLen = parseInt($input.attr('maxlength')) || 100;
+        const currentLen = $input.val().length;
+        const $msg = $input.siblings('.char-limit-msg');
+        if (currentLen >= maxLen) {
+            $input.addClass('border-danger');
+            $msg.removeClass('d-none').text('Maximum ' + maxLen +' characters limit reached!');
+        } else {
+            $input.removeClass('border-danger');
+            $msg.addClass('d-none');
+        }
+    });
+
+    $displayOrder.on('input keypress', function (e) {
+        const $input = $(this);
+        const val = $input.val();
+        const $msg = $input.siblings('.char-limit-msg');
+        if (val !== '' && !/^\d+$/.test(val)) {
+            $input.addClass('border-danger');
+            $msg.removeClass('d-none').text('Please enter numbers only (0-9)!');
+            return;
+        }
+        if (val.length >= 3) {
+            $input.addClass('border-danger');
+            $msg.removeClass('d-none').text('Display Order cannot exceed 3 digits!');
+        }
+        else {
+            $input.removeClass('border-danger');
+            $msg.addClass('d-none');
+        }
+    });
         $("#btnClear").click(function (e) {
             e.preventDefault();
 
@@ -120,6 +213,14 @@ $(document).ready(function () {
             $typeParent.prop('checked', true);
             $statusActive.prop('checked', true);
 
+            $menuForm.find('.char-limit-msg').addClass('d-none').empty();
+            $menuForm.find('.limit-input, #DisplayOrder').removeClass('border-danger');
+
+            $menuForm.find('[asp-validation-summary]').empty();
+            $menuForm.find('.validation-summary-errors, .validation-summary-valid')
+                .addClass('validation-summary-valid')
+                .removeClass('validation-summary-errors')
+                .find('ul, div, span').empty();
             validator.resetForm();
             if ($menuForm.data('validator')) {
                 $menuForm.find('.field-validation-error')

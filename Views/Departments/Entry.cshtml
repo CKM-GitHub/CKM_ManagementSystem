@@ -9,7 +9,9 @@
 <!DOCTYPE html>
 
 <html lang="en">
+
 <head>
+
     <meta charset="utf-8" />
 
     <meta name="viewport"
@@ -21,8 +23,18 @@
           href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 
     <link rel="stylesheet"
-          href="~/css/Department_Entry.css" />
+          href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/Alert_Modal.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/Department_Entry.css"
+          asp-append-version="true" />
+
 </head>
+
 
 <body>
 
@@ -33,17 +45,17 @@
             <h2 class="department-entry-title">
                 Department Entry
             </h2>
-            
+
+
             <form asp-controller="Departments"
-                  asp-action="@(string.IsNullOrWhiteSpace(Model.OriginalDepartmentCode)
-                     ?"Entry":"Edit")" 
+                  asp-action="Entry"
                   method="post"
                   id="departmentEntryForm">
-                  <input type="hidden" asp-for="OriginalDepartmentCode" />
 
                 <div asp-validation-summary="ModelOnly"
                      class="validation-summary">
                 </div>
+
 
                 <div class="form-group">
 
@@ -52,14 +64,14 @@
                     <input asp-for="DepartmentCode"
                            id="departmentCode"
                            class="form-control"
-                           autocomplete="off" 
-                           readonly="@(!string.IsNullOrWhiteSpace(Model.OriginalDepartmentCode))"/>
+                           autocomplete="off" />
 
                     <span asp-validation-for="DepartmentCode"
                           class="validation-message">
                     </span>
 
                 </div>
+
 
                 <div class="form-group">
 
@@ -75,6 +87,7 @@
 
                 </div>
 
+
                 <div class="form-group">
 
                     <label asp-for="Description"></label>
@@ -88,6 +101,7 @@
                     </span>
 
                 </div>
+
 
                 <div class="status-row">
 
@@ -107,6 +121,7 @@
 
                         </label>
 
+
                         <label class="radio-label">
 
                             <input type="radio"
@@ -121,88 +136,47 @@
 
                 </div>
 
+
                 <div class="button-row">
 
-                    @if (string.IsNullOrWhiteSpace(Model.OriginalDepartmentCode))
-                    {
-                        <button type="button"
-                                class="btn-clear"
-                                id="btnClear">
-                            Clear
-                        </button>
+                    <button type="button"
+                            class="btn-clear"
+                            id="btnClear">
+                        Clear
+                    </button>
 
-                        <button type="submit"
-                                class="btn-register">
-                            Register
-                        </button>
-                    }
-                    else
-                    {
-                        <button type="button" class="btn-clear"
-                                 onclick="window.location.href='@Url.Action("Index", "Departments")'">
-                            Cancel
-                        </button>
-
-                        <button type="submit"
-                                class="btn-register">
-                            Update
-                        </button>
-                    }
+                    <button type="submit"
+                            class="btn-register">
+                        Register
+                    </button>
 
                 </div>
+
             </form>
-            @if (TempData["SuccessMessage"] != null)
-            {
-                <div class="modal fade"
-                     id="successModal"
-                     tabindex="-1"
-                     aria-labelledby="successModalLabel"
-                     aria-hidden="true">
 
-                    <div class="modal-dialog modal-dialog-centered">
-
-                        <div class="modal-content">
-
-                            <div class="modal-header">
-
-                                <h5 class="modal-title"
-                                    id="successModalLabel">
-                                    Success
-                                </h5>
-
-                                <button type="button"
-                                        class="btn-close"
-                                        data-bs-dismiss="modal"
-                                        aria-label="Close">
-                                </button>
-
-                            </div>
-
-                            <div class="modal-body">
-                                @TempData["SuccessMessage"]
-                            </div>
-
-                            <div class="modal-footer">
-
-                                <button type="button"
-                                        class="btn btn-primary"
-                                        data-bs-dismiss="modal">
-                                    OK
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-            }
         </div>
 
     </div>
+
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <input type="hidden"
+               id="successMessage"
+               value="@TempData["SuccessMessage"]" />
+    }
+
+
+    <partial name="AlertModal" />
+
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="~/js/Alert_Modal.js"
+            asp-append-version="true">
+    </script>
 
     <partial name="_ValidationScriptsPartial" />
 
@@ -211,4 +185,5 @@
     </script>
 
 </body>
+
 </html>

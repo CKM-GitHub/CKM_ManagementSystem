@@ -27,6 +27,11 @@ namespace CKM_ManagementSystem.Controllers.Menu
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> MenuEntry(CreateMenuViewModel model)
         {
+            bool isSubMenu = string.Equals(model.MenuType, "Sub", StringComparison.OrdinalIgnoreCase);
+            if(model.MenuType == "Sub" && (!model.ParentMenuId.HasValue || model.ParentMenuId <= 0))
+            {
+                ModelState.AddModelError("ParentMenuId", "Please select a valid Parent Menu for Sub Menu.");
+            }
             if (!ModelState.IsValid)
             {
                 model.ParentMenuList = await GetParentMenuListAsync();
@@ -45,6 +50,7 @@ namespace CKM_ManagementSystem.Controllers.Menu
                     model.IconClass,
                     model.DisplayOrder ?? 0,
                     parentMenuId,
+                    isSubMenu,
                     model.Status);
 
 
@@ -53,7 +59,11 @@ namespace CKM_ManagementSystem.Controllers.Menu
 
                 if (statusCode == 0)
                 {
-                    if (statusMessage.Contains("display order", StringComparison.OrdinalIgnoreCase))
+                    if(statusMessage.Contains("Parent Menu", StringComparison.OrdinalIgnoreCase))
+                    {
+                        ModelState.AddModelError("ParentMenuId", statusMessage);
+                    }
+                    else if (statusMessage.Contains("display order", StringComparison.OrdinalIgnoreCase))
                     {
                         ModelState.AddModelError("DisplayOrder", statusMessage);
                     }

@@ -26,27 +26,30 @@
                         </div>
                     </div>
 
-                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
                     <form asp-action = "MenuEntry" method="post" id="menuForm">
+                        <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
                         <div class="mb-3">
                             <label asp-for="DisplayText" class="form-label fw-semibold text-secondary small">Display Text</label>
-                            <input asp-for="DisplayText" class="form-control" placeholder="e.g. , Register User" maxlength="150"  />
+                            <input asp-for="DisplayText" class="form-control limit-input" placeholder="e.g. , Register User" maxlength="100"  />
                             <span asp-validation-for="DisplayText" class="text-danger small"></span>
+                            <small class="text-danger char-limit-msg d-none">Maximum 100 characters reached!</small>
                         </div>
                         <div class="mb-3">
                             <label asp-for="ActionName" class="form-label fw-semibold text-secondary small">Action Name(Form Name)</label>
-                            <input asp-for="ActionName" class="form-control" placeholder="e.g. , Register " maxlength="150" />
+                            <input asp-for="ActionName" class="form-control limit-input" placeholder="e.g. , Register " maxlength="100" />
                             <span asp-validation-for="ActionName" class="text-danger small"></span>
+                            <small class="text-danger char-limit-msg d-none">Maximum 100 characters reached!</small>
                         </div>
                         <div class="mb-3">
                             <label asp-for="ControllerName" class="form-label fw-semibold text-secondary small">Controller Name</label>
-                            <input asp-for="ControllerName" class="form-control" placeholder="e.g. , Account" maxlength="150" />
+                            <input asp-for="ControllerName" class="form-control limit-input" placeholder="e.g. , Account" maxlength="100" />
                             <span asp-validation-for="ControllerName" class="text-danger small"></span>
+                            <small class="text-danger char-limit-msg d-none">Maximum 100 characters reached!</small>
                         </div>
                         
                         <div class="mb-3">
                             <label asp-for="IconClass" class="form-label fw-semibold text-secondary small">Icon Class</label>
-                            <input asp-for="IconClass" class="form-control" placeholder="e.g. , fas fa-user-plus" maxlength="100" />
+                            <input asp-for="IconClass" class="form-control limit-input" placeholder="e.g. , fas fa-user-plus" maxlength="50" />
                             <span asp-validation-for="IconClass" class="text-danger small"></span>
                         </div>
                         
@@ -55,7 +58,7 @@
                             <label class="col-sm-4 form-label fw-semibold text-secondary small d-block">Menu Type</label>
                             <div class="col-sm-8 d-flex gap-3">
                                 <div class="form-check">
-                                    <input asp-for="MenuType" class="form-check-input" type="radio"  id="typeParent" value="Parent" checked />
+                                    <input asp-for="MenuType" class="form-check-input" type="radio"  id="typeParent" value="Parent"  />
                                     <label class="form-check-label" for="typeParent">Parent Menu</label>
                                 </div>
                                 <div class="form-check">
@@ -67,11 +70,10 @@
 
                         <div class="mb-3">
                             <label asp-for="ParentMenuId" class="form-label fw-semibold text-secondary small">Parent Menu</label>
-                            <select asp-for="ParentMenuId" asp-items="Model.ParentMenuList" class="form-select" id="ParentMenu" disabled>
+                            <select asp-for="ParentMenuId" asp-items="Model.ParentMenuList" class="form-select" id="ParentMenu" >
                                 <option value="0">None (Root Level)</option>
                             </select>
-                            <input type = "hidden" id="hiddenParentMenu" name="ParentMenuId" value="0" />
-                            <span asp-validation-for="ParentMenuId" class="text-danger small"></span>
+                            <span asp-validation-for="ParentMenuId" class="text-danger small parent-menu-error"></span>
                         </div>
                         <div class="mb-3">
                             <label asp-for="DisplayOrder" class="form-label fw-semibold text-secondary small">Display Order</label>
