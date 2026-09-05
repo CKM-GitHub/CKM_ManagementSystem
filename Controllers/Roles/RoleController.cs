@@ -45,7 +45,7 @@ namespace CKM_ManagementSystem.Controllers
                 MenuPermissions = new List<RolePermissionViewModel>()
             };
 
-            List<MenuPermissionViewModel> rawPermissions;
+            List<RolePermissionViewModel> mappedPermissions = new List<RolePermissionViewModel>();
 
             if (!string.IsNullOrEmpty(targetCode))
             {
@@ -59,27 +59,27 @@ namespace CKM_ManagementSystem.Controllers
                     model.IsEdit = true;
                 }
 
-                rawPermissions = await _roleBL.GetMenuPermissionsAsync(targetCode);
+                var rawPermissions = await _roleBL.GetMenuPermissionsAsync(targetCode);
+                if (rawPermissions != null)
+                {
+                    mappedPermissions = rawPermissions.Select(p => new RolePermissionViewModel
+                    {
+                        MenuId = p.MenuId,
+                        MenuName = p.MenuName,
+                        ParentId = (p.ParentId.HasValue && p.ParentId.Value > 0) ? p.ParentId : null,
+                        CanRead = p.CanRead,
+                        CanWrite = p.CanWrite,
+                        CanDelete = p.CanDelete
+                    }).ToList();
+                }
             }
             else
             {
-                rawPermissions = await _roleBL.GetMenuPermissionsAsync(null);
+                DataTable dtMenus = _roleBL.GetAllMenus();
+                mappedPermissions = MapDataTableToMenuPermissionList(dtMenus);
             }
 
-            if (rawPermissions != null && rawPermissions.Any())
-            {
-                var sortedPermissions = SortMenuHierarchy(rawPermissions);
-
-                model.MenuPermissions = sortedPermissions.Select(p => new RolePermissionViewModel
-                {
-                    MenuId = p.MenuId,
-                    MenuName = p.MenuName,
-                    ParentId = (p.ParentId.HasValue && p.ParentId.Value > 0) ? p.ParentId : null,
-                    CanRead = p.CanRead,
-                    CanWrite = p.CanWrite,
-                    CanDelete = p.CanDelete
-                }).ToList();
-            }
+            model.MenuPermissions = SortMenuHierarchy(mappedPermissions);
 
             return View(model);
         }
@@ -100,7 +100,7 @@ namespace CKM_ManagementSystem.Controllers
                 var errors = string.Join(" | ", ModelState.Values
                     .SelectMany(v => v.Errors)
                     .Select(e => e.ErrorMessage));
-                return Json(new { success = false, message = errors });
+                return Json(new { success = false, message = string.IsNullOrEmpty(errors) ? "Please fill in all required fields properly." : errors });
             }
 
             var role = new Roles
@@ -160,43 +160,83 @@ namespace CKM_ManagementSystem.Controllers
             }
         }
 
-        private List<MenuPermissionViewModel> SortMenuHierarchy(List<MenuPermissionViewModel> rawList)
+        private List<RolePermissionViewModel> MapDataTableToMenuPermissionList(DataTable dt)
         {
-            if (rawList == null || !rawList.Any())
-                return new List<MenuPermissionViewModel>();
+            var list = new List<RolePermissionViewModel>();
+            if (dt == null) return list;
 
-            var sortedList = new List<MenuPermissionViewModel>();
-
-            
-            var rootMenus = rawList
-                .Where(m => !m.ParentId.HasValue || m.ParentId == 0)
-                .ToList();
-
-            
-            foreach (var root in rootMenus)
+            foreach (DataRow row in dt.Rows)
             {
-                AddMenuAndChildren(root, rawList, sortedList);
+                int? parentId = null;
+
+                string parentColName = dt.Columns.Contains("ParentMenuId") ? "ParentMenuId" :
+                                       (dt.Columns.Contains("Parent_Menu_Id") ? "Parent_Menu_Id" :
+                                       (dt.Columns.Contains("ParentId") ? "ParentId" : null));
+
+                if (parentColName != null && row[parentColName] != DBNull.Value)
+                {
+                    if (int.TryParse(row[parentColName].ToString(), out int parsedParentId) && parsedParentId > 0)
+                    {
+                        parentId = parsedParentId;
+                    }
+                }
+
+                list.Add(new RolePermissionViewModel
+                {
+                    MenuId = Convert.ToInt32(row["MenuId"]),
+                    MenuName = row["MenuName"]?.ToString() ?? string.Empty,
+                    ParentId = parentId,
+                    CanRead = dt.Columns.Contains("CanRead") && row["CanRead"] != DBNull.Value && Convert.ToBoolean(row["CanRead"]),
+                    CanWrite = dt.Columns.Contains("CanWrite") && row["CanWrite"] != DBNull.Value && Convert.ToBoolean(row["CanWrite"]),
+                    CanDelete = dt.Columns.Contains("CanDelete") && row["CanDelete"] != DBNull.Value && Convert.ToBoolean(row["CanDelete"])
+                });
             }
 
-           
-            var addedIds = sortedList.Select(x => x.MenuId).ToHashSet();
+            return list;
+        }
+
+        private List<RolePermissionViewModel> SortMenuHierarchy(List<RolePermissionViewModel> rawList)
+        {
+            if (rawList == null || !rawList.Any())
+                return new List<RolePermissionViewModel>();
+
+            var sortedList = new List<RolePermissionViewModel>();
+            var rootMenus = rawList
+                .Where(m => !m.ParentId.HasValue || m.ParentId.Value == 0)
+                .OrderBy(m => m.MenuId)
+                .ToList();
+
+            foreach (var root in rootMenus)
+            {
+                AddMenuAndChildren(root, rawList, sortedList, 0);
+            }
+
+            var addedIds = sortedList.Select(s => s.MenuId).ToHashSet();
             var orphanMenus = rawList.Where(m => !addedIds.Contains(m.MenuId)).ToList();
-            sortedList.AddRange(orphanMenus);
+
+            foreach (var orphan in orphanMenus)
+            {
+                orphan.ParentId = null;
+                orphan.Level = 0;
+                sortedList.Add(orphan);
+            }
 
             return sortedList;
         }
 
-        private void AddMenuAndChildren(MenuPermissionViewModel parent, List<MenuPermissionViewModel> allMenus, List<MenuPermissionViewModel> result)
+        private void AddMenuAndChildren(RolePermissionViewModel currentMenu, List<RolePermissionViewModel> rawList, List<RolePermissionViewModel> resultList, int currentLevel)
         {
-            result.Add(parent);
+            currentMenu.Level = currentLevel;
+            resultList.Add(currentMenu);
 
-            var children = allMenus
-                .Where(m => m.ParentId.HasValue && m.ParentId.Value == parent.MenuId)
+            var children = rawList
+                .Where(m => m.ParentId.HasValue && m.ParentId.Value == currentMenu.MenuId)
+                .OrderBy(m => m.MenuId)
                 .ToList();
 
             foreach (var child in children)
             {
-                AddMenuAndChildren(child, allMenus, result);
+                AddMenuAndChildren(child, rawList, resultList, currentLevel + 1);
             }
         }
     }

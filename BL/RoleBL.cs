@@ -398,14 +398,26 @@ namespace CKM_ManagementSystem.BL
         {
             if (dt == null) return;
 
-            if (dt.Columns.Contains("ParentMenuId") && !dt.Columns.Contains("ParentId"))
+            
+            string[] possibleParentCols = { "ParentMenuId", "Parent_Menu_Id", "ParentMenuID", "Parent_Menu_ID" };
+            foreach (var colName in possibleParentCols)
             {
-                dt.Columns["ParentMenuId"].ColumnName = "ParentId";
+                if (dt.Columns.Contains(colName) && colName != "ParentId")
+                {
+                    dt.Columns[colName].ColumnName = "ParentId";
+                    break;
+                }
             }
 
-            if (dt.Columns.Contains("MenuID") && !dt.Columns.Contains("MenuId"))
+            
+            string[] possibleMenuCols = { "MenuID", "Menu_Id", "Menu_ID" };
+            foreach (var colName in possibleMenuCols)
             {
-                dt.Columns["MenuID"].ColumnName = "MenuId";
+                if (dt.Columns.Contains(colName) && colName != "MenuId")
+                {
+                    dt.Columns[colName].ColumnName = "MenuId";
+                    break;
+                }
             }
         }
 

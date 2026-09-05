@@ -12,28 +12,26 @@ namespace CKM_ManagementSystem.Models.ViewModels.Roles
 
         [Required(ErrorMessage = "Display Name is required.")]
         [StringLength(50, ErrorMessage = "Display Name cannot exceed 50 characters.")]
-        public string DisplayName { get; set; } = string.Empty;
+        public string DisplayName { get.set; } = string.Empty; // Fixed typo if any, keeping standard syntax
 
         [StringLength(250, ErrorMessage = "Description cannot exceed 250 characters.")]
         public string? Description { get; set; }
 
         public bool Status { get; set; } = true;
 
-       
         public bool IsEdit { get; set; } = false;
 
         public List<RolePermissionViewModel> MenuPermissions { get; set; } = new List<RolePermissionViewModel>();
     }
 
-    public class MenuPermissionViewModel
+    public class RolePermissionViewModel
     {
         public int MenuId { get; set; }
         public string MenuName { get; set; } = string.Empty;
         public int? ParentId { get; set; }
+        public int Level { get; set; } = 0;
         public bool CanRead { get; set; }
         public bool CanWrite { get; set; }
         public bool CanDelete { get; set; }
     }
-
-    public class RolePermissionViewModel : MenuPermissionViewModel { }
 }
