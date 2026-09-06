@@ -39,26 +39,8 @@ $(document).ready(function () {
         }
     };
     if (typeof successMessage !== 'undefined' && successMessage !== '') {
-        const modalElement = document.getElementById('successModal');
-        if (modalElement) {
-            const successModal = new bootstrap.Modal(modalElement);
-            Swal.fire({
-                icon: 'success',
-                title: 'Successfully!!',
-                text: successMessage,
-                confirmButtonText: 'OK',
-                buttonStyling: false,
-                customClass: {
-                    popup: 'custom-modal-popup',
-                    title: 'custom-modal-title',
-                    htmlContainer: 'custom-modal-text',
-                    confirmButton: 'custom-modal-btn custom-modal-btn-confirm'
-                },
-                didClose: () => {
-                    $displayText.focus();
-                }
-            });
-        }
+        showSuccess(successMessage);
+        $displayText.focus();
     }
     else {
         setTimeout(function () {
@@ -98,9 +80,7 @@ $(document).ready(function () {
         const $allInputs = $menuForm.find(':input:visible:not(:disabled)').filter(function () {
             return this.type !== 'hidden' && this.type !== 'submit' && this.type !== 'button' && this.type !=='radio' && this.type !== 'reset';
         })
-        .filter(function () {
-            return this.type !== 'hidden' && this.type !== 'submit' && this.type !== 'button' && this.type !== 'radio';
-        });
+        
         const currentIndex = $allInputs.index($current);
         let $nextInput = null;
         for (let i = currentIndex + 1; i < $allInputs.length; i++) {
@@ -153,20 +133,7 @@ $(document).ready(function () {
             $parentMenu.focus();
             return false;
         }
-        Swal.fire({
-            title: 'Saving...',
-            text: 'Please wait a moment',
-            allowOutsideClick: false,
-            buttonsStyling: false,
-            customClass: {
-                popup: 'custom-modal-popup',
-                title: 'custom-modal-title',
-                htmlContainer: 'custom-modal-text'
-            },
-            didOpen: () => {
-                Swal.showLoading();
-            }
-        });
+        
         return true;
         //if ($menuForm.valid && !$menuForm.valid()) {
           //  e.preventDefault();

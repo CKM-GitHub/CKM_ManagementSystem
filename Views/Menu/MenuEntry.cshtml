@@ -11,22 +11,7 @@
                 </div>
                 <div class="menu-page-shell p-4">
              
-                    <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered modal-sm">
-                            <div class="modal-content custom-modal-popup">
-                                <div class="swal-icon-wrapper mb-3">
-                                    <div class="custom-swal-icon swal-success" id="modalIcon">
-                                        <i class="bi bi-check-lg" id="modalIconItem"></i>
-                                    </div>
-                                    <h5 class="custom-modal-title" id="modalTitle">Success!</h5>
-                                    <p class="custom-modal-text" id="modalText">@TempData["SuccessMessage"]</p>
-                                    <div class="d-flex justify-content-center w-100">
-                                        <button type="button" class="btn custom-modal-btn-confirm" id="btnModalConfirm" data-bs-dismiss="modal">OK</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <partial name = "AlertModal" />
 
                     <form asp-action = "MenuEntry" method="post" id="menuForm">
                         <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
@@ -112,11 +97,12 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script src="~/js/menu-entry.js" asp-append-version="true"></script>
-    <script src="~/lib/sweetalert2/dist/sweetalert2.all.min.js"></script>
+    <script src="~/js/Alert_Modal.js" asp-append-version="true"></script>
     <script>
         var successMessage = '@(TempData["SuccessMessage"] ?? "")';
     </script>
 }
 @section Styles {
     <link rel="stylesheet" href="~/css/menu-entry.css" />
+    <link rel="stylesheet" href="~/css/Alert_Modal.css" />
 }

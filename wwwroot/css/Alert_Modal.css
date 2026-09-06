@@ -43,6 +43,6 @@
     gap: 10px;
 }
 
-    #deleteButtons.d-none {
-        display: none !important;
-    }
+#deleteButtons.d-none {
+    display: none !important;
+}
