@@ -10,22 +10,16 @@ namespace CKM_ManagementSystem.BL
     public class UserEntryBL
     {
         private readonly BaseDL _bdl;
-        private readonly PasswordHasher<User> _passwordHasher = new();
+        private readonly PasswordService _passwordService;
 
-        public UserEntryBL(BaseDL baseDL)
+        public UserEntryBL(BaseDL baseDL,PasswordService passwordService)
         {
             _bdl = baseDL;
+            _passwordService = passwordService;
         }
         public async Task<int> CreateUserAsync(UserCreateViewModel model)
-        {
-            var user = new User
-            {
-                StaffCode = model.StaffCode,
-                Name = model.Name,
-                Email = model.Email
-            };
-
-            model.Password = _passwordHasher.HashPassword(user, model.Password);
+        {            
+            model.Password = _passwordService.HashPassword( model.Password);
 
             SqlParameter[] parameters =
             {
@@ -49,17 +43,17 @@ namespace CKM_ManagementSystem.BL
 
             return await _bdl.ExecuteNonQueryWithErrorCodeAsync("sp_CreateUser", parameters);
         }
-        public async Task<IEnumerable<Department>> GetDepartmentsAsync()
+        public async Task<List<DepartmentDropdownViewModel>> GetDepartmentsAsync()
         {
             DataTable table = _bdl.SelectDataTable(
                 "sp_GetDepartmentDropdown");
 
-            var departments = new List<Department>();
+            var departments = new List<DepartmentDropdownViewModel>();
 
             foreach (DataRow row in table.Rows)
             {
                 departments.Add(
-                     new Department
+                     new DepartmentDropdownViewModel
                      {
                          DepartmentCode = row["Department_Code"]?.ToString() ?? string.Empty,
                          DepartmentName = row["Department_Name"]?.ToString() ?? string.Empty
@@ -67,17 +61,17 @@ namespace CKM_ManagementSystem.BL
             } 
             return await Task.FromResult(departments);
         }
-        public async Task<IEnumerable<UserRole>> GetUserRolesAsync()
+        public async Task<IEnumerable<RoleDropdownViewModel>> GetUserRolesAsync()
         {
             DataTable table = _bdl.SelectDataTable(
                 "sp_GetRoleDropdown");
 
-            var roles = new List<UserRole>();
+            var roles = new List<RoleDropdownViewModel>();
 
             foreach (DataRow row in table.Rows)
             {
                 roles.Add(
-                     new UserRole
+                     new RoleDropdownViewModel
                      {
                          RoleCode = row["Role_Code"]?.ToString() ?? string.Empty,
                          RoleName = row["Role_Name"]?.ToString() ?? string.Empty

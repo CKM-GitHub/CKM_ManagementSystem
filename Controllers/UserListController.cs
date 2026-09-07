@@ -74,6 +74,8 @@ namespace CKM_ManagementSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> UserUpdate(string StaffCode)
         {
+            CleanUpTempImages();
+
             if (string.IsNullOrWhiteSpace(StaffCode))
             {
                 TempData["ErrorMessage"] = "Fail";
@@ -108,27 +110,56 @@ namespace CKM_ManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UserUpdate(UserCreateViewModel model)
         {
-            model.Mode = "Update";
+            model.Mode = "Update";            
+
+            if (model.ImageFile != null) 
+            { 
+                string tempFolder = Path.Combine(_environment.WebRootPath, "images","temp");
+                Directory.CreateDirectory(tempFolder);
+
+                string tempFileName = $"{Guid.NewGuid()}{Path.GetExtension(model.ImageFile.FileName)}";
+                string tempFilePath = Path.Combine(tempFolder, tempFileName);
+
+                using var stream = new FileStream(tempFilePath, FileMode.Create);
+                await model.ImageFile.CopyToAsync(stream);
+
+                model.TempImageName = tempFileName;
+                ModelState.Remove(nameof(model.ImageFile));
+
+                model.ImageUrl = "/images/users/temp/{tempFileName}";
+            }
+
+            if(!string.IsNullOrEmpty(model.TempImageName))
+            {
+                model.ImageUrl = "/images/users/" + model.TempImageName;
+            }
 
             if (!ModelState.IsValid)
             {
-
                 await loadDropdownAsync(model);
 
                 return View("~/Views/UserList/UserCreate.cshtml", model);
             }
 
-            if (model.ImageFile != null)
-            {
-                model.ImageUrl = await SaveImageAsync(model.ImageFile);
-            }
-
-            int errorCode = await _userListBL.UserUpdateAsync(model);
+            int errorCode = await _userListBL.UserUpdateAsync(model);        
 
             if (errorCode == 0)
             {
+                if (!string.IsNullOrEmpty(model.TempImageName))
+                {
+                    string tempFolder = Path.Combine(_environment.WebRootPath, "images", "temp");
+                    string userFolder = Path.Combine(_environment.WebRootPath, "images");
+                    Directory.CreateDirectory(userFolder);
+
+                    string tempFilePath = Path.Combine(tempFolder, model.TempImageName);
+                    string finalPath = Path.Combine(userFolder, model.TempImageName);
+                    if (System.IO.File.Exists(tempFilePath))
+                    {
+                        System.IO.File.Move(tempFilePath, finalPath);
+                    }
+                }
                 TempData["SuccessMessage"] = "User Update Successfully";
-                return RedirectToAction("UserCreate", "UserCreate");
+                return RedirectToAction("UserCreate");
             }
 
             if (errorCode == 2)
@@ -171,6 +202,7 @@ namespace CKM_ManagementSystem.Controllers
              "RoleName",
               model.RoleCode);
         }
+        /*
         private async Task<string?> SaveImageAsync(IFormFile? imageFile)
         {
             if (imageFile == null)
@@ -197,6 +229,27 @@ namespace CKM_ManagementSystem.Controllers
             await imageFile.CopyToAsync(stream);
 
             return $"/images/users/{fileName}";
+        } */
+        private void CleanUpTempImages()
+        {
+            string tempFolder = Path.Combine(
+                _environment.WebRootPath,
+                "images",
+                "temp"
+                );
+
+            if (!Directory.Exists(tempFolder))
+                return;
+
+            DateTime expireTime = DateTime.UtcNow.AddMinutes(-30);
+
+            foreach (string file in Directory.GetFiles(tempFolder))
+            { 
+                if(System.IO.File.GetLastWriteTime(file) < expireTime)
+                {
+                    System.IO.File.Delete(file);
+                }
+            }
         }
     }    
 }

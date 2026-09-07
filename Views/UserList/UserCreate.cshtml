@@ -113,11 +113,22 @@
                         <div class="avatar-preview-circle rounded-circle border border-2 overflow-hidden d-flex align-items-center justify-content-center"
                              style="width:130px;height:130px;">
 
-                            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                            @if(!string.IsNullOrEmpty(Model.TempImageName))
                             {
                                 <img id="avatar-preview"
-                                     src="@Model.ImageUrl"
+                                     src="@Url.Content("~/images/temp/" + Model.TempImageName)"
                                      class="w-100 h-100 object-fit-cover"
+                                     width="120"
+                                     height="120"
+                                     alt="Profile Preview">
+                            }
+                            else if(!string.IsNullOrEmpty(Model.ImageUrl))
+                            {
+                                <img id="avatar-preview"
+                                     src="@Url.Content(Model.ImageUrl)"
+                                     class="w-100 h-100 object-fit-cover"
+                                     width="120"
+                                     height="120"
                                      alt="Profile Preview">
                             }
                             else
@@ -140,6 +151,7 @@
                         </label>
 
                         <input type="hidden" asp-for="ImageUrl" />
+                        <input type="hidden" asp-for="TempImageName" />
 
                         <input type="file"
                                id="image-upload"
@@ -150,7 +162,7 @@
 
                     <span asp-validation-for="ImageFile"
                           class="text-danger small"></span>
-                }
+                }            
             </div>
             <div class="col-md-8 ps-md-4">
                 <div class="row g-3">
