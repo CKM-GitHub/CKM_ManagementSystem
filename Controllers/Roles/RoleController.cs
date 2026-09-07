@@ -30,10 +30,13 @@ namespace CKM_ManagementSystem.Controllers
                 if (dtRole != null && dtRole.Rows.Count > 0)
                 {
                     DataRow row = dtRole.Rows[0];
-                    model.RoleCode = row["Role_Code"]?.ToString() ?? string.Empty;
-                    model.DisplayName = row["Role_Name"]?.ToString() ?? string.Empty;
-                    model.Description = row["Description"] != DBNull.Value ? row["Description"]?.ToString() : null;
-                    model.Status = row["Status"] != DBNull.Value && Convert.ToBoolean(row["Status"]);
+                    model.RoleCode = GetColumnValue(row, "Role_Code", "RoleCode");
+                    model.DisplayName = GetColumnValue(row, "Role_Name", "RoleName", "DisplayName");
+
+                    var descObj = GetColumnObject(row, "Description");
+                    model.Description = descObj != null && descObj != DBNull.Value ? descObj.ToString() : null;
+
+                    model.Status = GetBooleanValue(row, "Status");
                 }
 
                 DataTable dtPermissions = _roleBL.GetRolePermissionsByCode(id);
@@ -59,6 +62,18 @@ namespace CKM_ManagementSystem.Controllers
                 return Json(new { success = false, message = "Please fill in all required fields properly." });
             }
 
+            // Backend Level Read-Permission Safety Check (Write/Delete လုပ်နိုင်လျှင် Read ပါ အလိုအလျောက် သတ်မှတ်ပေးခြင်း)
+            if (model.MenuPermissions != null && model.MenuPermissions.Count > 0)
+            {
+                foreach (var perm in model.MenuPermissions)
+                {
+                    if (perm.CanWrite || perm.CanDelete)
+                    {
+                        perm.CanRead = true;
+                    }
+                }
+            }
+
             var role = new Roles
             {
                 RoleCode = model.RoleCode,
@@ -77,7 +92,6 @@ namespace CKM_ManagementSystem.Controllers
 
             string result = _roleBL.Role_Insert(role, permissions);
 
-            
             if (string.Equals(result, "true", StringComparison.OrdinalIgnoreCase) ||
                 string.Equals(result, "SUCCESS", StringComparison.OrdinalIgnoreCase) ||
                 result.Contains("successfully", StringComparison.OrdinalIgnoreCase))
@@ -93,13 +107,24 @@ namespace CKM_ManagementSystem.Controllers
             var list = new List<RolePermissionViewModel>();
             if (dt == null) return list;
 
+            string parentColName = null;
+            string[] possibleParentCols = new string[] {
+                "ParentMenuId", "Parent_Menu_Id", "ParentId", "Parent_Id", "Parent_Menu_ID", "Parent_ID", "MenuParentId", "Menu_Parent_Id"
+            };
+
+            foreach (var col in possibleParentCols)
+            {
+                var match = dt.Columns.Cast<DataColumn>().FirstOrDefault(c => string.Equals(c.ColumnName, col, StringComparison.OrdinalIgnoreCase));
+                if (match != null)
+                {
+                    parentColName = match.ColumnName;
+                    break;
+                }
+            }
+
             foreach (DataRow row in dt.Rows)
             {
                 int? parentId = null;
-
-                string parentColName = dt.Columns.Contains("ParentMenuId") ? "ParentMenuId" :
-                                       (dt.Columns.Contains("Parent_Menu_Id") ? "Parent_Menu_Id" :
-                                       (dt.Columns.Contains("ParentId") ? "ParentId" : null));
 
                 if (parentColName != null && row[parentColName] != DBNull.Value)
                 {
@@ -109,14 +134,17 @@ namespace CKM_ManagementSystem.Controllers
                     }
                 }
 
+                int menuId = Convert.ToInt32(GetColumnObject(row, "MenuId", "Menu_Id", "ID") ?? 0);
+                string menuName = GetColumnValue(row, "MenuName", "Menu_Name", "Name");
+
                 list.Add(new RolePermissionViewModel
                 {
-                    MenuId = Convert.ToInt32(row["MenuId"]),
-                    MenuName = row["MenuName"]?.ToString() ?? string.Empty,
+                    MenuId = menuId,
+                    MenuName = menuName,
                     ParentId = parentId,
-                    CanRead = dt.Columns.Contains("CanRead") && row["CanRead"] != DBNull.Value && Convert.ToBoolean(row["CanRead"]),
-                    CanWrite = dt.Columns.Contains("CanWrite") && row["CanWrite"] != DBNull.Value && Convert.ToBoolean(row["CanWrite"]),
-                    CanDelete = dt.Columns.Contains("CanDelete") && row["CanDelete"] != DBNull.Value && Convert.ToBoolean(row["CanDelete"])
+                    CanRead = GetBooleanValue(row, "CanRead", "Can_Read"),
+                    CanWrite = GetBooleanValue(row, "CanWrite", "Can_Write"),
+                    CanDelete = GetBooleanValue(row, "CanDelete", "Can_Delete")
                 });
             }
 
@@ -128,6 +156,7 @@ namespace CKM_ManagementSystem.Controllers
             if (rawList == null || !rawList.Any()) return new List<RolePermissionViewModel>();
 
             var sortedList = new List<RolePermissionViewModel>();
+
             var rootMenus = rawList
                 .Where(m => !m.ParentId.HasValue || m.ParentId.Value == 0)
                 .OrderBy(m => m.MenuId)
@@ -166,5 +195,43 @@ namespace CKM_ManagementSystem.Controllers
                 AddMenuAndChildren(child, rawList, resultList, currentLevel + 1);
             }
         }
+
+        #region Helper Methods for DataTable Columns
+        private object? GetColumnObject(DataRow row, params string[] columnNames)
+        {
+            foreach (var name in columnNames)
+            {
+                var matchCol = row.Table.Columns.Cast<DataColumn>()
+                    .FirstOrDefault(c => string.Equals(c.ColumnName, name, StringComparison.OrdinalIgnoreCase));
+
+                if (matchCol != null && row[matchCol] != DBNull.Value)
+                {
+                    return row[matchCol];
+                }
+            }
+            return null;
+        }
+
+        private string GetColumnValue(DataRow row, params string[] columnNames)
+        {
+            var obj = GetColumnObject(row, columnNames);
+            return obj?.ToString() ?? string.Empty;
+        }
+
+        private bool GetBooleanValue(DataRow row, params string[] columnNames)
+        {
+            var obj = GetColumnObject(row, columnNames);
+            if (obj != null && obj != DBNull.Value)
+            {
+                string val = obj.ToString().Trim();
+                if (bool.TryParse(val, out bool result))
+                {
+                    return result;
+                }
+                return val == "1" || val.Equals("true", StringComparison.OrdinalIgnoreCase);
+            }
+            return false;
+        }
+        #endregion
     }
 }

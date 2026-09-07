@@ -18,27 +18,15 @@ namespace CKM_ManagementSystem.BL
 
         public string Role_Insert(Roles role, List<RolePermission> permissions)
         {
-            DataTable dtPermissions = ConvertPermissionsToDataTable(permissions);
-
-            SqlParameter paramPermissions = new SqlParameter("@Permissions", SqlDbType.Structured)
-            {
-                TypeName = "dbo.RolePermissionType",
-                Value = dtPermissions
-            };
-
-            SqlParameter[] sqlprms =
-            {
-                new SqlParameter("@Role_Code", (object)role.RoleCode ?? string.Empty),
-                new SqlParameter("@Role_Name", (object)role.RoleName ?? string.Empty),
-                new SqlParameter("@Description", (object)role.Description ?? DBNull.Value),
-                new SqlParameter("@Status", role.Status),
-                paramPermissions
-            };
-
-            return bdl.InsertUpdateDeleteData("sp_SaveRoleInfo", sqlprms);
+            return SaveRoleInfo(role, permissions);
         }
 
         public string Role_Update(Roles role, List<RolePermission> permissions)
+        {
+            return SaveRoleInfo(role, permissions);
+        }
+
+        private string SaveRoleInfo(Roles role, List<RolePermission> permissions)
         {
             DataTable dtPermissions = ConvertPermissionsToDataTable(permissions);
 
@@ -110,25 +98,26 @@ namespace CKM_ManagementSystem.BL
         {
             if (dt == null) return;
 
-            
-            string[] possibleParentCols = { "ParentMenuId", "Parent_Menu_Id", "ParentMenuID", "Parent_Menu_ID" };
-            foreach (var colName in possibleParentCols)
+            // Target standardization dictionary (Original variations -> Normalized Name)
+            var columnMappings = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase)
             {
-                if (dt.Columns.Contains(colName) && colName != "ParentId")
-                {
-                    dt.Columns[colName].ColumnName = "ParentId";
-                    break;
-                }
-            }
+                { "ParentId", new[] { "ParentMenuId", "Parent_Menu_Id", "ParentMenuID", "Parent_Menu_ID", "Parent_Id", "Parent_ID" } },
+                { "MenuId", new[] { "MenuID", "Menu_Id", "Menu_ID" } }
+            };
 
-            
-            string[] possibleMenuCols = { "MenuID", "Menu_Id", "Menu_ID" };
-            foreach (var colName in possibleMenuCols)
+            foreach (var mapping in columnMappings)
             {
-                if (dt.Columns.Contains(colName) && colName != "MenuId")
+                string targetCol = mapping.Key;
+                if (!dt.Columns.Contains(targetCol))
                 {
-                    dt.Columns[colName].ColumnName = "MenuId";
-                    break;
+                    foreach (var possibleCol in mapping.Value)
+                    {
+                        if (dt.Columns.Contains(possibleCol))
+                        {
+                            dt.Columns[possibleCol].ColumnName = targetCol;
+                            break;
+                        }
+                    }
                 }
             }
         }
