@@ -106,14 +106,13 @@
 }
 
 .empty-state i {
-    font-size: 4rem;
+    font-size: 8rem;
     display: block;
     margin-bottom: 1.5rem;
     opacity: 0.6;
 }
 
 .empty-state span {
-     font-size: 1.5rem;
      display: block;
 }
 
@@ -221,6 +220,35 @@
 
 .search-form-container + div {
     flex: 0 0 auto;
+}
+
+.paging-btn {
+    margin-right: 5px;
+    padding: 8px 15px;
+    border: 1px solid #ddd;
+    background: white;
+    color: #333;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.paging-btn:hover {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.paging-btn.active {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.paging-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 .swal2-actions-right {

@@ -9,23 +9,30 @@ namespace CKM_ManagementSystem.Controllers
     {
         private readonly IWebHostEnvironment _environment;
         private readonly UserEntryBL _userEntryBL;
+        private readonly UserListBL _userListBL;
 
         public UserCreateController(
             IWebHostEnvironment environment,
-            UserEntryBL userEntryBL)
+            UserEntryBL userEntryBL,
+            UserListBL userListBL)
         {
             _environment = environment;
             _userEntryBL = userEntryBL;
+            _userListBL = userListBL;
         }
 
         [HttpGet]
-        public async Task<IActionResult> UserCreate(string mode = "Entry")
+        public async Task<IActionResult> UserCreate(string mode = "Entry",string? staffCode = null)
         {
+            var model = staffCode != null ? await _userListBL.GetUserByStaffCodeAsync(staffCode)
+                                            : new UserCreateViewModel();
 
-            var model = new UserCreateViewModel
+            if(model == null)
             {
-                Mode = mode
-            };
+                return NotFound();
+            }
+
+            model.Mode = mode;
 
             await PopulateDropdownsAsync();
 

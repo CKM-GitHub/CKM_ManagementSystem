@@ -159,7 +159,7 @@ namespace CKM_ManagementSystem.Controllers
                     }
                 }
                 TempData["SuccessMessage"] = "User Update Successfully";
-                return RedirectToAction("UserCreate","UserCreate", new {mode = "Update"});
+                return RedirectToAction("UserCreate","UserCreate", new {mode = "Update", staffCode = model.StaffCode });
             }
 
             if (errorCode == 2)

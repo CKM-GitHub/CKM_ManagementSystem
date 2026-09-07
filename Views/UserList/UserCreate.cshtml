@@ -2,6 +2,7 @@
 @section Scripts {
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/UserCreate.js" asp-append-version="true"></script>
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
@@ -25,20 +26,24 @@
                             </p>
                         </div>
                         <div class="modal-footer border-0 justify-content-center">
-                              <a class="btn btn-success px-4" asp-controller="UserList" asp-action="UserList">OK</a>
+                            <a class="btn btn-success px-4"
+                               asp-controller="UserList"
+                               asp-action="UserList">
+                                OK
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
         }
         <div class="d-flex align-items-center justify-content-center position-relative mb-5">
-
+            @*
             @if (Model.Mode == "Entry")
             {
                 <a asp-action="UserList" asp-controller="UserList" class="position-absolute start-0 text-secondary fs-4">
                     <i class="bi bi-arrow-left"></i>
                 </a>
-            }
+            } *@
             <h2 class="text-center fw-bold mb-0 user-entry-title">
                 @(Model.Mode == "Entry" ? "User Entry" : "User Update")
             </h2>

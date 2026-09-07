@@ -1,4 +1,12 @@
-﻿
+﻿document.addEventListener("DOMContentLoaded", function () {
+    var successModal = document.getElementById("successModal");
+
+    if (successModal) {
+        var modal = new bootstrap.Modal(successModal);
+        modal.show();
+    }
+});
+
 const imageUpload = document.getElementById("image-upload");       // Drr ka Image preview
 const avatarPreview = document.getElementById("avatar-preview");
 const defaultIcon = document.getElementById("default-icon");
@@ -95,12 +103,3 @@ document.getElementById("clearBtn").addEventListener("click", function () {
     }
 });
 
-document.addEventListener("DOMContentLoaded", function () {
-
-    var successModal = document.getElementById('successModal');
-
-    if (successModal) {
-        var modal = new bootstrap.Modal(successModal);
-        modal.show();
-    }
-});

@@ -209,7 +209,7 @@ namespace CKM_ManagementSystem.BL
                 Status = row["Status"] != DBNull.Value &&Convert.ToBoolean(row["Status"]),
                 ImageUrl = row["Image_URL"]?.ToString() ?? string.Empty
             };
-        }
+        }   
 
         public async Task<List<DepartmentDropdownViewModel>> GetDepartmentsAsync()
         {
