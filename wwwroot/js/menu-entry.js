@@ -8,150 +8,165 @@ $(document).ready(function () {
     const $statusActive = $('#statusActive');
 
     const validator = $menuForm.validate({
-        showErrors: function (errorMap, errorList) {
-            this.defaultShowErrors();
-            if (errorList.length > 0) {
-                const firstError = errorList[0];
-                const $firstEl = $(firstError.element);
-                const errorClass = this.settings.errorClass;
-                setTimeout(function () {
-                    for (let i = 1; i < errorList.length; i++) {
-                        const el = errorList[i].element;
-                        const $el = $(el);
-                        $el.removeClass(errorClass);
-                        $el.closest('.mb-3 , .form-group, div')
-                            .find('.field-validation-error')
-                            .removeClass('field-validation-error')
-                            .addClass('field-validation-valid')
-                            .empty();
-                    }
-                    $firstEl.addClass('input-validation-error').focus();
-                }, 0);
-            }
-            
-        }
+        onsubmit: false,
+        onfocusout: false,
+        onclick: false,
+        onkeyup: false
     });
-    validator.settings.onfocusout = false;
-    validator.settings.onclick = false;
-    validator.settings.onkeyup = function (element) {
-        if ($(element).hasClass('input-validation-error') || $(element).hasClass('error')) {
-            this.element(element);
-        }
-    };
+
+    toggleParentMenu();
+
     if (typeof successMessage !== 'undefined' && successMessage !== '') {
         showSuccess(successMessage);
         $displayText.focus();
     }
     else {
         setTimeout(function () {
-            const $firstError = $menuForm.find('.input-validation-error:visible, .error:visible').first();
-            if ($firstError.length > 0) {
-                $firstError.focus();
-            } else {
-                $displayText.focus();
-            }
-        }, 100);
-        
+            focusAtEnd($displayText);
+        }, 300);
     }
-    $menuForm.on('keydown', ':input', function (e) {
+    $menuForm.on(
+        'input',
+        'input[type="text"], input[type="number"], textarea',
+        function () {
+            const $input = $(this);
+            if ($input.hasClass('input-validation-error')) {
+                validator.element($input);
+            }
+            updateCharLimitMessage($input);
+        }
+    );
+
+    $menuForm.on('change','select',
+        function () {
+            const $select = $(this);
+            if ($select.hasClass('input-validation-error')) {
+                validator.element($select);
+            }
+        }
+    );
+
+    function updateCharLimitMessage($input) {
+        if (!$input.attr('maxlength')) {
+            return;
+        }
+        const maxLength =
+            parseInt(
+                $input.attr('maxlength'),
+                10
+            );
+        const currentLength =$input.val().length;
+        const $limitMsg =$input.siblings('.char-limit-msg');
+
+        if (maxLength &&currentLength >= maxLength
+        ) {
+            $limitMsg.removeClass(
+                'd-none'
+            );
+        }
+        else {
+
+            $limitMsg.addClass(
+                'd-none'
+            );
+        }
+    }
+
+
+    $menuForm.find('input[maxlength]')
+        .each(function () {
+            updateCharLimitMessage(
+                $(this)
+            );
+        });
+    $menuForm.on('keydown', 'input, select, textarea', function (e) {
         if (e.key !== 'Enter') {
             return;
         }
-        const $current = $(this);
-        if ($current.is(':submit') || $current.is('textarea')) {
-            return;
-        }
+        
         e.preventDefault();
-        const isCurrentRequired = $current.prop('required') || $current.data('val-required') !== undefined || $current.hasClass('required');
-        if (isCurrentRequired && !validator.element($current)) {
-            $current.focus();
-            return;
+        const $currentInput = $(this);
+
+        const isCurrentValid = validator.element($currentInput);
+        if (!isCurrentValid) {
+            focusAtEnd($currentInput);
+            return false;
         }
-        const selectedType = $('input[name="MenuType"]:checked').val();
-        if (selectedType === 'Sub' && ($parentMenu.val() === '0' || $parentMenu.val() === '' || $parentMenu.val() === null)) {
-            $parentMenu.addClass('input-validation-error');
-            $('.parent-menu-error, #parentMenuError')
-                .removeClass('field-validation-valid')
-                .addClass('field-validation-error')
-                .text('Please select a Parent Menu.');
-            $parentMenu.focus();
-            return;
-        }
-        const $allInputs = $menuForm.find(':input:visible:not(:disabled)').filter(function () {
-            return this.type !== 'hidden' && this.type !== 'submit' && this.type !== 'button' && this.type !=='radio' && this.type !== 'reset';
-        })
+        const $focusable = $menuForm.find('input, select, textarea')
+            .filter(function () {
+                const $field = $(this);
+                return $field.is(':visible:enabled:not([readonly]):not([type="hidden"]):not([type="radio"]):not([type="checkbox"])')
+                    &&($field.prop('required') || $field.attr('data-val-required'));
+            });
         
-        const currentIndex = $allInputs.index($current);
-        let $nextInput = null;
-        for (let i = currentIndex + 1; i < $allInputs.length; i++) {
-            const $candidate = $allInputs.eq(i);
-            const isRequired = $candidate.prop('required') || $candidate.data('val-required') !== undefined || $candidate.hasClass('required');
-            const isEmpty = $.trim($candidate.val()) === '';
-            if (isRequired && isEmpty) {
-                $nextInput = $candidate;
-                break;
-            }
-        }
-        
-        if ($nextInput) {
-            $nextInput.focus();
+        const currentIndex = $focusable.index($currentInput);
+        const nextIndex = currentIndex + 1;
+        if (currentIndex !== -1 && nextIndex < $focusable.length) {
+            focusAtEnd($focusable.eq(nextIndex));
         } else {
-            $menuForm.submit();
+            $('#btnRegister').focus();
         }
+        return false;
     });
     $menuForm.on('submit', function (e) {
-        $parentMenu.prop('disabled', false);
-        $('input[name="MenuType"]').prop('disabled', false);
-        if (!$menuForm.valid()) {
-            e.preventDefault();
+        e.preventDefault();
+        validator.resetForm();
+        $menuForm.find('.field-validation-error')
+            .removeClass('field-validation-error')
+            .addClass('field-validation-valid')
+            .text('');
+        const isValid = validator.form();
+        const invalidElements = validator.invalidElements();
+        let firstInvalid = invalidElements.length > 0 ? $(invalidElements[0]) : null;
+        if (invalidElements.length > 1) {
+            for (let i = 1; i < invalidElements.length; i++) {
+                const $el = $(invalidElements[i]);
+                $el.removeClass('input-validation-error');
+                const name = $el.attr('name');
+                if (name) {
+                    $(`[data-valmsg-for="${name}"]`)
+                        .removeClass('field-validation-error')
+                        .addClass('field-validation-valid')
+                        .text('');
+                }
+            }
+        }
+        if (!firstInvalid) {
+            const selectedType = $('input[name="MenuType"]:checked').val();
+            if (selectedType === 'Sub' && ($parentMenu.val() === '0' || $parentMenu.val() === '' || $parentMenu.val() === null)) {
+                $parentMenu.addClass('input-validation-error');
+                const $parentError = $('[data-valmsg-for="ParentMenuId"], .parent-menu-error, #parentMenuError').first();
+                if ($parentError.length > 0) {
+                    $parentError.removeClass('field-validation-valid')
+                        .addClass('field-validation-error')
+                        .text('Please select a Parent Menu.');
+                }
+                firstInvalid = $parentMenu;
+            }
+        }
+
+        if (firstInvalid) {
             setTimeout(function () {
-                const $invalidInputs = $menuForm.find('.input-validation-error:visible, :input.error:visible');
-                if ($invalidInputs.length > 1) {
-                    $invalidInputs.slice(1).each(function () {
-                        const $el = $(this);
-                        $el.removeClass('input-validation-error error');
-                        $el.closest('.mb-3, .form-group, div')
-                            .find('.field-validation-error')
-                            .removeClass('field-validation-error')
-                            .addClass('field-validation-valid')
-                            .empty();
-                    });
-                }
-                if ($invalidInputs.length > 0) {
-                    $invalidInputs.first().focus();
-                }
-            }, 10);
+                focusAtEnd(firstInvalid);
+            }, 50);
             return false;
         }
-        const selectedType = $('input[name="MenuType"]:checked').val();
-        if (selectedType === 'Sub' && ($parentMenu.val() === '0' || $parentMenu.val() === '')) {
-            e.preventDefault();
-            $parentMenu.addClass('input-validation-error');
-            $('.parent-menu-error').text('').removeClass('field-validation-valid')
-                .addClass('field-validation-error')
-                .text('Please select a Parent Menu.');
-            $parentMenu.focus();
-            return false;
-        }
-        
-        return true;
-        //if ($menuForm.valid && !$menuForm.valid()) {
-          //  e.preventDefault();
-            //$menuForm.find('.input-validation-error').filter(":visible").first().focus();
-            //return false;
-        //}
-        //$parentMenu.prop('disabled', false);
-        //$('input[name="MenuType"]').prop('disabled', false);
+
+        $parentMenu.prop('disabled', false);
+        this.submit();
     });
     function toggleParentMenu() {
         const selectedType = $('input[name="MenuType"]:checked').val();
         if (selectedType === 'Sub') {
             $parentMenu.prop('disabled', false).removeClass('bg-light');
-                
+
         } else {
             $parentMenu.val('0').prop('disabled', true).addClass('bg-light');
-            $parentMenu.removeClass('input-validation-error');
-            $('.parent-menu-error').text('');
+            $parentMenu.removeClass('input-validation-error error');
+            const $parentError = $('[data-valmsg-for="ParentMenuId"], .parent-menu-error, #parentMenuError').first();
+            if ($parentError.length > 0) {
+                $parentError.removeClass('field-validation-error').addClass('field-validation-valid').text('');
+            }
         }
     }
 
@@ -169,13 +184,19 @@ $(document).ready(function () {
     });
     $parentMenu.on('change', function () {
         revalidateDisplayOrder();
-        if ($(this).val() != '') {
+        if ($(this).val() !== '' && $(this).val() !== '0') {
             $(this).removeClass('input-validation-error error');
-            $(this).closest('.mb-3, .form-group')
-                .find('.field-validation-error, span.text-danger')
-                .removeClass('field-validation-error')
-                .addClass('field-validation-valid')
-                .empty();
+            const $parentError =
+                $(
+                    '[data-valmsg-for="ParentMenuId"], ' +
+                    '.parent-menu-error, ' +
+                    '#parentMenuError'
+                ).first();
+            if ($parentError.length > 0) {
+                $parentError.removeClass('field-validation-error')
+                    .addClass('field-validation-valid')
+                    .text('');
+            }
         }
         else if (validator) {
             validator.element(this);
@@ -217,34 +238,32 @@ $(document).ready(function () {
             $msg.addClass('d-none');
         }
     });
+    function focusAtEnd($input) {
+        if (!$input || $input.length === 0) { return; }
+        const element = $input[0];
+        $input.focus();
+        if (typeof element.selectionStart === 'number') {
+            const length = $input.val().length;
+            element.selectionStart = length;
+            element.selectionEnd = length;
+        }
+    }
         $("#btnClear").click(function (e) {
             e.preventDefault();
 
-            $menuForm.find('input[type="text"], input[type= "number"], textarea').val('');
+            $menuForm.find('input[type="text"], ' + 'input[type="number"], ' + 'textarea').val('');
             $menuForm.find('select').prop('selectedIndex', 0);
             $typeParent.prop('checked', true);
             $statusActive.prop('checked', true);
-
-            $menuForm.find('.char-limit-msg').addClass('d-none').empty();
-            $menuForm.find('.limit-input, #DisplayOrder').removeClass('border-danger');
-
-            $menuForm.find('[asp-validation-summary]').empty();
-            $menuForm.find('.validation-summary-errors, .validation-summary-valid')
-                .addClass('validation-summary-valid')
-                .removeClass('validation-summary-errors')
-                .find('ul, div, span').empty();
             validator.resetForm();
-            if ($menuForm.data('validator')) {
-                $menuForm.find('.field-validation-error')
-                    .removeClass('field-validation-error')
-                    .addClass('field-validation-valid')
-                    .empty();
-
-                $menuForm.find('.input-validation-error').removeClass('input-validation-error');
-            }
+            $menuForm.find('.field-validation-error')
+                .removeClass('field-validation-error')
+                .text('');
+            $menuForm.find('.char-limit-msg')
+                .addClass('d-none').text('');
+            toggleParentMenu();
             setTimeout(function () {
-                toggleParentMenu();
-                $displayText.focus();
-            }, 10);
+                focusAtEnd($displayText);
+            }, 100);
     });
 }); 
