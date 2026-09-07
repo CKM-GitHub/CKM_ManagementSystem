@@ -37,6 +37,7 @@ namespace CKM_ManagementSystem.Controllers.Menu
                 model.ParentMenuList = await GetParentMenuListAsync();
                 return View("MenuEntry", model);
             }
+            string statusMessage = null;
             try
             {
                 int? parentMenuId = model.ParentMenuId.HasValue && model.ParentMenuId > 0
@@ -55,7 +56,7 @@ namespace CKM_ManagementSystem.Controllers.Menu
 
 
                 int statusCode = result.StatusCode;
-                string statusMessage = result.StatusMessage;
+                statusMessage = result.StatusMessage;
 
                 if (statusCode == 0)
                 {
@@ -88,7 +89,7 @@ namespace CKM_ManagementSystem.Controllers.Menu
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, "Error occurred: " + ex.Message);
+                TempData["ErrorMessage"] = statusMessage ?? ex.Message ?? "Unexpected status returned";
                 model.ParentMenuList = await GetParentMenuListAsync();
                 return View("MenuEntry", model);
             }
