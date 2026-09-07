@@ -11,95 +11,100 @@
     validator.settings.onfocusout = false;
     validator.settings.onclick = false;
     validator.settings.onkeyup = false;
-    
-    $menuForm.on('input change', 'input, select, textarea', function () {
-        const $input = $(this);
-        if ($input.val().trim() !== '') {
-            $input.removeClass('input-validation-error error');
-            const fieldName = $input.attr('name');
-            const $span = $menuForm.find(`[data-valmsg-for="${fieldName}"]`);
-            if ($span.length > 0) {
-                $span.removeClass('field-validation-error')
-                    .addClass('field-validation-valid')
-                    .empty();
-            }
-        }
-    });
-    
-    $menuForm.on('keydown', 'input, select, textarea', function (e) {
-        if (e.key === 'Enter' || e.keyCode === 13) {
-            if ($(this).attr('type') !== 'submit' && $(this).prop('tagName') !== 'BUTTON') {
-                e.preventDefault();
-                const $currentInput = $(this);
-                if ($currentInput.attr('id')) {
-                    sessionStorage.setItem('lastFocusedElementId', $currentInput.attr('id'));
-                }
-                
-                if ($currentInput.val().trim() === '' && $currentInput.data('has-focused-empty')) {
-                    e.preventDefault();
-                    $menuForm.submit();
-                    return false;
-                }
-                const $focusable = $menuForm.find('input, select, textarea').filter(function () {
-                    const $el = $(this);
-                    return $el.is(':visible:enabled:not([readonly]):not([type="hidden"]):not([type="radio"]):not([type="checkbox"])')
-                        && ($el.prop('required') || $el.attr('data-val-required'));
-                });
-                const currentIndex = $focusable.index($currentInput);
 
-                if (currentIndex === -1 || $currentInput.is(':radio') || $currentInput.is(':checkbox')) {
-                    $menuForm.submit();
-                    return false;
-                }
-                //const $nextIndex = $focusable.index($currentInput) + 1;
-                const $nextIndex = currentIndex + 1;
-                if ($nextIndex < $focusable.length) {
-                    const $nextInput = $focusable.eq($nextIndex);
-                    if ($nextInput.val().trim() === '') {
-                        $nextInput.data('has-focused-empty', true);
-                    }
-                    focusAtEnd($nextInput);
-                } else {
-                    $menuForm.find('button[type="submit"], input[type="submit"]').first().click();
-                }
+    $menuForm.on('input change', 'input, select, textarea',
+        function () {
+            const $input = $(this);
+            if (
+                $input.hasClass('input-validation-error') ||
+                $input.siblings('[data-valmsg-for="' + $input.attr('name') + '"]'
+                ).hasClass('field-validation-error')
+            ) {
+                validator.element($input);
             }
         }
+    );
+    
+    $menuForm.on('keydown', 'input, select, textarea',
+        function (e) {
+            if (e.key !== 'Enter') {
+                return;
+            }
+            e.preventDefault();
+            const $currentInput = $(this);
+            const isCurrentValid = validator.element($currentInput);
+            if (!isCurrentValid) {
+                focusAtEnd($currentInput);
+                return false;
+            }
+        const $focusable = $menuForm.find('input, select, textarea')
+        .filter(function () {
+            const $el = $(this);
+            return $el.is(':visible:enabled:not([readonly]):not([type="hidden"]):not([type="radio"]):not([type="checkbox"])')
+                && ($el.prop('required') || $el.attr('data-val-required'));
+        });
+    const currentIndex = $focusable.index($currentInput);
+    const nextIndex = currentIndex + 1;
+    if (currentIndex !== -1 && nextIndex < $focusable.length) {
+        focusAtEnd($focusable.eq(nextIndex));
+    } else {
+        $('#btnRegister').focus();
+    }
     });
+
     $menuForm.off('submit').on('submit', function (e) {
         e.preventDefault();
-        const isValid = validator.form();
-        /*
-        $menuForm.find('.field-validation-error')
-            .removeClass('field-validation-error')
-            .addClass('field-validation-valid')
-            .empty();
-            */
-        //$menuForm.find('.input-validation-error').removeClass('input-validation-error');
-        if (!isValid) {
-            if (validator.errorList.length > 0) {
-                const firstError = validator.errorList[0];
-                const $firstElement = $(firstError.element);
-                $firstElement.addClass('input-validation-error');
-                const fieldName = firstError.element.name;
-                const $span = $menuForm.find(`[data-valmsg-for="${fieldName}"]`);
-                if ($span.length > 0) {
-                    $span.removeClass('field-validation-valid')
-                        .addClass('field-validation-error')
-                        .text(firstError.message);
-                }
-                setTimeout(function () {
-                    focusAtEnd($firstElement);
-                }, 50);
+        
+        if (!$parentMenu.prop('disabled') && $parentMenu.val() === '') {
+            $parentMenu.addClass('input-validation-error');
+            const $span = $menuForm.find(`[data-valmsg-for="${$parentMenu.attr('name')}"]`);
+            if ($span.length > 0) {
+                $span.removeClass('field-validation-valid')
+                    .addClass('field-validation-error')
+                    .text('Please choose a Parent Menu.');
             }
+            setTimeout(function () {
+                $parentMenu.focus();
+            }, 50);
             return false;
         }
-        
+        const $fields = $menuForm.find('input, select, textarea')
+            .filter(function () {
+                const $field = $(this);
+                return $field.is(':visible:enabled:not([readonly]):not([type="hidden"]):not([type="radio"]):not([type="checkbox"])')
+                    && $field.attr('data-val') === 'true';
+            });
+        let firstInvalid = null;
+        for (let i = 0; i < $fields.length; i++) {
+            const $field = $fields.eq(i);
+            const isValid = validator.element($field);
+            if (!isValid) {
+                firstInvalid = $field;
+                break;
+            }
+        }
+        if (firstInvalid) {
+            firstInvalid.addClass('input-validation-error');
+            const fieldName = firstInvalid.attr('name');
+            const $span = $menuForm.find(`[data-valmsg-for="${fieldName}"]`);
+            const errorMessage = validator.errorMap[fieldName];
+            if ($span.length > 0 && errorMessage) {
+                $span.removeClass('field-validation-valid')
+                    .addClass('field-validation-error')
+                    .text(errorMessage);
+            }
+
+            setTimeout(function () {
+                focusAtEnd(firstInvalid);
+            }, 50);
+            return false;
+        }
         $parentMenu.prop('disabled', false);
         $('input[name="MenuType"]').prop('disabled', false);
         this.submit();
     });
-    $menuForm.find('input[maxlength]').on('input keyup', function () {
-        const $input = $(this);
+
+    function updateCharLimitMessage($input) {
         const maxLength = parseInt($input.attr('maxlength'), 10);
         const currentLength = $input.val().length;
         const $limitMsg = $input.siblings('.char-limit-msg');
@@ -108,7 +113,15 @@
         } else {
             $limitMsg.addClass('d-none');
         }
+    }
+    $menuForm.find('input[maxlength]').on('input keyup', function () {
+        updateCharLimitMessage($(this));
     });
+    $menuForm.find('input[maxlength]')
+        .each(function () {
+            updateCharLimitMessage($(this));
+        });
+
     if (typeof errorMessage !== 'undefined' && errorMessage !== '') {
         setTimeout(function () {
             //showError(errorMessage);
