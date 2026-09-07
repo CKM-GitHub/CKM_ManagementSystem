@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using CKM_ManagementSystem.DL;
 using CKM_ManagementSystem.Models.Entities;
 using CKM_ManagementSystem.Models.ViewModels;
@@ -15,7 +16,7 @@ namespace CKM_ManagementSystem.BL
 
         public RoleBL(BaseDL bdl)
         {
-            _bdl = bdl;
+            _bdl = bdl ?? throw new ArgumentNullException(nameof(bdl));
         }
 
         #region Role Save / Update / Get Standard SPs
@@ -65,17 +66,85 @@ namespace CKM_ManagementSystem.BL
 
         public DataTable GetRolePermissionsByCode(string roleCode)
         {
+            DataTable dtAllMenus = GetAllMenus();
+
             SqlParameter[] sqlprms = { new SqlParameter("@RoleCode", (object?)roleCode ?? string.Empty) };
-            DataTable dt = _bdl.SelectData("sp_GetRolePermission", sqlprms);
-            StandardizeMenuColumns(dt);
-            return dt;
+            DataTable dtRolePerms = _bdl.SelectData("sp_GetRolePermission", sqlprms);
+            StandardizeMenuColumns(dtRolePerms);
+
+            var permDict = new Dictionary<int, (bool Read, bool Write, bool Delete)>();
+            if (dtRolePerms != null && dtRolePerms.Rows.Count > 0)
+            {
+                foreach (DataRow row in dtRolePerms.Rows)
+                {
+                    int menuId = Convert.ToInt32(row["MenuId"] ?? 0);
+                    bool canRead = dtRolePerms.Columns.Contains("CanRead") && Convert.ToBoolean(row["CanRead"]);
+                    bool canWrite = dtRolePerms.Columns.Contains("CanWrite") && Convert.ToBoolean(row["CanWrite"]);
+                    bool canDelete = dtRolePerms.Columns.Contains("CanDelete") && Convert.ToBoolean(row["CanDelete"]);
+                    permDict[menuId] = (canRead, canWrite, canDelete);
+                }
+            }
+
+            if (!dtAllMenus.Columns.Contains("CanRead")) dtAllMenus.Columns.Add("CanRead", typeof(bool));
+            if (!dtAllMenus.Columns.Contains("CanWrite")) dtAllMenus.Columns.Add("CanWrite", typeof(bool));
+            if (!dtAllMenus.Columns.Contains("CanDelete")) dtAllMenus.Columns.Add("CanDelete", typeof(bool));
+
+            foreach (DataRow row in dtAllMenus.Rows)
+            {
+                int menuId = Convert.ToInt32(row["MenuId"] ?? 0);
+                if (permDict.TryGetValue(menuId, out var p))
+                {
+                    row["CanRead"] = p.Read;
+                    row["CanWrite"] = p.Write;
+                    row["CanDelete"] = p.Delete;
+                }
+                else
+                {
+                    row["CanRead"] = false;
+                    row["CanWrite"] = false;
+                    row["CanDelete"] = false;
+                }
+            }
+
+            return dtAllMenus;
         }
 
         public DataTable GetAllMenus()
         {
             DataTable dt = _bdl.SelectData("sp_GetMenuList");
             StandardizeMenuColumns(dt);
-            return dt;
+
+            if (dt == null || dt.Rows.Count == 0 || !dt.Columns.Contains("MenuId") || !dt.Columns.Contains("ParentId"))
+            {
+                return dt ?? new DataTable();
+            }
+
+            if (!dt.Columns.Contains("Level"))
+            {
+                dt.Columns.Add("Level", typeof(int));
+            }
+
+            var rowsList = dt.AsEnumerable().ToList();
+            DataTable sortedDt = dt.Clone();
+            HashSet<int> addedMenuIds = new HashSet<int>();
+
+            var rootMenus = rowsList.Where(r => r["ParentId"] == DBNull.Value || Convert.ToInt32(r["ParentId"]) == 0)
+                                    .OrderBy(r => GetDisplayOrder(r))
+                                    .ToList();
+
+            foreach (var root in rootMenus)
+            {
+                AppendMenuAndChildren(root, rowsList, sortedDt, addedMenuIds, 0);
+            }
+
+            var remainingMenus = rowsList.Where(r => !addedMenuIds.Contains(Convert.ToInt32(r["MenuId"]))).ToList();
+            foreach (var rem in remainingMenus)
+            {
+                rem["Level"] = 0;
+                sortedDt.ImportRow(rem);
+            }
+
+            return sortedDt;
         }
 
         public bool IsRoleCodeDuplicate(string roleCode)
@@ -166,14 +235,21 @@ namespace CKM_ManagementSystem.BL
                         parentId = Convert.ToInt32(row["ParentMenuId"]);
                     }
 
+                    int level = 0;
+                    if (row.Table.Columns.Contains("Level") && row["Level"] != DBNull.Value)
+                    {
+                        level = Convert.ToInt32(row["Level"]);
+                    }
+
                     list.Add(new MenuPermissionViewModel
                     {
                         MenuId = menuId,
                         MenuName = row["MenuName"]?.ToString() ?? string.Empty,
                         ParentId = parentId,
-                        CanRead = row["CanRead"] != DBNull.Value && Convert.ToBoolean(row["CanRead"]),
-                        CanWrite = row["CanWrite"] != DBNull.Value && Convert.ToBoolean(row["CanWrite"]),
-                        CanDelete = row["CanDelete"] != DBNull.Value && Convert.ToBoolean(row["CanDelete"])
+                        Level = level,
+                        CanRead = row.Table.Columns.Contains("CanRead") && row["CanRead"] != DBNull.Value && Convert.ToBoolean(row["CanRead"]),
+                        CanWrite = row.Table.Columns.Contains("CanWrite") && row["CanWrite"] != DBNull.Value && Convert.ToBoolean(row["CanWrite"]),
+                        CanDelete = row.Table.Columns.Contains("CanDelete") && row["CanDelete"] != DBNull.Value && Convert.ToBoolean(row["CanDelete"])
                     });
                 }
             }
@@ -243,26 +319,51 @@ namespace CKM_ManagementSystem.BL
             return str.Equals("true", StringComparison.OrdinalIgnoreCase) || str == "1";
         }
 
-        private static void StandardizeMenuColumns(DataTable dt)
+        private static void AppendMenuAndChildren(DataRow currentMenu, List<DataRow> allRows, DataTable targetTable, HashSet<int> addedIds, int currentLevel)
+        {
+            int currentId = Convert.ToInt32(currentMenu["MenuId"]);
+            if (addedIds.Contains(currentId)) return;
+
+            currentMenu["Level"] = currentLevel;
+            targetTable.ImportRow(currentMenu);
+            addedIds.Add(currentId);
+
+            var children = allRows.Where(r => r["ParentId"] != DBNull.Value && Convert.ToInt32(r["ParentId"]) == currentId)
+                                  .OrderBy(r => GetDisplayOrder(r))
+                                  .ToList();
+
+            foreach (var child in children)
+            {
+                AppendMenuAndChildren(child, allRows, targetTable, addedIds, currentLevel + 1);
+            }
+        }
+
+        private static int GetDisplayOrder(DataRow row)
+        {
+            if (row.Table.Columns.Contains("DisplayOrder") && row["DisplayOrder"] != DBNull.Value)
+            {
+                return Convert.ToInt32(row["DisplayOrder"]);
+            }
+            return 0;
+        }
+
+        private static void StandardizeMenuColumns(DataTable? dt)
         {
             if (dt == null) return;
 
-            string[] possibleParentCols = { "ParentMenuId", "Parent_Menu_Id", "ParentMenuID", "Parent_Menu_ID" };
-            foreach (var colName in possibleParentCols)
-            {
-                if (dt.Columns.Contains(colName) && colName != "ParentId")
-                {
-                    dt.Columns[colName].ColumnName = "ParentId";
-                    break;
-                }
-            }
+            RenameColumnIfExist(dt, new[] { "MenuID", "Menu_Id", "Menu_ID" }, "MenuId");
+            RenameColumnIfExist(dt, new[] { "ParentMenuId", "Parent_Menu_Id", "ParentMenuID", "Parent_Menu_ID", "Parent_Id", "Parent_ID" }, "ParentId");
+        }
 
-            string[] possibleMenuCols = { "MenuID", "Menu_Id", "Menu_ID" };
-            foreach (var colName in possibleMenuCols)
+        private static void RenameColumnIfExist(DataTable dt, string[] possibleNames, string targetName)
+        {
+            if (dt.Columns.Contains(targetName)) return;
+
+            foreach (var name in possibleNames)
             {
-                if (dt.Columns.Contains(colName) && colName != "MenuId")
+                if (dt.Columns.Contains(name))
                 {
-                    dt.Columns[colName].ColumnName = "MenuId";
+                    dt.Columns[name].ColumnName = targetName;
                     break;
                 }
             }

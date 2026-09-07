@@ -4,13 +4,15 @@
     ViewData["Title"] = isEditMode ? "Edit User Role" : "User Role Entry";
 }
 
-<link rel="stylesheet" href="~/css/role-entry.css" asp-append-version="true" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+@section Styles {
+    <link rel="stylesheet" href="~/css/role-entry.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Alert_Modal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+}
 
 <div class="container py-4">
     <div class="role-entry-card">
-
         <h2 class="role-entry-title">@(isEditMode ? "Edit User Role" : "User Role Entry")</h2>
 
         <form id="roleForm" action="@Url.Action("SaveRole", "Role")" method="post" onsubmit="return false;">
@@ -51,7 +53,7 @@
             <div class="mb-4">
                 <label class="form-label-custom mb-2">Menu Group Permissions</label>
 
-                <div class="table-responsive permissions-table-wrapper">
+                <div class="table-responsive permissions-table-wrapper border rounded">
                     <table class="table align-middle mb-0 permissions-table">
                         <thead class="bg-light">
                             <tr>
@@ -63,36 +65,39 @@
                             @if (Model?.MenuPermissions != null && Model.MenuPermissions.Count > 0)
                             {
                                 var rootMenus = Model.MenuPermissions
-                                .Where(m => !m.ParentId.HasValue || m.ParentId == 0)
-                                .ToList();
+                                    .Where(m => !m.ParentId.HasValue || m.ParentId == 0)
+                                    .ToList();
 
                                 foreach (var root in rootMenus)
                                 {
                                     int rootIndex = Model.MenuPermissions.IndexOf(root);
                                     var children = Model.MenuPermissions
-                                    .Where(m => m.ParentId == root.MenuId)
-                                    .ToList();
+                                        .Where(m => m.ParentId == root.MenuId)
+                                        .ToList();
 
-                                    <tr class="parent-menu-row fw-bold" data-menu-id="@root.MenuId" data-parent-id="0">
-                                        <td>
+                                    <tr class="parent-menu-row fw-bold table-light" data-menu-id="@root.MenuId" data-parent-id="0">
+                                        <td style="padding-left: 1.5rem;">
                                             <input type="hidden" name="MenuPermissions[@rootIndex].MenuId" value="@root.MenuId" />
                                             <input type="hidden" name="MenuPermissions[@rootIndex].MenuName" value="@root.MenuName" />
                                             <input type="hidden" name="MenuPermissions[@rootIndex].ParentId" value="@root.ParentId" />
-                                            <span class="fw-bold text-dark ps-3">@root.MenuName</span>
+                                            <span class="fw-bold text-dark ps-2">@root.MenuName</span>
                                         </td>
-                                        <td class="text-end pe-4">
-                                            <div class="d-inline-flex justify-content-end align-items-center gap-3">
-                                                <div class="form-check form-check-inline mb-0 me-0">
+                                        <td class="text-end" style="padding-right: 2.5rem;">
+                                            <div class="d-inline-flex justify-content-end align-items-center">
+                                                <div class="form-check form-check-inline mb-0 me-0 text-start" style="width: 75px;">
                                                     <input class="form-check-input chk-read" type="checkbox" name="MenuPermissions[@rootIndex].CanRead" value="true" id="read_@rootIndex" @(root.CanRead ? "checked" : "") />
-                                                    <label class="form-check-label small fw-bold" for="read_@rootIndex">Read</label>
+                                                    <input type="hidden" name="MenuPermissions[@rootIndex].CanRead" value="false" />
+                                                    <label class="form-check-label fw-bold small ms-1" for="read_@rootIndex">Read</label>
                                                 </div>
-                                                <div class="form-check form-check-inline mb-0 me-0">
+                                                <div class="form-check form-check-inline mb-0 me-0 text-start" style="width: 75px;">
                                                     <input class="form-check-input chk-write" type="checkbox" name="MenuPermissions[@rootIndex].CanWrite" value="true" id="write_@rootIndex" @(root.CanWrite ? "checked" : "") />
-                                                    <label class="form-check-label small fw-bold" for="write_@rootIndex">Write</label>
+                                                    <input type="hidden" name="MenuPermissions[@rootIndex].CanWrite" value="false" />
+                                                    <label class="form-check-label fw-bold small ms-1" for="write_@rootIndex">Write</label>
                                                 </div>
-                                                <div class="form-check form-check-inline mb-0 me-0">
+                                                <div class="form-check form-check-inline mb-0 me-0 text-start" style="width: 75px;">
                                                     <input class="form-check-input chk-delete" type="checkbox" name="MenuPermissions[@rootIndex].CanDelete" value="true" id="delete_@rootIndex" @(root.CanDelete ? "checked" : "") />
-                                                    <label class="form-check-label small fw-bold" for="delete_@rootIndex">Delete</label>
+                                                    <input type="hidden" name="MenuPermissions[@rootIndex].CanDelete" value="false" />
+                                                    <label class="form-check-label fw-bold small ms-1" for="delete_@rootIndex">Delete</label>
                                                 </div>
                                             </div>
                                         </td>
@@ -105,26 +110,29 @@
                                         bool isLastChild = (c == children.Count - 1);
 
                                         <tr class="child-menu-row" data-menu-id="@child.MenuId" data-parent-id="@root.MenuId">
-                                            <td style="padding-left: 2.5rem;">
+                                            <td style="padding-left: 3.0rem;">
                                                 <input type="hidden" name="MenuPermissions[@childIndex].MenuId" value="@child.MenuId" />
                                                 <input type="hidden" name="MenuPermissions[@childIndex].MenuName" value="@child.MenuName" />
                                                 <input type="hidden" name="MenuPermissions[@childIndex].ParentId" value="@child.ParentId" />
                                                 <span class="text-muted me-2 font-monospace">@(isLastChild ? "└─" : "├─")</span>
                                                 <span class="text-secondary">@child.MenuName</span>
                                             </td>
-                                            <td class="text-end pe-4">
-                                                <div class="d-inline-flex justify-content-end align-items-center gap-3">
-                                                    <div class="form-check form-check-inline mb-0 me-0">
+                                            <td class="text-end" style="padding-right: 2.5rem;">
+                                                <div class="d-inline-flex justify-content-end align-items-center">
+                                                    <div class="form-check form-check-inline mb-0 me-0 text-start" style="width: 75px;">
                                                         <input class="form-check-input chk-read" type="checkbox" name="MenuPermissions[@childIndex].CanRead" value="true" id="read_@childIndex" @(child.CanRead ? "checked" : "") />
-                                                        <label class="form-check-label small" for="read_@childIndex">Read</label>
+                                                        <input type="hidden" name="MenuPermissions[@childIndex].CanRead" value="false" />
+                                                        <label class="form-check-label small ms-1" for="read_@childIndex">Read</label>
                                                     </div>
-                                                    <div class="form-check form-check-inline mb-0 me-0">
+                                                    <div class="form-check form-check-inline mb-0 me-0 text-start" style="width: 75px;">
                                                         <input class="form-check-input chk-write" type="checkbox" name="MenuPermissions[@childIndex].CanWrite" value="true" id="write_@childIndex" @(child.CanWrite ? "checked" : "") />
-                                                        <label class="form-check-label small" for="write_@childIndex">Write</label>
+                                                        <input type="hidden" name="MenuPermissions[@childIndex].CanWrite" value="false" />
+                                                        <label class="form-check-label small ms-1" for="write_@childIndex">Write</label>
                                                     </div>
-                                                    <div class="form-check form-check-inline mb-0 me-0">
+                                                    <div class="form-check form-check-inline mb-0 me-0 text-start" style="width: 75px;">
                                                         <input class="form-check-input chk-delete" type="checkbox" name="MenuPermissions[@childIndex].CanDelete" value="true" id="delete_@childIndex" @(child.CanDelete ? "checked" : "") />
-                                                        <label class="form-check-label small" for="delete_@childIndex">Delete</label>
+                                                        <input type="hidden" name="MenuPermissions[@childIndex].CanDelete" value="false" />
+                                                        <label class="form-check-label small ms-1" for="delete_@childIndex">Delete</label>
                                                     </div>
                                                 </div>
                                             </td>
@@ -166,18 +174,21 @@
                     </button>
                 </div>
             </div>
-
         </form>
     </div>
 </div>
 
+<partial name="AlertModal" />
+
 @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/Alert_Modal.js" asp-append-version="true"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         $(document).ready(function () {
-            var isEditMode = @(isEditMode.ToString().ToLower());
-            var initialFormData = '';
+            const isEditMode = @isEditMode.ToString().ToLower();
+            let initialFormData = '';
 
             if (!isEditMode) {
                 $('#RoleCode').focus();
@@ -190,26 +201,14 @@
                 $('#generalError').text('');
             }
 
-            $(document).on('keydown', '#RoleCode, #DisplayName, #Description', function (e) {
-                if (e.which === 13 || e.keyCode === 13) {
-                    e.preventDefault();
-                    e.stopPropagation();
+            function getActionClass($checkbox) {
+                if ($checkbox.hasClass('chk-read')) return '.chk-read';
+                if ($checkbox.hasClass('chk-write')) return '.chk-write';
+                if ($checkbox.hasClass('chk-delete')) return '.chk-delete';
+                return '';
+            }
 
-                    var fields = [];
-                    if (!isEditMode) fields.push('#RoleCode');
-                    fields.push('#DisplayName');
-                    fields.push('#Description');
-
-                    var currentId = '#' + $(this).attr('id');
-                    var idx = fields.indexOf(currentId);
-
-                    if (idx !== -1 && idx < fields.length - 1) {
-                        $(fields[idx + 1]).focus();
-                    }
-                    return false;
-                }
-            });
-
+            // Input Validation Cleaners
             $('#RoleCode').on('input keyup paste change', function () {
                 var val = $(this).val();
                 var clean = val.replace(/[^a-zA-Z0-9_-]/g, '');
@@ -226,44 +225,75 @@
                 }
             });
 
+            // Input Error Clear on Typing
+            $('#RoleCode, #DisplayName, #Description').on('input', function () {
+                var fieldId = $(this).attr('id');
+                $('[data-valmsg-for="' + fieldId + '"]').text('');
+            });
+
+            // Enter key navigation
+            $('#roleForm input, #roleForm textarea').on('keydown', function (e) {
+                if (e.key === 'Enter' || e.keyCode === 13) {
+                    if ($(this).is(':checkbox') || $(this).is(':radio')) return;
+
+                    e.preventDefault();
+                    const inputs = $(this).closest('form').find('input:enabled:not([readonly]), textarea:enabled:not([readonly])');
+                    const index = inputs.index(this);
+
+                    if (index >= 0 && index < inputs.length - 1) {
+                        inputs.eq(index + 1).focus();
+                    }
+                }
+            });
+
+            // Auto Check Logic
+            $(document).on('change', '.chk-write, .chk-delete', function () {
+                if ($(this).is(':checked')) {
+                    $(this).closest('td').find('.chk-read').prop('checked', true);
+                }
+            });
+
+            $(document).on('change', '.chk-read', function () {
+                if (!$(this).is(':checked')) {
+                    $(this).closest('td').find('.chk-write, .chk-delete').prop('checked', false);
+                }
+            });
+
+            // Parent - Child Checkbox sync
             $(document).on('change', '.parent-menu-row input[type="checkbox"]', function () {
-                var $parentRow = $(this).closest('tr');
-                var parentId = $parentRow.data('menu-id');
-                var isChecked = $(this).is(':checked');
+                const $parentRow = $(this).closest('tr');
+                const parentId = $parentRow.data('menu-id');
+                const isChecked = $(this).is(':checked');
+                const actionClass = getActionClass($(this));
 
-                var actionType = '';
-                if ($(this).hasClass('chk-read')) actionType = '.chk-read';
-                else if ($(this).hasClass('chk-write')) actionType = '.chk-write';
-                else if ($(this).hasClass('chk-delete')) actionType = '.chk-delete';
-
-                if (actionType !== '') {
-                    $('tr.child-menu-row[data-parent-id="' + parentId + '"]')
-                        .find(actionType)
-                        .prop('checked', isChecked);
+                if (actionClass) {
+                    $(`tr.child-menu-row[data-parent-id="${parentId}"]`)
+                        .find(actionClass)
+                        .prop('checked', isChecked)
+                        .trigger('change');
                 }
             });
 
             $(document).on('change', '.child-menu-row input[type="checkbox"]', function () {
-                var $childRow = $(this).closest('tr');
-                var parentId = $childRow.data('parent-id');
+                const $childRow = $(this).closest('tr');
+                const parentId = $childRow.data('parent-id');
+                const actionClass = getActionClass($(this));
 
-                var actionType = '';
-                if ($(this).hasClass('chk-read')) actionType = '.chk-read';
-                else if ($(this).hasClass('chk-write')) actionType = '.chk-write';
-                else if ($(this).hasClass('chk-delete')) actionType = '.chk-delete';
+                if (actionClass) {
+                    const $totalChildren = $(`tr.child-menu-row[data-parent-id="${parentId}"]`);
+                    const $checkedChildren = $totalChildren.find(`${actionClass}:checked`);
+                    const allChecked = ($totalChildren.length === $checkedChildren.length);
 
-                if (actionType !== '') {
-                    var anyChecked = $('tr.child-menu-row[data-parent-id="' + parentId + '"]')
-                        .find(actionType + ':checked').length > 0;
-
-                    $('tr.parent-menu-row[data-menu-id="' + parentId + '"]')
-                        .find(actionType)
-                        .prop('checked', anyChecked);
+                    $(`tr.parent-menu-row[data-menu-id="${parentId}"]`)
+                        .find(actionClass)
+                        .prop('checked', allChecked);
                 }
             });
 
+            // Clear Button Logic
             $('#btnClear').on('click', function () {
-                $('#roleForm')[0].reset();
+                const $form = $('#roleForm');
+                $form[0].reset();
                 clearValidationErrors();
                 $('#statusActive').prop('checked', true);
                 $('.permissions-table input[type="checkbox"]').prop('checked', false);
@@ -274,11 +304,7 @@
                 }
             });
 
-            $('#RoleCode, #DisplayName, #Description').on('input', function () {
-                var fieldId = $(this).attr('id');
-                $('[data-valmsg-for="' + fieldId + '"]').text('');
-            });
-
+            // Submit Button Action
             $('#btnRegister').on('click', function (e) {
                 e.preventDefault();
                 executeSubmit();

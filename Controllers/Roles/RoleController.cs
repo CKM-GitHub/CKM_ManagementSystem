@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using CKM_ManagementSystem.BL;
-using CKM_ManagementSystem.Models.Entities;
-using CKM_ManagementSystem.Models.ViewModels.Roles;
-using CKM_ManagementSystem.Models.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using CKM_ManagementSystem.BL;
+using CKM_ManagementSystem.Models.Entities;
+using CKM_ManagementSystem.Models.ViewModels;
+using CKM_ManagementSystem.Models.ViewModels.Roles;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CKM_ManagementSystem.Controllers
 {
@@ -45,15 +45,13 @@ namespace CKM_ManagementSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SaveRole(RoleEntryViewModel model)
+        public IActionResult SaveRole(RoleEntryViewModel model)
         {
-            
             if (!string.IsNullOrWhiteSpace(model.RoleCode) && !Regex.IsMatch(model.RoleCode, @"^[a-zA-Z0-9_-]+$"))
             {
                 ModelState.AddModelError("RoleCode", "Role Code contains invalid characters. Only alphanumeric, underscore and hyphen are allowed.");
             }
 
-           
             if (!string.IsNullOrWhiteSpace(model.DisplayName) && Regex.IsMatch(model.DisplayName, @"[<>'""&;]"))
             {
                 ModelState.AddModelError("DisplayName", "Role Name contains invalid special characters.");
@@ -66,6 +64,17 @@ namespace CKM_ManagementSystem.Controllers
                     kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).FirstOrDefault()
                 );
                 return Json(new { success = false, errors = errors });
+            }
+
+            if (model.MenuPermissions != null && model.MenuPermissions.Count > 0)
+            {
+                foreach (var perm in model.MenuPermissions)
+                {
+                    if (perm.CanWrite || perm.CanDelete)
+                    {
+                        perm.CanRead = true;
+                    }
+                }
             }
 
             try
@@ -94,7 +103,6 @@ namespace CKM_ManagementSystem.Controllers
                 if (model.IsEdit)
                 {
                     _roleBL.Role_Update(roleEntity, permissions);
-
                     TempData["SuccessMessage"] = "Update is complete.";
                     return Json(new
                     {
@@ -106,7 +114,6 @@ namespace CKM_ManagementSystem.Controllers
                 else
                 {
                     _roleBL.Role_Insert(roleEntity, permissions);
-
                     return Json(new
                     {
                         success = true,
@@ -141,5 +148,42 @@ namespace CKM_ManagementSystem.Controllers
             var result = _roleBL.DeleteRole(targetCode);
             return Json(new { success = result.Success, message = result.Message });
         }
+
+        #region Private Helper Methods
+
+        private object? GetColumnObject(DataRow row, params string[] columnNames)
+        {
+            foreach (var name in columnNames)
+            {
+                if (row.Table.Columns.Contains(name) && row[name] != DBNull.Value)
+                {
+                    return row[name];
+                }
+            }
+            return null;
+        }
+
+        private string GetColumnValue(DataRow row, params string[] columnNames)
+        {
+            var obj = GetColumnObject(row, columnNames);
+            return obj?.ToString() ?? string.Empty;
+        }
+
+        private bool GetBooleanValue(DataRow row, params string[] columnNames)
+        {
+            var obj = GetColumnObject(row, columnNames);
+            if (obj != null)
+            {
+                string val = obj.ToString()!.Trim();
+                if (bool.TryParse(val, out bool result))
+                {
+                    return result;
+                }
+                return val == "1" || val.Equals("true", StringComparison.OrdinalIgnoreCase);
+            }
+            return false;
+        }
+
+        #endregion
     }
 }
