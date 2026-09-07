@@ -13,7 +13,6 @@
 
 <div class="container py-4">
     <div class="role-entry-card">
-
         <h4 class="role-entry-title">User Role Entry</h4>
 
         <form id="roleForm" method="post" asp-action="RoleEntry" asp-controller="Role">
@@ -33,6 +32,7 @@
 
             <div class="mb-3">
                 <label class="form-label-custom">Description</label>
+
                 <textarea asp-for="Description" id="Description" class="form-control" rows="3" placeholder="e.g., Description..." maxlength="250"></textarea>
             </div>
 
@@ -60,27 +60,24 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @if (Model != null && Model.MenuPermissions != null && Model.MenuPermissions.Count > 0)
+                            @if (Model?.MenuPermissions != null && Model.MenuPermissions.Count > 0)
                             {
                                 for (int i = 0; i < Model.MenuPermissions.Count; i++)
                                 {
                                     var currentMenu = Model.MenuPermissions[i];
+                                    int level = currentMenu.Level; // Dynamic Hierarchy Level
+                                    bool isParent = level == 0;
 
-                                    bool isChild = currentMenu.ParentId.HasValue && currentMenu.ParentId.Value > 0;
-                                    bool isParent = !isChild;
-
+                                    // Check if this menu is the last item in its child group
                                     bool isLastSubmenu = false;
-                                    if (isChild)
+                                    if (!isParent)
                                     {
-                                        var currentParentId = currentMenu.ParentId;
                                         bool hasNextChild = false;
                                         for (int j = i + 1; j < Model.MenuPermissions.Count; j++)
                                         {
                                             var nextMenu = Model.MenuPermissions[j];
-                                            bool isNextChild = nextMenu.ParentId.HasValue && nextMenu.ParentId.Value > 0;
-
-                                            if (!isNextChild) break;
-                                            if (nextMenu.ParentId == currentParentId)
+                                            if (nextMenu.Level < level) break;
+                                            if (nextMenu.ParentId == currentMenu.ParentId)
                                             {
                                                 hasNextChild = true;
                                                 break;
@@ -89,25 +86,28 @@
                                         isLastSubmenu = !hasNextChild;
                                     }
 
+                                    double paddingLeftRem = 1.5 + (level * 1.5);
+
                                     <tr class="@(isParent ? "parent-menu-row table-light" : "child-menu-row")"
                                         data-menu-id="@currentMenu.MenuId"
-                                        data-parent-id="@(currentMenu.ParentId ?? 0)">
+                                        data-parent-id="@(currentMenu.ParentId ?? 0)"
+                                        data-level="@level">
 
                                         <input type="hidden" asp-for="MenuPermissions[i].MenuId" />
                                         <input type="hidden" asp-for="MenuPermissions[i].MenuName" />
                                         <input type="hidden" asp-for="MenuPermissions[i].ParentId" />
                                         <input type="hidden" asp-for="MenuPermissions[i].Level" />
 
-                                        <td style="padding-left: @(isParent ? "1.5rem" : "3.5rem");">
+                                        <td style="padding-left: @(paddingLeftRem.ToString("0.0"))rem;">
                                             @if (isParent)
                                             {
                                                 <span class="parent-menu-title fw-bold text-dark">
-                                                    <i class="bi bi-folder2-open me-1"></i> @currentMenu.MenuName
+                                                    @currentMenu.MenuName
                                                 </span>
                                             }
                                             else
                                             {
-                                                <span class="tree-icon text-muted me-2 fw-bold">@(isLastSubmenu ? "└─" : "├─")</span>
+                                                <span class="tree-icon text-muted me-2 fw-bold">@(isLastSubmenu ? "└──" : "├──")</span>
                                                 <span class="child-menu-title text-secondary">@currentMenu.MenuName</span>
                                             }
                                         </td>
@@ -165,7 +165,6 @@
                     </button>
                 </div>
             </div>
-
         </form>
     </div>
 </div>
@@ -178,33 +177,30 @@
 
     <script>
         $(document).ready(function () {
-            var isEditMode = @isEditMode.ToString().ToLower();
+            const isEditMode = @isEditMode.ToString().ToLower();
 
             if (!isEditMode) {
                 $('#RoleCode').focus();
             }
 
-            // Write သို့မဟုတ် Delete ကို Check လုပ်ပါက Read ကိုပါ Check အလိုအလျောက် ပေးခြင်း
+          
             $(document).on('change', '.chk-write, .chk-delete', function () {
                 if ($(this).is(':checked')) {
                     $(this).closest('td').find('.chk-read').prop('checked', true).trigger('change');
                 }
             });
 
-            // Read ကို Uncheck လုပ်ပါက Write/Delete ကိုပါ Uncheck ပေးခြင်း
+            
             $(document).on('change', '.chk-read', function () {
                 if (!$(this).is(':checked')) {
                     $(this).closest('td').find('.chk-write, .chk-delete').prop('checked', false);
                 }
             });
 
-            // Ajax Form Submit
+            
             $('#roleForm').on('submit', function (e) {
-                var $form = $(this);
-
-                if (!$form.valid()) {
-                    return;
-                }
+                const $form = $(this);
+                if (!$form.valid()) return;
 
                 e.preventDefault();
 
@@ -215,7 +211,6 @@
                     success: function (response) {
                         if (response.success) {
                             showSuccess(response.message);
-
                             $('#alertModal').one('hidden.bs.modal', function () {
                                 if (isEditMode) {
                                     window.location.href = '@Url.Action("RoleList", "Role")';
@@ -233,17 +228,14 @@
                 });
             });
 
-            // Enter Key navigation
+            
             $('#roleForm input, #roleForm textarea').on('keydown', function (e) {
                 if (e.key === 'Enter' || e.keyCode === 13) {
-                    if ($(this).is(':checkbox') || $(this).is(':radio')) {
-                        return;
-                    }
+                    if ($(this).is(':checkbox') || $(this).is(':radio')) return;
 
                     e.preventDefault();
-
-                    var inputs = $(this).closest('form').find('input:enabled:not([readonly]), textarea:enabled:not([readonly])');
-                    var index = inputs.index(this);
+                    const inputs = $(this).closest('form').find('input:enabled:not([readonly]), textarea:enabled:not([readonly])');
+                    const index = inputs.index(this);
 
                     if (index >= 0 && index < inputs.length - 1) {
                         inputs.eq(index + 1).focus();
@@ -251,71 +243,67 @@
                 }
             });
 
-            // Role Code input restrict regex validation
+            
             $(document).on('input keyup paste', '#RoleCode', function () {
-                var $this = $(this);
+                const $this = $(this);
                 setTimeout(function () {
-                    var cleanValue = $this.val().replace(/[^a-zA-Z0-9_-]/g, '');
+                    const cleanValue = $this.val().replace(/[^a-zA-Z0-9_-]/g, '');
                     $this.val(cleanValue);
                 }, 0);
             });
 
-            // Parent Checkbox Toggle Logic
+            
             $(document).on('change', '.parent-menu-row input[type="checkbox"]', function () {
-                var $parentRow = $(this).closest('tr');
-                var parentId = $parentRow.data('menu-id');
-                var isChecked = $(this).is(':checked');
+                const $parentRow = $(this).closest('tr');
+                const parentId = $parentRow.data('menu-id');
+                const isChecked = $(this).is(':checked');
 
-                var actionClass = '';
-                if ($(this).hasClass('chk-read')) actionClass = '.chk-read';
-                else if ($(this).hasClass('chk-write')) actionClass = '.chk-write';
-                else if ($(this).hasClass('chk-delete')) actionClass = '.chk-delete';
+                const actionClass = getActionClass($(this));
 
-                if (actionClass !== '') {
-                    $('tr.child-menu-row[data-parent-id="' + parentId + '"]')
+                if (actionClass) {
+                    $(`tr.child-menu-row[data-parent-id="${parentId}"]`)
                         .find(actionClass)
                         .prop('checked', isChecked);
 
-                    // Cross-trigger read dependency update if needed
                     if (actionClass !== '.chk-read' && isChecked) {
                         $parentRow.find('.chk-read').prop('checked', true);
-                        $('tr.child-menu-row[data-parent-id="' + parentId + '"]').find('.chk-read').prop('checked', true);
+                        $(`tr.child-menu-row[data-parent-id="${parentId}"]`).find('.chk-read').prop('checked', true);
                     }
                 }
             });
 
-            // Child Checkbox Toggle Logic
+           
             $(document).on('change', '.child-menu-row input[type="checkbox"]', function () {
-                var $childRow = $(this).closest('tr');
-                var parentId = $childRow.data('parent-id');
+                const $childRow = $(this).closest('tr');
+                const parentId = $childRow.data('parent-id');
 
-                var actionClass = '';
-                if ($(this).hasClass('chk-read')) actionClass = '.chk-read';
-                else if ($(this).hasClass('chk-write')) actionClass = '.chk-write';
-                else if ($(this).hasClass('chk-delete')) actionClass = '.chk-delete';
+                const actionClass = getActionClass($(this));
 
-                if (actionClass !== '') {
-                    var $totalChildren = $('tr.child-menu-row[data-parent-id="' + parentId + '"]');
-                    var $checkedChildren = $totalChildren.find(actionClass + ':checked');
+                if (actionClass) {
+                    const $totalChildren = $(`tr.child-menu-row[data-parent-id="${parentId}"]`);
+                    const $checkedChildren = $totalChildren.find(`${actionClass}:checked`);
+                    const allChecked = ($totalChildren.length === $checkedChildren.length);
 
-                    // Check parent only if all children are checked
-                    var allChecked = ($totalChildren.length === $checkedChildren.length);
-
-                    $('tr.parent-menu-row[data-menu-id="' + parentId + '"]')
+                    $(`tr.parent-menu-row[data-menu-id="${parentId}"]`)
                         .find(actionClass)
                         .prop('checked', allChecked);
                 }
             });
 
-            // Clear Button Click Logic
-            $('#btnClear').on('click', function () {
-                var $form = $('#roleForm');
-                $form[0].reset();
+            
+            function getActionClass($el) {
+                if ($el.hasClass('chk-read')) return '.chk-read';
+                if ($el.hasClass('chk-write')) return '.chk-write';
+                if ($el.hasClass('chk-delete')) return '.chk-delete';
+                return '';
+            }
 
-                // Clear validation messages and classes
+            
+            $('#btnClear').on('click', function () {
+                const $form = $('#roleForm');
+                $form[0].reset();
                 $form.find('.field-validation-error').empty().addClass('field-validation-valid').removeClass('field-validation-error');
                 $form.find('.input-validation-error').removeClass('input-validation-error');
-
                 $('#statusActive').prop('checked', true);
                 $('#RoleCode').focus();
             });

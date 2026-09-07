@@ -22,7 +22,7 @@ namespace CKM_ManagementSystem.Controllers
         public IActionResult RoleEntry(string? id)
         {
             var model = new RoleEntryViewModel();
-            List<RolePermissionViewModel> rawPermissions = new List<RolePermissionViewModel>();
+            List<RolePermissionViewModel> rawPermissions;
 
             if (!string.IsNullOrEmpty(id))
             {
@@ -32,10 +32,7 @@ namespace CKM_ManagementSystem.Controllers
                     DataRow row = dtRole.Rows[0];
                     model.RoleCode = GetColumnValue(row, "Role_Code", "RoleCode");
                     model.DisplayName = GetColumnValue(row, "Role_Name", "RoleName", "DisplayName");
-
-                    var descObj = GetColumnObject(row, "Description");
-                    model.Description = descObj != null && descObj != DBNull.Value ? descObj.ToString() : null;
-
+                    model.Description = GetColumnObject(row, "Description")?.ToString();
                     model.Status = GetBooleanValue(row, "Status");
                 }
 
@@ -62,7 +59,7 @@ namespace CKM_ManagementSystem.Controllers
                 return Json(new { success = false, message = "Please fill in all required fields properly." });
             }
 
-            // Backend Level Read-Permission Safety Check (Write/Delete လုပ်နိုင်လျှင် Read ပါ အလိုအလျောက် သတ်မှတ်ပေးခြင်း)
+           
             if (model.MenuPermissions != null && model.MenuPermissions.Count > 0)
             {
                 foreach (var perm in model.MenuPermissions)
@@ -102,25 +99,15 @@ namespace CKM_ManagementSystem.Controllers
             return Json(new { success = false, message = result });
         }
 
+        #region Private Mapping & Hierarchy Methods
+
         private List<RolePermissionViewModel> MapDataTableToMenuPermissionList(DataTable dt)
         {
             var list = new List<RolePermissionViewModel>();
-            if (dt == null) return list;
+            if (dt == null || dt.Rows.Count == 0) return list;
 
-            string parentColName = null;
-            string[] possibleParentCols = new string[] {
-                "ParentMenuId", "Parent_Menu_Id", "ParentId", "Parent_Id", "Parent_Menu_ID", "Parent_ID", "MenuParentId", "Menu_Parent_Id"
-            };
-
-            foreach (var col in possibleParentCols)
-            {
-                var match = dt.Columns.Cast<DataColumn>().FirstOrDefault(c => string.Equals(c.ColumnName, col, StringComparison.OrdinalIgnoreCase));
-                if (match != null)
-                {
-                    parentColName = match.ColumnName;
-                    break;
-                }
-            }
+            string[] parentCols = { "ParentMenuId", "Parent_Menu_Id", "ParentId", "Parent_Id", "Parent_Menu_ID", "Parent_ID", "MenuParentId", "Menu_Parent_Id" };
+            string parentColName = parentCols.FirstOrDefault(col => dt.Columns.Contains(col));
 
             foreach (DataRow row in dt.Rows)
             {
@@ -157,6 +144,7 @@ namespace CKM_ManagementSystem.Controllers
 
             var sortedList = new List<RolePermissionViewModel>();
 
+            
             var rootMenus = rawList
                 .Where(m => !m.ParentId.HasValue || m.ParentId.Value == 0)
                 .OrderBy(m => m.MenuId)
@@ -167,6 +155,7 @@ namespace CKM_ManagementSystem.Controllers
                 AddMenuAndChildren(root, rawList, sortedList, 0);
             }
 
+           
             var addedIds = sortedList.Select(s => s.MenuId).ToHashSet();
             var orphanMenus = rawList.Where(m => !addedIds.Contains(m.MenuId)).ToList();
 
@@ -185,6 +174,7 @@ namespace CKM_ManagementSystem.Controllers
             currentMenu.Level = currentLevel;
             resultList.Add(currentMenu);
 
+            
             var children = rawList
                 .Where(m => m.ParentId.HasValue && m.ParentId.Value == currentMenu.MenuId)
                 .OrderBy(m => m.MenuId)
@@ -196,17 +186,17 @@ namespace CKM_ManagementSystem.Controllers
             }
         }
 
+        #endregion
+
         #region Helper Methods for DataTable Columns
+
         private object? GetColumnObject(DataRow row, params string[] columnNames)
         {
             foreach (var name in columnNames)
             {
-                var matchCol = row.Table.Columns.Cast<DataColumn>()
-                    .FirstOrDefault(c => string.Equals(c.ColumnName, name, StringComparison.OrdinalIgnoreCase));
-
-                if (matchCol != null && row[matchCol] != DBNull.Value)
+                if (row.Table.Columns.Contains(name) && row[name] != DBNull.Value)
                 {
-                    return row[matchCol];
+                    return row[name];
                 }
             }
             return null;
@@ -221,9 +211,9 @@ namespace CKM_ManagementSystem.Controllers
         private bool GetBooleanValue(DataRow row, params string[] columnNames)
         {
             var obj = GetColumnObject(row, columnNames);
-            if (obj != null && obj != DBNull.Value)
+            if (obj != null)
             {
-                string val = obj.ToString().Trim();
+                string val = obj.ToString()!.Trim();
                 if (bool.TryParse(val, out bool result))
                 {
                     return result;
@@ -232,6 +222,7 @@ namespace CKM_ManagementSystem.Controllers
             }
             return false;
         }
+
         #endregion
     }
 }
