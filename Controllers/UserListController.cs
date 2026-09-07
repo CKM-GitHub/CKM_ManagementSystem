@@ -126,7 +126,7 @@ namespace CKM_ManagementSystem.Controllers
                 model.TempImageName = tempFileName;
                 ModelState.Remove(nameof(model.ImageFile));
 
-                model.ImageUrl = "/images/users/temp/{tempFileName}";
+                model.ImageUrl = "/images/users/{tempFileName}";
             }
 
             if(!string.IsNullOrEmpty(model.TempImageName))
@@ -159,7 +159,7 @@ namespace CKM_ManagementSystem.Controllers
                     }
                 }
                 TempData["SuccessMessage"] = "User Update Successfully";
-                return RedirectToAction("UserCreate");
+                return RedirectToAction("UserCreate","UserCreate", new {mode = "Update"});
             }
 
             if (errorCode == 2)
