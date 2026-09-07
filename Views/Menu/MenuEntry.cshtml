@@ -18,24 +18,8 @@
                     </h4>
                 </div>
                 <div class="menu-page-shell p-4">
-                    <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content custom-modal-popup text-center">
-                                <div class="swal-icon-wrapper mb-3">
-                                    <div class="custom-swal-icon swal-success" id="modalIcon">
-                                        <i class="bi bi-check-lg" id="modalIconItem"></i>
-                                    </div>
-                                </div>
-                                <h3 class="custom-modal-title" id="modalTitle">Success!</h3>
-                                <p class="custom-modal-text" id="modalText">@TempData["SuccessMessage"]</p>
-                                <div class="d-flex justify-content-center w-100">
-                                    <button type="button" class="btn custom-modal-btn-confirm" id="btnModalConfirm" data-bs-dismiss="modal">OK</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <partial name="AlertModal" />
 
-                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
                     <form method="post" id="menuForm" asp-action="MenuEntry" asp-route-page ="@Context.Request.Query["page"]">
                         <input type="hidden" asp-for="MenuID" />
                         <div class="mb-3">
@@ -133,14 +117,16 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script src="~/js/menu-entry.js" asp-append-version="true"></script>
-    <script src="~/lib/sweetalert2/dist/sweetalert2.all.min.js"></script>
+    <script src="~/js/Alert_Modal.js" asp-append-version="true"></script>
     <script>
         var isEditMode = @isEdit.ToString().ToLower();
         var successMessage = '@(TempData["SuccessMessage"] ?? "")';
+        var errorMessage = '@(TempData["ErrorMessage"] ?? "")';
         var currentPage = '@pageNum';
         var menuListUrl = '@Url.Action("MenuListView", "Menu")';
     </script>
 }
 @section Styles {
     <link rel="stylesheet" href="~/css/menu-entry.css" />
+    <link rel="stylesheet" href="~/css/Alert_Modal.css" />
 }

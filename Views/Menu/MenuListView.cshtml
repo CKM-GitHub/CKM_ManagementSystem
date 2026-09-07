@@ -4,20 +4,7 @@
     ViewData["Title"] = "Menu Management";
 }
 <div class="menu-page-shell">
-    <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content custom-modal-popup text-center">
-                <div class="swal-icon-wrapper mb-3">
-                    <div class="custom-swal-icon swal-success" id="modalIcon">
-                        <i class="bi bi-check-lg" id="modalIconItem"></i>
-                    </div>
-                </div>
-                    <h3 class="custom-modal-title" id="modalTitle">Success!</h3>
-                    <p class="custom-modal-text" id="modalText">@TempData["SuccessMessage"]</p>
-                    <button type="button" class="btn custom-modal-btn" id="btnModalConfirm" data-bs-dismiss="modal">OK</button>
-            </div>
-        </div>
-    </div>
+    <partial name="AlertModal" />
     <div class="menu-page-container">
         <div class="page-header text-center">
             <h2 class="page-title">Menu Management</h2>
@@ -180,11 +167,11 @@
         var errorMessage = '@(TempData["ErrorMessage"] ?? "")';
         var menuListUrl = '@Url.Action("MenuListView", "Menu")';
     </script>
-    <script src="~/lib/sweetalert2/dist/sweetalert2.all.min.js"></script>
+    <script src="~/js/Alert_Modal.js" asp-append-version="true"></script>
     <script src="~/js/menu-management.js" asp-append-version="true"></script>
 }
 @section Styles {
     <link rel="stylesheet" href="~/css/menu-management.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/lib/sweetalert2/dist/sweetalert2.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Alert_Modal.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 }

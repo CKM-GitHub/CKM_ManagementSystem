@@ -6,13 +6,12 @@
     const $typeParent = $('#typeParent');
     const $statusActive = $('#statusActive');
     toggleParentMenu();
-    $.validator.setDefaults({
-        showErrors: function (errorMap, errorList) { }
-    });
+    //$.validator.setDefaults(showError(errorMessage));
     const validator = $menuForm.validate();
     validator.settings.onfocusout = false;
     validator.settings.onclick = false;
     validator.settings.onkeyup = false;
+    
     $menuForm.on('input change', 'input, select, textarea', function () {
         const $input = $(this);
         if ($input.val().trim() !== '') {
@@ -26,6 +25,7 @@
             }
         }
     });
+    
     $menuForm.on('keydown', 'input, select, textarea', function (e) {
         if (e.key === 'Enter' || e.keyCode === 13) {
             if ($(this).attr('type') !== 'submit' && $(this).prop('tagName') !== 'BUTTON') {
@@ -34,7 +34,9 @@
                 if ($currentInput.attr('id')) {
                     sessionStorage.setItem('lastFocusedElementId', $currentInput.attr('id'));
                 }
+                
                 if ($currentInput.val().trim() === '' && $currentInput.data('has-focused-empty')) {
+                    e.preventDefault();
                     $menuForm.submit();
                     return false;
                 }
@@ -49,7 +51,8 @@
                     $menuForm.submit();
                     return false;
                 }
-                const $nextIndex = $focusable.index($currentInput) + 1;
+                //const $nextIndex = $focusable.index($currentInput) + 1;
+                const $nextIndex = currentIndex + 1;
                 if ($nextIndex < $focusable.length) {
                     const $nextInput = $focusable.eq($nextIndex);
                     if ($nextInput.val().trim() === '') {
@@ -65,11 +68,13 @@
     $menuForm.off('submit').on('submit', function (e) {
         e.preventDefault();
         const isValid = validator.form();
+        /*
         $menuForm.find('.field-validation-error')
             .removeClass('field-validation-error')
             .addClass('field-validation-valid')
             .empty();
-        $menuForm.find('.input-validation-error').removeClass('input-validation-error');
+            */
+        //$menuForm.find('.input-validation-error').removeClass('input-validation-error');
         if (!isValid) {
             if (validator.errorList.length > 0) {
                 const firstError = validator.errorList[0];
@@ -82,23 +87,13 @@
                         .addClass('field-validation-error')
                         .text(firstError.message);
                 }
+                setTimeout(function () {
+                    focusAtEnd($firstElement);
+                }, 50);
             }
             return false;
         }
-        Swal.fire({
-            title: 'Saving...',
-            text: 'Please wait a moment',
-            allowOutsideClick: false,
-            buttonsStyling: false,
-            customClass: {
-                popup: 'custom-modal-popup',
-                title: 'custom-modal-title',
-                htmlContainer: 'custom-modal-text'
-            },
-            didOpen: () => {
-                Swal.showLoading();
-            }
-        });
+        
         $parentMenu.prop('disabled', false);
         $('input[name="MenuType"]').prop('disabled', false);
         this.submit();
@@ -114,35 +109,27 @@
             $limitMsg.addClass('d-none');
         }
     });
-    if ($('.input-validation-error:visible').length > 0) {
-        const $firstError = $('.input-validation-error:visible').first();
+    if (typeof errorMessage !== 'undefined' && errorMessage !== '') {
         setTimeout(function () {
-            focusAtEnd($firstError);
+            //showError(errorMessage);
+            const $firstError = $('.input-validation-error:visible').first();
+            if ($firstError.length > 0) {
+                focusAtEnd($firstError);
+            } else {
+                focusAtEnd($displayText);
+            }
         }, 300);
     } else if (typeof successMessage !== 'undefined' && successMessage !== '') {
-        const modalElement = document.getElementById('successModal');
-        if (modalElement) {
-            let successModal = new bootstrap.Modal(modalElement);
             let pageNum = $('#currentPageNum').val() || 1;
-            
             const redirectUrl = menuListUrl + '?page=' + pageNum;
-            Swal.fire({
-                icon: 'success',
-                title: 'Successfully!!',
-                text: successMessage,
-                confirmButtonText: 'OK',
-                buttonsStyling: false,
-                customClass: {
-                    popup: 'custom-modal-popup',
-                    title: 'custom-modal-title',
-                    htmlContainer: 'custom-modal-text',
-                    confirmButton: 'custom-modal-btn custom-modal-btn-confirm'
-                },
-                didClose: () => {
+            showSuccess(successMessage);
+            const alertModalEl = document.getElementById("alertModal");
+            if (alertModalEl) {
+                $(alertModalEl).one('hidden.bs.modal', function () {
                     window.location.assign(redirectUrl);
-                }
-            });
-        } else {
+                });
+            }
+    } else {
             setTimeout(function () {
                 if ($displayText.length > 0) {
                     if ($displayText.val().trim() === '') {
@@ -151,24 +138,8 @@
                     focusAtEnd($displayText);
                 }
             }, 300);
-            $(modalElement).find('.btn, [data-bs-dismiss="modal"]').one('click', function () {
-                window.location.assign(redirectUrl);
-            });
-            $(modalElement).on('hide.bs.modal', function () {
-                window.location.assign(redirectUrl);
-            });
-        }
     }
-    else {
-        setTimeout(function () {
-            if ($displayText.length > 0) {
-                if ($displayText.val().trim() === '') {
-                    $displayText.data('has-focused-empty', true);
-                }
-                focusAtEnd($displayText);
-            }
-        }, 300);
-    }
+   
     function focusAtEnd($input) {
         if (!$input || $input.length === 0) return;
         const element = $input[0];

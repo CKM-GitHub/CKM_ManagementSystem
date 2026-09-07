@@ -150,13 +150,21 @@ namespace CKM_ManagementSystem.Controllers.Menu
                     model.ParentMenuList = await _menuBL.GetParentMenusForDropdownAsync();
                     return View("MenuEntry", model);
                 }
-                ModelState.AddModelError(string.Empty, statusMessage ?? "Unexpected status returned");
+                
+                TempData["ErrorMessage"] = statusMessage ?? "Unexpected status returned";
                 model.ParentMenuList = await _menuBL.GetParentMenusForDropdownAsync();
                 return View("MenuEntry", model);
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, "Error occurred: " + ex.Message);
+                if(ex.Message.Contains("String or binary data would be truncated") || 
+                        (ex.InnerException != null && ex.InnerException.Message.Contains("String or binary data would be truncated")))
+                {
+                    TempData["ErrorMessage"] = "The input text exceeds the maximum charcher limit allowed.";
+                } else
+                {
+                    TempData["ErrorMessage"] = "A system error has occurred. Please wait a moment and try again";
+                }
                 model.ParentMenuList = await _menuBL.GetParentMenusForDropdownAsync();
                 return View("MenuEntry", model);
             }
