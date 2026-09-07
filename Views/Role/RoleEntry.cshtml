@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="~/css/role-entry.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/Alert_Modal.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 }
 
 <div class="container py-4">
@@ -65,15 +64,15 @@
                             @if (Model?.MenuPermissions != null && Model.MenuPermissions.Count > 0)
                             {
                                 var rootMenus = Model.MenuPermissions
-                                    .Where(m => !m.ParentId.HasValue || m.ParentId == 0)
-                                    .ToList();
+                                .Where(m => !m.ParentId.HasValue || m.ParentId == 0)
+                                .ToList();
 
                                 foreach (var root in rootMenus)
                                 {
                                     int rootIndex = Model.MenuPermissions.IndexOf(root);
                                     var children = Model.MenuPermissions
-                                        .Where(m => m.ParentId == root.MenuId)
-                                        .ToList();
+                                    .Where(m => m.ParentId == root.MenuId)
+                                    .ToList();
 
                                     <tr class="parent-menu-row fw-bold table-light" data-menu-id="@root.MenuId" data-parent-id="0">
                                         <td style="padding-left: 1.5rem;">
@@ -183,12 +182,12 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script src="~/js/Alert_Modal.js" asp-append-version="true"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         $(document).ready(function () {
-            const isEditMode = @isEditMode.ToString().ToLower();
+            const isEditMode = @Html.Raw(Json.Serialize(isEditMode));
             let initialFormData = '';
+            let pendingAction = null;
 
             if (!isEditMode) {
                 $('#RoleCode').focus();
@@ -208,7 +207,15 @@
                 return '';
             }
 
-            // Input Validation Cleaners
+            
+            $('#alertModal').on('hidden.bs.modal', function () {
+                if (pendingAction) {
+                    pendingAction();
+                    pendingAction = null;
+                }
+            });
+
+          
             $('#RoleCode').on('input keyup paste change', function () {
                 var val = $(this).val();
                 var clean = val.replace(/[^a-zA-Z0-9_-]/g, '');
@@ -225,13 +232,13 @@
                 }
             });
 
-            // Input Error Clear on Typing
+            
             $('#RoleCode, #DisplayName, #Description').on('input', function () {
                 var fieldId = $(this).attr('id');
                 $('[data-valmsg-for="' + fieldId + '"]').text('');
             });
 
-            // Enter key navigation
+         
             $('#roleForm input, #roleForm textarea').on('keydown', function (e) {
                 if (e.key === 'Enter' || e.keyCode === 13) {
                     if ($(this).is(':checkbox') || $(this).is(':radio')) return;
@@ -246,7 +253,7 @@
                 }
             });
 
-            // Auto Check Logic
+           
             $(document).on('change', '.chk-write, .chk-delete', function () {
                 if ($(this).is(':checked')) {
                     $(this).closest('td').find('.chk-read').prop('checked', true);
@@ -259,7 +266,7 @@
                 }
             });
 
-            // Parent - Child Checkbox sync
+           
             $(document).on('change', '.parent-menu-row input[type="checkbox"]', function () {
                 const $parentRow = $(this).closest('tr');
                 const parentId = $parentRow.data('menu-id');
@@ -269,8 +276,7 @@
                 if (actionClass) {
                     $(`tr.child-menu-row[data-parent-id="${parentId}"]`)
                         .find(actionClass)
-                        .prop('checked', isChecked)
-                        .trigger('change');
+                        .prop('checked', isChecked);
                 }
             });
 
@@ -290,7 +296,6 @@
                 }
             });
 
-            // Clear Button Logic
             $('#btnClear').on('click', function () {
                 const $form = $('#roleForm');
                 $form[0].reset();
@@ -304,7 +309,7 @@
                 }
             });
 
-            // Submit Button Action
+          
             $('#btnRegister').on('click', function (e) {
                 e.preventDefault();
                 executeSubmit();
@@ -332,33 +337,31 @@
                         $('#btnRegister').prop('disabled', false);
 
                         if (response.success) {
-                            Swal.fire({
-                                title: 'Success!',
-                                text: response.message || (isEditMode ? "Role updated successfully." : "The new role has been created successfully."),
-                                icon: 'success',
-                                confirmButtonText: 'OK',
-                                confirmButtonColor: '#0d6efd',
-                                customClass: { popup: 'rounded-4 border-0 shadow' }
-                            }).then(function() {
+                            const message = response.message || (isEditMode ? "Role updated successfully." : "Registration is complete.");
+
+                           
+                            pendingAction = function () {
                                 if (response.isEdit || isEditMode) {
                                     window.location.href = response.redirectUrl || '@Url.Action("RoleList", "Role")';
                                 } else {
                                     $('#btnClear').click();
                                 }
-                            });
+                            };
+
+                            showSuccess(message);
                         } else {
                             if (response.errors && typeof response.errors === 'object') {
                                 $.each(response.errors, function (key, message) {
                                     $('[data-valmsg-for="' + key + '"]').text(message);
                                 });
                             } else if (response.message) {
-                                $('#generalError').text(response.message);
+                                showError(response.message);
                             }
                         }
                     },
                     error: function () {
                         $('#btnRegister').prop('disabled', false);
-                        $('#generalError').text('An error occurred while processing your request.');
+                        showError('An error occurred while processing your request.');
                     }
                 });
             }

@@ -46,8 +46,6 @@ function showSuccess(message){
         message
     );
 }
-
-/*Error function*/
 function showError(message) {
     showAlert(
         "error",
@@ -56,7 +54,7 @@ function showError(message) {
     );
 }
 
-/*Delete function*/
+
 function showDelete(message, onConfirm) {
     showAlert(
         "delete",
