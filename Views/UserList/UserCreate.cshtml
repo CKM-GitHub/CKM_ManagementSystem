@@ -4,13 +4,17 @@
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/UserCreate.js" asp-append-version="true"></script>
+    <script src="~/js/Alert_Modal.js" asp-append-version="true"></script>
+    <partial name="AlertModal" />
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="~/css/Alert_Modal.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/UserCreate.css" />
 
 <div class="container d-flex justify-content-center align-items-center min-vh-100 py-5">
     <div class="card border-0 rounded-4 shadow p-5 bg-white w-100 user-entry-card">
+        @*
         @if (TempData["SuccessMessage"] != null)
         {
             <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
@@ -46,7 +50,19 @@
                     </div>
                 </div>
             </div>
+        } *@
+        @if (TempData["SuccessMessage"] is string successMessage)
+        {
+            var redirectUrl = Model.Mode == "Entry"
+            ? Url.Action("UserCreate", "UserCreate")
+            : Url.Action("UserList", "UserList");
+
+            <input type="hidden" id="successMessage" value="@successMessage" />
+            <input type="hidden" id="redirectUrl" value="@redirectUrl" />
         }
+
+        <partial name="AlertModal" />
+
         <div class="d-flex align-items-center justify-content-center position-relative mb-5">
             @*
             @if (Model.Mode == "Entry")
