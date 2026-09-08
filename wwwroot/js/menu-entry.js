@@ -57,7 +57,7 @@ $(document).ready(function () {
         const currentLength = ($input.val() || '').length;
         const $limitMsg = $input.siblings('.char-limit-msg');
 
-        if (currentLength >= maxLength) {
+        if (currentLength > maxLength) {
             $limitMsg
                 .removeClass('d-none')
                 .text('Maximum ' + maxLength + ' characters limit reached.');
