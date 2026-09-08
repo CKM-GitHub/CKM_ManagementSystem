@@ -1,43 +1,78 @@
-﻿
+﻿/* Base Page & Backgrounds */
 body {
-    background: #1e40af;
-    min-height: 100vh;
-    color: #333;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #1e3a8a !important; /* Dark Blue Background */
+    color: #ffffff !important; /* Pure White Text */
+    font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif !important;
 }
 
-
+/* Card Container (Background White) */
 .role-entry-card {
-    background-color: #ffffff;
+    background-color: #ffffff !important;
     border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
     padding: 2.5rem;
     max-width: 720px;
     margin: 2rem auto;
 }
 
-.role-entry-title {
-    color: #212529;
-    font-weight: 700;
-    font-size: 1.75rem;
+/* Main Header - 32px Bold (Dark Blue Text on White Card) */
+.role-entry-title,
+.main-header,
+h1 {
+    color: #0f172a !important; /* Deep Dark Blue */
+    font-weight: 700 !important;
+    font-size: 32px !important;
     text-align: center;
     margin-bottom: 1.5rem;
+    line-height: 1.2;
 }
 
+/* Subheaders & Table Headers - 16px Bold */
+.permissions-table thead th,
+.parent-menu-row,
+.subheader,
+h2, h3, h4 {
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    color: #1e293b !important; /* Dark Blue-Gray */
+}
+
+/* Labels, Body Text & Controls - 14px */
 .form-label-custom {
-    font-weight: 600;
-    color: #495057;
+    color: #334155 !important; /* Dark Blue Label */
+    font-size: 14px !important;
+    font-weight: 600 !important;
     margin-bottom: 0.4rem;
 }
 
-.form-control:focus {
-    border-color: #5846f6;
-    box-shadow: 0 0 0 0.2rem rgba(88, 70, 246, 0.25);
+.form-control {
+    font-size: 14px !important;
+    color: #0f172a !important;
+    background-color: #f8fafc !important; /* Slightly Off-White Input */
+    border: 1px solid #cbd5e1;
 }
 
+    .form-control:focus {
+        border-color: #2563eb !important; /* Light/Bright Blue Focus Line */
+        box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.2) !important;
+        background-color: #ffffff !important;
+    }
 
+/* Sub-text / Validation Error - 12px */
+small,
+.field-validation-error,
+.form-text {
+    font-size: 12px !important;
+}
+
+.text-muted {
+    color: #64748b !important; /* Light Slate Blue-Gray */
+    font-size: 12px !important;
+}
+
+/* Table Customization */
 .permissions-table-wrapper {
-    border: 1px solid #e9ecef;
+    border: 1px solid #e2e8f0;
     border-radius: 8px;
     max-height: 380px;
     overflow-y: auto;
@@ -46,98 +81,49 @@ body {
 .permissions-table thead th {
     position: sticky;
     top: 0;
-    background-color: #f8f9fa;
+    background-color: #f1f5f9 !important; /* Light Off-White Table Header */
     z-index: 2;
-    font-weight: 600;
-    color: #495057;
-    border-bottom: 1px solid #dee2e6;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid #cbd5e1;
 }
-
-.permissions-table-wrapper::-webkit-scrollbar {
-    width: 6px;
-}
-
-.permissions-table-wrapper::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
-}
-
-.permissions-table-wrapper::-webkit-scrollbar-thumb {
-    background: #ccc;
-    border-radius: 4px;
-}
-
-    .permissions-table-wrapper::-webkit-scrollbar-thumb:hover {
-        background: #a8a8a8;
-    }
-
 
 .parent-menu-row {
-    background-color: #f8f9fa;
-    font-weight: 700;
+    background-color: #f8fafc !important; /* Soft Off-White Parent Row */
+}
+
+.child-menu-row td {
+    font-size: 14px !important;
+    color: #334155 !important; /* Dark Slate Body Text */
 }
 
 .submenu-indent {
     padding-left: 1.75rem !important;
-    color: #6c757d;
+    color: #64748b !important; /* Light Blue Accent Icon/Text */
 }
 
-
+/* Buttons */
 .btn-register {
-    background-color: #1d4ed8;
+    background-color: #2563eb !important; /* Bright Blue Primary Button */
     border: none;
-    color: #ffffff;
-    font-weight: 600;
+    color: #ffffff !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
     padding: 0.6rem 1rem;
-    transition: background-color 0.2s ease-in-out;
+    transition: background-color 0.2s ease;
 }
 
     .btn-register:hover {
-        background-color: #1e40af;
-        color: #ffffff;
+        background-color: #1d4ed8 !important; /* Darker Blue on Hover */
     }
 
 .btn-clear {
-    background-color: #6c757d;
+    background-color: #64748b !important; /* Slate Gray-Blue Secondary Button */
     border: none;
-    color: #ffffff;
-    font-weight: 600;
+    color: #ffffff !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
     padding: 0.6rem 1rem;
 }
 
     .btn-clear:hover {
-        background-color: #5a6268;
-        color: #ffffff;
-    }
-
-
-.swal2-popup {
-    border-radius: 16px !important;
-    padding: 2rem !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
-}
-
-.swal2-title {
-    font-size: 1.4rem !important;
-    font-weight: 600 !important;
-    color: #2b2d42 !important;
-}
-
-.swal2-html-container {
-    font-size: 1rem !important;
-    color: #6c757d !important;
-}
-
-.swal2-icon.swal2-success {
-    border-color: #635bff !important;
-    color: #635bff !important;
-}
-
-    .swal2-icon.swal2-success .swal2-success-ring {
-        border-color: rgba(99, 91, 255, 0.3) !important;
-    }
-
-    .swal2-icon.swal2-success [class^='swal2-success-line'] {
-        background-color: #635bff !important;
+        background-color: #475569 !important;
     }
