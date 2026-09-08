@@ -1,7 +1,5 @@
 using CKM_ManagementSystem.BL;
 using CKM_ManagementSystem.DL;
-using CKM_ManagementSystem.Models;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,11 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<BaseDL>();
 builder.Services.AddScoped<UserEntryBL>();
-
-builder.Services.AddDbContext<CkmManagementSystemContext>(options =>
-   options.UseSqlServer(
-       builder.Configuration.GetConnectionString("DefaultConnection")));
-
+builder.Services.AddScoped<PasswordService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -24,7 +18,6 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -34,7 +27,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=UserCreate}/{action=UserCreate}/{id?}");
-
+    pattern: "{controller=UserList}/{action=UserList}/{id?}");
 
 app.Run();

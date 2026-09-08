@@ -19,11 +19,11 @@ namespace CKM_ManagementSystem.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> UserCreate(string? source)
-        {
-            ViewBag.Source = source;
-
+        public async Task<IActionResult> UserCreate(string mode = "Entry")
+        {          
             var model = new UserCreateViewModel();
+
+            model.Mode = mode;
 
             await PopulateDropdownsAsync();
 

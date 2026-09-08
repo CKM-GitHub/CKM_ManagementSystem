@@ -10,23 +10,16 @@ namespace CKM_ManagementSystem.BL
     public class UserEntryBL
     {
         private readonly BaseDL _bdl;
-        private readonly PasswordHasher<User> _passwordHasher = new();
-
-        public UserEntryBL(BaseDL baseDL)
+        private readonly PasswordService _passwordService;
+        public UserEntryBL(BaseDL baseDL,PasswordService passwordService)
         {
             _bdl = baseDL;
+            _passwordService = passwordService;
         }
 
         public async Task<int> CreateUserAsync(UserCreateViewModel model)
         {
-            var user = new User
-            {
-                StaffCode = model.StaffCode,
-                Name = model.Name,
-                Email = model.Email
-            };
-
-            model.Password = _passwordHasher.HashPassword(user, model.Password);
+            model.Password = _passwordService.HashPassword(model.Password);
 
             SqlParameter[] parameters =
             {
@@ -50,21 +43,21 @@ namespace CKM_ManagementSystem.BL
 
             return await _bdl.ExecuteNonQueryWithErrorCodeAsync("sp_CreateUser", parameters);
         }
-        public async Task<IEnumerable<Department>> GetDepartmentsAsync()
+        public async Task<List<DepartmentDropdownViewModel>> GetDepartmentsAsync()
         {
             return await _bdl.ExecuteReaderAsync(
                 "sp_GetDepartmentDropdown",
-                reader => new Department
+                reader => new DepartmentDropdownViewModel
                 {
                     DepartmentCode = reader["Department_Code"]?.ToString() ?? string.Empty,
                     DepartmentName = reader["Department_Name"]?.ToString() ?? string.Empty
                 });
         }
-        public async Task<IEnumerable<UserRole>> GetUserRolesAsync()
+        public async Task<List<RoleDropdownViewModel>> GetUserRolesAsync()
         {
             return await _bdl.ExecuteReaderAsync(
                 "sp_GetRoleDropdown",
-                reader => new UserRole
+                reader => new RoleDropdownViewModel
                 {
                     RoleCode = reader["Role_Code"]?.ToString() ?? string.Empty,
                     RoleName = reader["Role_Name"]?.ToString() ?? string.Empty
