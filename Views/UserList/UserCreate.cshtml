@@ -71,9 +71,9 @@
                     <i class="bi bi-arrow-left"></i>
                 </a>
             } *@
-            <h2 class="text-center fw-bold mb-0 user-entry-title">
+            <h1 class="text-center fw-bold mb-0 user-entry-title">
                 @(Model.Mode == "Entry" ? "User Entry" : "User Update")
-            </h2>
+            </h1>
         </div>
         <form class="row g-4"
               method="post"
@@ -240,7 +240,7 @@
                             <div class="row align-items-center">
                                 <label asp-for="Password" class="col-sm-4 form-label fw-medium text-secondary mb-sm-0"></label>
                                 <div class="col-sm-8">
-                                    <input type="password" asp-for="Password" class="form-control rounded-3 py-2" placeholder="Generate temporary password">
+                                    <input type="password" asp-for="Password" class="form-control rounded-3 py-2" placeholder="Password">
                                     <span asp-validation-for="Password" class="text-danger small"></span>
                                 </div>
                             </div>
@@ -341,10 +341,10 @@
                                     I agree to the Terms of Service and Privacy Policy
                                 </label>
                             </div>
-                            <span asp-validation-for="AcceptTerms" class="text-danger small"></span>
+                            <span class="text-danger small" id="acceptTermsError"></span>
                         </div>
                     </div>
-
+                    <input asp-for="Mode" type="hidden" />
                 </div>
             </div>
             <div class="col-12 d-flex justify-content-end gap-3 mt-5 pt-3 border-top form-actions">

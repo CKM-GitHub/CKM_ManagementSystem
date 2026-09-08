@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using CKM_ManagementSystem.Models.Validation;
 
 namespace CKM_ManagementSystem.Models.ViewModels;
-public class UserCreateViewModel
+public class UserCreateViewModel  : IValidatableObject
 {
     public string Mode { get; set; } = "Entry";
 
@@ -23,46 +23,47 @@ public class UserCreateViewModel
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
-        if (Mode == "Entry")
+        if (!string.Equals(Mode, "Entry", StringComparison.OrdinalIgnoreCase))
         {
-            if (string.IsNullOrWhiteSpace(Password))
+            yield break;
+        }
+
+        if (string.IsNullOrWhiteSpace(Password))
+        {
+            yield return new ValidationResult(
+                "Password is required.",
+                new[] { nameof(Password) });
+        }
+        else
+        {
+            if (Password.Length < 8 || Password.Length > 15)
             {
                 yield return new ValidationResult(
-                    "Password is required",
+                    "Password must be between 8 and 15 characters.",
                     new[] { nameof(Password) });
             }
-            else
-            {
-                if (Password.Length < 8 || Password.Length > 15)
-                {
 
-                    yield return new ValidationResult(
-                    "Password must be between 8 and 15 characters",
-                    new[] { nameof(Password) });
-                }
-                if (!System.Text.RegularExpressions.Regex.IsMatch(Password,
+            if (!System.Text.RegularExpressions.Regex.IsMatch(
+                    Password,
                     @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$"))
-                {
-                    yield return new ValidationResult(
-                        "Password must contain at least one uppercase letter, one lowercase letter, and one number",
-                        new[] { nameof(Password) }
-                    );
-                }
-                if (string.IsNullOrWhiteSpace(ConfirmPassword))
-                {
-                    yield return new ValidationResult(
-                        "Confirm Password is required",
-                        new[] { nameof(ConfirmPassword) }
-                    );
-                }
-                else if (Password != ConfirmPassword)
-                {
-                    yield return new ValidationResult(
-                        "Password and Confirm Password do not match",
-                        new[] { nameof(ConfirmPassword) }
-                    );
-                }
+            {
+                yield return new ValidationResult(
+                    "Password must contain at least one uppercase letter, one lowercase letter, and one number.",
+                    new[] { nameof(Password) });
             }
+        }
+
+        if (string.IsNullOrWhiteSpace(ConfirmPassword))
+        {
+            yield return new ValidationResult(
+                "Confirm Password is required.",
+                new[] { nameof(ConfirmPassword) });
+        }
+        else if (!string.Equals(Password, ConfirmPassword, StringComparison.Ordinal))
+        {
+            yield return new ValidationResult(
+                "Password and Confirm Password do not match.",
+                new[] { nameof(ConfirmPassword) });
         }
     }
 
@@ -86,7 +87,6 @@ public class UserCreateViewModel
     [Display(Name = "Status")]
     public bool Status { get; set; } = true;
 
-    [Required(ErrorMessage = "You must agree to the Terms of Service and Privacy Policy")]
     [MustBeTrue(ErrorMessage = "You must agree to the Terms of Service and Privacy Policy")]
     [Display(Name = "Terms Agreement")]
     public bool AcceptTerms { get; set; }
@@ -108,6 +108,7 @@ public class RoleDropdownViewModel
     public string RoleCode { get; set; } = string.Empty;
     public string RoleName { get; set; } = string.Empty;
 }
+ 
 
 
 
