@@ -47,28 +47,23 @@ $(document).ready(function () {
     );
 
     function updateCharLimitMessage($input) {
-        if (!$input.attr('maxlength')) {
+
+        const maxLength = parseInt($input.attr('maxlength'), 10);
+
+        if (!maxLength) {
             return;
         }
-        const maxLength =
-            parseInt(
-                $input.attr('maxlength'),
-                10
-            );
-        const currentLength =$input.val().length;
-        const $limitMsg =$input.siblings('.char-limit-msg');
 
-        if (maxLength &&currentLength >= maxLength
-        ) {
-            $limitMsg.removeClass(
-                'd-none'
-            );
+        const currentLength = ($input.val() || '').length;
+        const $limitMsg = $input.siblings('.char-limit-msg');
+
+        if (currentLength >= maxLength) {
+            $limitMsg
+                .removeClass('d-none')
+                .text('Maximum ' + maxLength + ' characters limit reached.');
         }
         else {
-
-            $limitMsg.addClass(
-                'd-none'
-            );
+            $limitMsg.addClass('d-none');
         }
     }
 
@@ -206,19 +201,7 @@ $(document).ready(function () {
         revalidateDisplayOrder();
     });
     
-    $('.limit-input').on('input keyup', function () {
-        const $input = $(this);
-        const maxLen = parseInt($input.attr('maxlength')) || 100;
-        const currentLen = $input.val().length;
-        const $msg = $input.siblings('.char-limit-msg');
-        if (currentLen >= maxLen) {
-            $input.addClass('border-danger');
-            $msg.removeClass('d-none').text('Maximum ' + maxLen +' characters limit reached!');
-        } else {
-            $input.removeClass('border-danger');
-            $msg.addClass('d-none');
-        }
-    });
+   
 
     $displayOrder.on('input', function (e) {
         const $input = $(this);
