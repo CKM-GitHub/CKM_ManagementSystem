@@ -174,7 +174,6 @@ namespace CKM_ManagementSystem.Controllers
                 new { source = source }
             );
         }
-
         private async Task PopulateDropdownsAsync(
             string? selectedDept = null,
             string? selectedRole = null)
@@ -200,6 +199,27 @@ namespace CKM_ManagementSystem.Controllers
                     "RoleName",
                     selectedRole
                 );
+        }
+        private void CleanUpTempImages()
+        {
+            string tempFolder = Path.Combine(
+                _environment.WebRootPath,
+                "images",
+                "temp"
+                );
+
+            if (!Directory.Exists(tempFolder))
+                return;
+
+            DateTime expireTime = DateTime.UtcNow.AddMinutes(-30);
+
+            foreach (string file in Directory.GetFiles(tempFolder))
+            {
+                if (System.IO.File.GetLastWriteTime(file) < expireTime)
+                {
+                    System.IO.File.Delete(file);
+                }
+            }
         }
     }
 }
