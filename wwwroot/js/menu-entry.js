@@ -15,6 +15,7 @@ $(document).ready(function () {
     });
 
     toggleParentMenu();
+    truncateParentMenuOptions(35);
 
     if (typeof successMessage !== 'undefined' && successMessage !== '') {
         showSuccess(successMessage);
@@ -66,7 +67,18 @@ $(document).ready(function () {
             $limitMsg.addClass('d-none');
         }
     }
-
+    function truncateParentMenuOptions(maxChars = 35) {
+        if ($parentMenu.length > 0) {
+            $parentMenu.find('option').each(function () {
+                const $option = $(this);
+                const text = $option.text();
+                if (text.length > maxChars) {
+                    $option.attr('title', text);
+                    $option.text(text.substring(0, maxChars) + "...");
+                }
+            });
+        }
+    }
 
     $menuForm.find('input[maxlength]')
         .each(function () {
@@ -221,6 +233,19 @@ $(document).ready(function () {
             $msg.addClass('d-none');
         }
     });
+
+    /*
+    if ($parentMenuSelect.length > 0) {
+        $parentMenuSelect.find('option').each(function () {
+            const $option = $(this);
+            const maxCharas = 35;
+            if ($option.text().length > maxChars) {
+                $option.attr('title', $option.text());
+                $option.text($option.text().substring(0, maxChars) + "...");
+            }
+        });
+    }
+    */
     function focusAtEnd($input) {
         if (!$input || $input.length === 0) { return; }
         const element = $input[0];
@@ -231,6 +256,7 @@ $(document).ready(function () {
             element.selectionEnd = length;
         }
     }
+    
         $("#btnClear").click(function (e) {
             e.preventDefault();
 

@@ -55,9 +55,9 @@
                             </div>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-3" >
                             <label asp-for="ParentMenuId" class="form-label fw-semibold text-secondary small">Parent Menu</label>
-                            <select asp-for="ParentMenuId" asp-items="Model.ParentMenuList" class="form-select" id="ParentMenu" >
+                            <select asp-for="ParentMenuId" asp-items="Model.ParentMenuList" class="form-select"  id="ParentMenu">
                                 <option value="0">None (Root Level)</option>
                             </select>
                             <span asp-validation-for="ParentMenuId" class="text-danger small parent-menu-error"></span>

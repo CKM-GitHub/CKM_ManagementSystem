@@ -18,7 +18,7 @@ namespace CKM_ManagementSystem.Models.ViewModels
         public string ControllerName { get; set; } = string.Empty;
 
         [StringLength(50, ErrorMessage = "Icon Class cannot exceed 50 characters. ")]
-        [RegularExpression(@"^[a-zA-Z\s\-]+$", ErrorMessage = "Icon class can only contain letters, spaces, and hyphens.")]
+        [RegularExpression(@"^[a-zA-Z0-9\s\-_]+$", ErrorMessage = "Icon class can only contain letters, spaces, and hyphens.")]
         public string? IconClass { get; set; }
 
         [Required(ErrorMessage = "Display Order is required.")]

@@ -71,3 +71,27 @@
 .menu-center {
     padding: 70px;
 }
+
+.form-select {
+    width: 50% !important;
+    max-width: 50% !important;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+#ParentMenu {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+}
+
+    #ParentMenu option {
+        max-width: 100%;
+        font-size: 14px;
+    }
+
+.select-dropdown-wrapper{
+    width: 100%;
+    max-width: 100%;
+    overflow:hidden;
+}
