@@ -54,7 +54,7 @@
 
                 <div class="table-responsive permissions-table-wrapper border rounded">
                     <table class="table align-middle mb-0 permissions-table">
-                        <thead class="bg-light">
+                        <thead class="bg-light sticky-top">
                             <tr>
                                 <th style="padding-left: 1.5rem;" class="text-secondary small fw-bold">Menu Structure</th>
                                 <th class="text-end text-secondary small fw-bold" style="padding-right: 2.5rem; min-width: 260px;">Allowed Actions</th>
@@ -64,15 +64,15 @@
                             @if (Model?.MenuPermissions != null && Model.MenuPermissions.Count > 0)
                             {
                                 var rootMenus = Model.MenuPermissions
-                                .Where(m => !m.ParentId.HasValue || m.ParentId == 0)
-                                .ToList();
+                                    .Where(m => !m.ParentId.HasValue || m.ParentId == 0)
+                                    .ToList();
 
                                 foreach (var root in rootMenus)
                                 {
                                     int rootIndex = Model.MenuPermissions.IndexOf(root);
                                     var children = Model.MenuPermissions
-                                    .Where(m => m.ParentId == root.MenuId)
-                                    .ToList();
+                                        .Where(m => m.ParentId == root.MenuId)
+                                        .ToList();
 
                                     <tr class="parent-menu-row fw-bold table-light" data-menu-id="@root.MenuId" data-parent-id="0">
                                         <td style="padding-left: 1.5rem;">
@@ -207,7 +207,72 @@
                 return '';
             }
 
-            
+            // Read, Write, Delete checkbox dependency handler
+            $(document).on('change', '.chk-write, .chk-delete', function () {
+                if ($(this).is(':checked')) {
+                    $(this).closest('tr').find('.chk-read').prop('checked', true);
+                }
+            });
+
+            $(document).on('change', '.chk-read', function () {
+                if (!$(this).is(':checked')) {
+                    $(this).closest('tr').find('.chk-write, .chk-delete').prop('checked', false);
+                }
+            });
+
+            // Parent Menu Checkbox Cascade Handler
+            $(document).on('change', '.parent-menu-row input[type="checkbox"]', function () {
+                const $parentRow = $(this).closest('tr');
+                const parentId = $parentRow.data('menu-id');
+                const isChecked = $(this).is(':checked');
+                const actionClass = getActionClass($(this));
+                const $children = $(`tr.child-menu-row[data-parent-id="${parentId}"]`);
+
+                if (actionClass === '.chk-read') {
+                    if (isChecked) {
+                        $children.find('.chk-read').prop('checked', true);
+                    } else {
+                        $parentRow.find('.chk-write, .chk-delete').prop('checked', false);
+                        $children.find('input[type="checkbox"]').prop('checked', false);
+                    }
+                } else if (actionClass) {
+                    $children.find(actionClass).prop('checked', isChecked);
+                    if (isChecked) {
+                        $parentRow.find('.chk-read').prop('checked', true);
+                        $children.find('.chk-read').prop('checked', true);
+                    }
+                }
+            });
+
+            // Child Menu Checkbox Cascade Handler
+            $(document).on('change', '.child-menu-row input[type="checkbox"]', function () {
+                const $childRow = $(this).closest('tr');
+                const parentId = $childRow.data('parent-id');
+                const actionClass = getActionClass($(this));
+
+                if (actionClass) {
+                    const $totalChildren = $(`tr.child-menu-row[data-parent-id="${parentId}"]`);
+                    const $checkedChildren = $totalChildren.find(`${actionClass}:checked`);
+                    const $parentRow = $(`tr.parent-menu-row[data-menu-id="${parentId}"]`);
+
+                    if (actionClass === '.chk-read') {
+                        if ($(this).is(':checked')) {
+                            $parentRow.find('.chk-read').prop('checked', true);
+                        } else if ($checkedChildren.length === 0) {
+                            $parentRow.find('.chk-read').prop('checked', false);
+                        }
+                    } else {
+                        const allChecked = ($totalChildren.length === $checkedChildren.length && $totalChildren.length > 0);
+                        $parentRow.find(actionClass).prop('checked', allChecked);
+
+                        if ($(this).is(':checked')) {
+                            $childRow.find('.chk-read').prop('checked', true);
+                            $parentRow.find('.chk-read').prop('checked', true);
+                        }
+                    }
+                }
+            });
+
             $('#alertModal').on('hidden.bs.modal', function () {
                 if (pendingAction) {
                     pendingAction();
@@ -215,7 +280,7 @@
                 }
             });
 
-          
+            // Input Sanitization
             $('#RoleCode').on('input keyup paste change', function () {
                 var val = $(this).val();
                 var clean = val.replace(/[^a-zA-Z0-9_-]/g, '');
@@ -232,13 +297,12 @@
                 }
             });
 
-            
             $('#RoleCode, #DisplayName, #Description').on('input', function () {
                 var fieldId = $(this).attr('id');
                 $('[data-valmsg-for="' + fieldId + '"]').text('');
             });
 
-         
+            // Enter key navigation
             $('#roleForm input, #roleForm textarea').on('keydown', function (e) {
                 if (e.key === 'Enter' || e.keyCode === 13) {
                     if ($(this).is(':checkbox') || $(this).is(':radio')) return;
@@ -253,49 +317,7 @@
                 }
             });
 
-           
-            $(document).on('change', '.chk-write, .chk-delete', function () {
-                if ($(this).is(':checked')) {
-                    $(this).closest('td').find('.chk-read').prop('checked', true);
-                }
-            });
-
-            $(document).on('change', '.chk-read', function () {
-                if (!$(this).is(':checked')) {
-                    $(this).closest('td').find('.chk-write, .chk-delete').prop('checked', false);
-                }
-            });
-
-           
-            $(document).on('change', '.parent-menu-row input[type="checkbox"]', function () {
-                const $parentRow = $(this).closest('tr');
-                const parentId = $parentRow.data('menu-id');
-                const isChecked = $(this).is(':checked');
-                const actionClass = getActionClass($(this));
-
-                if (actionClass) {
-                    $(`tr.child-menu-row[data-parent-id="${parentId}"]`)
-                        .find(actionClass)
-                        .prop('checked', isChecked);
-                }
-            });
-
-            $(document).on('change', '.child-menu-row input[type="checkbox"]', function () {
-                const $childRow = $(this).closest('tr');
-                const parentId = $childRow.data('parent-id');
-                const actionClass = getActionClass($(this));
-
-                if (actionClass) {
-                    const $totalChildren = $(`tr.child-menu-row[data-parent-id="${parentId}"]`);
-                    const $checkedChildren = $totalChildren.find(`${actionClass}:checked`);
-                    const allChecked = ($totalChildren.length === $checkedChildren.length);
-
-                    $(`tr.parent-menu-row[data-menu-id="${parentId}"]`)
-                        .find(actionClass)
-                        .prop('checked', allChecked);
-                }
-            });
-
+            // Clear Button Handler
             $('#btnClear').on('click', function () {
                 const $form = $('#roleForm');
                 $form[0].reset();
@@ -309,7 +331,7 @@
                 }
             });
 
-          
+            // Form Submission
             $('#btnRegister').on('click', function (e) {
                 e.preventDefault();
                 executeSubmit();
@@ -339,7 +361,6 @@
                         if (response.success) {
                             const message = response.message || (isEditMode ? "Role updated successfully." : "Registration is complete.");
 
-                           
                             pendingAction = function () {
                                 if (response.isEdit || isEditMode) {
                                     window.location.href = response.redirectUrl || '@Url.Action("RoleList", "Role")';
