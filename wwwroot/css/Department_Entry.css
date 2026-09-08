@@ -1,12 +1,4 @@
-﻿:root {
-    --dark-blue: #14213F;
-    --white: #FFFFFF;
-    --primary-blue: #087DF1;
-    --gray: #7A838B;
-    --border-color: #C8C8C8;
-    --error-color: #DC3545;
-}
-
+﻿
 html,
 body {
     width: 100%;

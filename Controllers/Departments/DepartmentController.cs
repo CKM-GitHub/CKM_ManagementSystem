@@ -229,7 +229,7 @@ namespace CKM_ManagementSystem.Controllers.Departments
             TempData["SuccessMessage"] =
                 "Department updated successfully.";
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Edit), new {departmentCode=model.OriginalDepartmentCode});
         }
 
         [HttpPost]

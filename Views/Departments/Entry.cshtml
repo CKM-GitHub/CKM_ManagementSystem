@@ -35,6 +35,9 @@
           asp-append-version="true" />
 
     <link rel="stylesheet"
+          href="~/css/ckm-theme.css"
+          asp-append-version="true" />
+    <link rel="stylesheet"
           href="~/css/Department_Entry.css"
           asp-append-version="true" />
 
@@ -105,8 +108,8 @@
                     <label asp-for="Description"></label>
 
                     <textarea asp-for="Description"
-                              class="form-control description-box 
-                               maxlength="500">
+                              class="form-control description-box
+                              maxlength="500">
                     </textarea>
 
                     <span asp-validation-for="Description"
@@ -208,6 +211,9 @@
     </script>
 
     <partial name="_ValidationScriptsPartial" />
+    <link rel="stylesheet"
+          href="~/css/ckm-theme.css"
+          asp-append-version="true" />
 
     <script src="~/js/Department_Entry.js"
             asp-append-version="true">
