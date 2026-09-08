@@ -1,40 +1,59 @@
 ﻿.alert-modal-content {
     border: none;
-    border-radius: 8px;
+    border-radius: 12px;
+    padding: 10px;
+    background-color: #ffffff;
 }
 
 .alert-icon {
     width: 60px;
     height: 60px;
-    margin: 0 auto 15px;
+    margin: 10px auto 15px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid;
+    border: 2px solid transparent;
     border-radius: 50%;
     font-size: 30px;
 }
 
+/* Success Icon Style */
 .alert-success {
-    color: #72c96b;
+    color: #28a745;
+    border-color: #28a745;
+    background-color: #e8f5e9;
 }
 
+/* Error Icon Style */
 .alert-error {
-    color: #ff6666;
+    color: #dc3545;
+    border-color: #dc3545;
+    background-color: #f8d7da;
 }
 
+/* Delete Icon Style */
 .alert-delete {
-    color: #ff6666;
+    color: #dc3545;
+    border-color: #dc3545;
+    background-color: #f8d7da;
 }
 
+/* Title Style */
 .alert-title {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 700;
+    color: #212529 !important; /* စာသား အမည်းရောင် သေချာစေရန် */
+    margin-bottom: 8px;
+    display: block;
 }
 
+/* Message Style */
 .alert-message {
-    margin-bottom: 20px;
     font-size: 14px;
+    color: #6c757d !important; /* စာသား မီးခိုးရောင် သေချာစေရန် */
+    margin-bottom: 20px;
+    line-height: 1.5;
+    display: block;
 }
 
 #deleteButtons {
@@ -43,6 +62,6 @@
     gap: 10px;
 }
 
-#deleteButtons.d-none {
-    display: none !important;
-}
+    #deleteButtons.d-none {
+        display: none !important;
+    }

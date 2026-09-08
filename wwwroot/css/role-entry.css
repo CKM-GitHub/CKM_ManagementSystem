@@ -1,4 +1,4 @@
-﻿/* Base Body Setup */
+﻿
 body {
     background-color: #1e3a8a !important; /* Dark Blue Background */
     color: #ffffff !important; /* Pure White Text */
@@ -63,21 +63,40 @@ h2, h3, h4 {
     font-size: 12px !important;
 }
 
-/* Table Customization */
+/* Table Customization & Fixed Layout Setup */
 .permissions-table-wrapper {
     border: 1px solid #e2e8f0;
     border-radius: 8px;
     max-height: 380px;
-    overflow-y: auto;
+    overflow-y: auto !important;
+    overflow-x: hidden !important; /* Horizontal scrollbar မထွက်စေရန် */
 }
 
-.permissions-table thead th {
-    position: sticky;
-    top: 0;
-    background-color: #f1f5f9 !important; /* Light Off-White Table Header */
-    z-index: 2;
-    border-bottom: 1px solid #cbd5e1;
+.permissions-table {
+    width: 100% !important;
+    table-layout: fixed !important; /* Column width များကို ပုံသေအချိုးအစား ထိန်းပေးရန် */
+    margin-bottom: 0 !important;
 }
+
+    .permissions-table thead th {
+        position: sticky;
+        top: 0;
+        background-color: #f1f5f9 !important; /* Light Off-White Table Header */
+        z-index: 2;
+        border-bottom: 1px solid #cbd5e1;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+        /* Menu Structure Title Alignment */
+        .permissions-table thead th.col-menu-structure {
+            text-align: left !important;
+        }
+
+    .permissions-table td {
+        vertical-align: middle !important;
+        word-wrap: break-word;
+    }
 
 .parent-menu-row {
     background-color: #f8fafc !important; /* Soft Off-White Parent Row */
