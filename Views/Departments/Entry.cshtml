@@ -89,6 +89,7 @@
 
                     <input asp-for="DepartmentName"
                            class="form-control"
+                           maxlength="150"
                            autocomplete="off" />
 
                     <span asp-validation-for="DepartmentName"
@@ -103,7 +104,8 @@
                     <label asp-for="Description"></label>
 
                     <textarea asp-for="Description"
-                              class="form-control description-box">
+                              class="form-control description-box 
+                               maxlength="500">
                     </textarea>
 
                     <span asp-validation-for="Description"
@@ -212,4 +214,4 @@
 
 </body>
 
-</html>3
+</html>

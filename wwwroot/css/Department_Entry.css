@@ -97,12 +97,11 @@ body {
     min-height: 16px;
     margin-top: 4px;
     font-size: 12px;
+    line-height:18px;
     color: #dc3545;
 }
 
-    .validation-message:empty {
-        display: none;
-    }
+    
 
 .validation-summary {
     font-size: 12px;

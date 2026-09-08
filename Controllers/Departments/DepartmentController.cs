@@ -160,6 +160,28 @@ namespace CKM_ManagementSystem.Controllers.Departments
                 return View("Entry", model);
             }
 
+            DepartmentEntryViewModel? original =
+                _departmentBL.GetDepartmentByCode(
+                    model.OriginalDepartmentCode);
+            if (original == null)
+            {
+                TempData["ErrorMessage"] =
+                    "Department was not found.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            bool noChanges =
+                original.DepartmentName.Trim() == model.DepartmentName.Trim()
+            && (original.Description ?? "").Trim() == (model.Description ?? "").Trim()
+            && original.Status == model.Status;
+
+            if (noChanges)
+            {
+                ModelState.AddModelError(
+                    "","No changes were made");
+                return View("Entry", model);
+            }
+
             bool nameExists =
                 _departmentBL.IsDepartmentNameDuplicateForUpdate(
                     model.DepartmentName,

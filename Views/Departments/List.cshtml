@@ -12,21 +12,21 @@
     <meta charset="utf-8" />
 
     <meta name="viewport"
-          content="width=device-width, initial-scale=1.0" />
+    content="width=device-width, initial-scale=1.0" />
 
     <title>@ViewData["Title"]</title>
 
     <link rel="stylesheet"
-          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 
     <link rel="stylesheet"
-          href="~/css/DepartmentList.css"
-          asp-append-version="true" />
+    href="~/css/DepartmentList.css"
+    asp-append-version="true" />
     <link rel="stylesheet"
-          href="~/css/Alert_Modal.css"
-          asp-append-version="true" />
+    href="~/css/Alert_Modal.css"
+    asp-append-version="true" />
     <link rel="stylesheet"
-          href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
+    href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
 </head>
 
 <body>
@@ -38,39 +38,39 @@
         </h2>
 
         <form asp-controller="Departments"
-              asp-action="Index"
-              method="get"
-              class="search-section">
+        asp-action="Index"
+        method="get"
+        class="search-section">
 
             <div class="search-left">
 
                 <input type="text"
-                       name="searchText"
-                       value="@Model.SearchText"
-                       class="form-control search-input"
-                       placeholder="Search department by name or code" />
+                name="searchText"
+                value="@Model.SearchText"
+                class="form-control search-input"
+                placeholder="Search department by name or code" />
 
                 <select name="status"
-                        class="form-select status-select">
+                class="form-select status-select">
 
                     <option value="">
                         All Status
                     </option>
 
                     <option value="true"
-                            selected="@(Model.Status == true)">
+                    selected="@(Model.Status == true)">
                         Active
                     </option>
 
                     <option value="false"
-                            selected="@(Model.Status == false)">
+                    selected="@(Model.Status == false)">
                         Inactive
                     </option>
 
                 </select>
 
                 <button type="submit"
-                        class="btn-search">
+                class="btn-search">
                     Search Department
                 </button>
 
@@ -79,8 +79,8 @@
             <div class="search-right">
 
                 <a asp-controller="Departments"
-                   asp-action="Entry"
-                   class="btn-add">
+                asp-action="Entry"
+                class="btn-add">
                     + Add Department
                 </a>
 
@@ -116,7 +116,7 @@
                         {
                             <tr>
                                 <td colspan="6"
-                                    class="no-records">
+                                class="no-records">
                                     No departments found.
                                 </td>
                             </tr>
@@ -133,14 +133,31 @@
                                     </td>
 
                                     <td>
-                                        @department.DepartmentName
+                                        <span class="text-limit"
+                                        title="@department.DepartmentName">
+
+                                            @(department.DepartmentName.Length>30
+                                                    ?department.DepartmentName.Substring(0,30)+"..."
+                                                    :department.DepartmentName)
+
+                                        </span>
                                     </td>
 
                                     <td>
-                                        @(string.IsNullOrWhiteSpace(
-                                            department.Description)
-                                            ? "-"
-                                            : department.Description)
+                                        @if (string.IsNullOrWhiteSpace(department.Description))
+                                        {
+                                            <span>-</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-limit"
+                                                  title="@department.Description">
+                                               @(department.Description.Length>40
+                                               ?department.Description.Substring(0,40)+"..."
+                                               :department.Description)
+                                              
+                                            </span>
+                                        }
                                     </td>
 
                                     <td>
