@@ -46,11 +46,15 @@
 
             <div class="search-left">
 
-                <input type="text"
-                name="searchText"
-                value="@Model.SearchText"
-                class="form-control search-input"
-                placeholder="Search department by name or code" />
+                <div class="search-box">
+                    <input type="text"
+                           name="searchText"
+                           value="@Model.SearchText"
+                           class="form-control search-input"
+                           placeholder="Search department by name or code" />
+
+                    <i class="bi bi-search search-icon"></i>
+                </div>
 
                 <select name="status"
                 class="form-select status-select">

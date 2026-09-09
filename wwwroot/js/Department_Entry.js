@@ -81,18 +81,17 @@
         }
         const successMessage = document.getElementById("successMessage");
 
+        const departmentListUrl = document.getElementById("departmentListUrl");
+
+
         if (successMessage) {
-            showSuccess(successMessage.value);
-
-            const alertModal = document.getElementById("alertModal");
-
-            if (alertModal) {
-                alertModal.addEventListener(
-                    "hidden.bs.modal",
-                    function () {
-                        departmentCode.focus();
+            showSuccess(successMessage.value,
+                function () {
+                    if (departmentListUrl) {
+                        window.location.href = departmentListUrl.value;
                     }
+                }
                 );
-            }
+            
         }
     });

@@ -39,12 +39,21 @@
     modal.show();
 }
 /*Success function*/
-function showSuccess(message){
+function showSuccess(message , onOk){
     showAlert(
         "success",
         "Success!",
         message
     );
+    const okButton = document.querySelector("#normalButtons .btn");
+
+    if (okButton) {
+        okButton.onclick = function () {
+            if (typeof onOk === "function") {
+                onOk();
+            }
+        }
+    }
 }
 
 /*Error function*/
