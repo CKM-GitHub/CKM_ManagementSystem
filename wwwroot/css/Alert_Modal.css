@@ -46,3 +46,7 @@
 #deleteButtons.d-none {
     display: none !important;
 }
+    #deleteButtons .btn {
+        width: 110px;
+        height: 40px;
+    }

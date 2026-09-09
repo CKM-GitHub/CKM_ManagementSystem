@@ -1,8 +1,8 @@
 ﻿body {
-    background: #284A9F;
+    background: var(--dark-blue);
     font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
     font-size: 14px;
-    color: #333333;
+    color: var(--dark-blue);
 }
 .card {
     border-radius: 15px !important;
@@ -12,19 +12,19 @@
     padding-bottom: 2.5rem !important;
 }
 .card-header h2 {
-    color: #2c3e50;
+    color: var(--dark-blue);
     font-size: 32px !important;
     font-weight: bold !important;
 }
 
 .form-label {
-    color: #555555 !important;
+    color: var(--dark-blue) !important;
     font-size: 14px !important;
     font-weight: bold !important;
 }
 
 .form-control, .form-select {
-    border-color: #dcdcdc;
+    border-color: var(--border-color);
     padding: 0.55rem 0.75rem;
     font-size: 14px;
     border-radius: 6px;
@@ -32,13 +32,13 @@
 }
 
 .form-control:focus, .form-select:focus {
-    border-color: #2a5298;
+    border-color: var(--primary-blue);
     box-shadow: 0 0 0 0.25rem rgba(42, 82, 152, 0.15);
     font-size: 14px;
 }
 
 .form-select:disabled {
-    background-color: #e9ecef;
+    background-color: var(--light-gray);
     opacity: 0.8;
 }
 
@@ -47,17 +47,26 @@
     border-radius: 6px;
     border: none;
 }
-.btn-clear {
-    background-color: #5a6268;
-    color: #ffffff;
+.btn-register {
+    background-color: var(--primary-blue);
+    color: var(--white);
     border: none;
     padding: 0.6rem;
     border-radius: 6px;
 }
 
-.btn-clear:hover {
-    background-color: #6c757d;
-    color: #ffffff;
+.btn-register:hover {
+    color: var(--white);
+}
+
+.btn-clear{
+    background-color: var(--gray) !important;
+    color: var(--white) !important;
+    border: none !important;
+    padding: 0.6rem !important;
+    border-radius:6px !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
 .modal-dialog {
@@ -85,13 +94,25 @@
     min-width: 0 !important;
 }
 
-    #ParentMenu option {
-        max-width: 100%;
-        font-size: 14px;
-    }
+#ParentMenu option {
+    max-width: 100%;
+    font-size: 14px;
+}
 
 .select-dropdown-wrapper{
     width: 100%;
     max-width: 100%;
     overflow:hidden;
+}
+.input-validation-error, 
+input.border-danger,
+select.border-danger,
+textarea.border-danger{
+    border-color: var(--error-color, #DC3545) !important;
+}
+.input-validation-error:focus,
+input.border-danger:focus,
+select.border-danger:focus{
+    border-color: var(--error-color, #DC3545) !important;
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.15) !important;
 }
