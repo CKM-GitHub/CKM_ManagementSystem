@@ -1,13 +1,14 @@
-﻿/* Base Page & Backgrounds */
+﻿
+/* Base Page & Backgrounds */
 body {
-    background-color: #1e3a8a !important; /* Dark Blue Background */
-    color: #ffffff !important; /* Pure White Text */
+    background-color: var(--dark-blue) !important;
+    color: var(--white) !important;
     font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif !important;
 }
 
 /* Card Container (Background White) */
 .role-entry-card {
-    background-color: #ffffff !important;
+    background-color: var(--white) !important;
     border-radius: 12px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
     padding: 2.5rem;
@@ -19,7 +20,7 @@ body {
 .role-entry-title,
 .main-header,
 h1 {
-    color: #0f172a !important; /* Deep Dark Blue */
+    color: var(--dark-blue) !important;
     font-weight: 700 !important;
     font-size: 32px !important;
     text-align: center;
@@ -34,12 +35,12 @@ h1 {
 h2, h3, h4 {
     font-size: 16px !important;
     font-weight: 700 !important;
-    color: #1e293b !important; /* Dark Blue-Gray */
+    color: var(--dark-blue) !important;
 }
 
 /* Labels, Body Text & Controls - 14px */
 .form-label-custom {
-    color: #334155 !important; /* Dark Blue Label */
+    color: var(--dark-blue) !important;
     font-size: 14px !important;
     font-weight: 600 !important;
     margin-bottom: 0.4rem;
@@ -48,50 +49,54 @@ h2, h3, h4 {
 
 .form-control {
     font-size: 14px !important;
-    color: #0f172a !important;
-    background-color: #f8fafc !important; /* Slightly Off-White Input */
-    border: 1px solid #cbd5e1;
+    color: var(--dark-blue) !important;
+    background-color: var(--light-gray) !important;
+    border: 1px solid var(--border-color);
 }
 
     .form-control:focus {
-        border-color: #2563eb !important; /* Light/Bright Blue Focus Line */
-        box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.2) !important;
-        background-color: #ffffff !important;
+        border-color: var(--primary-blue) !important;
+        box-shadow: 0 0 0 0.2rem rgba(8, 125, 241, 0.2) !important;
+        background-color: var(--white) !important;
     }
 
 /* Sub-text / Validation Error - 12px */
 small,
-.field-validation-error,
 .form-text {
     font-size: 12px !important;
 }
 
+.field-validation-error {
+    color: var(--error-color) !important;
+    font-size: 12px !important;
+}
+
 .text-muted {
-    color: #64748b !important; /* Light Slate Blue-Gray */
+    color: var(--gray) !important;
     font-size: 12px !important;
 }
 
 /* Table Customization & Scrollbar Controls */
 .permissions-table-wrapper {
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     max-height: 380px;
-    overflow-y: auto; /* ဒေါင်လိုက် Scroll ပဲထားမည် */
-    overflow-x: hidden; /* ဘယ်ညာ Horizontal Scrollbar ကို အပြီးဖျောက်မည် */
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
     .permissions-table-wrapper table {
         width: 100% !important;
-        table-layout: fixed; /* Column Width မကျော်အောင် ထိန်းပေးသည် */
+        table-layout: fixed;
         margin-bottom: 0;
     }
 
         .permissions-table-wrapper table thead th {
             position: sticky;
             top: 0;
-            background-color: #f1f5f9 !important; /* Light Off-White Table Header */
+            background-color: var(--light-gray) !important;
             z-index: 2;
-            border-bottom: 1px solid #cbd5e1;
+            border-bottom: 1px solid var(--border-color);
         }
 
         /* Option A: Ellipsis Text Control for Table Cells */
@@ -120,53 +125,53 @@ small,
 
 .tree-icon {
     flex-shrink: 0;
-    color: #64748b !important; /* Light Slate Accent Icon */
+    color: var(--gray) !important;
 }
 
 .parent-menu-row {
-    background-color: #f8fafc !important; /* Soft Off-White Parent Row */
+    background-color: var(--light-gray) !important;
 }
 
 .child-menu-row td {
     font-size: 14px !important;
-    color: #334155 !important; /* Dark Slate Body Text */
+    color: var(--dark-blue) !important;
 }
 
 /* Custom Checkbox Alignment & Styling */
 .form-check-input {
     cursor: pointer;
-    border-color: #cbd5e1;
+    border-color: var(--border-color);
 }
 
     .form-check-input:checked {
-        background-color: #2563eb !important;
-        border-color: #2563eb !important;
+        background-color: var(--primary-blue) !important;
+        border-color: var(--primary-blue) !important;
     }
 
 /* Buttons */
 .btn-primary {
-    background-color: #2563eb !important; /* Bright Blue Primary Button */
-    border: 1px solid #2563eb !important;
-    color: #ffffff !important;
+    background-color: var(--primary-blue) !important;
+    border: 1px solid var(--primary-blue) !important;
+    color: var(--white) !important;
     font-size: 14px !important;
     font-weight: 600 !important;
     transition: background-color 0.2s ease;
 }
 
     .btn-primary:hover {
-        background-color: #1d4ed8 !important; /* Darker Blue on Hover */
-        border-color: #1d4ed8 !important;
+        background-color: var(--primary-blue-hover) !important;
+        border-color: var(--primary-blue-hover) !important;
     }
 
 .btn-outline-secondary {
-    border: 1px solid #64748b !important;
-    color: #475569 !important;
+    border: 1px solid var(--gray) !important;
+    color: var(--dark-blue) !important;
     font-size: 14px !important;
     font-weight: 600 !important;
     transition: all 0.2s ease;
 }
 
     .btn-outline-secondary:hover {
-        background-color: #64748b !important;
-        color: #ffffff !important;
+        background-color: var(--gray) !important;
+        color: var(--white) !important;
     }
