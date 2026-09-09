@@ -22,7 +22,7 @@ body {
     justify-content: center;
     padding: 40px 20px;
     box-sizing: border-box;
-    background: linear-gradient( 110deg, var(--dark-blue) 0%, #203D80 55%, #3159AD 100% );
+    background:var(--dark-blue);
 }
 
 /* Card */

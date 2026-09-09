@@ -16,7 +16,7 @@ body {
     width: 100%;
     min-height: 100vh;
     padding: 16px 24px 60px;
-    background: linear-gradient( 110deg, var(--dark-blue) 0%, #243F7D 48%, #4D87E8 100% );
+    background:var(--dark-blue);
 }
 
 .department-list-title {
