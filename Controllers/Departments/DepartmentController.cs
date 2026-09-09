@@ -1,5 +1,4 @@
-﻿using CKM_ManagementSystem.Services.Interfaces;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using CKM_ManagementSystem.BL;
 using CKM_ManagementSystem.Models.Entities;
 using CKM_ManagementSystem.Models.ViewModels.Departments;
