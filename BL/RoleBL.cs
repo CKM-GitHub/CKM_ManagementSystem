@@ -60,7 +60,24 @@ namespace CKM_ManagementSystem.BL
 
             if (result != null && result != DBNull.Value)
             {
-                return Convert.ToInt32(result) > 0;
+                return Convert.ToBoolean(result);
+            }
+
+            return false;
+        }
+
+        public bool IsRoleNameDuplicate(string roleName)
+        {
+            SqlParameter[] sqlprms =
+            {
+                new SqlParameter("@RoleCode", (object?)roleName ?? string.Empty)
+            };
+
+            object result = _bdl.ExecuteScalar("sp_CheckDuplicateRoleCode", sqlprms);
+
+            if (result != null && result != DBNull.Value)
+            {
+                return Convert.ToBoolean(result);
             }
 
             return false;
@@ -135,7 +152,6 @@ namespace CKM_ManagementSystem.BL
                 return dt ?? new DataTable();
             }
 
-            
             if (!dt.Columns.Contains("Level"))
             {
                 dt.Columns.Add("Level", typeof(int));
@@ -145,7 +161,6 @@ namespace CKM_ManagementSystem.BL
             DataTable sortedDt = dt.Clone();
             HashSet<int> addedMenuIds = new HashSet<int>();
 
-            
             var rootMenus = rowsList.Where(r => r["ParentId"] == DBNull.Value || Convert.ToInt32(r["ParentId"]) == 0)
                                     .OrderBy(r => GetDisplayOrder(r))
                                     .ToList();
@@ -155,7 +170,6 @@ namespace CKM_ManagementSystem.BL
                 AppendMenuAndChildren(root, rowsList, sortedDt, addedMenuIds, 0);
             }
 
-            
             var remainingMenus = rowsList.Where(r => !addedMenuIds.Contains(Convert.ToInt32(r["MenuId"]))).ToList();
             foreach (var rem in remainingMenus)
             {

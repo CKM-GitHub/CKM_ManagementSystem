@@ -59,7 +59,17 @@ namespace CKM_ManagementSystem.Controllers
                 return Json(new { success = false, message = "Please fill in all required fields properly." });
             }
 
-           
+            if (_roleBL.IsRoleCodeDuplicate(model.RoleCode))
+            {
+                return Json(new { success = false, message = $"Role Code '{model.RoleCode}' already exists." });
+            }
+
+            if (_roleBL.IsRoleNameDuplicate(model.DisplayName))
+            {
+                return Json(new { success = false, message = $"Role Name '{model.DisplayName}' already exists." });
+            }
+
+
             if (model.MenuPermissions != null && model.MenuPermissions.Count > 0)
             {
                 foreach (var perm in model.MenuPermissions)
@@ -87,8 +97,10 @@ namespace CKM_ManagementSystem.Controllers
                 CanDelete = p.CanDelete
             }).ToList() ?? new List<RolePermission>();
 
+            
             string result = _roleBL.Role_Insert(role, permissions);
 
+            
             if (string.Equals(result, "true", StringComparison.OrdinalIgnoreCase) ||
                 string.Equals(result, "SUCCESS", StringComparison.OrdinalIgnoreCase) ||
                 result.Contains("successfully", StringComparison.OrdinalIgnoreCase))
@@ -96,7 +108,7 @@ namespace CKM_ManagementSystem.Controllers
                 return Json(new { success = true, message = "Role saved successfully!" });
             }
 
-            return Json(new { success = false, message = result });
+            return Json(new { success = false, message = !string.IsNullOrEmpty(result) ? result : "Failed to save role into database." });
         }
 
         #region Private Mapping & Hierarchy Methods
@@ -144,7 +156,6 @@ namespace CKM_ManagementSystem.Controllers
 
             var sortedList = new List<RolePermissionViewModel>();
 
-            
             var rootMenus = rawList
                 .Where(m => !m.ParentId.HasValue || m.ParentId.Value == 0)
                 .OrderBy(m => m.MenuId)
@@ -155,7 +166,6 @@ namespace CKM_ManagementSystem.Controllers
                 AddMenuAndChildren(root, rawList, sortedList, 0);
             }
 
-           
             var addedIds = sortedList.Select(s => s.MenuId).ToHashSet();
             var orphanMenus = rawList.Where(m => !addedIds.Contains(m.MenuId)).ToList();
 
@@ -174,7 +184,6 @@ namespace CKM_ManagementSystem.Controllers
             currentMenu.Level = currentLevel;
             resultList.Add(currentMenu);
 
-            
             var children = rawList
                 .Where(m => m.ParentId.HasValue && m.ParentId.Value == currentMenu.MenuId)
                 .OrderBy(m => m.MenuId)

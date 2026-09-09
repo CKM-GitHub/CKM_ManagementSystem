@@ -28,8 +28,8 @@ h1 {
 }
 
 /* Subheaders & Table Headers - 16px Bold */
-.permissions-table thead th,
-.parent-menu-row,
+.permissions-table-wrapper table thead th,
+.parent-menu-title,
 .subheader,
 h2, h3, h4 {
     font-size: 16px !important;
@@ -43,6 +43,7 @@ h2, h3, h4 {
     font-size: 14px !important;
     font-weight: 600 !important;
     margin-bottom: 0.4rem;
+    display: inline-block;
 }
 
 .form-control {
@@ -70,20 +71,56 @@ small,
     font-size: 12px !important;
 }
 
-/* Table Customization */
+/* Table Customization & Scrollbar Controls */
 .permissions-table-wrapper {
     border: 1px solid #e2e8f0;
     border-radius: 8px;
     max-height: 380px;
-    overflow-y: auto;
+    overflow-y: auto; /* ဒေါင်လိုက် Scroll ပဲထားမည် */
+    overflow-x: hidden; /* ဘယ်ညာ Horizontal Scrollbar ကို အပြီးဖျောက်မည် */
 }
 
-.permissions-table thead th {
-    position: sticky;
-    top: 0;
-    background-color: #f1f5f9 !important; /* Light Off-White Table Header */
-    z-index: 2;
-    border-bottom: 1px solid #cbd5e1;
+    .permissions-table-wrapper table {
+        width: 100% !important;
+        table-layout: fixed; /* Column Width မကျော်အောင် ထိန်းပေးသည် */
+        margin-bottom: 0;
+    }
+
+        .permissions-table-wrapper table thead th {
+            position: sticky;
+            top: 0;
+            background-color: #f1f5f9 !important; /* Light Off-White Table Header */
+            z-index: 2;
+            border-bottom: 1px solid #cbd5e1;
+        }
+
+        /* Option A: Ellipsis Text Control for Table Cells */
+        .permissions-table-wrapper table td.menu-cell {
+            max-width: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+.menu-title-wrapper {
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.parent-menu-title,
+.child-menu-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.tree-icon {
+    flex-shrink: 0;
+    color: #64748b !important; /* Light Slate Accent Icon */
 }
 
 .parent-menu-row {
@@ -95,35 +132,41 @@ small,
     color: #334155 !important; /* Dark Slate Body Text */
 }
 
-.submenu-indent {
-    padding-left: 1.75rem !important;
-    color: #64748b !important; /* Light Blue Accent Icon/Text */
+/* Custom Checkbox Alignment & Styling */
+.form-check-input {
+    cursor: pointer;
+    border-color: #cbd5e1;
 }
 
+    .form-check-input:checked {
+        background-color: #2563eb !important;
+        border-color: #2563eb !important;
+    }
+
 /* Buttons */
-.btn-register {
+.btn-primary {
     background-color: #2563eb !important; /* Bright Blue Primary Button */
-    border: none;
+    border: 1px solid #2563eb !important;
     color: #ffffff !important;
     font-size: 14px !important;
     font-weight: 600 !important;
-    padding: 0.6rem 1rem;
     transition: background-color 0.2s ease;
 }
 
-    .btn-register:hover {
+    .btn-primary:hover {
         background-color: #1d4ed8 !important; /* Darker Blue on Hover */
+        border-color: #1d4ed8 !important;
     }
 
-.btn-clear {
-    background-color: #64748b !important; /* Slate Gray-Blue Secondary Button */
-    border: none;
-    color: #ffffff !important;
+.btn-outline-secondary {
+    border: 1px solid #64748b !important;
+    color: #475569 !important;
     font-size: 14px !important;
     font-weight: 600 !important;
-    padding: 0.6rem 1rem;
+    transition: all 0.2s ease;
 }
 
-    .btn-clear:hover {
-        background-color: #475569 !important;
+    .btn-outline-secondary:hover {
+        background-color: #64748b !important;
+        color: #ffffff !important;
     }
