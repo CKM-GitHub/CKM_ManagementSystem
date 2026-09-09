@@ -1,69 +1,55 @@
-﻿.menu-center {
-    max-width: 360px !important;
-    margin: 1.75rem auto !important;
-}
-
+﻿/* Alert Modal Main Container */
 .alert-modal-content {
-    border: none !important;
-    border-radius: 12px !important;
-    background-color: #ffffff !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
-    padding: 15px !important;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    background-color: var(--white, #ffffff);
 }
 
+/* Alert Icon Styling */
 .alert-icon {
     width: 60px;
     height: 60px;
-    margin: 10px auto 15px;
+    margin: 0 auto 15px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid transparent;
+    border: 2px solid currentColor;
     border-radius: 50%;
     font-size: 30px;
 }
 
-/* Success Icon Style */
 .alert-success {
-    color: #28a745 !important;
-    border-color: #28a745 !important;
-    background-color: #e8f5e9 !important;
+    color: #198754;
 }
 
-/* Error Icon Style */
 .alert-error {
-    color: #dc3545 !important;
-    border-color: #dc3545 !important;
-    background-color: #f8d7da !important;
+    color: #dc3545;
 }
 
-/* Delete Icon Style */
 .alert-delete {
-    color: #dc3545 !important;
-    border-color: #dc3545 !important;
-    background-color: #f8d7da !important;
+    color: #dc3545;
 }
 
-/* Title Style */
+/* Alert Title & Message */
 .alert-title {
-    font-size: 18px !important;
-    font-weight: 700 !important;
-    color: #212529 !important;
-    margin-top: 10px !important;
-    margin-bottom: 8px !important;
-    display: block !important;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--dark-blue, #1e293b);
+    text-align: center;
+    margin-bottom: 10px;
 }
 
-/* Message Style */
 .alert-message {
-    font-size: 14px !important;
-    color: #495057 !important;
-    margin-bottom: 20px !important;
-    line-height: 1.5 !important;
-    display: block !important;
-    word-break: break-word !important;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #4b5563;
+    text-align: center;
+    line-height: 1.5;
 }
 
+/* Delete Action Buttons */
 #deleteButtons {
     display: flex;
     justify-content: center;
@@ -72,4 +58,14 @@
 
     #deleteButtons.d-none {
         display: none !important;
+    }
+
+    #deleteButtons .btn {
+        width: 110px;
+        height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        border-radius: 6px;
     }

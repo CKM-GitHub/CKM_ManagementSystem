@@ -1,13 +1,13 @@
 ﻿body {
     background: var(--dark-blue);
     min-height: 100vh;
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
 }
 
 .page-title {
     color: var(--white);
     font-weight: 700;
-    font-size: 26px;
+    font-size: 32px; /* Main Header Size */
     text-align: center;
     margin-top: 20px;
     margin-bottom: 20px;
@@ -48,7 +48,7 @@
         border-radius: 6px;
         border: 1px solid var(--border-color);
         height: 38px;
-        font-size: 13px;
+        font-size: 14px; /* Body Text Size */
         color: var(--dark-blue);
     }
 
@@ -58,14 +58,14 @@
         top: 50%;
         transform: translateY(-50%);
         color: var(--gray);
-        font-size: 13px;
+        font-size: 14px;
     }
 
 .custom-select {
     border-radius: 6px;
     border: 1px solid var(--border-color);
     height: 38px;
-    font-size: 13px;
+    font-size: 14px; /* Body Text Size */
     width: 140px;
     color: var(--dark-blue);
 }
@@ -74,8 +74,8 @@
     background-color: var(--primary-blue);
     color: var(--white);
     border-radius: 6px;
-    font-weight: 600;
-    font-size: 13px;
+    font-weight: 700;
+    font-size: 16px; /* Subheader / Button Size */
     height: 38px;
     padding: 0 16px;
     border: none;
@@ -94,8 +94,8 @@
     background-color: var(--primary-blue);
     color: var(--white);
     border-radius: 6px;
-    font-weight: 600;
-    font-size: 13px;
+    font-weight: 700;
+    font-size: 16px; /* Subheader / Button Size */
     height: 38px;
     padding: 0 18px;
     border: none;
@@ -122,8 +122,8 @@
 
     .role-table th {
         color: var(--dark-blue);
-        font-weight: 600;
-        font-size: 13px;
+        font-weight: 700;
+        font-size: 16px; /* Subheader Size */
         padding: 14px 10px;
         border-bottom: 1px solid var(--light-gray);
         background-color: var(--white);
@@ -131,7 +131,7 @@
 
     .role-table td {
         color: var(--dark-blue);
-        font-size: 13px;
+        font-size: 14px; /* Body Text Size */
         padding: 16px 10px;
         border-bottom: 1px solid var(--light-gray);
         vertical-align: middle;
@@ -163,39 +163,40 @@
 
 .sort-icon {
     color: var(--border-color);
-    font-size: 11px;
+    font-size: 12px;
     margin-left: 3px;
 }
 
-/* Status Badges - Common Dimensions & Alignment */
+/* Status Badges - Fixed Dimensions & Strict Alignment */
 .badge-status-active,
 .badge-status-inactive {
-    padding: 5px 14px;
-    border-radius: 16px;
-    font-size: 12px;
+    width: 80px; /* Fixed Width ပေးထား၍ အရွယ်အစား လုံးဝညီပါမည် */
+    height: 28px; /* Height ညီစေရန် */
+    border-radius: 14px;
+    font-size: 13px;
     font-weight: 600;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 72px;
     text-align: center;
     box-sizing: border-box;
+    line-height: 1;
 }
 
 .badge-status-active {
-    background-color: rgba(25, 135, 84, 0.15);
-    color: var(--success-color);
+    background-color: rgba(25, 135, 84, 0.15); /* Green background */
+    color: #198754; /* Active text color (Green) */
 }
 
 .badge-status-inactive {
-    background-color: rgba(220, 53, 69, 0.15);
-    color: var(--error-color);
+    background-color: rgba(220, 53, 69, 0.15); /* Red background */
+    color: #dc3545; /* Inactive text color (Red) */
 }
 
 .action-icon-btn {
     background: transparent;
     border: none;
-    font-size: 15px;
+    font-size: 16px;
     padding: 2px 4px;
     cursor: pointer;
     text-decoration: none;
@@ -224,7 +225,7 @@
     align-items: center;
     padding-top: 18px;
     color: var(--gray);
-    font-size: 12px;
+    font-size: 14px; /* Body Text Size */
 }
 
 .pagination-wrapper {
@@ -234,8 +235,8 @@
 }
 
 .page-btn {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -243,7 +244,7 @@
     border: 1px solid var(--border-color);
     background-color: var(--white);
     color: var(--gray);
-    font-size: 12px;
+    font-size: 14px; /* Body Text Size */
     text-decoration: none;
 }
 
