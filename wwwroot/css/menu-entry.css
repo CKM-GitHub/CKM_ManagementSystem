@@ -73,20 +73,7 @@
 
 .btn-clear:hover,
 .btn-cancel:hover {
-    background-color: #6c757d !important;
-    color: var(--white) !important;
-}
-
-.btn-warning {
-    background-color: #ffc107 !important;
-    color: var(--white) !important;
-    padding: 0.6rem !important;
-    border-radius: 6px !important;
-    border: none !important;
-}
-
-.btn-warning:hover {
-    background-color: #e0a800 !important;
+    background-color: var(--gray) !important;
     color: var(--white) !important;
 }
 
