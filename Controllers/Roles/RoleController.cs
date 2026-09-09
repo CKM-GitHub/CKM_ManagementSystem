@@ -47,7 +47,7 @@ namespace CKM_ManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult SaveRole(RoleEntryViewModel model)
         {
-            // 1. Validation Checks
+            
             if (!string.IsNullOrWhiteSpace(model.RoleCode) && !Regex.IsMatch(model.RoleCode, @"^[a-zA-Z0-9_-]+$"))
             {
                 ModelState.AddModelError("RoleCode", "Role Code contains invalid characters. Only alphanumeric, underscore and hyphen are allowed.");
@@ -63,9 +63,19 @@ namespace CKM_ManagementSystem.Controllers
                 ModelState.AddModelError("RoleCode", $"Role Code '{model.RoleCode}' already exists.");
             }
 
-            if (_roleBL.IsRoleNameDuplicate(model.DisplayName))
+           
+            bool checkDuplicateName = true;
+            if (model.IsEdit)
             {
-                // Note: If updating, check logic in BL or handle accordingly if name isn't changed
+                var existingRole = _roleBL.GetRoleByCodeViewModel(model.RoleCode);
+                if (existingRole != null && string.Equals(existingRole.DisplayName, model.DisplayName, StringComparison.OrdinalIgnoreCase))
+                {
+                    checkDuplicateName = false;
+                }
+            }
+
+            if (checkDuplicateName && _roleBL.IsRoleNameDuplicate(model.DisplayName))
+            {
                 ModelState.AddModelError("DisplayName", $"Role Name '{model.DisplayName}' already exists.");
             }
 
@@ -78,7 +88,7 @@ namespace CKM_ManagementSystem.Controllers
                 return Json(new { success = false, errors = errors });
             }
 
-            // 2. Map Read permissions automatically if Write/Delete is checked
+            
             if (model.MenuPermissions != null && model.MenuPermissions.Count > 0)
             {
                 foreach (var perm in model.MenuPermissions)
@@ -90,7 +100,7 @@ namespace CKM_ManagementSystem.Controllers
                 }
             }
 
-            // 3. Save / Update Operations
+          
             try
             {
                 var roleEntity = new Roles
@@ -160,13 +170,13 @@ namespace CKM_ManagementSystem.Controllers
 
         #region Private Mapping & Hierarchy Methods
 
-        private List<RolePermissionViewModel> MapDataTableToMenuPermissionList(DataTable dt)
+        private List<MenuPermissionViewModel> MapDataTableToMenuPermissionList(DataTable dt)
         {
-            var list = new List<RolePermissionViewModel>();
+            var list = new List<MenuPermissionViewModel>();
             if (dt == null || dt.Rows.Count == 0) return list;
 
             string[] parentCols = { "ParentMenuId", "Parent_Menu_Id", "ParentId", "Parent_Id", "Parent_Menu_ID", "Parent_ID", "MenuParentId", "Menu_Parent_Id" };
-            string parentColName = parentCols.FirstOrDefault(col => dt.Columns.Contains(col));
+            string? parentColName = parentCols.FirstOrDefault(col => dt.Columns.Contains(col));
 
             foreach (DataRow row in dt.Rows)
             {
@@ -183,7 +193,7 @@ namespace CKM_ManagementSystem.Controllers
                 int menuId = Convert.ToInt32(GetColumnObject(row, "MenuId", "Menu_Id", "ID") ?? 0);
                 string menuName = GetColumnValue(row, "MenuName", "Menu_Name", "Name");
 
-                list.Add(new RolePermissionViewModel
+                list.Add(new MenuPermissionViewModel
                 {
                     MenuId = menuId,
                     MenuName = menuName,
@@ -197,11 +207,11 @@ namespace CKM_ManagementSystem.Controllers
             return list;
         }
 
-        private List<RolePermissionViewModel> SortMenuHierarchy(List<RolePermissionViewModel> rawList)
+        private List<MenuPermissionViewModel> SortMenuHierarchy(List<MenuPermissionViewModel> rawList)
         {
-            if (rawList == null || !rawList.Any()) return new List<RolePermissionViewModel>();
+            if (rawList == null || !rawList.Any()) return new List<MenuPermissionViewModel>();
 
-            var sortedList = new List<RolePermissionViewModel>();
+            var sortedList = new List<MenuPermissionViewModel>();
 
             var rootMenus = rawList
                 .Where(m => !m.ParentId.HasValue || m.ParentId.Value == 0)
@@ -226,7 +236,7 @@ namespace CKM_ManagementSystem.Controllers
             return sortedList;
         }
 
-        private void AppendMenuAndChildren(RolePermissionViewModel currentMenu, List<RolePermissionViewModel> rawList, List<RolePermissionViewModel> resultList, int currentLevel)
+        private void AppendMenuAndChildren(MenuPermissionViewModel currentMenu, List<MenuPermissionViewModel> rawList, List<MenuPermissionViewModel> resultList, int currentLevel)
         {
             currentMenu.Level = currentLevel;
             resultList.Add(currentMenu);

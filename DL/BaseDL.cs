@@ -57,7 +57,7 @@ namespace CKM_ManagementSystem.DL
             }
         }
 
-        public int ExecuteScalar(
+        public object? ExecuteScalar(
             string storedProcedureName,
             params SqlParameter[] parameters)
         {
@@ -77,9 +77,7 @@ namespace CKM_ManagementSystem.DL
                 command.Parameters.AddRange(parameters);
             }
 
-            object? result = command.ExecuteScalar();
-
-            return Convert.ToInt32(result);
+            return command.ExecuteScalar();
         }
 
         public DataTable SelectData(
@@ -108,19 +106,17 @@ namespace CKM_ManagementSystem.DL
             return dt;
         }
 
-        private static void ChangeToDBNull(
-            SqlParameter[] parameters)
+        private static void ChangeToDBNull(SqlParameter[] parameters)
         {
             foreach (SqlParameter parameter in parameters)
             {
-                
                 if (parameter.SqlDbType == SqlDbType.Structured)
                 {
                     continue;
                 }
 
                 if (parameter.Value == null ||
-                    string.IsNullOrWhiteSpace(parameter.Value.ToString()))
+                    (parameter.Value is string strValue && string.IsNullOrWhiteSpace(strValue)))
                 {
                     parameter.Value = DBNull.Value;
                 }

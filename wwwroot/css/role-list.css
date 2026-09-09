@@ -1,11 +1,11 @@
 ﻿body {
-    background: #1e40af;
+    background: var(--dark-blue);
     min-height: 100vh;
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
 .page-title {
-    color: #ffffff;
+    color: var(--white);
     font-weight: 700;
     font-size: 26px;
     text-align: center;
@@ -15,7 +15,7 @@
 }
 
 .custom-card {
-    background-color: #ffffff;
+    background-color: var(--white);
     border-radius: 12px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
     padding: 18px 24px;
@@ -46,10 +46,10 @@
     .search-input-group .form-control {
         padding-right: 32px;
         border-radius: 6px;
-        border: 1px solid #d1d5db;
+        border: 1px solid var(--border-color);
         height: 38px;
         font-size: 13px;
-        color: #374151;
+        color: var(--dark-blue);
     }
 
     .search-input-group .search-icon {
@@ -57,22 +57,22 @@
         right: 10px;
         top: 50%;
         transform: translateY(-50%);
-        color: #9ca3af;
+        color: var(--gray);
         font-size: 13px;
     }
 
 .custom-select {
     border-radius: 6px;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--border-color);
     height: 38px;
     font-size: 13px;
     width: 140px;
-    color: #374151;
+    color: var(--dark-blue);
 }
 
 .btn-search-menu {
-    background-color: #2563eb;
-    color: #ffffff;
+    background-color: var(--primary-blue);
+    color: var(--white);
     border-radius: 6px;
     font-weight: 600;
     font-size: 13px;
@@ -86,13 +86,13 @@
 }
 
     .btn-search-menu:hover {
-        background-color: #1d4ed8;
-        color: #ffffff;
+        background-color: var(--primary-blue-hover);
+        color: var(--white);
     }
 
 .btn-add-role {
-    background-color: #2563eb;
-    color: #ffffff;
+    background-color: var(--primary-blue);
+    color: var(--white);
     border-radius: 6px;
     font-weight: 600;
     font-size: 13px;
@@ -107,8 +107,8 @@
 }
 
     .btn-add-role:hover {
-        background-color: #1d4ed8;
-        color: #ffffff;
+        background-color: var(--primary-blue-hover);
+        color: var(--white);
     }
 
 /* Table Style & Fixed Layout */
@@ -121,19 +121,19 @@
 }
 
     .role-table th {
-        color: #374151;
+        color: var(--dark-blue);
         font-weight: 600;
         font-size: 13px;
         padding: 14px 10px;
-        border-bottom: 1px solid #f3f4f6;
-        background-color: #ffffff;
+        border-bottom: 1px solid var(--light-gray);
+        background-color: var(--white);
     }
 
     .role-table td {
-        color: #1f2937;
+        color: var(--dark-blue);
         font-size: 13px;
         padding: 16px 10px;
-        border-bottom: 1px solid #f3f4f6;
+        border-bottom: 1px solid var(--light-gray);
         vertical-align: middle;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -141,10 +141,9 @@
     }
 
     .role-table tbody tr:hover {
-        background-color: #f9fafb;
+        background-color: var(--light-gray);
     }
 
-/* စာသားအရှည်များကို Ellipsis (...) လုပ်ပေးသည့် Class */
 .cell-truncate {
     white-space: nowrap;
     overflow: hidden;
@@ -154,30 +153,43 @@
     vertical-align: middle;
 }
 
+.desc-truncate {
+    max-width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+}
+
 .sort-icon {
-    color: #d1d5db;
+    color: var(--border-color);
     font-size: 11px;
     margin-left: 3px;
 }
 
-.badge-status-active {
-    background-color: #dcfce7;
-    color: #16a34a;
-    padding: 4px 14px;
+/* Status Badges - Common Dimensions & Alignment */
+.badge-status-active,
+.badge-status-inactive {
+    padding: 5px 14px;
     border-radius: 16px;
     font-size: 12px;
     font-weight: 600;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 72px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.badge-status-active {
+    background-color: rgba(25, 135, 84, 0.15);
+    color: var(--success-color);
 }
 
 .badge-status-inactive {
-    background-color: #f3f4f6;
-    color: #6b7280;
-    padding: 4px 14px;
-    border-radius: 16px;
-    font-size: 12px;
-    font-weight: 600;
-    display: inline-block;
+    background-color: rgba(220, 53, 69, 0.15);
+    color: var(--error-color);
 }
 
 .action-icon-btn {
@@ -190,20 +202,20 @@
 }
 
 .action-edit {
-    color: #3b82f6;
+    color: var(--primary-blue);
 }
 
     .action-edit:hover {
-        color: #1d4ed8;
+        color: var(--primary-blue-hover);
     }
 
 .action-delete {
-    color: #ef4444;
+    color: var(--error-color);
     margin-left: 4px;
 }
 
     .action-delete:hover {
-        color: #b91c1c;
+        opacity: 0.8;
     }
 
 .table-footer {
@@ -211,7 +223,7 @@
     justify-content: space-between;
     align-items: center;
     padding-top: 18px;
-    color: #6b7280;
+    color: var(--gray);
     font-size: 12px;
 }
 
@@ -228,29 +240,22 @@
     align-items: center;
     justify-content: center;
     border-radius: 4px;
-    border: 1px solid #e5e7eb;
-    background-color: #ffffff;
-    color: #6b7280;
+    border: 1px solid var(--border-color);
+    background-color: var(--white);
+    color: var(--gray);
     font-size: 12px;
     text-decoration: none;
 }
 
     .page-btn.active {
-        background-color: #2563eb;
-        color: #ffffff;
-        border-color: #2563eb;
+        background-color: var(--primary-blue);
+        color: var(--white);
+        border-color: var(--primary-blue);
         font-weight: 600;
     }
 
     .page-btn.disabled {
-        color: #d1d5db;
+        color: var(--border-color);
         cursor: not-allowed;
-        background-color: #f9fafb;
+        background-color: var(--light-gray);
     }
-.desc-truncate {
-    max-width: 250px; 
-    white-space: nowrap; 
-    overflow: hidden; 
-    text-overflow: ellipsis;
-    display: block;
-}

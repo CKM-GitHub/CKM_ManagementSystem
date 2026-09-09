@@ -60,26 +60,32 @@ namespace CKM_ManagementSystem.BL
 
         public bool IsRoleCodeDuplicate(string roleCode)
         {
-            SqlParameter[] sqlprms = { new SqlParameter("@RoleCode", (object?)roleCode ?? string.Empty) };
-            var scalarResult = _bdl.ExecuteScalar("sp_CheckDuplicateRoleCode", sqlprms);
-
-            if (scalarResult != null && scalarResult != DBNull.Value)
+            SqlParameter[] sqlprms =
             {
-                return Convert.ToBoolean(scalarResult);
-            }
-            return false;
+                new SqlParameter("@RoleCode", SqlDbType.NVarChar, 100)
+                {
+                    Value = string.IsNullOrWhiteSpace(roleCode) ? DBNull.Value : roleCode
+                }
+            };
+
+            object? scalarResult = _bdl.ExecuteScalar("sp_CheckDuplicateRoleCode", sqlprms);
+
+            return ParseBooleanResult(scalarResult);
         }
 
         public bool IsRoleNameDuplicate(string roleName)
         {
-            SqlParameter[] sqlprms = { new SqlParameter("@RoleName", (object?)roleName ?? string.Empty) };
-            var scalarResult = _bdl.ExecuteScalar("sp_CheckDuplicateRoleName", sqlprms);
-
-            if (scalarResult != null && scalarResult != DBNull.Value)
+            SqlParameter[] sqlprms =
             {
-                return Convert.ToBoolean(scalarResult);
-            }
-            return false;
+                new SqlParameter("@RoleCode", SqlDbType.NVarChar, 100)
+                {
+                    Value = string.IsNullOrWhiteSpace(roleName) ? DBNull.Value : roleName
+                }
+            };
+
+            object? scalarResult = _bdl.ExecuteScalar("sp_CheckDuplicateRoleCode", sqlprms);
+
+            return ParseBooleanResult(scalarResult);
         }
 
         public DataTable GetRoleByCode(string roleCode)
@@ -101,11 +107,15 @@ namespace CKM_ManagementSystem.BL
             {
                 foreach (DataRow row in dtRolePerms.Rows)
                 {
-                    int menuId = Convert.ToInt32(row["MenuId"] ?? 0);
-                    bool canRead = dtRolePerms.Columns.Contains("CanRead") && Convert.ToBoolean(row["CanRead"]);
-                    bool canWrite = dtRolePerms.Columns.Contains("CanWrite") && Convert.ToBoolean(row["CanWrite"]);
-                    bool canDelete = dtRolePerms.Columns.Contains("CanDelete") && Convert.ToBoolean(row["CanDelete"]);
-                    permDict[menuId] = (canRead, canWrite, canDelete);
+                    int menuId = row["MenuId"] != DBNull.Value ? Convert.ToInt32(row["MenuId"]) : 0;
+                    bool canRead = dtRolePerms.Columns.Contains("CanRead") && row["CanRead"] != DBNull.Value && Convert.ToBoolean(row["CanRead"]);
+                    bool canWrite = dtRolePerms.Columns.Contains("CanWrite") && row["CanWrite"] != DBNull.Value && Convert.ToBoolean(row["CanWrite"]);
+                    bool canDelete = dtRolePerms.Columns.Contains("CanDelete") && row["CanDelete"] != DBNull.Value && Convert.ToBoolean(row["CanDelete"]);
+
+                    if (menuId > 0)
+                    {
+                        permDict[menuId] = (canRead, canWrite, canDelete);
+                    }
                 }
             }
 
@@ -115,7 +125,7 @@ namespace CKM_ManagementSystem.BL
 
             foreach (DataRow row in dtAllMenus.Rows)
             {
-                int menuId = Convert.ToInt32(row["MenuId"] ?? 0);
+                int menuId = row["MenuId"] != DBNull.Value ? Convert.ToInt32(row["MenuId"]) : 0;
                 if (permDict.TryGetValue(menuId, out var p))
                 {
                     row["CanRead"] = p.Read;
@@ -152,7 +162,7 @@ namespace CKM_ManagementSystem.BL
             DataTable sortedDt = dt.Clone();
             HashSet<int> addedMenuIds = new HashSet<int>();
 
-            var rootMenus = rowsList.Where(r => r["ParentId"] == DBNull.Value || Convert.ToInt32(r["ParentId"]) == 0)
+            var rootMenus = rowsList.Where(r => r["ParentId"] == DBNull.Value || (r["ParentId"] != DBNull.Value && Convert.ToInt32(r["ParentId"]) == 0))
                                     .OrderBy(r => GetDisplayOrder(r))
                                     .ToList();
 
@@ -325,6 +335,17 @@ namespace CKM_ManagementSystem.BL
         #endregion
 
         #region Private Helpers
+
+        private static bool ParseBooleanResult(object? scalarResult)
+        {
+            if (scalarResult != null && scalarResult != DBNull.Value)
+            {
+                if (scalarResult is bool b) return b;
+                if (int.TryParse(scalarResult.ToString(), out int val)) return val > 0;
+                return scalarResult.ToString()!.Equals("true", StringComparison.OrdinalIgnoreCase);
+            }
+            return false;
+        }
 
         private static bool ParseStatus(object? statusObj)
         {
