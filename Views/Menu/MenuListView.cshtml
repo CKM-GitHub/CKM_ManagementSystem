@@ -19,7 +19,7 @@
                                 placeholder="Search by Menu Name" value="@Model.SearchTerm" />
                     </div>
                     <div class="select-box-wrapper">
-                        <select name="selectedParentId" asp-for="SelectedParentId" class="form-select toolbar-input" asp-items="Model.ParentMenuList">
+                        <select name="selectedParentId" asp-for="SelectedParentId" id="ParentMenu" class="form-select toolbar-input" asp-items="Model.ParentMenuList">
                             <option value=""> All Menus </option>
                         </select>
                         <i class="bi bi-chevron-down select-icon"></i>
@@ -173,5 +173,6 @@
 @section Styles {
     <link rel="stylesheet" href="~/css/menu-management.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/Alert_Modal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/ckm-theme.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 }

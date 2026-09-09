@@ -6,6 +6,7 @@
     const $typeParent = $('#typeParent');
     const $statusActive = $('#statusActive');
     toggleParentMenu();
+    truncateParentMenuOptions(35);
     //$.validator.setDefaults(showError(errorMessage));
     const validator = $menuForm.validate();
     validator.settings.onfocusout = false;
@@ -15,6 +16,7 @@
     $menuForm.on('input change', 'input, select, textarea',
         function () {
             const $input = $(this);
+           
             if (
                 $input.hasClass('input-validation-error') ||
                 $input.siblings('[data-valmsg-for="' + $input.attr('name') + '"]'
@@ -32,6 +34,17 @@
             }
             e.preventDefault();
             const $currentInput = $(this);
+            if ($currentInput.is('#DisplayOrder')) {
+                const val = $currentInput.val();
+                const $msg = $currentInput.siblings('.char-limit-msg');
+
+                if (val !== '' && !/^\d+$/.test(val)) {
+                    $currentInput.addClass('border-danger');
+                    $msg.removeClass('d-none').text('Please enter numbers only (0-9)!');
+                    focusAtEnd($currentInput);
+                    return false;
+                }
+            }
             const isCurrentValid = validator.element($currentInput);
             if (!isCurrentValid) {
                 focusAtEnd($currentInput);
@@ -108,7 +121,7 @@
         const maxLength = parseInt($input.attr('maxlength'), 10);
         const currentLength = $input.val().length;
         const $limitMsg = $input.siblings('.char-limit-msg');
-        if (maxLength && currentLength >= maxLength) {
+        if (maxLength && currentLength > maxLength) {
             $limitMsg.removeClass('d-none');
         } else {
             $limitMsg.addClass('d-none');
@@ -121,6 +134,18 @@
         .each(function () {
             updateCharLimitMessage($(this));
         });
+    function truncateParentMenuOptions(maxChars = 35) {
+        if ($parentMenu.length > 0) {
+            $parentMenu.find('option').each(function () {
+                const $option = $(this);
+                const text = $option.text();
+                if (text.length > maxChars) {
+                    $option.attr('title', text);
+                    $option.text(text.substring(0, maxChars) + "...");
+                }
+            });
+        }
+    }
 
     if (typeof errorMessage !== 'undefined' && errorMessage !== '') {
         setTimeout(function () {
@@ -152,7 +177,35 @@
                 }
             }, 300);
     }
-   
+    $displayOrder.on('input keyup change', function (e) {
+        const $input = $(this);
+        const val = $input.val();
+        const $msg = $input.siblings('.char-limit-msg');
+        
+        if (val === '') {
+            $input.removeClass('border-danger');
+            $msg.addClass('d-none');
+            return;
+        }
+        if (val !== '' && !/^\d+$/.test(val)) {
+            $input.addClass('border-danger');
+            $msg.removeClass('d-none').text('Please enter numbers only (0-9)!');
+            return;
+        }
+        if (val.length > 3) {
+            val = val.substring(0, 3);
+            $input.val(val);
+            $input.addClass('border-danger');
+            $msg.removeClass('d-none').text('Display Order cannot exceed 3 digits!');
+        }
+        else {
+            $input.removeClass('border-danger');
+            $msg.addClass('d-none');
+        }
+        if (typeof validator !== 'undefined') {
+            validator.element($input);
+        }
+    });
     function focusAtEnd($input) {
         if (!$input || $input.length === 0) return;
         const element = $input[0];
@@ -198,7 +251,7 @@
     }
     $("#btnClear").click(function (e) {
         e.preventDefault();
-        $menuForm.find('input[type="text"], input[type="number"], textarea').val('');
+        $menuForm.find('input:not([type="radio"]):not([type="checkbox"]):not([type="hidden"]), textarea').val('');
         $menuForm.find('select').prop('selectedIndex', 0);
         $typeParent.prop('checked', true);
         $statusActive.prop('checked', true);
@@ -207,7 +260,7 @@
             .removeClass('field-validation-error')
             .addClass('field-validation-valid')
             .empty();
-        $menuForm.find('.input-validation-error').removeClass('input-validation-error');
+        $menuForm.find('.input-validation-error, .border-danger').removeClass('input-validation-error border-danger');
         $menuForm.find('.char-limit-msg').addClass('d-none');
         $menuForm.find('input, select, textarea').removeData('has-focused-empty');
         $('.alert, .alert-danger, [asp-validation-summary], .validation-summary-errors')

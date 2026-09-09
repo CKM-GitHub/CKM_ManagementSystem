@@ -1,4 +1,7 @@
 ﻿$(document).ready(function () {
+    const $parentMenu = $('#ParentMenu');
+    truncateParentMenuOptions();
+
     function setFocusToSearch() {
         const $searchInput = $('#searchTermInput');
         if ($searchInput.length) {
@@ -9,6 +12,18 @@
                     $searchInput[0].setSelectionRange(strLength, strLength);
                 }
             }, 100)
+        }
+    }
+    function truncateParentMenuOptions(maxChars = 35) {
+        if ($parentMenu.length > 0) {
+            $parentMenu.find('option').each(function () {
+                const $option = $(this);
+                const text = $option.text();
+                if (text.length > maxChars) {
+                    $option.attr('title', text);
+                    $option.text(text.substring(0, maxChars) + "...");
+                }
+            });
         }
     }
     setFocusToSearch();

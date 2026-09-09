@@ -13,9 +13,9 @@
         <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
             <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
                 <div class="card-header bg-white border-0 pt-4 pb-2 text-center">
-                    <h4 class="fw-bold text-dark mb-0">
+                    <h2 class="fw-bold text-dark mb-0">
                         @(Model?.MenuID.HasValue == true && Model.MenuID > 0 ? "Menu Edit" : "Menu Entry")
-                    </h4>
+                    </h2>
                 </div>
                 <div class="menu-page-shell p-4">
                     <partial name="AlertModal" />
@@ -74,7 +74,7 @@
                         </div>
                         <div class="mb-3">
                             <label asp-for="DisplayOrder" class="form-label fw-semibold text-secondary small">Display Order</label>
-                            <input asp-for="DisplayOrder" type="text" id="DisplayOrder" class="form-control" placeholder="e.g. , 000 - 999" />
+                            <input asp-for="DisplayOrder" type="text" id="DisplayOrder" class="form-control" placeholder="e.g. , 000 - 999" maxlength="3" />
                             <span asp-validation-for="DisplayOrder" class="text-danger small"></span>
                         </div>
                         <div class="row mb-3 d-flex align-items-center">
@@ -103,7 +103,7 @@
                                 }
                             </div>
                             <div class="col-6">
-                                <button type="submit" id="btnRegister" class="btn @(isEdit ? "btn-warning" : "btn-success") w-100 fw-bold">
+                                <button type="submit" id="btnRegister" class="btn @(isEdit ? "btn-warning" : "btn-register") w-100 fw-bold">
                                     @(isEdit ? "Update" : "Register")
                                 </button>
                             </div>
@@ -129,4 +129,5 @@
 @section Styles {
     <link rel="stylesheet" href="~/css/menu-entry.css" />
     <link rel="stylesheet" href="~/css/Alert_Modal.css" />
+    <link rel="stylesheet" href="~/css/ckm-theme.css" asp-append-version="true" />
 }
