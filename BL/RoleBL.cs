@@ -58,6 +58,30 @@ namespace CKM_ManagementSystem.BL
             return _bdl.SelectData("sp_GetRoleList");
         }
 
+        public bool IsRoleCodeDuplicate(string roleCode)
+        {
+            SqlParameter[] sqlprms = { new SqlParameter("@RoleCode", (object?)roleCode ?? string.Empty) };
+            var scalarResult = _bdl.ExecuteScalar("sp_CheckDuplicateRoleCode", sqlprms);
+
+            if (scalarResult != null && scalarResult != DBNull.Value)
+            {
+                return Convert.ToBoolean(scalarResult);
+            }
+            return false;
+        }
+
+        public bool IsRoleNameDuplicate(string roleName)
+        {
+            SqlParameter[] sqlprms = { new SqlParameter("@RoleName", (object?)roleName ?? string.Empty) };
+            var scalarResult = _bdl.ExecuteScalar("sp_CheckDuplicateRoleName", sqlprms);
+
+            if (scalarResult != null && scalarResult != DBNull.Value)
+            {
+                return Convert.ToBoolean(scalarResult);
+            }
+            return false;
+        }
+
         public DataTable GetRoleByCode(string roleCode)
         {
             SqlParameter[] sqlprms = { new SqlParameter("@RoleCode", (object?)roleCode ?? string.Empty) };
@@ -145,14 +169,6 @@ namespace CKM_ManagementSystem.BL
             }
 
             return sortedDt;
-        }
-
-        public bool IsRoleCodeDuplicate(string roleCode)
-        {
-            SqlParameter[] sqlprms = { new SqlParameter("@RoleCode", (object?)roleCode ?? string.Empty) };
-            var scalarResult = _bdl.ExecuteScalar("sp_CheckDuplicateRoleCode", sqlprms);
-            int result = scalarResult != null ? Convert.ToInt32(scalarResult) : 0;
-            return result > 0;
         }
 
         #endregion

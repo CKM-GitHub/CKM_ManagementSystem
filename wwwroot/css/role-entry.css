@@ -1,13 +1,13 @@
-﻿
+﻿/* Base Page & Backgrounds */
 body {
-    background-color: #1e3a8a !important; /* Dark Blue Background */
-    color: #ffffff !important; /* Pure White Text */
+    background-color: var(--dark-blue) !important;
+    color: var(--white) !important;
     font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif !important;
 }
 
 /* Card Container */
 .role-entry-card {
-    background-color: #ffffff !important;
+    background-color: var(--white) !important;
     border-radius: 12px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
     padding: 2.5rem;
@@ -19,7 +19,7 @@ body {
 .role-entry-title,
 .main-header,
 h1 {
-    color: #0f172a !important; /* Deep Dark Blue */
+    color: var(--dark-blue) !important;
     font-weight: 700 !important;
     font-size: 32px !important;
     text-align: center;
@@ -28,116 +28,156 @@ h1 {
 }
 
 /* Subheaders & Table Headers - 16px Bold */
-.permissions-table thead th,
-.parent-menu-row,
+.permissions-table-wrapper table thead th,
+.parent-menu-title,
 .subheader,
 h2, h3, h4 {
     font-size: 16px !important;
     font-weight: 700 !important;
-    color: #1e293b !important; /* Dark Blue-Gray */
+    color: var(--dark-blue) !important;
 }
 
 /* Form Controls & Labels - 14px */
 .form-label-custom {
-    color: #334155 !important; /* Dark Blue Label */
+    color: var(--dark-blue) !important;
     font-size: 14px !important;
     font-weight: 600 !important;
     margin-bottom: 0.4rem;
+    display: inline-block;
 }
 
 .form-control {
     font-size: 14px !important;
-    color: #0f172a !important;
-    background-color: #f8fafc !important; /* Slightly Off-White Input */
-    border: 1px solid #cbd5e1;
+    color: var(--dark-blue) !important;
+    background-color: var(--light-gray) !important;
+    border: 1px solid var(--border-color);
 }
 
     .form-control:focus {
-        border-color: #2563eb !important; /* Light/Bright Blue Focus Line */
-        box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.2) !important;
-        background-color: #ffffff !important;
+        border-color: var(--primary-blue) !important;
+        box-shadow: 0 0 0 0.2rem rgba(8, 125, 241, 0.2) !important;
+        background-color: var(--white) !important;
     }
 
 .text-muted {
-    color: #64748b !important; /* Light Slate Blue-Gray */
+    color: var(--gray) !important;
     font-size: 12px !important;
 }
 
 /* Table Customization & Fixed Layout Setup */
 .permissions-table-wrapper {
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     max-height: 380px;
     overflow-y: auto !important;
-    overflow-x: hidden !important; /* Horizontal scrollbar မထွက်စေရန် */
+    overflow-x: hidden !important;
 }
 
-.permissions-table {
-    width: 100% !important;
-    table-layout: fixed !important; /* Column width များကို ပုံသေအချိုးအစား ထိန်းပေးရန် */
-    margin-bottom: 0 !important;
-}
-
-    .permissions-table thead th {
-        position: sticky;
-        top: 0;
-        background-color: #f1f5f9 !important; /* Light Off-White Table Header */
-        z-index: 2;
-        border-bottom: 1px solid #cbd5e1;
-        text-align: center;
-        vertical-align: middle;
+    .permissions-table-wrapper table,
+    .permissions-table {
+        width: 100% !important;
+        table-layout: fixed !important;
+        margin-bottom: 0 !important;
     }
 
-        /* Menu Structure Title Alignment */
-        .permissions-table thead th.col-menu-structure {
-            text-align: left !important;
+        .permissions-table-wrapper table thead th,
+        .permissions-table thead th {
+            position: sticky;
+            top: 0;
+            background-color: #f1f5f9 !important;
+            z-index: 2;
+            border-bottom: 1px solid #cbd5e1;
+            text-align: center;
+            vertical-align: middle;
         }
 
-    .permissions-table td {
-        vertical-align: middle !important;
-        word-wrap: break-word;
-    }
+            .permissions-table thead th.col-menu-structure {
+                text-align: left !important;
+            }
+
+        .permissions-table td {
+            vertical-align: middle !important;
+            word-wrap: break-word;
+        }
+
+        .permissions-table-wrapper table td.menu-cell {
+            max-width: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+/* Menu Text Overflow & Tree Alignment */
+.menu-title-wrapper {
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.parent-menu-title,
+.child-menu-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.tree-icon {
+    flex-shrink: 0;
+    color: var(--gray) !important;
+}
 
 .parent-menu-row {
-    background-color: #f8fafc !important; /* Soft Off-White Parent Row */
+    background-color: #f8fafc !important;
     font-weight: 700;
 }
 
 .child-menu-row td {
     font-size: 14px !important;
-    color: #334155 !important; /* Dark Slate Body Text */
+    color: var(--dark-blue) !important;
 }
 
-.submenu-indent {
-    padding-left: 1.75rem !important;
-    color: #64748b !important; /* Light Blue Accent Icon/Text */
+/* Custom Checkbox Alignment & Styling */
+.form-check-input {
+    cursor: pointer;
+    border-color: var(--border-color);
 }
 
-/* Buttons Styling */
-.btn-register {
-    background-color: #2563eb !important; /* Bright Blue Primary Button */
-    border: none;
-    color: #ffffff !important;
-    font-size: 14px !important;
-    font-weight: 600 !important;
-    padding: 0.6rem 1rem;
-    transition: background-color 0.2s ease;
-}
-
-    .btn-register:hover {
-        background-color: #1d4ed8 !important; /* Darker Blue on Hover */
+    .form-check-input:checked {
+        background-color: var(--primary-blue) !important;
+        border-color: var(--primary-blue) !important;
     }
 
-.btn-clear {
-    background-color: #64748b !important; /* Slate Gray-Blue Secondary Button */
-    border: none;
+/* Buttons Styling */
+.btn-primary,
+.btn-register {
+    background-color: #2563eb !important;
+    border: 1px solid #2563eb !important;
     color: #ffffff !important;
     font-size: 14px !important;
     font-weight: 600 !important;
-    padding: 0.6rem 1rem;
     transition: background-color 0.2s ease;
 }
 
+    .btn-primary:hover,
+    .btn-register:hover {
+        background-color: var(--primary-blue-hover, #1d4ed8) !important;
+        border-color: var(--primary-blue-hover, #1d4ed8) !important;
+    }
+
+.btn-outline-secondary,
+.btn-clear {
+    border: 1px solid var(--gray, #64748b) !important;
+    color: var(--dark-blue, #1e293b) !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    padding: 0.6rem 1rem;
+    transition: all 0.2s ease;
+}
+
+    .btn-outline-secondary:hover,
     .btn-clear:hover {
         background-color: #475569 !important;
         color: #ffffff !important;

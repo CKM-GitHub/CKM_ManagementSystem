@@ -7,6 +7,7 @@
 @section Styles {
     <link rel="stylesheet" href="~/css/role-entry.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/Alert_Modal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/ckm-theme.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 }
 
@@ -66,16 +67,17 @@
                             @if (Model?.MenuPermissions != null && Model.MenuPermissions.Count > 0)
                             {
                                 var rootMenus = Model.MenuPermissions
-                                .Where(m => !m.ParentId.HasValue || m.ParentId == 0)
-                                .ToList();
+                                    .Where(m => !m.ParentId.HasValue || m.ParentId == 0)
+                                    .ToList();
 
                                 foreach (var root in rootMenus)
                                 {
                                     int rootIndex = Model.MenuPermissions.IndexOf(root);
                                     var children = Model.MenuPermissions
-                                    .Where(m => m.ParentId == root.MenuId)
-                                    .ToList();
+                                        .Where(m => m.ParentId == root.MenuId)
+                                        .ToList();
 
+                                    <!-- Parent Row -->
                                     <tr class="parent-menu-row fw-bold table-light" data-menu-id="@root.MenuId" data-parent-id="0">
                                         <td style="padding-left: 1.5rem;">
                                             <input type="hidden" name="MenuPermissions[@rootIndex].MenuId" value="@root.MenuId" />
@@ -97,6 +99,7 @@
                                         </td>
                                     </tr>
 
+                                    <!-- Child Rows -->
                                     for (int c = 0; c < children.Count; c++)
                                     {
                                         var child = children[c];
@@ -174,18 +177,18 @@
     <script>
         $(document).ready(function () {
             const isEditMode = @Html.Raw(Json.Serialize(isEditMode));
-            let initialFormData = '';
+            let initialFormData = $('#roleForm').serialize();
             let pendingAction = null;
 
             if (!isEditMode) {
                 $('#RoleCode').focus();
-            } else {
-                initialFormData = $('#roleForm').serialize();
             }
 
             function clearValidationErrors() {
                 $('span.text-danger').text('');
                 $('#generalError').text('');
+                $('#roleForm').find('.field-validation-error').empty().addClass('field-validation-valid').removeClass('field-validation-error');
+                $('#roleForm').find('.input-validation-error').removeClass('input-validation-error');
             }
 
             function getActionClass($checkbox) {
@@ -195,7 +198,7 @@
                 return '';
             }
 
-           
+            // Checkbox Hierarchy Logic
             $(document).on('change', '.chk-write, .chk-delete', function () {
                 if ($(this).is(':checked')) {
                     $(this).closest('tr').find('.chk-read').prop('checked', true);
@@ -208,7 +211,6 @@
                 }
             });
 
-            
             $(document).on('change', '.parent-menu-row input[type="checkbox"]', function () {
                 const $parentRow = $(this).closest('tr');
                 const parentId = $parentRow.data('menu-id');
@@ -232,7 +234,6 @@
                 }
             });
 
-            
             $(document).on('change', '.child-menu-row input[type="checkbox"]', function () {
                 const $childRow = $(this).closest('tr');
                 const parentId = $childRow.data('parent-id');
@@ -261,6 +262,57 @@
                 }
             });
 
+            // Input Validation and Filtering
+            $(document).on('input keyup paste', '#RoleCode', function () {
+                const $this = $(this);
+                $('#valRoleCode').text(''); 
+                setTimeout(function () {
+                    const cleanValue = $this.val().replace(/[^a-zA-Z0-9_-]/g, '');
+                    $this.val(cleanValue);
+                }, 0);
+            });
+
+            $(document).on('input keyup paste', '#DisplayName, #Description', function () {
+                const $this = $(this);
+                const fieldId = $this.attr('id');
+                $(`[data-valmsg-for="${fieldId}"]`).text('');
+                setTimeout(function () {
+                    const cleanValue = $this.val().replace(/[<>'";&]/g, '');
+                    $this.val(cleanValue);
+                }, 0);
+            });
+
+            // Enter Key Navigation
+            $('#roleForm').on('keydown', 'input, textarea', function (e) {
+                if (e.key === 'Enter' || e.keyCode === 13) {
+                    if ($(this).is('button, :submit, :checkbox, :radio')) return;
+
+                    e.preventDefault();
+                    const id = $(this).attr('id');
+
+                    if (id === 'RoleCode') {
+                        $('#DisplayName').focus();
+                    } else if (id === 'DisplayName') {
+                        $('#Description').focus();
+                    } else if (id === 'Description') {
+                        $('#statusActive').focus();
+                    }
+                }
+            });
+
+            // Clear Button Action
+            $('#btnClear').on('click', function () {
+                clearValidationErrors();
+                if (!isEditMode) {
+                    $('#RoleCode').val('').focus();
+                }
+                $('#DisplayName').val('');
+                $('#Description').val('');
+                $('#statusActive').prop('checked', true);
+                $('.permissions-table input[type="checkbox"]').prop('checked', false);
+            });
+
+            // Alert Modal Closed Event
             $('#alertModal').on('hidden.bs.modal', function () {
                 if (pendingAction) {
                     pendingAction();
@@ -268,58 +320,7 @@
                 }
             });
 
-            
-            $('#RoleCode').on('input keyup paste change', function () {
-                var val = $(this).val();
-                var clean = val.replace(/[^a-zA-Z0-9_-]/g, '');
-                if (val !== clean) {
-                    $(this).val(clean);
-                }
-            });
-
-            $('#DisplayName, #Description').on('input keyup paste change', function () {
-                var val = $(this).val();
-                var clean = val.replace(/[<>'";&]/g, '');
-                if (val !== clean) {
-                    $(this).val(clean);
-                }
-            });
-
-            $('#RoleCode, #DisplayName, #Description').on('input', function () {
-                var fieldId = $(this).attr('id');
-                $('[data-valmsg-for="' + fieldId + '"]').text('');
-            });
-
-           
-            $('#roleForm input, #roleForm textarea').on('keydown', function (e) {
-                if (e.key === 'Enter' || e.keyCode === 13) {
-                    if ($(this).is(':checkbox') || $(this).is(':radio')) return;
-
-                    e.preventDefault();
-                    const inputs = $(this).closest('form').find('input:enabled:not([readonly]), textarea:enabled:not([readonly])');
-                    const index = inputs.index(this);
-
-                    if (index >= 0 && index < inputs.length - 1) {
-                        inputs.eq(index + 1).focus();
-                    }
-                }
-            });
-
-            
-            $('#btnClear').on('click', function () {
-                const $form = $('#roleForm');
-                $form[0].reset();
-                clearValidationErrors();
-                $('#statusActive').prop('checked', true);
-                $('.permissions-table input[type="checkbox"]').prop('checked', false);
-                if (!isEditMode) {
-                    $('#RoleCode').focus();
-                } else {
-                    $('#DisplayName').focus();
-                }
-            });
-
-            
+            // Submit Button Click Handler
             $('#btnRegister').on('click', function (e) {
                 e.preventDefault();
                 executeSubmit();

@@ -1,0 +1,11 @@
+﻿:root {
+    --dark-blue: #14213F;
+    --white: #FFFFFF;
+    --primary-blue: #087DF1;
+    --primary-blue-hover: #0667C9;
+    --gray: #7A838B;
+    --error-color: #DC3545;
+    --success-color: #198754;
+    --border-color: #C8C8C8;
+    --light-gray: #F4F6F8;
+}
