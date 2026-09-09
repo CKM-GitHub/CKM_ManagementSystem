@@ -10,5 +10,6 @@ namespace CKM_ManagementSystem.Models.Validation
                 ? ValidationResult.Success
                 : new ValidationResult(ErrorMessage ?? "This Field must be checked bro.");
         }
+
     }
 }

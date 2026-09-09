@@ -62,7 +62,7 @@ namespace CKM_ManagementSystem.Controllers
             var result = await _userListBL.DeleteUserAsync(staffCode);
             if (result.ErrorCode == 0)
             {
-                return RedirectToAction("UserList");
+                TempData["SuccessMessage"] = "User deleted successfully.";
             }
             else
             {
@@ -110,28 +110,36 @@ namespace CKM_ManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UserUpdate(UserCreateViewModel model)
         {
-            model.Mode = "Update";            
+            model.Mode = "Update";
 
-            if (model.ImageFile != null) 
-            { 
-                string tempFolder = Path.Combine(_environment.WebRootPath, "images","temp");
+            if (model.ImageFile != null)
+            {
+                string tempFolder = Path.Combine(
+                    _environment.WebRootPath,
+                    "images",
+                    "temp");
+
                 Directory.CreateDirectory(tempFolder);
 
-                string tempFileName = $"{Guid.NewGuid()}{Path.GetExtension(model.ImageFile.FileName)}";
-                string tempFilePath = Path.Combine(tempFolder, tempFileName);
+                string tempFileName =
+                    $"{Guid.NewGuid()}{Path.GetExtension(model.ImageFile.FileName)}";
 
-                using var stream = new FileStream(tempFilePath, FileMode.Create);
+                string tempFilePath = Path.Combine(
+                    tempFolder,
+                    tempFileName);
+
+                await using var stream = new FileStream(
+                    tempFilePath,
+                    FileMode.Create);
+
                 await model.ImageFile.CopyToAsync(stream);
 
                 model.TempImageName = tempFileName;
+
+                model.ImageUrl = $"/images/users/{tempFileName}";
+
                 ModelState.Remove(nameof(model.ImageFile));
-
-                model.ImageUrl = "/images/users/{tempFileName}";
-            }
-
-            if(!string.IsNullOrEmpty(model.TempImageName))
-            {
-                model.ImageUrl = "/images/users/" + model.TempImageName;
+                ModelState.Remove(nameof(model.ImageUrl));
             }
 
             if (!ModelState.IsValid)
@@ -148,7 +156,7 @@ namespace CKM_ManagementSystem.Controllers
                 if (!string.IsNullOrEmpty(model.TempImageName))
                 {
                     string tempFolder = Path.Combine(_environment.WebRootPath, "images", "temp");
-                    string userFolder = Path.Combine(_environment.WebRootPath, "images");
+                    string userFolder = Path.Combine(_environment.WebRootPath, "images", "users");
                     Directory.CreateDirectory(userFolder);
 
                     string tempFilePath = Path.Combine(tempFolder, model.TempImageName);

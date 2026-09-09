@@ -4,24 +4,61 @@
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/UserCreate.js" asp-append-version="true"></script>
+    <script src="~/js/Alert_Modal.js" asp-append-version="true"></script>
     <partial name="AlertModal" />
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<link rel="stylesheet" href="~/css/UserCreate.css"/>
+<link rel="stylesheet" href="~/css/Alert_Modal.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/UserCreate.css" />
 
 <div class="container d-flex justify-content-center align-items-center min-vh-100 py-5">
     <div class="card border-0 rounded-4 shadow p-5 bg-white w-100 user-entry-card">
+        @*
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-body text-center">
+                            <div class="mb-3">
+                                <i class="bi bi-check-circle-fill text-success"
+                                   style="font-size: 50px;"></i>
+                            </div>
+                            <p class="mb-0">
+                                @TempData["SuccessMessage"]
+                            </p>
+                        </div>
+                        <div class="modal-footer border-0 justify-content-center">
+                            @if (Model.Mode == "Entry")
+                            {
+                                <a class="btn btn-success px-4"
+                                   asp-controller="UserCreate"
+                                   asp-action="UserCreate">
+                                    OK
+                                </a>
+                            }
+                            else
+                            {
+                                <a class="btn btn-success px-4"
+                                   asp-controller="UserList"
+                                   asp-action="UserList">
+                                    OK
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        } *@
         @if (TempData["SuccessMessage"] is string successMessage)
         {
-            var redirectUrl = Model.Mode == "Entry"
-            ? Url.Action("UserCreate", "UserCreate")
-            : Url.Action("UserList", "UserList");
+            var redirectUrl = Url.Action("UserList", "UserList");
 
             <input type="hidden" id="successMessage" value="@successMessage" />
             <input type="hidden" id="redirectUrl" value="@redirectUrl" />
         }
-     
+
         <div class="d-flex align-items-center justify-content-center position-relative mb-5">
             @*
             @if (Model.Mode == "Entry")
@@ -30,9 +67,9 @@
                     <i class="bi bi-arrow-left"></i>
                 </a>
             } *@
-            <h2 class="text-center fw-bold mb-0 user-entry-title">
+            <h1 class="text-center fw-bold mb-0 user-entry-title">
                 @(Model.Mode == "Entry" ? "User Entry" : "User Update")
-            </h2>
+            </h1>
         </div>
         <form class="row g-4"
               method="post"
@@ -153,7 +190,7 @@
 
                     <span asp-validation-for="ImageFile"
                           class="text-danger small"></span>
-                }            
+                }
             </div>
             <div class="col-md-8 ps-md-4">
                 <div class="row g-3">
@@ -161,7 +198,7 @@
                         <div class="row align-items-center">
                             <label asp-for="StaffCode" class="col-sm-4 col-form-label fw-medium text-secondary"></label>
                             @if (Model.Mode == "Entry")
-                            {                               
+                            {
                                 <div class="col-sm-8">
                                     <input type="text" asp-for="StaffCode" class="form-control rounded-3 py-2" placeholder="e.g. CKM-0001" autofocus>
                                     <span asp-validation-for="StaffCode" class="text-danger small"></span>
@@ -171,8 +208,8 @@
                             {
                                 <div class="col-sm-8">
                                     <input type="text" asp-for="StaffCode" class="form-control rounded-3 py-2" readonly>
-                                </div>                                
-                            }                         
+                                </div>
+                            }
                         </div>
                     </div>
                     <div class="col-12">
@@ -199,7 +236,7 @@
                             <div class="row align-items-center">
                                 <label asp-for="Password" class="col-sm-4 form-label fw-medium text-secondary mb-sm-0"></label>
                                 <div class="col-sm-8">
-                                    <input type="password" asp-for="Password" class="form-control rounded-3 py-2" placeholder="Generate temporary password">
+                                    <input type="password" asp-for="Password" class="form-control rounded-3 py-2" placeholder="Password">
                                     <span asp-validation-for="Password" class="text-danger small"></span>
                                 </div>
                             </div>
@@ -298,12 +335,12 @@
                                 <input class="form-check-input rounded-1 terms-checkbox mt-1" type="checkbox" asp-for="AcceptTerms">
                                 <label class="form-check-label text-secondary small ms-2" for="AcceptTerms">
                                     I agree to the Terms of Service and Privacy Policy
-                                </label>                             
+                                </label>
                             </div>
                             <span class="text-danger small" id="acceptTermsError"></span>
                         </div>
                     </div>
-
+                    <input asp-for="Mode" type="hidden" />
                 </div>
             </div>
             <div class="col-12 d-flex justify-content-end gap-3 mt-5 pt-3 border-top form-actions">
@@ -316,7 +353,7 @@
                 {
                     <a asp-action="UserList" asp-controller="UserList" class="btn btn-light px-4 py-2 rounded-3 fw-medium text-secondary border cancel-btn">Cancel</a>
                     <button type="submit" class="btn btn-primary px-4 py-2 rounded-3 fw-medium create-btn">Update</button>
-                }            
+                }
             </div>
         </form>
     </div>

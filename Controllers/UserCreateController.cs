@@ -28,7 +28,7 @@ namespace CKM_ManagementSystem.Controllers
                                             : new UserCreateViewModel();
 
             if(model == null)
-            {
+        {          
                 return NotFound();
             }
 
@@ -209,6 +209,27 @@ namespace CKM_ManagementSystem.Controllers
                     "RoleName",
                     selectedRole
                 );
+        }
+        private void CleanUpTempImages()
+        {
+            string tempFolder = Path.Combine(
+                _environment.WebRootPath,
+                "images",
+                "temp"
+                );
+
+            if (!Directory.Exists(tempFolder))
+                return;
+
+            DateTime expireTime = DateTime.UtcNow.AddMinutes(-30);
+
+            foreach (string file in Directory.GetFiles(tempFolder))
+            {
+                if (System.IO.File.GetLastWriteTime(file) < expireTime)
+                {
+                    System.IO.File.Delete(file);
+                }
+            }
         }
     }
 }

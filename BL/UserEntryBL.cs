@@ -17,9 +17,10 @@ namespace CKM_ManagementSystem.BL
             _bdl = baseDL;
             _passwordService = passwordService;
         }
+
         public async Task<int> CreateUserAsync(UserCreateViewModel model)
-        {            
-            model.Password = _passwordService.HashPassword( model.Password);
+        {
+            model.Password = _passwordService.HashPassword(model.Password);
 
             SqlParameter[] parameters =
             {
@@ -45,39 +46,24 @@ namespace CKM_ManagementSystem.BL
         }
         public async Task<List<DepartmentDropdownViewModel>> GetDepartmentsAsync()
         {
-            DataTable table = _bdl.SelectDataTable(
-                "sp_GetDepartmentDropdown");
-
-            var departments = new List<DepartmentDropdownViewModel>();
-
-            foreach (DataRow row in table.Rows)
-            {
-                departments.Add(
-                     new DepartmentDropdownViewModel
-                     {
-                         DepartmentCode = row["Department_Code"]?.ToString() ?? string.Empty,
-                         DepartmentName = row["Department_Name"]?.ToString() ?? string.Empty
-                     });
-            } 
-            return await Task.FromResult(departments);
+            return await _bdl.ExecuteReaderAsync(
+                "sp_GetDepartmentDropdown",
+                reader => new DepartmentDropdownViewModel
+                {
+                    DepartmentCode = reader["Department_Code"]?.ToString() ?? string.Empty,
+                    DepartmentName = reader["Department_Name"]?.ToString() ?? string.Empty
+                });
         }
-        public async Task<IEnumerable<RoleDropdownViewModel>> GetUserRolesAsync()
+        public async Task<List<RoleDropdownViewModel>> GetUserRolesAsync()
         {
-            DataTable table = _bdl.SelectDataTable(
-                "sp_GetRoleDropdown");
-
-            var roles = new List<RoleDropdownViewModel>();
-
-            foreach (DataRow row in table.Rows)
-            {
-                roles.Add(
-                     new RoleDropdownViewModel
-                     {
-                         RoleCode = row["Role_Code"]?.ToString() ?? string.Empty,
-                         RoleName = row["Role_Name"]?.ToString() ?? string.Empty
-                     });
-            }
-            return await Task.FromResult(roles);
+            return await _bdl.ExecuteReaderAsync(
+                "sp_GetRoleDropdown",
+                reader => new RoleDropdownViewModel
+                {
+                    RoleCode = reader["Role_Code"]?.ToString() ?? string.Empty,
+                    RoleName = reader["Role_Name"]?.ToString() ?? string.Empty
+                });
         }
+
     }
 }

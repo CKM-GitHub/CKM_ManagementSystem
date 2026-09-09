@@ -1,0 +1,64 @@
+﻿body {
+    background: #284A9F;
+}
+.card {
+    border-radius: 15px !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
+}
+.card-body {
+    padding-bottom: 2.5rem !important;
+}
+.card-header h4 {
+    color: #2c3e50;
+}
+
+.form-label {
+    color: #555555 !important;
+}
+
+.form-control, .form-select {
+    border-color: #dcdcdc;
+    padding: 0.55rem 0.75rem;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    height: 40px;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #2a5298;
+    box-shadow: 0 0 0 0.25rem rgba(42, 82, 152, 0.15);
+}
+
+.form-select:disabled {
+    background-color: #e9ecef;
+    opacity: 0.8;
+}
+
+.btn-success{
+    padding: 0.6rem;
+    border-radius: 6px;
+    border: none;
+}
+.btn-clear {
+    background-color: #5a6268;
+    color: #ffffff;
+    border: none;
+    padding: 0.6rem;
+    border-radius: 6px;
+}
+
+.btn-clear:hover {
+    background-color: #6c757d;
+    color: #ffffff;
+}
+
+.modal-dialog {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 100vh !important;
+    margin: 0 auto !important;
+}
+.menu-center {
+    padding: 70px;
+}

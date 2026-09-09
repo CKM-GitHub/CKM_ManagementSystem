@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using CKM_ManagementSystem.Models.Validation;
 
 namespace CKM_ManagementSystem.Models.ViewModels;
-public class UserCreateViewModel
+public class UserCreateViewModel  : IValidatableObject
 {
     public string Mode { get; set; } = "Entry";
 
@@ -25,46 +25,48 @@ public class UserCreateViewModel
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
-        if(Mode == "Entry")
+        if (!string.Equals(Mode, "Entry", StringComparison.OrdinalIgnoreCase))
         {
-            if (string.IsNullOrWhiteSpace(Password))
+            yield break;
+        }
+
+        if (string.IsNullOrWhiteSpace(Password))
+        {
+            yield return new ValidationResult(
+                "Password is required.",
+                new[] { nameof(Password) });
+        }
+        else
+        {
+            if (Password.Length < 8 || Password.Length > 15)
             {
+
                 yield return new ValidationResult(
-                    "Password is required",
+                    "Password must be between 8 and 15 characters.",
                     new[] { nameof(Password) });
             }
-            else
-            {
-                if (Password.Length < 8 || Password.Length > 15)
-                {
 
-                   yield return new ValidationResult(
-                   "Password must be between 8 and 15 characters",
-                   new[] { nameof(Password) });
-                }
-                if(!System.Text.RegularExpressions.Regex.IsMatch(Password,
+            if (!System.Text.RegularExpressions.Regex.IsMatch(
+                    Password,
                     @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$"))
-                {
-                    yield return new ValidationResult(
-                        "Password must contain at least one uppercase letter, one lowercase letter, and one number",
-                        new[] { nameof(Password) }
-                    );
-                }
-                if (string.IsNullOrWhiteSpace(ConfirmPassword))
-                {
-                    yield return new ValidationResult(
-                        "Confirm Password is required",
-                        new[] { nameof(ConfirmPassword) }
-                    );
-                }
-                else if (Password != ConfirmPassword)
-                {
-                    yield return new ValidationResult(
-                        "Password and Confirm Password do not match",
-                        new[] { nameof(ConfirmPassword) }
-                    );
-                }
+            {
+                yield return new ValidationResult(
+                    "Password must contain at least one uppercase letter, one lowercase letter, and one number.",
+                    new[] { nameof(Password) });
             }
+        }
+
+        if (string.IsNullOrWhiteSpace(ConfirmPassword))
+        {
+            yield return new ValidationResult(
+                "Confirm Password is required.",
+                new[] { nameof(ConfirmPassword) });
+        }
+        else if (!string.Equals(Password, ConfirmPassword, StringComparison.Ordinal))
+        {
+            yield return new ValidationResult(
+                "Password and Confirm Password do not match.",
+                new[] { nameof(ConfirmPassword) });
         }
     }
 
@@ -72,7 +74,7 @@ public class UserCreateViewModel
     public string Password { get; set; } = string.Empty;
 
     [Display(Name = "Confirm Password")]
-    public string ConfirmPassword { get; set; } = string.Empty; 
+    public string ConfirmPassword { get; set; } = string.Empty;
 
     [Display(Name = "Gender")]
     public string Gender { get; set; } = string.Empty;
@@ -100,9 +102,13 @@ public class UserCreateViewModel
     public string? TempImageName { get; set; }
     public string? ImageUrl { get; set; }
 }
-
-
-
-
-
-
+public class DepartmentDropdownViewModel
+{
+    public string DepartmentCode { get; set; } = string.Empty;
+    public string DepartmentName { get; set; } = string.Empty;
+}
+public class RoleDropdownViewModel
+{
+    public string RoleCode { get; set; } = string.Empty;
+    public string RoleName { get; set; } = string.Empty;
+}

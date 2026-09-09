@@ -15,7 +15,7 @@ namespace CKM_ManagementSystem.Models.ViewModels
         public int OverallInactiveCount { get; set; }
         public int TotalCount { get; set; }
         public int DepartmentCount { get; set; }
-    }
+    }/*
     public class DepartmentDropdownViewModel
     {
         public string DepartmentCode { get; set; } = string.Empty;
@@ -25,5 +25,5 @@ namespace CKM_ManagementSystem.Models.ViewModels
     {
         public string RoleCode { get; set; } = string.Empty;
         public string RoleName { get; set; } = string.Empty;
-    }
+    } */
 }

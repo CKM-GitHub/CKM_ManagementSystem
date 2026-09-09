@@ -1,3 +1,10 @@
+
+*.user
+*.suo
 .vs/ 
 bin/
 obj/
+.history/
+.lh/
+**/bin/
+**/obj/

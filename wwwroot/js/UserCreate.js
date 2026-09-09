@@ -4,7 +4,7 @@ const defaultIcon = document.getElementById("default-icon");
 
 let currentObjectUrl = null;
 
-if (imageUpload && avatarPreview && defaultIcon) {
+if (imageUpload && avatarPreview) {
     imageUpload.addEventListener("change", function () {
         const file = this.files[0];
 
@@ -17,11 +17,15 @@ if (imageUpload && avatarPreview && defaultIcon) {
             currentObjectUrl = URL.createObjectURL(file);
             avatarPreview.src = currentObjectUrl;
             avatarPreview.classList.remove("d-none");
-            defaultIcon.classList.add("d-none");
+            if (defaultIcon) {
+                defaultIcon.classList.add("d-none");
+            }
         } else {
             avatarPreview.src = "";
             avatarPreview.classList.add("d-none");
-            defaultIcon.classList.remove("d-none");
+            if (defaultIcon) {
+                defaultIcon.classList.remove("d-none");
+            }
         }
     });
 }
@@ -88,7 +92,8 @@ if (clearButton) {
 
             const termsError = document.getElementById("acceptTermsError");
 
-            if (termsError) {
+            if (termsError)
+            {
                 termsError.textContent = "";
             }
             termsCheckbox.classList.remove("is-invalid");
@@ -128,29 +133,29 @@ if (clearButton) {
 
 document.addEventListener("DOMContentLoaded", function () {
     const successMessage = document.getElementById("successMessage");
+    const redirectUrl = document.getElementById("redirectUrl");
+    const alertModal = document.getElementById("alertModal");
 
-    if (successMessage && typeof showSuccess === "function") {
+    if (successMessage &&
+        redirectUrl &&
+        alertModal &&
+        typeof showSuccess === "function") {
+
         showSuccess(successMessage.value);
 
-        const alertModal = document.getElementById("alertModal");
-        const firstInput = document.querySelector(
-            "#UserForm input:not([type='hidden'])"
+        alertModal.addEventListener(
+            "hidden.bs.modal",
+            function () {
+                window.location.href = redirectUrl.value;
+            },
+            { once: true }
         );
-
-        if (alertModal && firstInput) {
-            alertModal.addEventListener(
-                "hidden.bs.modal",
-                function () {
-                    firstInput.focus();
-                },
-                { once: true }
-            );
-        }
     }
 
-    const passwordInput = document.getElementById("Password");
-    const confirmPasswordInput = document.getElementById("ConfirmPassword");
-    const confirmPasswordMessage = document.querySelector(
+
+const passwordInput = document.getElementById("Password");
+const confirmPasswordInput = document.getElementById("ConfirmPassword");
+const confirmPasswordMessage = document.querySelector(
         '[data-valmsg-for="ConfirmPassword"]'
     );
 
@@ -212,7 +217,8 @@ const acceptTerms = document.getElementById("AcceptTerms");
 const acceptTermError = document.getElementById("acceptTermsError");
 
 form.addEventListener("submit", function (event) {
-    if (!acceptTerms.checked) {
+    if (!acceptTerms.checked)
+    {
         event.preventDefault();
 
         acceptTermsError.textContent =
