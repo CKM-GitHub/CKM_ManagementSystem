@@ -1,40 +1,52 @@
 ﻿.alert-modal-content {
     border: none;
-    border-radius: 8px;
+    border-radius: 16px; 
+    padding: 10px;
 }
 
 .alert-icon {
-    width: 60px;
-    height: 60px;
+    width: 64px;
+    height: 64px;
     margin: 0 auto 15px;
     display: flex;
     align-items: center;
     justify-content: center;
     border: 2px solid;
     border-radius: 50%;
-    font-size: 30px;
+    font-size: 28px;
 }
+
 
 .alert-success {
-    color: #72c96b;
+    color: #22c55e;
+    border-color: #22c55e; 
+    background-color: #e8f5e9; 
 }
+
 
 .alert-error {
-    color: #ff6666;
+    color: #ef4444;
+    border-color: #ef4444;
+    background-color: #fef2f2;
 }
 
+
 .alert-delete {
-    color: #ff6666;
+    color: #ef4444;
+    border-color: #ef4444;
+    background-color: #fef2f2;
 }
 
 .alert-title {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 700;
+    color: #111827;
 }
 
 .alert-message {
     margin-bottom: 20px;
     font-size: 14px;
+    color: #6b7280;
 }
 
 #deleteButtons {
@@ -43,6 +55,6 @@
     gap: 10px;
 }
 
-#deleteButtons.d-none {
-    display: none !important;
-}
+    #deleteButtons.d-none {
+        display: none !important;
+    }
