@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using CKM_ManagementSystem.BL;
 using CKM_ManagementSystem.Models.ViewModels.Projects;
+using System.Linq;
 
 namespace CKM_ManagementSystem.Controllers
 {
@@ -8,7 +10,6 @@ namespace CKM_ManagementSystem.Controllers
     {
         private readonly ProjectBL _projectBL;
 
-       
         public ProjectController(ProjectBL projectBL)
         {
             _projectBL = projectBL;
@@ -16,8 +17,25 @@ namespace CKM_ManagementSystem.Controllers
 
         private void BindDropdowns()
         {
-            ViewBag.Managers = _projectBL.GetActiveManagers();
-            ViewBag.Departments = _projectBL.GetDepartments();
+            
+            var rawManagers = _projectBL.GetActiveManagers();
+            ViewBag.Managers = rawManagers.Select(m => new SelectListItem
+            {
+                Value = m.Value,
+                Text = !string.IsNullOrEmpty(m.Text) && m.Text.Length > 30
+                    ? m.Text.Substring(0, 27) + "..."
+                    : m.Text
+            }).ToList();
+
+            
+            var rawDepartments = _projectBL.GetDepartments();
+            ViewBag.Departments = rawDepartments.Select(d => new SelectListItem
+            {
+                Value = d.Value,
+                Text = !string.IsNullOrEmpty(d.Text) && d.Text.Length > 30
+                    ? d.Text.Substring(0, 27) + "..."
+                    : d.Text
+            }).ToList();
         }
 
         [HttpGet]

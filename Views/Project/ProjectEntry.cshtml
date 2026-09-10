@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/project-entry.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/Alert_Modal.css" asp-append-version="true" />
-    
+    <link rel="stylesheet" href="~/css/ckm-themes.css" asp-append-version="true" />
 </head>
 <body class="project-entry-bg">
 
@@ -23,12 +23,13 @@
             <div class="col-md-10 col-lg-8">
                 <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
 
+                  
                     <div class="text-center mb-4">
-                        <div class="d-inline-flex align-items-center justify-content-center bg-primary text-white rounded-3 mb-3" style="width: 48px; height: 48px;">
+                        <div class="d-inline-flex align-items-center justify-content-center bg-primary text-white rounded-3 mb-3 icon-header-box">
                             <i class="bi bi-folder-fill fs-3"></i>
                         </div>
-                        <h3 class="fw-bold text-dark mb-1">@(Model.IsEdit ? "Edit Project" : "Create New Project")</h3>
-                        <p class="text-muted small">
+                        <h1 class="main-header mb-1">@(Model.IsEdit ? "Edit Project" : "Create New Project")</h1>
+                        <p class="text-muted small-text">
                             @(Model.IsEdit ? "Update existing project details." : "Set up the basic information for your new project to get started.")
                         </p>
                     </div>
@@ -41,68 +42,72 @@
                             <input type="hidden" asp-for="ProjectCode" id="HiddenProjectCode" />
                         }
 
-                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3 small"></div>
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3 small-text"></div>
 
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold text-dark">Project Code <span class="text-danger">*</span></label>
+                                <label class="form-label">Project Code <span class="text-danger">*</span></label>
                                 <input asp-for="ProjectCode" id="ProjectCode" class="form-control rounded-3 py-2" placeholder="Enter project Code" maxlength="50" disabled="@(Model.IsEdit ? "disabled" : null)" />
-                                <span asp-validation-for="ProjectCode" id="valProjectCode" class="text-danger small"></span>
-                                <div class="form-text text-muted small">Choose a clear and unique code for your project.</div>
+                                <span asp-validation-for="ProjectCode" id="valProjectCode" class="text-danger small-text"></span>
+                                <div class="form-help-text text-muted">Choose a clear and unique code for your project.</div>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold text-dark">Project Name <span class="text-danger">*</span></label>
+                                <label class="form-label">Project Name <span class="text-danger">*</span></label>
                                 <input asp-for="ProjectName" id="ProjectName" class="form-control rounded-3 py-2" placeholder="Enter project name" maxlength="200" />
-                                <span asp-validation-for="ProjectName" id="valProjectName" class="text-danger small"></span>
-                                <div class="form-text text-muted small">Choose a clear and unique name for your project.</div>
+                                <span asp-validation-for="ProjectName" id="valProjectName" class="text-danger small-text"></span>
+                                <div class="form-help-text text-muted">Choose a clear and unique name for your project.</div>
                             </div>
                         </div>
 
+                       
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold text-dark">Project Manager <span class="text-danger">*</span></label>
+                                <label class="form-label">Project Manager <span class="text-danger">*</span></label>
                                 <select asp-for="ProjectManagerId" id="ProjectManagerId" asp-items="@(ViewBag.Managers as List<SelectListItem>)" class="form-select rounded-3 py-2 select-truncate">
                                     <option value="" selected disabled>Select project manager</option>
                                 </select>
-                                <span asp-validation-for="ProjectManagerId" class="text-danger small"></span>
-                                <div class="form-text text-muted small">Choose the person who will be responsible for this project.</div>
+                                <span asp-validation-for="ProjectManagerId" class="text-danger small-text"></span>
+                                <div class="form-help-text text-muted">Choose the person who will be responsible for this project.</div>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold text-dark">Project Git Link</label>
+                                <label class="form-label">Project Git Link</label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-white border-end-0 text-muted rounded-start-3"><i class="bi bi-link-45deg fs-5"></i></span>
                                     <input asp-for="GitRepositoryUrl" id="GitRepositoryUrl" class="form-control border-start-0 rounded-end-3 py-2" placeholder="https://github.com/company/repo" />
                                 </div>
-                                <span asp-validation-for="GitRepositoryUrl" class="text-danger small"></span>
-                                <div class="form-text text-muted small">Provide the repository link for this project.</div>
+                                <span asp-validation-for="GitRepositoryUrl" class="text-danger small-text"></span>
+                                <div class="form-help-text text-muted">Provide the repository link for this project.</div>
                             </div>
                         </div>
 
+                       
                         <div class="mb-3">
-                            <label class="form-label fw-semibold text-dark">Description</label>
+                            <label class="form-label">Description</label>
                             <textarea asp-for="Description" id="Description" class="form-control rounded-3" rows="3" placeholder="Enter project description"></textarea>
-                            <span asp-validation-for="Description" class="text-danger small"></span>
-                            <div class="form-text text-muted small">Provide a brief overview of the project, its goals, and objectives.</div>
+                            <span asp-validation-for="Description" class="text-danger small-text"></span>
+                            <div class="form-help-text text-muted">Provide a brief overview of the project, its goals, and objectives.</div>
                         </div>
 
+                      
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold text-dark">Start Date <span class="text-danger">*</span></label>
+                                <label class="form-label">Start Date <span class="text-danger">*</span></label>
                                 <input asp-for="StartDate" type="date" id="StartDate" class="form-control rounded-3 py-2" value="@(Model.StartDate?.ToString("yyyy-MM-dd"))" />
-                                <span asp-validation-for="StartDate" id="valStartDate" class="text-danger small"></span>
-                                <div class="form-text text-muted small">When the project will begin.</div>
+                                <span asp-validation-for="StartDate" id="valStartDate" class="text-danger small-text"></span>
+                                <div class="form-help-text text-muted">When the project will begin.</div>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold text-dark">Target End Date <span class="text-danger">*</span></label>
+                                <label class="form-label">Target End Date <span class="text-danger">*</span></label>
                                 <input asp-for="EndDate" type="date" id="EndDate" class="form-control rounded-3 py-2" value="@(Model.EndDate?.ToString("yyyy-MM-dd"))" />
-                                <span asp-validation-for="EndDate" id="valEndDate" class="text-danger small"></span>
-                                <div class="form-text text-muted small">Expected completion date.</div>
+                                <span asp-validation-for="EndDate" id="valEndDate" class="text-danger small-text"></span>
+                                <div class="form-help-text text-muted">Expected completion date.</div>
                             </div>
                         </div>
 
+                        
                         <div class="row align-items-center mb-4">
                             <div class="col-auto">
-                                <label class="form-label fw-semibold text-dark mb-0 me-3">Status</label>
+                                <label class="form-label mb-0 me-3">Status</label>
                             </div>
                             <div class="col-auto">
                                 <div class="form-check form-check-inline me-3">
@@ -126,25 +131,26 @@
 
                         <hr class="text-muted opacity-25 my-4" />
 
+                     
                         <div class="mb-4">
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h6 class="fw-bold text-dark mb-0">Project Members</h6>
-                                <button type="button" class="btn btn-light text-primary border-0 rounded-3 btn-sm fw-medium px-3" data-bs-toggle="modal" data-bs-target="#memberModal" style="background-color: #eef2ff;">
+                                <h2 class="section-title mb-0">Project Members</h2>
+                                <button type="button" class="btn btn-add-member-custom text-primary border-0 rounded-3 btn-sm fw-medium px-3" data-bs-toggle="modal" data-bs-target="#memberModal">
                                     + Add Member
                                 </button>
                             </div>
 
                             <div class="table-responsive border rounded-3">
                                 <table class="table table-hover align-middle mb-0" id="tblSelectedMembers">
-                                    <thead class="bg-light small text-muted">
+                                    <thead class="bg-light text-muted">
                                         <tr>
-                                            <th class="text-center" style="width: 50px;">NO.</th>
-                                            <th style="width: 150px;">STAFF CODE</th>
+                                            <th class="text-center col-width-50">NO.</th>
+                                            <th class="col-width-140">STAFF CODE</th>
                                             <th>STAFF NAME</th>
-                                            <th class="text-end" style="width: 60px;">Action</th>
+                                            <th class="text-end col-width-60">Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="small">
+                                    <tbody>
                                         @if (Model.ProjectMembers != null && Model.ProjectMembers.Any())
                                         {
                                             int no = 1;
@@ -154,7 +160,7 @@
                                                     <td class="text-center text-muted row-no">@no</td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                            <img src="@(string.IsNullOrEmpty(member.Image_URL) ? "/images/default-avatar.png" : member.Image_URL)" onerror="this.onerror=null;this.src='/images/default-avatar.png';" class="rounded-circle me-2 flex-shrink-0" width="28" height="28" />
+                                                            <img src="@(string.IsNullOrEmpty(member.Image_URL) ? "/images/default-avatar.png" : member.Image_URL)" onerror="this.onerror=null;this.src='/images/default-avatar.png';" class="rounded-circle me-2 flex-shrink-0 member-avatar" />
                                                             <span class="fw-semibold text-dark text-truncate">@member.Staff_Code</span>
                                                         </div>
                                                     </td>
@@ -183,11 +189,12 @@
                             </div>
                         </div>
 
+                        
                         <div class="d-flex justify-content-end gap-2 pt-3">
-                            <button type="button" id="btnClear" class="btn btn-outline-secondary rounded-3 px-4 py-2 small">
+                            <button type="button" id="btnClear" class="btn btn-outline-secondary rounded-3 px-4 py-2">
                                 @(Model.IsEdit ? "Cancel" : "Clear")
                             </button>
-                            <button type="submit" id="btnRegister" class="btn btn-primary rounded-3 px-4 py-2 small fw-medium">
+                            <button type="submit" id="btnRegister" class="btn btn-primary rounded-3 px-4 py-2 fw-medium">
                                 @(Model.IsEdit ? "Update Project" : "+ Create Project")
                             </button>
                         </div>
@@ -199,42 +206,42 @@
         </div>
     </div>
 
-    <!-- Member Modal -->
+    
     <div class="modal fade" id="memberModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content rounded-4 border-0 shadow-lg">
                 <div class="modal-header border-0 pb-0 px-4 pt-4">
-                    <h5 class="modal-title fw-bold text-dark fs-5">Manage Project Members</h5>
+                    <h2 class="modal-title">Manage Project Members</h2>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
                     <div class="row g-2 mb-3">
                         <div class="col-md-5">
-                            <input type="text" id="modalSearchText" class="form-control rounded-3 py-2 small" placeholder="Staff Name / Code" />
+                            <input type="text" id="modalSearchText" class="form-control rounded-3 py-2" placeholder="Staff Name / Code" />
                         </div>
                         <div class="col-md-4">
-                            <select id="modalDeptSelect" class="form-select rounded-3 py-2 small select-truncate" asp-items="@(ViewBag.Departments as List<SelectListItem>)">
+                            <select id="modalDeptSelect" class="form-select rounded-3 py-2 select-truncate" asp-items="@(ViewBag.Departments as List<SelectListItem>)">
                                 <option value="" selected>All Departments</option>
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <button type="button" id="btnModalSearch" class="btn btn-primary rounded-3 w-100 py-2 small fw-medium">
+                            <button type="button" id="btnModalSearch" class="btn btn-primary rounded-3 w-100 py-2 fw-medium">
                                 <i class="bi bi-search me-1"></i> Search
                             </button>
                         </div>
                     </div>
 
-                    <div class="table-responsive border rounded-3" style="max-height: 280px;">
+                    <div class="table-responsive border rounded-3 modal-table-container">
                         <table class="table table-hover align-middle mb-0" id="tblModalMembers">
-                            <thead class="bg-light small text-muted sticky-top">
+                            <thead class="bg-light text-muted">
                                 <tr>
-                                    <th class="text-center" style="width: 40px;"></th>
-                                    <th style="width: 140px;">STAFF CODE</th>
+                                    <th class="text-center col-width-45"></th>
+                                    <th class="col-width-130">STAFF CODE</th>
                                     <th>STAFF NAME</th>
                                     <th>DEPARTMENT NAME</th>
                                 </tr>
                             </thead>
-                            <tbody class="small text-secondary">
+                            <tbody class="text-secondary">
                                 <tr>
                                     <td colspan="4" class="text-center text-muted py-3">Click search to find staff members.</td>
                                 </tr>
@@ -243,12 +250,15 @@
                     </div>
                 </div>
                 <div class="modal-footer border-0 px-4 pb-4 pt-0">
-                    <button type="button" class="btn btn-outline-secondary rounded-3 px-4 py-2 small" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" id="btnAddSelectedMembers" class="btn btn-primary rounded-3 px-4 py-2 small fw-medium">Add Members</button>
+                    <button type="button" class="btn btn-outline-secondary rounded-3 px-4 py-2" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" id="btnAddSelectedMembers" class="btn btn-primary rounded-3 px-4 py-2 fw-medium">Add Members</button>
                 </div>
             </div>
         </div>
     </div>
+
+</body>
+</html>
 
     @await Html.PartialAsync("~/Views/Shared/AlertModal.cshtml")
 
@@ -259,339 +269,306 @@
 
     <script src="~/js/Alert_Modal.js" asp-append-version="true"></script>
 
-    <script>
-        function initTooltips() {
-            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            tooltipTriggerList.map(function (tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl);
-            });
-        }
+<script>
+    function initTooltips() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    }
 
-        function getOrCreateModal(elementId) {
-            var el = document.getElementById(elementId);
-            return bootstrap.Modal.getInstance(el) || new bootstrap.Modal(el);
-        }
+    function getOrCreateModal(elementId) {
+        var el = document.getElementById(elementId);
+        return bootstrap.Modal.getInstance(el) || new bootstrap.Modal(el);
+    }
 
-        function showSuccessAlert(message, title = 'Success!') {
-            $('#alertIcon').attr('class', 'alert-icon alert-success').html('<i class="bi bi-check-lg"></i>');
-            $('#alertTitle').text(title);
-            $('#alertMessage').text(message);
-            $('#btnAlertOk').show();
-            $('#deleteButtons').addClass('d-none');
-            getOrCreateModal('alertModal').show();
-        }
+    function showSuccessAlert(message, title = 'Success!') {
+        $('#alertIcon').attr('class', 'alert-icon alert-success').html('<i class="bi bi-check-lg"></i>');
+        $('#alertTitle').text(title);
+        $('#alertMessage').text(message);
+        $('#btnAlertOk').show().removeClass('d-none');
+        $('#deleteButtons').addClass('d-none');
+        getOrCreateModal('alertModal').show();
+    }
 
-        function showErrorAlert(message, title = 'Error!') {
-            $('#alertIcon').attr('class', 'alert-icon alert-error').html('<i class="bi bi-x-lg"></i>');
-            $('#alertTitle').text(title);
-            $('#alertMessage').text(message);
-            $('#btnAlertOk').show();
-            $('#deleteButtons').addClass('d-none');
-            getOrCreateModal('alertModal').show();
-        }
+    function showErrorAlert(message, title = 'Error!') {
+        $('#alertIcon').attr('class', 'alert-icon alert-error').html('<i class="bi bi-x-lg"></i>');
+        $('#alertTitle').text(title);
+        $('#alertMessage').text(message);
+        $('#btnAlertOk').show().removeClass('d-none');
+        $('#deleteButtons').addClass('d-none');
+        getOrCreateModal('alertModal').show();
+    }
 
-        function showDeleteAlert(message, onConfirm, title = 'Are you sure?') {
-            $('#alertIcon').attr('class', 'alert-icon alert-delete').html('<i class="bi bi-trash"></i>');
-            $('#alertTitle').text(title);
-            $('#alertMessage').text(message);
-            $('#btnAlertOk').hide();
-            $('#deleteButtons').removeClass('d-none');
+    $(document).ready(function () {
+        initTooltips();
 
-            var modal = getOrCreateModal('alertModal');
-            modal.show();
+        var isEditMode = $('#IsEdit').val() === 'true' || $('#IsEdit').val() === 'True';
+        $(isEditMode ? '#ProjectName' : '#ProjectCode').focus();
 
-            $('#btnConfirmDelete').off('click').on('click', function () {
-                modal.hide();
-                if (typeof onConfirm === 'function') {
-                    onConfirm();
-                }
-            });
-        }
+        $('#memberModal').on('shown.bs.modal', function () {
+            $('#btnModalSearch').click();
+        });
 
-        $(document).ready(function () {
-            initTooltips();
+        
+        $('#ProjectCode').on('input', function () {
+            $(this).val($(this).val().replace(/[^a-zA-Z0-9\-_]/g, ''));
+        });
 
-            var isEditMode = $('#IsEdit').val() === 'true' || $('#IsEdit').val() === 'True';
+        $('#ProjectName').on('input', function () {
+            $(this).val($(this).val().replace(/[^a-zA-Z0-9\s\-_]/g, ''));
+        });
 
-            if (isEditMode) {
-                $('#ProjectName').focus();
-            } else {
-                $('#ProjectCode').focus();
+        
+        $('#ProjectCode').on('blur', function () {
+            if (isEditMode) return;
+            var val = $(this).val().trim();
+            if (val === '') {
+                $('#valProjectCode').text('');
+                return;
             }
 
-            $('#memberModal').on('shown.bs.modal', function () {
-                $('#btnModalSearch').click();
-            });
-
-            $('#ProjectCode').on('input', function () {
-                var cleaned = $(this).val().replace(/[^a-zA-Z0-9\-_]/g, '');
-                $(this).val(cleaned);
-            });
-
-            $('#ProjectName').on('input', function () {
-                var cleaned = $(this).val().replace(/[^a-zA-Z0-9\s\-_]/g, '');
-                $(this).val(cleaned);
-            });
-
-            $('#ProjectCode').on('blur', function () {
-                if (isEditMode) return;
-                var val = $(this).val().trim();
-                if (val === '') {
-                    $('#valProjectCode').text('');
-                    return;
-                }
-
-                $.post('/Project/CheckDuplicateProjectCode', { projectCode: val }, function (res) {
-                    if (res && res.isDuplicate) {
-                        $('#valProjectCode').text('Project Code already exists.');
-                    } else {
-                        $('#valProjectCode').text('');
-                    }
-                });
-            });
-
-            $('#ProjectName').on('blur', function () {
-                var val = $(this).val().trim();
-                var codeVal = isEditMode ? $('#HiddenProjectCode').val() : $('#ProjectCode').val().trim();
-                if (val === '') {
-                    $('#valProjectName').text('');
-                    return;
-                }
-
-                $.post('/Project/CheckDuplicateProjectName', { projectName: val, projectCode: codeVal, isEdit: isEditMode }, function (res) {
-                    if (res && res.isDuplicate) {
-                        $('#valProjectName').text('Project Name already exists.');
-                    } else {
-                        $('#valProjectName').text('');
-                    }
-                });
-            });
-
-            $('#StartDate, #EndDate').on('change blur', function () {
-                var startVal = $('#StartDate').val();
-                var endVal = $('#EndDate').val();
-
-                if (startVal && endVal) {
-                    var startDate = new Date(startVal);
-                    var endDate = new Date(endVal);
-
-                    if (endDate < startDate) {
-                        $('#valEndDate').text('Target End Date cannot be earlier than Start Date.');
-                    } else {
-                        $('#valEndDate').text('');
-                    }
-                }
-            });
-
-            function updateRowNumbers() {
-                $('#tblSelectedMembers tbody tr[data-staffcode]').each(function (index) {
-                    $(this).find('.row-no').text(index + 1);
-                });
-            }
-
-            $('#btnModalSearch').on('click', function () {
-                var searchText = $('#modalSearchText').val();
-                var deptCode = $('#modalDeptSelect').val();
-
-                $.post('/Project/SearchProjectMembers', { searchText: searchText, departmentCode: deptCode }, function (data) {
-                    var $tbody = $('#tblModalMembers tbody').empty();
-                    if (data && data.length > 0) {
-                        $.each(data, function (i, item) {
-                            var img = item.image_URL || item.image_Url || item.Image_URL || '/images/default-avatar.png';
-                            var dept = item.department_Name || item.Department_Name || '-';
-                            var staffCode = item.staff_Code || item.Staff_Code;
-                            var name = item.name || item.Name;
-
-                            var isAlreadyAdded = $('#tblSelectedMembers tbody tr[data-staffcode="' + staffCode + '"]').length > 0;
-
-                            var row = `<tr>
-                                <td class="text-center">
-                                    <input type="checkbox" class="form-check-input chk-member" value="${staffCode}"
-                                           data-name="${name}" data-img="${img}" ${isAlreadyAdded ? 'disabled checked' : ''} />
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <img src="${img}" onerror="this.onerror=null;this.src='/images/default-avatar.png';" class="rounded-circle me-2 flex-shrink-0" width="28" height="28" />
-                                        <span class="fw-semibold text-dark text-truncate">${staffCode}</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="text-truncate-custom cursor-pointer" data-bs-toggle="tooltip" data-bs-placement="top" title="${name}">
-                                        ${name}
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="text-truncate-custom cursor-pointer" data-bs-toggle="tooltip" data-bs-placement="top" title="${dept}">
-                                        ${dept}
-                                    </span>
-                                </td>
-                            </tr>`;
-                            $tbody.append(row);
-                        });
-                        initTooltips();
-                    } else {
-                        $tbody.append('<tr><td colspan="4" class="text-center text-muted py-3">No users found.</td></tr>');
-                    }
-                });
-            });
-
-            $('#btnAddSelectedMembers').on('click', function () {
-                var selected = $('#tblModalMembers .chk-member:checked:not(:disabled)');
-                if (selected.length === 0) {
-                    getOrCreateModal('memberModal').hide();
-                    return;
-                }
-
-                $('#emptyMemberRow').remove();
-
-                selected.each(function () {
-                    var code = $(this).val();
-                    var name = $(this).data('name');
-                    var img = $(this).data('img');
-
-                    var row = `<tr data-staffcode="${code}" data-img="${img}">
-                        <td class="text-center text-muted row-no"></td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <img src="${img}" onerror="this.onerror=null;this.src='/images/default-avatar.png';" class="rounded-circle me-2 flex-shrink-0" width="28" height="28" />
-                                <span class="fw-semibold text-dark text-truncate">${code}</span>
-                            </div>
-                        </td>
-                        <td class="text-secondary">
-                            <span class="text-truncate-custom cursor-pointer" data-bs-toggle="tooltip" data-bs-placement="top" title="${name}">
-                                ${name}
-                            </span>
-                        </td>
-                        <td class="text-end">
-                            <button type="button" class="btn btn-sm text-danger border-0 p-0 btn-remove-member me-2" title="Remove Member">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </td>
-                    </tr>`;
-                    $('#tblSelectedMembers tbody').append(row);
-                });
-
-                updateRowNumbers();
-                initTooltips();
-                getOrCreateModal('memberModal').hide();
-            });
-
-            $(document).on('click', '.btn-remove-member', function () {
-                var $row = $(this).closest('tr');
-
-                showDeleteAlert('Are you sure you want to remove this member?', function () {
-                    $row.remove();
-                    if ($('#tblSelectedMembers tbody tr[data-staffcode]').length === 0) {
-                        $('#tblSelectedMembers tbody').html('<tr id="emptyMemberRow"><td colspan="4" class="text-center text-muted py-3">No project members added.</td></tr>');
-                    } else {
-                        updateRowNumbers();
-                    }
-                });
-            });
-
-            $('#btnClear').on('click', function () {
-                if (isEditMode) {
-                    window.location.href = '/Project/Index';
-                } else {
-                    $('#projectForm')[0].reset();
-                    $('span.text-danger').text('');
-                    $('#ProjectManagerId').val('');
-                    $('#statusActive').prop('checked', true);
-                    $('#tblSelectedMembers tbody').html('<tr id="emptyMemberRow"><td colspan="4" class="text-center text-muted py-3">No project members added.</td></tr>');
-                    $('#ProjectCode').focus();
-                }
-            });
-
-            $('#projectForm').on('submit', function (e) {
-                e.preventDefault();
-
-                var $form = $(this);
-                if ($.data($form[0], 'validator') && !$form.valid()) {
-                    showErrorAlert('Please fill required fields correctly.', 'Validation Error');
-                    return;
-                }
-
-                var codeVal = isEditMode ? $('#HiddenProjectCode').val() : $('#ProjectCode').val().trim();
-                var nameVal = $('#ProjectName').val().trim();
-
-                if (!isEditMode && codeVal === '') {
-                    $('#valProjectCode').text('Project Code is required.');
-                    return;
-                }
-
-                if ($('#valProjectCode').text() !== '' || $('#valProjectName').text() !== '' || $('#valEndDate').text() !== '') {
-                    showErrorAlert('Please fix the errors in the form before submitting.', 'Validation Error');
-                    return;
-                }
-
-                var startDate = new Date($('#StartDate').val());
-                var endDate = new Date($('#EndDate').val());
-                if (endDate < startDate) {
-                    $('#valEndDate').text('Target End Date cannot be earlier than Start Date.');
-                    showErrorAlert('Target End Date cannot be earlier than Start Date.', 'Invalid Date Range');
-                    return;
-                }
-
-                var membersList = [];
-                $('#tblSelectedMembers tbody tr[data-staffcode]').each(function () {
-                    membersList.push({
-                        Staff_Code: String($(this).attr('data-staffcode')),
-                        Name: $(this).find('td:nth-child(3) span').text().trim(),
-                        Image_URL: $(this).attr('data-img') || ''
-                    });
-                });
-
-                var selectedStatus = $('input[name="Status"]:checked').val() || 'Active';
-
-                var payload = {
-                    ProjectCode: codeVal,
-                    ProjectName: nameVal,
-                    ProjectManagerId: $('#ProjectManagerId').val(),
-                    GitRepositoryUrl: $('#GitRepositoryUrl').val(),
-                    Description: $('#Description').val(),
-                    StartDate: $('#StartDate').val(),
-                    EndDate: $('#EndDate').val(),
-                    Status: selectedStatus,
-                    IsEdit: isEditMode,
-                    ProjectMembers: membersList
-                };
-
-                var token = $('input[name="__RequestVerificationToken"]').val();
-                var $btn = $('#btnRegister');
-                $btn.prop('disabled', true).text(isEditMode ? 'Updating...' : 'Creating...');
-
-                $.ajax({
-                    url: '/Project/SaveProject',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    headers: {
-                        "RequestVerificationToken": token,
-                        "__RequestVerificationToken": token
-                    },
-                    data: JSON.stringify(payload),
-                    success: function (response) {
-                        $btn.prop('disabled', false).text(isEditMode ? 'Update Project' : '+ Create Project');
-                        if (response && response.success) {
-                            showSuccessAlert(response.message, 'Success!');
-
-                            $('#alertModal').one('hidden.bs.modal', function () {
-                                if (isEditMode) {
-                                    window.location.href = '/Project/Index';
-                                } else {
-                                    $('#btnClear').click();
-                                }
-                            });
-                        } else {
-                            showErrorAlert(response ? response.message : 'Operation failed.', 'Error');
-                        }
-                    },
-                    error: function (xhr) {
-                        $btn.prop('disabled', false).text(isEditMode ? 'Update Project' : '+ Create Project');
-                        showErrorAlert(xhr.responseText || 'Request failed.', 'Server Error');
-                    }
-                });
+            $.post('/Project/CheckDuplicateProjectCode', { projectCode: val }, function (res) {
+                $('#valProjectCode').text((res && res.isDuplicate) ? 'Project Code already exists.' : '');
             });
         });
-    </script>
-</body>
-</html>
+
+        
+        $('#ProjectName').on('blur', function () {
+            var val = $(this).val().trim();
+            var codeVal = isEditMode ? $('#HiddenProjectCode').val() : $('#ProjectCode').val().trim();
+            if (val === '') {
+                $('#valProjectName').text('');
+                return;
+            }
+
+            $.post('/Project/CheckDuplicateProjectName', { projectName: val, projectCode: codeVal, isEdit: isEditMode }, function (res) {
+                $('#valProjectName').text((res && res.isDuplicate) ? 'Project Name already exists.' : '');
+            });
+        });
+
+        
+        $('#StartDate, #EndDate').on('change blur', function () {
+            var startVal = $('#StartDate').val();
+            var endVal = $('#EndDate').val();
+
+            if (startVal && endVal) {
+                var startDate = new Date(startVal);
+                var endDate = new Date(endVal);
+
+                if (endDate < startDate) {
+                    $('#valEndDate').text('Target End Date cannot be earlier than Start Date.');
+                } else {
+                    $('#valEndDate').text('');
+                }
+            }
+        });
+
+        function updateRowNumbers() {
+            $('#tblSelectedMembers tbody tr[data-staffcode]').each(function (index) {
+                $(this).find('.row-no').text(index + 1);
+            });
+        }
+
+       
+        $('#btnModalSearch').on('click', function () {
+            var searchText = $('#modalSearchText').val();
+            var deptCode = $('#modalDeptSelect').val();
+
+            $.post('/Project/SearchProjectMembers', { searchText: searchText, departmentCode: deptCode }, function (data) {
+                var $tbody = $('#tblModalMembers tbody').empty();
+                if (data && data.length > 0) {
+                    $.each(data, function (i, item) {
+                        var img = item.image_URL || item.image_Url || item.Image_URL || '/images/default-avatar.png';
+                        var dept = item.department_Name || item.Department_Name || '-';
+                        var staffCode = item.staff_Code || item.Staff_Code;
+                        var name = item.name || item.Name;
+
+                        var isAlreadyAdded = $('#tblSelectedMembers tbody tr[data-staffcode="' + staffCode + '"]').length > 0;
+
+                        var row = `<tr>
+                            <td class="text-center">
+                                <input type="checkbox" class="form-check-input chk-member" value="${staffCode}"
+                                       data-name="${name}" data-img="${img}" ${isAlreadyAdded ? 'disabled checked' : ''} />
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="${img}" onerror="this.onerror=null;this.src='/images/default-avatar.png';" class="rounded-circle me-2 flex-shrink-0" width="28" height="28" />
+                                    <span class="fw-semibold text-dark text-truncate">${staffCode}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="text-truncate-custom cursor-pointer" data-bs-toggle="tooltip" data-bs-placement="top" title="${name}">
+                                    ${name}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="text-truncate-custom cursor-pointer" data-bs-toggle="tooltip" data-bs-placement="top" title="${dept}">
+                                    ${dept}
+                                </span>
+                            </td>
+                        </tr>`;
+                        $tbody.append(row);
+                    });
+                    initTooltips();
+                } else {
+                    $tbody.append('<tr><td colspan="4" class="text-center text-muted py-3">No users found.</td></tr>');
+                }
+            });
+        });
+
+       
+        $('#btnAddSelectedMembers').on('click', function () {
+            var selected = $('#tblModalMembers .chk-member:checked:not(:disabled)');
+            if (selected.length === 0) {
+                getOrCreateModal('memberModal').hide();
+                return;
+            }
+
+            $('#emptyMemberRow').remove();
+
+            selected.each(function () {
+                var code = $(this).val();
+                var name = $(this).data('name');
+                var img = $(this).data('img');
+
+                var row = `<tr data-staffcode="${code}" data-img="${img}">
+                    <td class="text-center text-muted row-no"></td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <img src="${img}" onerror="this.onerror=null;this.src='/images/default-avatar.png';" class="rounded-circle me-2 flex-shrink-0" width="28" height="28" />
+                            <span class="fw-semibold text-dark text-truncate">${code}</span>
+                        </div>
+                    </td>
+                    <td class="text-secondary">
+                        <span class="text-truncate-custom cursor-pointer" data-bs-toggle="tooltip" data-bs-placement="top" title="${name}">
+                            ${name}
+                        </span>
+                    </td>
+                    <td class="text-end">
+                        <button type="button" class="btn btn-sm text-danger border-0 p-0 btn-remove-member me-2" title="Remove Member">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>`;
+                $('#tblSelectedMembers tbody').append(row);
+            });
+
+            updateRowNumbers();
+            initTooltips();
+            getOrCreateModal('memberModal').hide();
+        });
+
+       
+        $(document).on('click', '.btn-remove-member', function () {
+            $(this).closest('tr').remove();
+
+            if ($('#tblSelectedMembers tbody tr[data-staffcode]').length === 0) {
+                $('#tblSelectedMembers tbody').html('<tr id="emptyMemberRow"><td colspan="4" class="text-center text-muted py-3">No project members added.</td></tr>');
+            } else {
+                updateRowNumbers();
+            }
+        });
+
+        
+        $('#btnClear').on('click', function () {
+            if (isEditMode) {
+                window.location.href = '/Project/Index';
+            } else {
+                $('#projectForm')[0].reset();
+                $('span.text-danger').text('');
+                $('#ProjectManagerId').val('');
+                $('#statusActive').prop('checked', true);
+                $('#tblSelectedMembers tbody').html('<tr id="emptyMemberRow"><td colspan="4" class="text-center text-muted py-3">No project members added.</td></tr>');
+                $('#ProjectCode').focus();
+            }
+        });
+
+       
+        $('#projectForm').on('submit', function (e) {
+            e.preventDefault();
+
+            var $form = $(this);
+            if ($.data($form[0], 'validator') && !$form.valid()) {
+                return;
+            }
+
+            var codeVal = isEditMode ? $('#HiddenProjectCode').val() : $('#ProjectCode').val().trim();
+            var nameVal = $('#ProjectName').val().trim();
+
+            if (!isEditMode && codeVal === '') {
+                $('#valProjectCode').text('Project Code is required.');
+                return;
+            }
+
+            if ($('#valProjectCode').text() !== '' || $('#valProjectName').text() !== '' || $('#valEndDate').text() !== '') {
+                return;
+            }
+
+            var startDate = new Date($('#StartDate').val());
+            var endDate = new Date($('#EndDate').val());
+            if (endDate < startDate) {
+                $('#valEndDate').text('Target End Date cannot be earlier than Start Date.');
+                return;
+            }
+
+            var membersList = [];
+            $('#tblSelectedMembers tbody tr[data-staffcode]').each(function () {
+                membersList.push({
+                    Staff_Code: String($(this).attr('data-staffcode')),
+                    Name: $(this).find('td:nth-child(3) span').text().trim(),
+                    Image_URL: $(this).attr('data-img') || ''
+                });
+            });
+
+            var selectedStatus = $('input[name="Status"]:checked').val() || 'Active';
+
+            var payload = {
+                ProjectCode: codeVal,
+                ProjectName: nameVal,
+                ProjectManagerId: $('#ProjectManagerId').val(),
+                GitRepositoryUrl: $('#GitRepositoryUrl').val(),
+                Description: $('#Description').val(),
+                StartDate: $('#StartDate').val(),
+                EndDate: $('#EndDate').val(),
+                Status: selectedStatus,
+                IsEdit: isEditMode,
+                ProjectMembers: membersList
+            };
+
+            var token = $('input[name="__RequestVerificationToken"]').val();
+            var $btn = $('#btnRegister');
+            $btn.prop('disabled', true).text(isEditMode ? 'Updating...' : 'Creating...');
+
+            $.ajax({
+                url: '/Project/SaveProject',
+                type: 'POST',
+                contentType: 'application/json',
+                headers: {
+                    "RequestVerificationToken": token
+                },
+                data: JSON.stringify(payload),
+                success: function (response) {
+                    $btn.prop('disabled', false).text(isEditMode ? 'Update Project' : '+ Create Project');
+                    if (response && response.success) {
+                        showSuccessAlert(response.message, 'Success!');
+
+                        $('#alertModal').one('hidden.bs.modal', function () {
+                            if (isEditMode) {
+                                window.location.href = '/Project/Index';
+                            } else {
+                                $('#btnClear').click();
+                            }
+                        });
+                    } else {
+                        showErrorAlert(response ? response.message : 'Operation failed.', 'Error');
+                    }
+                },
+                error: function (xhr) {
+                    $btn.prop('disabled', false).text(isEditMode ? 'Update Project' : '+ Create Project');
+                    showErrorAlert(xhr.responseText || 'Request failed.', 'Server Error');
+                }
+            });
+        });
+    });
+</script>

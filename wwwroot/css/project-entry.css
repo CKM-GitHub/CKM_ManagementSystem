@@ -1,44 +1,116 @@
-﻿/* Background Setup */
-body.project-entry-bg {
-    background-image: url('../images/system_img/background_img.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    min-height: 100vh;
+﻿/* Google Fonts Import */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap');
+
+
+/* Global Font Family & Base Typography Setup */
+
+body, input, button, select, textarea, label, table, .modal-content {
+    font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif !important;
+    font-size: 14px; /* Body Base Size */
+
+    color: #2b2f38;
 }
 
+
+    /* Background Setup */
+
+    body.project-entry-bg {
+        background-image: url('../images/system_img/background_img.png');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        min-height: 100vh;
+    }
+
+
+/* 1. Main Header (32px Bold) */
+
+.page-title, h1, .main-header {
+    font-size: 32px !important;
+    font-weight: 700 !important;
+    line-height: 1.2;
+    color: #111827;
+}
+
+
+/* 2. Subheader (16px Bold) */
+
+.section-title, h2, h3, .modal-title, .subheader, .card-title {
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    color: #1f2937;
+}
+
+
+/* 3. Primary Elements (14px) */
+
+.form-label,
+.form-control,
+.form-select,
+.btn,
+.table th,
+.table td {
+    font-size: 14px !important;
+}
+
+
+.form-label {
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.35rem;
+}
+
+
+/* 4. Small Text & Guidance (12px / 11px) */
+
+.form-text,
+.text-muted,
+.text-danger,
+.small-text,
+small,
+.row-no {
+    font-size: 12px !important;
+}
+
+
+.form-help-text {
+    font-size: 11px !important;
+}
+
+
 /* Header Folder Icon Box */
+
 .icon-header-box,
 .folder-icon-box {
     width: 54px;
     height: 54px;
 }
 
+
 /* Member Avatar Image Fix */
+
 .member-avatar {
     width: 28px;
     height: 28px;
     object-fit: cover;
 }
 
-/* Small Form Guidance Text */
-.form-help-text {
-    font-size: 11px;
-}
 
-/* Dropdown Overflow & Width Fix (FIXED) */
+/* Dropdown Overflow & Width Fix */
+
 #modalDeptSelect,
 .select-truncate {
     width: 100% !important;
-    max-width: 200px !important; /* Dropdown Container ၏ အကျယ်ဆုံး Limit ကို သတ်မှတ်ခြင်း */
+    max-width: 200px !important;
     text-overflow: ellipsis !important;
     overflow: hidden !important;
     white-space: nowrap !important;
     display: inline-block;
 }
 
-    /* Native Option Popup Width Fix (FIXED) */
+
     #modalDeptSelect option,
     .select-truncate option {
         max-width: 200px !important;
@@ -48,16 +120,21 @@ body.project-entry-bg {
         white-space: nowrap !important;
     }
 
+
 /* Modal and Input Stack Management */
+
 .modal-content {
     overflow: hidden;
 }
+
 
 .modal-body {
     overflow-x: hidden;
 }
 
+
 /* Text Truncation Utility for Table Content */
+
 .text-truncate-custom {
     max-width: 100%;
     white-space: nowrap;
@@ -67,53 +144,67 @@ body.project-entry-bg {
     vertical-align: middle;
 }
 
+
 .cursor-pointer {
     cursor: pointer;
 }
 
+
 /* Custom Scrollbar & Container for Member Selection Modal Table */
+
 .modal-table-container {
     max-height: 280px;
     overflow-y: auto;
     overflow-x: hidden;
 }
 
+
 /* Fixed Width Classes for Headers */
+
 .col-width-40 {
     width: 40px;
 }
+
 
 .col-width-45 {
     width: 45px;
 }
 
+
 .col-width-50 {
     width: 50px;
 }
+
 
 .col-width-60 {
     width: 60px;
 }
 
+
 .col-width-130 {
     width: 130px;
 }
+
 
 .col-width-140 {
     width: 140px;
 }
 
+
 .col-width-150 {
     width: 150px;
 }
 
-/* Table Fixed Layout - Prevents table cells from overflowing */
+
+/* Table Fixed Layout - Modal Members */
+
 #tblModalMembers {
     border-collapse: separate;
     border-spacing: 0;
     table-layout: fixed;
     width: 100%;
 }
+
 
     #tblModalMembers thead th {
         position: sticky;
@@ -125,26 +216,31 @@ body.project-entry-bg {
         text-overflow: ellipsis;
     }
 
-    /* Modal Table Column Widths */
+
     #tblModalMembers th:nth-child(1) {
         width: 45px;
     }
+
     /* Checkbox Column */
 
     #tblModalMembers th:nth-child(2) {
         width: 130px;
     }
+
     /* Staff Code Column */
 
     #tblModalMembers th:nth-child(3) {
         width: 35%;
     }
+
     /* Staff Name Column */
 
     #tblModalMembers th:nth-child(4) {
         width: 40%;
     }
+
     /* Department Name Column */
+
 
     #tblModalMembers td {
         white-space: nowrap;
@@ -152,32 +248,39 @@ body.project-entry-bg {
         text-overflow: ellipsis;
     }
 
+
 /* Selected Members Table Styling */
+
 #tblSelectedMembers {
     table-layout: fixed;
     width: 100%;
 }
 
-    /* Selected Members Table Column Widths */
+
     #tblSelectedMembers th:nth-child(1) {
         width: 50px;
     }
+
     /* NO. Column */
 
     #tblSelectedMembers th:nth-child(2) {
         width: 140px;
     }
+
     /* Staff Code Column */
 
     #tblSelectedMembers th:nth-child(3) {
         width: auto;
     }
+
     /* Staff Name Column */
 
     #tblSelectedMembers th:nth-child(4) {
         width: 70px;
     }
+
     /* Action Column */
+
 
     #tblSelectedMembers td,
     #tblSelectedMembers th {
@@ -186,10 +289,13 @@ body.project-entry-bg {
         text-overflow: ellipsis;
     }
 
+
 /* Form Interactivity & Hover States */
+
 .table-hover tbody tr:hover {
     background-color: #f8fafc;
 }
+
 
 .form-control:focus,
 .form-select:focus {
@@ -197,11 +303,13 @@ body.project-entry-bg {
     box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
 }
 
-.form-control:disabled { 
+
+.form-control:disabled {
     background-color: #e9ecef;
     opacity: 1;
     cursor: not-allowed;
 }
+
 
 .btn-add-member-custom {
     background-color: #eef2ff;
