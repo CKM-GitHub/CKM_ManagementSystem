@@ -57,33 +57,41 @@
                     <table class="table align-middle mb-0 permissions-table">
                         <thead class="bg-light sticky-top">
                             <tr>
-                                <th class="col-menu-structure" style="width: 52%; padding-left: 1.5rem;">Menu Structure</th>
-                                <th class="text-center" style="width: 16%;">Read</th>
-                                <th class="text-center" style="width: 16%;">Write</th>
-                                <th class="text-center" style="width: 16%;">Delete</th>
+                                <th class="col-menu-structure" style="width: 55%; padding-left: 1.5rem;">Menu Structure</th>
+                                <th class="text-center" style="width: 15%;">Read</th>
+                                <th class="text-center" style="width: 15%;">Write</th>
+                                <th class="text-center" style="width: 15%;">Delete</th>
                             </tr>
                         </thead>
                         <tbody>
                             @if (Model?.MenuPermissions != null && Model.MenuPermissions.Count > 0)
                             {
                                 var rootMenus = Model.MenuPermissions
-                                    .Where(m => !m.ParentId.HasValue || m.ParentId == 0)
-                                    .ToList();
+                                .Where(m => !m.ParentId.HasValue || m.ParentId == 0)
+                                .ToList();
 
                                 foreach (var root in rootMenus)
                                 {
                                     int rootIndex = Model.MenuPermissions.IndexOf(root);
                                     var children = Model.MenuPermissions
-                                        .Where(m => m.ParentId == root.MenuId)
-                                        .ToList();
+                                    .Where(m => m.ParentId == root.MenuId)
+                                    .ToList();
 
                                     <!-- Parent Row -->
                                     <tr class="parent-menu-row fw-bold table-light" data-menu-id="@root.MenuId" data-parent-id="0">
-                                        <td style="padding-left: 1.5rem;">
+                                        <td class="menu-cell" style="padding-left: 1.5rem;">
                                             <input type="hidden" name="MenuPermissions[@rootIndex].MenuId" value="@root.MenuId" />
                                             <input type="hidden" name="MenuPermissions[@rootIndex].MenuName" value="@root.MenuName" />
                                             <input type="hidden" name="MenuPermissions[@rootIndex].ParentId" value="@root.ParentId" />
-                                            <span class="fw-bold text-dark ps-2">@root.MenuName</span>
+
+                                            <div class="menu-title-wrapper">
+                                                <span class="parent-menu-title fw-bold text-dark"
+                                                      data-bs-toggle="tooltip"
+                                                      data-bs-placement="top"
+                                                      title="@root.MenuName">
+                                                    @root.MenuName
+                                                </span>
+                                            </div>
                                         </td>
                                         <td class="text-center">
                                             <input class="form-check-input chk-read m-0" type="checkbox" name="MenuPermissions[@rootIndex].CanRead" value="true" id="read_@rootIndex" @(root.CanRead ? "checked" : "") />
@@ -107,12 +115,20 @@
                                         bool isLastChild = (c == children.Count - 1);
 
                                         <tr class="child-menu-row" data-menu-id="@child.MenuId" data-parent-id="@root.MenuId">
-                                            <td style="padding-left: 3.0rem;">
+                                            <td class="menu-cell" style="padding-left: 2.5rem;">
                                                 <input type="hidden" name="MenuPermissions[@childIndex].MenuId" value="@child.MenuId" />
                                                 <input type="hidden" name="MenuPermissions[@childIndex].MenuName" value="@child.MenuName" />
                                                 <input type="hidden" name="MenuPermissions[@childIndex].ParentId" value="@child.ParentId" />
-                                                <span class="text-muted me-2 font-monospace">@(isLastChild ? "└─" : "├─")</span>
-                                                <span class="text-secondary">@child.MenuName</span>
+
+                                                <div class="menu-title-wrapper">
+                                                    <span class="tree-icon font-monospace">@(isLastChild ? "└" : "├")</span>
+                                                    <span class="child-menu-title text-secondary"
+                                                          data-bs-toggle="tooltip"
+                                                          data-bs-placement="top"
+                                                          title="@child.MenuName">
+                                                        @child.MenuName
+                                                    </span>
+                                                </div>
                                             </td>
                                             <td class="text-center">
                                                 <input class="form-check-input chk-read m-0" type="checkbox" name="MenuPermissions[@childIndex].CanRead" value="true" id="read_@childIndex" @(child.CanRead ? "checked" : "") />
@@ -180,6 +196,15 @@
             let initialFormData = $('#roleForm').serialize();
             let pendingAction = null;
 
+            
+            function initTooltips() {
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                tooltipTriggerList.map(function (tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl);
+                });
+            }
+            initTooltips();
+
             if (!isEditMode) {
                 $('#RoleCode').focus();
             }
@@ -198,7 +223,7 @@
                 return '';
             }
 
-            // Checkbox Hierarchy Logic
+           
             $(document).on('change', '.chk-write, .chk-delete', function () {
                 if ($(this).is(':checked')) {
                     $(this).closest('tr').find('.chk-read').prop('checked', true);
@@ -262,10 +287,10 @@
                 }
             });
 
-            // Input Validation and Filtering
+            
             $(document).on('input keyup paste', '#RoleCode', function () {
                 const $this = $(this);
-                $('#valRoleCode').text(''); 
+                $('#valRoleCode').text('');
                 setTimeout(function () {
                     const cleanValue = $this.val().replace(/[^a-zA-Z0-9_-]/g, '');
                     $this.val(cleanValue);
@@ -282,7 +307,7 @@
                 }, 0);
             });
 
-            // Enter Key Navigation
+            
             $('#roleForm').on('keydown', 'input, textarea', function (e) {
                 if (e.key === 'Enter' || e.keyCode === 13) {
                     if ($(this).is('button, :submit, :checkbox, :radio')) return;
@@ -312,7 +337,7 @@
                 $('.permissions-table input[type="checkbox"]').prop('checked', false);
             });
 
-            // Alert Modal Closed Event
+            
             $('#alertModal').on('hidden.bs.modal', function () {
                 if (pendingAction) {
                     pendingAction();
@@ -320,7 +345,7 @@
                 }
             });
 
-            // Submit Button Click Handler
+            
             $('#btnRegister').on('click', function (e) {
                 e.preventDefault();
                 executeSubmit();
