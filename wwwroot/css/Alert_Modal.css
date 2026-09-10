@@ -12,12 +12,13 @@
     justify-content: center;
     border: 2px solid;
     border-radius: 50%;
-    font-size: 30px;
+    font-size: 28px;
 }
 
 .alert-success {
     color: #72c96b;
 }
+
 
 .alert-error {
     color: #ff6666;

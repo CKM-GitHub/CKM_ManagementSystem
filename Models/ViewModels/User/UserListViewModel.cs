@@ -1,5 +1,4 @@
-﻿
-namespace CKM_ManagementSystem.Models.ViewModels
+﻿namespace CKM_ManagementSystem.Models.ViewModels.User
 {
     public class UserListViewModel
     {

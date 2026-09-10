@@ -1,9 +1,9 @@
 ﻿using CKM_ManagementSystem.BL;
-using CKM_ManagementSystem.Models.ViewModels;
+using CKM_ManagementSystem.Models.ViewModels.User;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace CKM_ManagementSystem.Controllers
+namespace CKM_ManagementSystem.Controllers.User
 {
     public class UserCreateController : Controller
     {
@@ -180,7 +180,7 @@ namespace CKM_ManagementSystem.Controllers
             return RedirectToAction(
                 "UserCreate",
                 "UserCreate",
-                new { source = source }
+                new { source }
             );
         }
 

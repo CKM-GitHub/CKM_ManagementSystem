@@ -1,6 +1,6 @@
 ﻿using CKM_ManagementSystem.DL;
 using CKM_ManagementSystem.Models;
-using CKM_ManagementSystem.Models.ViewModels;
+using CKM_ManagementSystem.Models.ViewModels.User;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
 using System.Data;

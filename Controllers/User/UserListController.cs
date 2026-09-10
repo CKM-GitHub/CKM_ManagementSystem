@@ -1,11 +1,11 @@
 ﻿using CKM_ManagementSystem.BL;
-using CKM_ManagementSystem.Models.ViewModels;
+using CKM_ManagementSystem.Models.ViewModels.User;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Reflection.Metadata.Ecma335;
 
-namespace CKM_ManagementSystem.Controllers
+namespace CKM_ManagementSystem.Controllers.User
 {
     public class UserListController : Controller
     {

@@ -1,11 +1,7 @@
-﻿﻿body {
+﻿body {
     min-height: 100vh;
     padding-top: 50px;
     padding-bottom: 30px;
-}
-
-.header-text {
-    font-family: 'Noto Sans JP' !important;
 }
 
 .stat-icon-box {
@@ -47,15 +43,26 @@
 .badge-status::before {
      content: "•";
      margin-right: 4px;
-     font-size: 18px;
+     font-size: 16px;
+}
+
+
+.badge-status.active {
+    color: var(--success-color) !important;
+    background-color: #F2FFED !important;
+}
+
+.badge-status.inactive {
+    color: var(--error-color) !important;
+    background-color: #FFEDED !important;
 }
 
 .badge-status.active::before {
-     color: #10b981;
+    color: var(--success-color);
 }
 
 .badge-status.inactive::before {
-     color: #9ca3af;
+    color: var(--error-color);
 }
 
 .w-5 {
@@ -68,6 +75,14 @@
 
 .w-15 {
     width: 15%;
+}
+
+.w-18 {
+     width: 18%;
+}
+
+.w-19 {
+    width: 19%;
 }
 
 .w-20 {
@@ -83,9 +98,6 @@
     border-radius: 12px;
     vertical-align: bottom;
     border-bottom: 1px solid #dee2e6 !important;
-    font-size : 16px;
-    font-weight: bold;
-    color: #6c757d;
     background-color: #f8f9fa;
 }
 
@@ -122,7 +134,7 @@
 }
 
 #alertIcon i {
-    font-size: 4rem;
+    font-size: 16px;
 }
 
 .alert-success-icon i {
@@ -131,7 +143,28 @@
 
 .alert-danger-icon i {
     color: #dc3545;
+} 
+
+#normalButtons .btn {
+    min-width: 100px;
+    padding: 8px 24px;
+    font-size: 15px;
 }
+
+#deleteButtons .btn {
+    min-width: 100px;
+    padding: 8px 24px;
+    font-size: 15px;
+}
+
+.alert-icon.alert-success {
+     background-color: #D1E7DD;
+     color: #0F5132;
+}
+
+.alert-icon.alert-delete {
+     background-color: #F8D7DA;
+ }
 
 #alertOkButton {
     background-color: #6c757d;
@@ -224,7 +257,7 @@
 
 .paging-btn {
     margin-right: 5px;
-    padding: 8px 15px;
+    padding: 6px 15px;
     border: 1px solid #ddd;
     background: white;
     color: #333;
@@ -312,6 +345,43 @@
     transform: translateY(0px) !important;
     background-color: #4e555b !important;
 }
+
+.custom-tooltip-item {
+    position: relative;
+}
+
+.custom-tooltip-box {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 8px;
+    padding: 6px 16px;
+    background-color: #4a4a4a; /* Dark Grey Background */
+    color: #ffffff;
+    font-size: 14px;
+    border-radius: 8px;
+    white-space: nowrap;
+    z-index: 1050;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+    .custom-tooltip-box::before {
+        content: "";
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 6px;
+        border-style: solid;
+        border-color: transparent transparent #4a4a4a transparent;
+    }
+
+.custom-tooltip-item:hover .custom-tooltip-box {
+    display: block;
+}
+
 
 @media (max-width: 576px) {
     .swal2-actions-right {

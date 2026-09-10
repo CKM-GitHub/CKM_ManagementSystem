@@ -152,7 +152,6 @@ document.addEventListener("DOMContentLoaded", function () {
         );
     }
 
-
 const passwordInput = document.getElementById("Password");
 const confirmPasswordInput = document.getElementById("ConfirmPassword");
 const confirmPasswordMessage = document.querySelector(

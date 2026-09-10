@@ -1,4 +1,5 @@
 ﻿document.addEventListener("DOMContentLoaded", function () {
+
     const successMessage = document.getElementById("successMessage");
     const errorMessage = document.getElementById("errorMessage");
 
@@ -10,47 +11,52 @@
         showError(errorMessage.value);
     }
 
-    const deleteIcons = document.querySelectorAll(".delete-icon");
+    let activeTooltip = null;
 
-    deleteIcons.forEach(icon => {
-        icon.addEventListener("click", function (e) {
-            e.preventDefault();
+    document.body.addEventListener('mouseenter', function (e) {
+        const el = e.target;
 
-            const form = this.closest(".delete-form");
-            const staffCode = form.querySelector(
-                'input[name="staffCode"]'
-            ).value;
+        if (el && el.classList.contains('custom-tooltip')) {
+            const tooltipText = el.getAttribute('data-tooltip-title');
+            const isTruncated = el.scrollWidth > el.clientWidth;
 
-            Swal.fire({
-                title: "ဖျက်မှာ သေချာလား သူငယ်ချင်း",
-                html: `<div style="text-align: left; padding: 10px 0;">
-                        <p style="margin-bottom: 8px; font-size: 15px;">
-                            <strong>Staff Code:</strong>
-                            <span style="color: #d33;">${staffCode}</span>
-                        </p>
-                        <hr style="margin: 12px 0;">
-                        <p style="font-size: 14px; color: grey; margin: 0;">
-                            All user data will be permanently removed.
-                        </p>
-                      </div>`,
-                iconHtml: '<i class="fas fa-user-slash" style="font-size: 48px;"></i>',
-                showCancelButton: true,
-                cancelButtonText: "မသေချာဘူး",
-                confirmButtonText: "ဖျက်မည်",
-                reverseButtons: true,
-                buttonstyling: false,
-                width: 450,
-                customClass: {
-                    actions: "swal2-actions-right",
-                    title: "custom-modal-title",
-                    confirmButton: "custom-confirm-btn",
-                    cancelButton: "custom-cancel-btn"
-                }
-            }).then(result => {
-                if (result.isConfirmed) {
+            if (activeTooltip) {
+                activeTooltip.dispose();
+                activeTooltip = null;
+            }
+
+            if (isTruncated && tooltipText) {
+                el.setAttribute('title', tooltipText);
+
+                activeTooltip = new bootstrap.Tooltip(el, {
+                    placement: 'bottom',
+                    trigger: 'manual'
+                });
+
+                activeTooltip.show();
+            }
+        }
+    }, true);
+
+    document.querySelectorAll(".delete-form").forEach(function (form) {
+
+        const deleteButton = form.querySelector(".delete-icon");
+
+        if (!deleteButton) return;
+
+        deleteButton.addEventListener("click", function (e) {
+            e.preventDefault();          
+
+            const staffCodeInput = form.querySelector('input[name="staffCode"]');
+            const staffCode = staffCodeInput ? staffCodeInput.value : "";
+
+            showDelete(
+                `Are you sure you want to delete user ${staffCode}?`,
+                function () {
                     form.submit();
                 }
-            });
+            );
         });
     });
+
 });
