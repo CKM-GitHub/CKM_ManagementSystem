@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
-namespace CKM_ManagementSystem.Models.ViewModels
+namespace CKM_ManagementSystem.Models.ViewModels.Menu
 {
     public class CreateMenuViewModel
     {

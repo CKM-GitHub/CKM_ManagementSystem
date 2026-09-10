@@ -1,5 +1,5 @@
 ﻿using CKM_ManagementSystem.BL;
-using CKM_ManagementSystem.Models.ViewModels;
+using CKM_ManagementSystem.Models.ViewModels.Menu;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
