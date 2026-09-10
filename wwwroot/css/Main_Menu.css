@@ -39,6 +39,10 @@ body {
     flex: 0 0 230px;
     background-color: #17181b;
     color: #ffffff;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    overflow-y: auto;
 }
 
 .main-area {
@@ -59,11 +63,12 @@ body {
     padding: 0 20px;
     background: transparent;
     border-bottom: none;
+    
 }
 
 .page-content {
     min-height: calc(100vh - 70px);
-    padding: 30px;
+    padding: 0;
     color: #ffffff;
 }
 
