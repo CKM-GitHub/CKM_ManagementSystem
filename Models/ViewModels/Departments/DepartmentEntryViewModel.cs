@@ -5,6 +5,7 @@ namespace CKM_ManagementSystem.Models.ViewModels.Departments
     public class DepartmentEntryViewModel
     {
         public Guid? Id { get; set; }
+        public string OriginalDepartmentCode { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Department Code is required.")]
         [StringLength( 30,ErrorMessage = "Department Code cannot exceed 30 characters.")]
