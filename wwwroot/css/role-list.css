@@ -6,7 +6,7 @@
 
 .page-title {
     color: var(--white);
-    font-weight: 700;
+    font-weight: bold;
     font-size: 32px; /* Main Header Size */
     text-align: center;
     margin-top: 20px;
@@ -74,7 +74,7 @@
     background-color: var(--primary-blue);
     color: var(--white);
     border-radius: 6px;
-    font-weight: 700;
+    font-weight:bold;
     font-size: 16px; /* Subheader / Button Size */
     height: 38px;
     padding: 0 16px;
@@ -94,7 +94,7 @@
     background-color: var(--primary-blue);
     color: var(--white);
     border-radius: 6px;
-    font-weight: 700;
+    font-weight: bold;
     font-size: 16px; /* Subheader / Button Size */
     height: 38px;
     padding: 0 18px;
@@ -122,7 +122,7 @@
 
     .role-table th {
         color: var(--dark-blue);
-        font-weight: 700;
+        font-weight: bold;
         font-size: 16px; /* Subheader Size */
         padding: 14px 10px;
         border-bottom: 1px solid var(--light-gray);
@@ -170,8 +170,8 @@
 /* Status Badges - Fixed Dimensions & Strict Alignment */
 .badge-status-active,
 .badge-status-inactive {
-    width: 80px; /* Fixed Width ပေးထား၍ အရွယ်အစား လုံးဝညီပါမည် */
-    height: 28px; /* Height ညီစေရန် */
+    width: 80px; 
+    height: 28px; 
     border-radius: 14px;
     font-size: 13px;
     font-weight: 600;

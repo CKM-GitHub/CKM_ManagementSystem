@@ -20,7 +20,7 @@ body {
 .main-header,
 h1 {
     color: var(--dark-blue) !important;
-    font-weight: 700 !important;
+    font-weight: bold;
     font-size: 32px !important;
     text-align: center;
     margin-bottom: 1.5rem;
@@ -33,7 +33,7 @@ h1 {
 .subheader,
 h2, h3, h4 {
     font-size: 16px !important;
-    font-weight: 700 !important;
+    font-weight:bold;
     color: var(--dark-blue) !important;
 }
 
