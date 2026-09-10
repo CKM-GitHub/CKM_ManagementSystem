@@ -5,11 +5,11 @@ using CKM_ManagementSystem.Models.ViewModels.Departments;
 
 namespace CKM_ManagementSystem.Controllers.Departments
 {
-    public class DepartmentsController : Controller
+    public class DepartmentEntryController : Controller
     {
         private readonly DepartmentBL _departmentBL;
 
-        public DepartmentsController(DepartmentBL departmentBL)
+        public DepartmentEntryController(DepartmentBL departmentBL)
         {
             _departmentBL = departmentBL;
         }
@@ -17,7 +17,9 @@ namespace CKM_ManagementSystem.Controllers.Departments
         [HttpGet]
         public IActionResult Entry()
         {
-            return View(new DepartmentEntryViewModel());
+            return View(
+                "~/Views/Departments/Entry.cshtml",
+                new DepartmentEntryViewModel());
         }
 
         [HttpPost]
@@ -37,7 +39,9 @@ namespace CKM_ManagementSystem.Controllers.Departments
 
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return View(
+                    "~/Views/Departments/Entry.cshtml",
+                    model);
             }
 
             bool exists =
@@ -50,7 +54,9 @@ namespace CKM_ManagementSystem.Controllers.Departments
                     nameof(model.DepartmentCode),
                     "Department Code already exists.");
 
-                return View(model);
+                return View(
+                    "~/Views/Departments/Entry.cshtml",
+                    model);
             }
 
             bool nameExists =
@@ -63,7 +69,9 @@ namespace CKM_ManagementSystem.Controllers.Departments
                     nameof(model.DepartmentName),
                     "Department Name already exists.");
 
-                return View(model);
+                return View(
+                    "~/Views/Departments/Entry.cshtml",
+                    model);
             }
 
             Department department = new Department
@@ -83,29 +91,15 @@ namespace CKM_ManagementSystem.Controllers.Departments
                     "",
                     "Save failed.");
 
-                return View(model);
+                return View(
+                    "~/Views/Departments/Entry.cshtml",
+                    model);
             }
 
             TempData["SuccessMessage"] =
                 "Registration is complete.";
 
             return RedirectToAction(nameof(Entry));
-        }
-
-        [HttpGet]
-        public IActionResult Index(
-            string? searchText,
-            bool? status,
-            int pageNumber = 1)
-        {
-            DepartmentListViewModel viewModel =
-                _departmentBL.GetDepartmentList(
-                    searchText,
-                    status,
-                    pageNumber,
-                    10);
-
-            return View("List", viewModel);
         }
 
         [HttpGet]
@@ -116,7 +110,9 @@ namespace CKM_ManagementSystem.Controllers.Departments
                 TempData["ErrorMessage"] =
                     "Department code is required.";
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(
+                    "Index",
+                    "DepartmentList");
             }
 
             DepartmentEntryViewModel? viewModel =
@@ -128,10 +124,14 @@ namespace CKM_ManagementSystem.Controllers.Departments
                 TempData["ErrorMessage"] =
                     "Department was not found.";
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(
+                    "Index",
+                    "DepartmentList");
             }
 
-            return View("Entry", viewModel);
+            return View(
+                "~/Views/Departments/Entry.cshtml",
+                viewModel);
         }
 
         [HttpPost]
@@ -145,7 +145,9 @@ namespace CKM_ManagementSystem.Controllers.Departments
                 TempData["ErrorMessage"] =
                     "Department code is required.";
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(
+                    "Index",
+                    "DepartmentList");
             }
 
             model.DepartmentName =
@@ -157,17 +159,23 @@ namespace CKM_ManagementSystem.Controllers.Departments
 
             if (!ModelState.IsValid)
             {
-                return View("Entry", model);
+                return View(
+                    "~/Views/Departments/Entry.cshtml",
+                    model);
             }
 
             DepartmentEntryViewModel? original =
                 _departmentBL.GetDepartmentByCode(
                     model.OriginalDepartmentCode);
+
             if (original == null)
             {
                 TempData["ErrorMessage"] =
                     "Department was not found.";
-                return RedirectToAction(nameof(Index));
+
+                return RedirectToAction(
+                    "Index",
+                    "DepartmentList");
             }
 
             bool nameExists =
@@ -181,14 +189,13 @@ namespace CKM_ManagementSystem.Controllers.Departments
                     nameof(model.DepartmentName),
                     "Department Name already exists.");
 
-                return View("Entry", model);
+                return View(
+                    "~/Views/Departments/Entry.cshtml",
+                    model);
             }
 
             Department department = new Department
             {
-                OriginalDepartmentCode =
-                    model.OriginalDepartmentCode,
-
                 DepartmentCode =
                     model.OriginalDepartmentCode,
 
@@ -211,43 +218,21 @@ namespace CKM_ManagementSystem.Controllers.Departments
                     "",
                     "Update failed.");
 
-                return View("Entry", model);
+                return View(
+                    "~/Views/Departments/Entry.cshtml",
+                    model);
             }
 
             TempData["SuccessMessage"] =
                 "Department updated successfully.";
 
-            return RedirectToAction(nameof(Edit), new {departmentCode=model.OriginalDepartmentCode});
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Delete(string departmentCode)
-        {
-            if (string.IsNullOrWhiteSpace(departmentCode))
-            {
-                TempData["ErrorMessage"] =
-                    "Department code is required.";
-
-                return RedirectToAction(nameof(Index));
-            }
-
-            string result =
-                _departmentBL.DeleteDepartment(
-                    departmentCode);
-
-            if (result == "true")
-            {
-                TempData["SuccessMessage"] =
-                    "Department deleted successfully.";
-            }
-            else
-            {
-                TempData["ErrorMessage"] =
-                    "Department deletion failed.";
-            }
-
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(
+                nameof(Edit),
+                new
+                {
+                    departmentCode =
+                        model.OriginalDepartmentCode
+                });
         }
     }
 }

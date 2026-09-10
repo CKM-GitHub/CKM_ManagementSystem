@@ -39,7 +39,7 @@
             Department Management
         </h2>
 
-        <form asp-controller="Departments"
+        <form asp-controller="DepartmentList"
         asp-action="Index"
         method="get"
         class="search-section">
@@ -84,7 +84,7 @@
 
             <div class="search-right">
 
-                <a asp-controller="Departments"
+                <a asp-controller="DepartmentEntry"
                 asp-action="Entry"
                 class="btn-add">
                     + Add Department
@@ -180,7 +180,7 @@
 
                                     <td class="action-column">
 
-                                        <a asp-controller="Departments"
+                                        <a asp-controller="DepartmentEntry"
                                            asp-action="Edit"
                                            asp-route-departmentCode="@department.DepartmentCode"
                                            class="icon-button edit-icon"
@@ -251,7 +251,7 @@
                                 : "")">
 
                                 <a class="page-link"
-                                   asp-controller="Departments"
+                                   asp-controller="DepartmentList"
                                    asp-action="Index"
                                    asp-route-searchText="@Model.SearchText"
                                    asp-route-status="@Model.Status"
@@ -271,7 +271,7 @@
                                     : "")">
 
                                     <a class="page-link"
-                                       asp-controller="Departments"
+                                       asp-controller="DepartmentList"
                                        asp-action="Index"
                                        asp-route-searchText="@Model.SearchText"
                                        asp-route-status="@Model.Status"
@@ -287,7 +287,7 @@
                                 : "")">
 
                                 <a class="page-link"
-                                   asp-controller="Departments"
+                                   asp-controller="DepartmentList"
                                    asp-action="Index"
                                    asp-route-searchText="@Model.SearchText"
                                    asp-route-status="@Model.Status"
@@ -321,7 +321,7 @@
 
         <partial name="AlertModal" />
 
-    <form asp-controller="Departments" 
+    <form asp-controller="DepartmentList" 
     asp-action="Delete" 
     method="post" 
     id="deleteDepartmentForm" 

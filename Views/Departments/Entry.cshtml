@@ -57,7 +57,7 @@
             </h2>
 
 
-            <form asp-controller="Departments"
+            <form asp-controller="DepartmentEntry"
                   asp-action="@(isEditMode ? "Edit": "Entry")"
                   method="post"
                   id="departmentEntryForm">
@@ -76,7 +76,7 @@
                            class="form-control"
                            maxlength="30"
                            autocomplete="off"
-                           placeholder="e.g.HR-001"
+                           placeholder="e.g. HR-001"
                            readonly="@(
                            isEditMode? "readonly" : null
                            )" />
@@ -95,7 +95,7 @@
                     <input asp-for="DepartmentName"
                            class="form-control"
                            maxlength="150"
-                           placeholder="e.g.Human Resources"
+                           placeholder="e.g. Human Resources"
                            autocomplete="off" />
 
                     <span asp-validation-for="DepartmentName"
@@ -111,7 +111,7 @@
 
                     <textarea asp-for="Description"
                               class="form-control description-box"
-                              placeholder="e.g.Handle employee management"
+                              placeholder="e.g. Handle employee management"
                               maxlength="500">
                     </textarea>
 
@@ -161,7 +161,7 @@
                     @if (isEditMode)
                     {
                         <input type="hidden" asp-for="OriginalDepartmentCode" />
-                        <a asp-controller="Departments"
+                        <a asp-controller="DepartmentList"
                            asp-action="Index"
                            class="btn-clear">
                             Cancel
@@ -201,7 +201,7 @@
                value="@TempData["SuccessMessage"]" />
     }
 
-    <input type="hidden" id="departmentListUrl" value="@Url.Action("Index","Departments")" />
+    <input type="hidden" id="departmentListUrl" value="@Url.Action("Index","DepartmentList")" />
     <partial name="AlertModal" />
 
 
@@ -214,10 +214,7 @@
     </script>
 
     <partial name="_ValidationScriptsPartial" />
-    <link rel="stylesheet"
-          href="~/css/ckm-theme.css"
-          asp-append-version="true" />
-
+   
     <script src="~/js/Department_Entry.js"
             asp-append-version="true">
     </script>
