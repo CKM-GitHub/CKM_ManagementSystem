@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text.Json;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace CKM_ManagementSystem.DL
 {
@@ -130,6 +131,42 @@ namespace CKM_ManagementSystem.DL
                 }
             }
             return parameters;
+        }
+
+        public object? ExecuteScalarObject(string storedProcedureName, params SqlParameter[] parameters)
+        {
+            using SqlConnection connection = new SqlConnection(_connectionString);
+            connection.Open();
+            using SqlCommand command = new SqlCommand(storedProcedureName, connection);
+            command.CommandType = CommandType.StoredProcedure;
+            if(parameters != null && parameters.Length > 0)
+            {
+                NormalizeParameters(parameters);
+                command.Parameters.AddRange(parameters);
+            }
+            object? result = command.ExecuteScalar();
+            return (result == DBNull.Value) ? null : result;
+        }
+
+        public DataTable ExecuteDataTable(string storedProcedure, params SqlParameter[] parameters)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            using var command = new SqlCommand(storedProcedure, connection);
+
+            command.CommandType= CommandType.StoredProcedure;
+            
+
+            if(parameters != null && parameters.Length > 0)
+            {
+                NormalizeParameters(parameters);
+                command.Parameters.AddRange(parameters);
+            }
+            using SqlDataAdapter adapter= new SqlDataAdapter(command);
+            DataTable dataTable = new DataTable();
+
+            adapter.Fill(dataTable);
+
+            return dataTable;
         }
 
     }
