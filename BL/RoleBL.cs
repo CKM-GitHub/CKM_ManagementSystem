@@ -4,7 +4,6 @@ using System.Data;
 using System.Linq;
 using CKM_ManagementSystem.DL;
 using CKM_ManagementSystem.Models.Entities;
-using CKM_ManagementSystem.Models.ViewModels;
 using CKM_ManagementSystem.Models.ViewModels.Roles;
 using Microsoft.Data.SqlClient;
 

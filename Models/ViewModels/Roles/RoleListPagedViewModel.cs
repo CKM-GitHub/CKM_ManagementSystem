@@ -1,7 +1,6 @@
-﻿using CKM_ManagementSystem.Models.ViewModels.Roles; 
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace CKM_ManagementSystem.Models.ViewModels
+namespace CKM_ManagementSystem.Models.ViewModels.Roles
 {
     public class RoleListPagedViewModel
     {
@@ -9,7 +8,7 @@ namespace CKM_ManagementSystem.Models.ViewModels
         public int TotalRecords { get; set; }
         public int PageNumber { get; set; } = 1;
         public int PageSize { get; set; } = 10;
-        public int TotalPages => (int)System.Math.Ceiling((double)TotalRecords / PageSize);
+        public int TotalPages => (int)Math.Ceiling((double)TotalRecords / PageSize);
         public string SearchKeyword { get; set; }
         public int? Status { get; set; }
     }
