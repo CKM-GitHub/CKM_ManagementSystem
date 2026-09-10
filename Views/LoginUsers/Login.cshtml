@@ -11,7 +11,7 @@
                     <div class="d-flex align-items-center justify-content-center mb-4">
                         <img src="~/images/system_img/login_logo.png" alt="CKM Logo" class="logo-img" onerror="this.style.display='none'" />
                     </div>
-                    <h3 class="login-title fw-bold mb-1">Sign In</h3>
+                    <h2 class="login-title fw-bold mb-1">Sign In</h2>
                     <p class="login-subtitle text-muted mb-4">Welcome back! Please sign in to contiue.</p>
                     
                     <form asp-controller="LoginUsers" asp-action="Login" id="loginForm" method="post">
@@ -49,13 +49,16 @@
         </div>
     </div>
 </div>
+<partial name="AlertModal" class="login-modal"/>
 @section Styles {
     <link rel="stylesheet" href="~/css/Login.css" />
-    <link rel="stylesheet" href="~/css/sweetalert2.min.css" />
+    <link rel="stylesheet" href="~/css/ckm-theme.css" />
+    <link rel="stylesheet" href="~/css/Alert_Modal.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 }
 @section Scripts{
     <partial name="_ValidationScriptsPartial" />
     <script src="~/js/Login.js" asp-append-version="true"></script>
-    <script src="~/js/sweetalert2.all.min.js" asp-append-version="true"></script>
+    <script src="~/js/Alert_Modal.js" asp-append-version="true"></script>
 }

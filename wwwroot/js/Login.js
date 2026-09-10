@@ -32,23 +32,10 @@
     });
     const errorMessage = $('.login-body').data('error');
     if (errorMessage) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Login Failed',
-            text: errorMessage,
-            confirmButtonText: 'Try Again',
-            confirmButtonColor: '#0066ff',
-            customClass: {
-                popup: 'custom-swal-popup',
-                title: 'custom-swal-title',
-                htmlContainer: 'custom-swal-text',
-                confirmButton: 'custom-swal-button'
-            }
-        }).then(() => {
+        showError(errorMessage, "Login Failed");
+        $('#alertModal').one('hidden.bs.modal', function () {
             passwordInput.attr('type', 'password');
-            toggleIcon
-                .removeClass('fa-eye-slash')
-                .addClass('fa-eye');
+            toggleIcon.removeClass('fa-eye-salash').addClass('fa-eye');
             setTimeout(function () {
                 passwordInput.focus();
             }, 100);
@@ -60,21 +47,9 @@
         }, 100);
     }
 
-    const successTitle = $('.login-body').data('success-title');
+    const successTitle = $('.login-body').data('success-title') || 'Success!';
     const successMessage = $('.login-body').data('success-message');
     if (successMessage) {
-        Swal.fire({
-            icon: 'success',
-            title: successTitle,
-            text: successMessage,
-            confirmButtonText: 'OK',
-            confirmButtonColor: '#0066ff',
-            customClass: {
-                popup: 'custom-swal-popup',
-                title: 'custom-swal-title',
-                htmlContainer: 'custom-swal-text',
-                confirmButton: 'custom-swal-button'
-            }
-        });
+        showSuccess(successMessage, successTitle);
     }
 });
