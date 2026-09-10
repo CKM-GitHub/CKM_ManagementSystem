@@ -34,6 +34,7 @@
     font-size: 14px;
     border-radius: 6px;
     height: 40px;
+    font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
 }
 
 .form-control:focus,
@@ -54,6 +55,7 @@
     border: none;
     background-color: var(--primary-blue);
     color: var(--white);
+    font-size: 14px !important;
 }
 .btn-register:hover{
     color: var(--white);
@@ -69,6 +71,8 @@
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
+    font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
+    font-size: 14px !important;
 }
 
 .btn-clear:hover,
@@ -104,6 +108,12 @@
     width: 100%;
     max-width: 100%;
     overflow: hidden;
+}
+
+#menuForm .border-danger, #menuForm .char-limit-msg{font-size: 12px !important;}
+.status-title{
+    font-size: 14px !important;
+    color: var(--dark-blue);
 }
 
 .input-validation-error, 

@@ -20,7 +20,7 @@
     font-weight: 600;
 }
 .route-text, .status-badge, .footer-text, .page-btn {
-    font-size: 12px !important;
+    font-size: 14px !important;
 }
 
 body {
@@ -113,7 +113,7 @@ body {
     top: 50%;
     transform: translateY(-50%);
     color: var(--gray);
-    font-size: 13px;
+    font-size: 14px;
     z-index: 2;
 }
 
@@ -188,7 +188,7 @@ body {
 }
 .table-icon{
     color: var(--primary-blue);
-    font-size: 1.125rem;
+    font-size: 14px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -238,19 +238,19 @@ body {
 }
 
 .col-route{
-    width: 20%;
+    width: 25%;
 }
 
 .col-parent {
-    width: 16%;
+    width: 12%;
 }
 
 .col-order{
-    width: 10%;
+    width: 12%;
 }
 
 .col-status{
-    width: 10%;
+    width: 12%;
 }
 
 .col-actions{
@@ -340,7 +340,7 @@ body {
     border-radius: 6px;
     background: var(--white);
     color: var(--gray);
-    font-size: 13px;
+    font-size: 14px;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
