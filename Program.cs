@@ -1,8 +1,6 @@
 using CKM_ManagementSystem.BL;
 using CKM_ManagementSystem.Data;
 using CKM_ManagementSystem.DL;
-using CKM_ManagementSystem.Services;
-using CKM_ManagementSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +12,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // 2. IDepartmentService 
-builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<BaseDL>();
 builder.Services.AddScoped<DepartmentBL>();
 builder.Services.AddScoped<Menu_BL>();

@@ -20,9 +20,5 @@
 	<Folder Include="Data\Migrations\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Services\Interfaces\" />
-  </ItemGroup>
-
   
 </Project>
