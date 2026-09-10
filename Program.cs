@@ -36,6 +36,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Departments}/{action=Entry}/{id?}");
+    pattern: "{controller=DepartmentEntry}/{action=Entry}/{id?}");
 
 app.Run();
