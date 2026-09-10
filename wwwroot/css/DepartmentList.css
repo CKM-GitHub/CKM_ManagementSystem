@@ -14,14 +14,15 @@ body {
 
 .department-list-page {
     width: 100%;
-    min-height: 100vh;
+    min-height: calc(100vh - 70px);
     padding: 16px 24px 60px;
-    background:var(--dark-blue);
+    background: transparent;
+    box-sizing: border-box;
 }
 
 .department-list-title {
     margin: 0 0 14px;
-    color: var(--white);
+    color: var(--dark-blue);
     text-align: center;
     font-size: 32px;
     font-weight: 700;
@@ -326,6 +327,13 @@ body {
     color: var(--dark-blue) !important;
     font-size: 14px;
 }
+.department-list-title,
+.search-section,
+.table-card {
+    width: min(100%, 1400px);
+    margin-left: auto;
+    margin-right: auto;
+}
 
 @media (max-width: 900px) {
     .department-list-page {
@@ -366,11 +374,4 @@ body {
     .pagination-container {
         margin-left: 0;
     }
-}
-.department-list-title,
-.search-section,
-.table-card {
-    width: min(100%, 1400px);
-    margin-left: auto;
-    margin-right: auto;
 }
