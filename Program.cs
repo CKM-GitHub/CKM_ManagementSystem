@@ -17,7 +17,7 @@ builder.Services.AddScoped<BaseDL>();
 builder.Services.AddScoped<DepartmentBL>();
 builder.Services.AddScoped<Menu_BL>();
 builder.Services.AddScoped<MainMenuBL>();
-
+builder.Services.AddScoped<RoleBL>();
 // builder.Services.AddScoped<IMenuService, MenuService>();
 builder.Services.AddScoped<LoginUserBL>();
 builder.Services.AddAuthentication("MyCookieAuth")
