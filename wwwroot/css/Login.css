@@ -1,4 +1,4 @@
-﻿html,body{
+﻿html, body {
     margin: 0 !important;
     padding: 0 !important;
     min-height: 100vh;
@@ -6,6 +6,7 @@
     overflow-x: hidden;
     font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
     font-size: 14px;
+    
 }
 main, .container, .container-fluid{
     padding: 0 !important;
@@ -13,11 +14,16 @@ main, .container, .container-fluid{
     max-width: 100% !important;
     width: 100% !important;
 }
-.login-body{
+.login-body {
     min-height: 100vh;
     justify-content: center;
     align-items: center;
     display: flex;
+    background-image: url('/images/system_img/background_img.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 .login-body .container-fluid {
     width: 100%;
