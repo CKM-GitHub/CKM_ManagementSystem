@@ -1,8 +1,8 @@
 ﻿using Microsoft.Data.SqlClient;
 using System.Data;
-using System.Linq;
 using System.Text.Json;
 using Microsoft.Data.SqlClient;
+using System.Linq;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 
@@ -15,6 +15,7 @@ namespace CKM_ManagementSystem.DL
 
         public BaseDL(IConfiguration configuration)
         {
+
             _connectionString =
                 configuration.GetConnectionString("DefaultConnection")
                 ?? throw new InvalidOperationException(
@@ -142,7 +143,20 @@ namespace CKM_ManagementSystem.DL
             using var reader = await command.ExecuteReaderAsync();
 
             var table = new DataTable();
-            table.Load(reader);
+            using (var reader = await command.ExecuteReaderAsync())
+            {
+                table.Load(reader);
+            }
+                if (parameters != null)
+                {
+                    for (int i = 0; i < parameters.Length; i++)
+                    {
+                        if (parameters[i].Direction == ParameterDirection.Output || parameters[i].Direction == ParameterDirection.InputOutput)
+                        {
+                            parameters[i].Value = command.Parameters[parameters[i].ParameterName].Value;
+                        }
+                    }
+                }
             return table;
         }
 
@@ -219,7 +233,36 @@ namespace CKM_ManagementSystem.DL
             {
                 command.Parameters.AddRange(NormalizeParameters(parameters));
             }
+        public async Task<bool> ExecuteAsync(string storedProcedure, params SqlParameter[] parameters){
+            using var connection = new SqlConnection(_connectionString);
+            using var command = new SqlCommand( storedProcedure, connection);
 
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandTimeout= _commandTimeout;
+
+            if(parameters != null && parameters.Length > 0)
+            {
+                command.Parameters.AddRange (NormalizeParameters(parameters));
+
+            }
+            await connection.OpenAsync();
+            await command.ExecuteNonQueryAsync();
+
+            if(parameters != null)
+            {
+                for(int i = 0;i< parameters.Length; i++)
+                {
+                    if (parameters[i].Direction == ParameterDirection.Output || parameters[i].Direction == ParameterDirection.InputOutput)
+                    {
+                        parameters[i].Value = command.Parameters[parameters[i].ParameterName].Value;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        private  SqlParameter[] NormalizeParameters(SqlParameter[] parameters)
             return command;
         }
         private SqlParameter[] NormalizeParameters(SqlParameter[] parameters)
