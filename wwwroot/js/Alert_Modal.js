@@ -38,7 +38,6 @@
     const modal = bootstrap.Modal.getOrCreateInstance(alertModal);
     modal.show();
 }
-<<<<<<< HEAD
 /*Success function*/
 function showSuccess(message, onOk) {
     showAlert(
@@ -55,11 +54,6 @@ function showSuccess(message, onOk) {
             }
         }
     }
-=======
-
-function showSuccess(message) {
-    showAlert("success", "Success!", message);
->>>>>>> 5-rolelist
 }
 
 function showError(message) {
@@ -69,14 +63,8 @@ function showError(message) {
 function showDelete(message, onConfirm) {
     showAlert("delete", "Delete!", message);
 
-<<<<<<< HEAD
 const confirmButton = document.getElementById("confirmDeleteButton");
 if (confirmButton) {
-=======
-    const confirmButton = document.getElementById("confirmDeleteButton");
-    if (confirmButton) {
-        // အရင် Event 旧 များကို ရှင်းထုတ်ပြီးမှ မဂ်လာပါ One-time Event Binding ပြုလုပ်ခြင်း
->>>>>>> 5-rolelist
         $(confirmButton).off('click').one('click', function () {
             if (typeof onConfirm === 'function') {
                 onConfirm();

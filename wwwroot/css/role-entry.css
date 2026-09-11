@@ -1,19 +1,11 @@
-<<<<<<< HEAD
 ﻿﻿
 /* Base Page & Backgrounds */
 body {
-=======
-﻿body {
->>>>>>> 5-rolelist
     color: var(--white) !important;
     font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif !important;
 }
 
-<<<<<<< HEAD
 /* Card Container (Background White) */
-=======
-
->>>>>>> 5-rolelist
 .role-entry-card {
     background-color: var(--white) !important;
     border-radius: 12px;
@@ -23,11 +15,7 @@ body {
     margin: 2rem auto;
 }
 
-<<<<<<< HEAD
 /* Main Header - 32px Bold (Dark Blue Text on White Card) */
-=======
-
->>>>>>> 5-rolelist
 .role-entry-title,
 .main-header,
 h1 {
@@ -39,11 +27,7 @@ h1 {
     line-height: 1.2;
 }
 
-<<<<<<< HEAD
 /* Subheaders & Table Headers - 16px Bold */
-=======
-
->>>>>>> 5-rolelist
 .permissions-table-wrapper table thead th,
 .parent-menu-title,
 .subheader,
@@ -53,11 +37,7 @@ h2, h3, h4 {
     color: var(--dark-blue) !important;
 }
 
-<<<<<<< HEAD
 /* Labels, Body Text & Controls - 14px */
-=======
-
->>>>>>> 5-rolelist
 .form-label-custom {
     color: var(--dark-blue) !important;
     font-size: 14px !important;
@@ -79,11 +59,7 @@ h2, h3, h4 {
         background-color: var(--white) !important;
     }
 
-<<<<<<< HEAD
 /* Sub-text / Validation Error - 12px */
-=======
-
->>>>>>> 5-rolelist
 small,
 .form-text {
     font-size: 12px !important;
@@ -99,11 +75,7 @@ small,
     font-size: 12px !important;
 }
 
-<<<<<<< HEAD
 /* Table Customization & Scrollbar Controls */
-=======
-
->>>>>>> 5-rolelist
 .permissions-table-wrapper {
     border: 1px solid var(--border-color);
     border-radius: 8px;
@@ -126,11 +98,7 @@ small,
             border-bottom: 1px solid var(--border-color);
         }
 
-<<<<<<< HEAD
         /* Option A: Ellipsis Text Control for Table Cells */
-=======
-       
->>>>>>> 5-rolelist
         .permissions-table-wrapper table td.menu-cell {
             max-width: 0;
             white-space: nowrap;
@@ -168,11 +136,7 @@ small,
     color: var(--dark-blue) !important;
 }
 
-<<<<<<< HEAD
 /* Custom Checkbox Alignment & Styling */
-=======
-
->>>>>>> 5-rolelist
 .form-check-input {
     cursor: pointer;
     border-color: var(--border-color);
@@ -183,11 +147,7 @@ small,
         border-color: var(--primary-blue) !important;
     }
 
-<<<<<<< HEAD
 /* Buttons */
-=======
-
->>>>>>> 5-rolelist
 .btn-primary {
     background-color: var(--primary-blue) !important;
     border: 1px solid var(--primary-blue) !important;
@@ -214,20 +174,3 @@ small,
         background-color: var(--gray) !important;
         color: var(--white) !important;
     }
-<<<<<<< HEAD
-=======
-
-
-.tooltip .tooltip-arrow {
-    display: none !important;
-}
-
-.tooltip-inner {
-    background-color: var(--dark-blue, #1e293b) !important;
-    color: #ffffff !important;
-    font-size: 12px !important;
-    padding: 6px 10px !important;
-    border-radius: 6px !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-}
->>>>>>> 5-rolelist

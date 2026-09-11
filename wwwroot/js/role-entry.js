@@ -1,9 +1,5 @@
 ﻿$(document).ready(function () {
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 5-rolelist
     const isEditMode = window.RoleEntryConfig ? window.RoleEntryConfig.isEditMode : false;
     const roleListUrl = window.RoleEntryConfig ? window.RoleEntryConfig.roleListUrl : '#';
 
@@ -95,7 +91,6 @@
             type: 'POST',
             data: $form.serialize(),
             success: function (response) {
-<<<<<<< HEAD
                 let msg = "";
                 if (typeof response === "string") {
                     msg = response;
@@ -112,30 +107,11 @@
                     $('#alertModal').one('hidden.bs.modal', function () {
                         if (isEditMode) {
                             window.location.href = roleListUrl;
-=======
-                const isSuccess = response && (response.success === true || response.Success === true);
-
-                if (isSuccess) {
-                   
-                    let msg = "";
-                    if (response.message || response.Message || response.msg) {
-                        msg = response.message || response.Message || response.msg;
-                    } else {
-                        msg = isEditMode ? "Update is complete." : "Registration is complete.";
-                    }
-
-                    showSuccess(msg);
-
-                    $('#alertModal').one('hidden.bs.modal', function () {
-                        if (isEditMode || response.isEdit) {
-                            window.location.href = response.redirectUrl || roleListUrl;
->>>>>>> 5-rolelist
                         } else {
                             $('#btnClear').click();
                         }
                     });
                 } else {
-<<<<<<< HEAD
                     if (msg.includes("Role Code")) {
                         $('#valRoleCode').text(msg);
                         $('#RoleCode').focus();
@@ -144,30 +120,6 @@
                         $('#DisplayName').focus();
                     } else {
                         showError(msg);
-=======
-                   
-                    let errorMsg = response && (response.message || response.Message)
-                        ? (response.message || response.Message)
-                        : "Validation error occurred.";
-
-                    if (response && response.errors) {
-                        if (response.errors.RoleCode) {
-                            $('#valRoleCode').text(response.errors.RoleCode);
-                            $('#RoleCode').focus();
-                        }
-                        if (response.errors.DisplayName) {
-                            $('#valDisplayName').text(response.errors.DisplayName);
-                            if (!response.errors.RoleCode) $('#DisplayName').focus();
-                        }
-                    } else if (errorMsg.includes("Role Code")) {
-                        $('#valRoleCode').text(errorMsg);
-                        $('#RoleCode').focus();
-                    } else if (errorMsg.includes("Role Name") || errorMsg.includes("Display Name")) {
-                        $('#valDisplayName').text(errorMsg);
-                        $('#DisplayName').focus();
-                    } else {
-                        showError(errorMsg);
->>>>>>> 5-rolelist
                     }
                 }
             },
