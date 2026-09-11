@@ -49,7 +49,43 @@ namespace CKM_ManagementSystem.Controllers
 
             return View(model);
         }
+        [HttpGet]
+        public IActionResult RoleList(
+    string searchKeyword,
+    int? status,
+    int pageNumber = 1,
+    int pageSize = 10)
+        {
+            var model = _roleBL.GetRoleListPaged(
+                pageNumber,
+                pageSize,
+                searchKeyword,
+                status);
 
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteRole(string roleCode)
+        {
+            if (string.IsNullOrWhiteSpace(roleCode))
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Invalid Role Code."
+                });
+            }
+
+            var result = _roleBL.DeleteRole(roleCode);
+
+            return Json(new
+            {
+                success = result.Success,
+                message = result.Message
+            });
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult RoleEntry(RoleEntryViewModel model)

@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using CKM_ManagementSystem.DL;
 using CKM_ManagementSystem.Models.Entities;
+using CKM_ManagementSystem.Models.ViewModels.Roles;
 using Microsoft.Data.SqlClient;
 
 namespace CKM_ManagementSystem.BL
@@ -178,6 +179,212 @@ namespace CKM_ManagementSystem.BL
             }
 
             return sortedDt;
+        }
+
+        public RoleListPagedViewModel GetRoleListPaged(
+    int pageNumber,
+    int pageSize,
+    string searchKeyword,
+    int? status)
+        {
+            SqlParameter[] sqlprms =
+            {
+        new SqlParameter(
+            "@SearchKeyword",
+            string.IsNullOrWhiteSpace(searchKeyword)
+                ? (object)DBNull.Value
+                : searchKeyword),
+
+        new SqlParameter(
+            "@Status",
+            status.HasValue
+                ? (object)status.Value
+                : DBNull.Value),
+
+        new SqlParameter(
+            "@Offset",
+            (pageNumber - 1) * pageSize),
+
+        new SqlParameter(
+            "@PageSize",
+            pageSize)
+    };
+
+            DataSet ds =
+                _bdl.SelectDataSet(
+                    "sp_GetRoleListPaged",
+                    sqlprms);
+
+            DataTable dtData =
+                ds.Tables.Count > 0
+                    ? ds.Tables[0]
+                    : new DataTable();
+
+            int totalRecords = 0;
+
+            if (ds.Tables.Count > 1 &&
+                ds.Tables[1].Rows.Count > 0)
+            {
+                totalRecords =
+                    Convert.ToInt32(
+                        ds.Tables[1].Rows[0][0]);
+            }
+
+            var roles =
+                new List<RoleEntryViewModel>();
+
+            foreach (DataRow row in dtData.Rows)
+            {
+                roles.Add(new RoleEntryViewModel
+                {
+                    RoleCode =
+                        row["RoleCode"]?.ToString() ?? "",
+
+                    DisplayName =
+                        row["DisplayName"]?.ToString() ?? "",
+
+                    Description =
+                        row["Description"] == DBNull.Value
+                            ? ""
+                            : row["Description"]?.ToString() ?? "",
+
+                    Status =
+                        ParseStatus(row["Status"])
+                });
+            }
+
+            return new RoleListPagedViewModel
+            {
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                SearchKeyword = searchKeyword ?? string.Empty,
+                Status = status,
+                TotalRecords = totalRecords,
+                Roles = roles
+            };
+        }
+        public RoleEntryViewModel? GetRoleByCodeViewModel(
+            string roleCode)
+        {
+            DataTable dt =
+                GetRoleByCode(roleCode);
+
+            if (dt.Rows.Count == 0)
+            {
+                return null;
+            }
+
+            DataRow row = dt.Rows[0];
+
+            string code =
+                dt.Columns.Contains("RoleCode")
+                    ? row["RoleCode"]?.ToString() ?? ""
+                    : dt.Columns.Contains("Role_Code")
+                        ? row["Role_Code"]?.ToString() ?? ""
+                        : "";
+
+            string name =
+                dt.Columns.Contains("DisplayName")
+                    ? row["DisplayName"]?.ToString() ?? ""
+                    : dt.Columns.Contains("Role_Name")
+                        ? row["Role_Name"]?.ToString() ?? ""
+                        : "";
+
+            string description =
+                dt.Columns.Contains("Description") &&
+                row["Description"] != DBNull.Value
+                    ? row["Description"]?.ToString() ?? ""
+                    : "";
+
+            return new RoleEntryViewModel
+            {
+                RoleCode = code,
+                DisplayName = name,
+                Description = description,
+                Status =
+                    dt.Columns.Contains("Status")
+                        ? ParseStatus(row["Status"])
+                        : false
+            };
+        }
+
+        public (bool Success, string Message) DeleteRole(
+            string roleCode)
+        {
+            var role =
+                GetRoleByCodeViewModel(roleCode);
+
+            if (role == null)
+            {
+                return (
+                    false,
+                    "Role not found.");
+            }
+
+            if (role.Status)
+            {
+                return (
+                    false,
+                    "Cannot delete an active role.");
+            }
+
+            SqlParameter[] prms =
+            {
+        new SqlParameter(
+            "@RoleCode",
+            (object?)roleCode ?? DBNull.Value)
+    };
+
+            string result =
+                _bdl.InsertUpdateDeleteData(
+                    "sp_DeleteRole",
+                    prms);
+
+            if (string.IsNullOrEmpty(result) ||
+                result.Equals(
+                    "true",
+                    StringComparison.OrdinalIgnoreCase) ||
+                result == "1")
+            {
+                return (
+                    true,
+                    "Role deleted successfully.");
+            }
+
+            return (
+                false,
+                "An error occurred while deleting the role: "
+                + result);
+        }
+
+        private static bool ParseStatus(
+            object? statusObj)
+        {
+            if (statusObj == null ||
+                statusObj == DBNull.Value)
+            {
+                return false;
+            }
+
+            if (statusObj is bool status)
+            {
+                return status;
+            }
+
+            if (int.TryParse(
+                statusObj.ToString(),
+                out int value))
+            {
+                return value == 1;
+            }
+
+            string text =
+                statusObj.ToString()!.Trim();
+
+            return text.Equals(
+                       "true",
+                       StringComparison.OrdinalIgnoreCase)
+                   || text == "1";
         }
 
         private static void AppendMenuAndChildren(DataRow currentMenu, List<DataRow> allRows, DataTable targetTable, HashSet<int> addedIds, int currentLevel)
