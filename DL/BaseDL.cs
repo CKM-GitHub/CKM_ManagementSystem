@@ -96,11 +96,7 @@ namespace CKM_ManagementSystem.DL
                 ? 0
                 : Convert.ToInt32(errorParameter.Value);
         }
-        public async Task<bool> ExecuteAsync(string storedProcedure, params SqlParameter[] parameters)
-        {
-            await ExecuteNonQueryAsync(storedProcedure, parameters);
-            return true;
-        }
+        
 
         public int ExecuteScalar(string storedProcedureName, params SqlParameter[] parameters)
         {
@@ -137,10 +133,8 @@ namespace CKM_ManagementSystem.DL
         public async Task<DataTable> SelectDataTableAsync(string storedProcedureName, params SqlParameter[]? parameters)
         {
             using var connection = new SqlConnection(_connectionString);
-            using var command = CreateCommand(connection, storedProcedureName, parameters);
-
             await connection.OpenAsync();
-            using var reader = await command.ExecuteReaderAsync();
+            using var command = CreateCommand(connection, storedProcedureName, parameters);
 
             var table = new DataTable();
             using (var reader = await command.ExecuteReaderAsync())
@@ -213,9 +207,6 @@ namespace CKM_ManagementSystem.DL
 
             return results;
         }      
-
-        #region Helpers
-
         protected SqlParameter CreateParameter(string parameterName, object? value)
         {
             return new SqlParameter(parameterName, value ?? DBNull.Value);
@@ -233,6 +224,8 @@ namespace CKM_ManagementSystem.DL
             {
                 command.Parameters.AddRange(NormalizeParameters(parameters));
             }
+            return command;
+        }
         public async Task<bool> ExecuteAsync(string storedProcedure, params SqlParameter[] parameters){
             using var connection = new SqlConnection(_connectionString);
             using var command = new SqlCommand( storedProcedure, connection);
@@ -262,9 +255,7 @@ namespace CKM_ManagementSystem.DL
             return true;
         }
 
-        private  SqlParameter[] NormalizeParameters(SqlParameter[] parameters)
-            return command;
-        }
+        
         private SqlParameter[] NormalizeParameters(SqlParameter[] parameters)
         {
             foreach (var parameter in parameters)
