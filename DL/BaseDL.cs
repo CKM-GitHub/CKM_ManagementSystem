@@ -15,31 +15,27 @@ namespace CKM_ManagementSystem.DL
 
         public BaseDL(IConfiguration configuration)
         {
-
             _connectionString =
                 configuration.GetConnectionString("DefaultConnection")
                 ?? throw new InvalidOperationException(
                     "DefaultConnection was not found.");
-
             _commandTimeout = 30;
         }
+
         public string InsertUpdateDeleteData(string storedProcedureName, params SqlParameter[] parameters)
         {
             using var connection = new SqlConnection(_connectionString);
             connection.Open();
-
             using var transaction = connection.BeginTransaction();
             using var command = new SqlCommand(storedProcedureName, connection, transaction)
             {
                 CommandType = CommandType.StoredProcedure,
                 CommandTimeout = _commandTimeout
             };
-
             if (parameters is { Length: > 0 })
             {
                 command.Parameters.AddRange(NormalizeParameters(parameters));
             }
-
             try
             {
                 command.ExecuteNonQuery();
@@ -52,50 +48,44 @@ namespace CKM_ManagementSystem.DL
                 return "false";
             }
         }
+
         public async Task<int> ExecuteNonQueryAsync(string storedProcedureName, params SqlParameter[] parameters)
         {
             using var connection = new SqlConnection(_connectionString);
             using var command = CreateCommand(connection, storedProcedureName, parameters);
-
             if (parameters != null && parameters.Length > 0)
             {
                 command.Parameters.AddRange(
                     NormalizeParameters(parameters));
             }
-
             await connection.OpenAsync();
-
             return await command.ExecuteNonQueryAsync();
         }
+
         public async Task<int> ExecuteNonQueryWithErrorCodeAsync(string storedProcedureName, params SqlParameter[] parameters)
         {
             using var connection = new SqlConnection(_connectionString);
             using var command = CreateCommand(connection, storedProcedureName, parameters);
-
             var errorParameter = command.Parameters
                 .Cast<SqlParameter>()
                 .FirstOrDefault(p =>
                     p.ParameterName.Equals("@ErrorCode", StringComparison.OrdinalIgnoreCase) ||
                     p.ParameterName.Equals("@Error_Code", StringComparison.OrdinalIgnoreCase));
-
             if (errorParameter == null)
             {
                 errorParameter = new SqlParameter("@ErrorCode", SqlDbType.Int)
                 {
                     Direction = ParameterDirection.Output
                 };
-
                 command.Parameters.Add(errorParameter);
             }
-
             await connection.OpenAsync();
-
             await command.ExecuteNonQueryAsync();
-
             return errorParameter.Value == DBNull.Value
                 ? 0
                 : Convert.ToInt32(errorParameter.Value);
         }
+
         public async Task<bool> ExecuteAsync(string storedProcedure, params SqlParameter[] parameters)
         {
             await ExecuteNonQueryAsync(storedProcedure, parameters);
@@ -106,17 +96,13 @@ namespace CKM_ManagementSystem.DL
         {
             using var connection = new SqlConnection(_connectionString);
             using var command = CreateCommand(connection, storedProcedureName, parameters);
-
             if (parameters != null && parameters.Length > 0)
             {
                 command.Parameters.AddRange(
                     NormalizeParameters(parameters));
             }
-
             connection.Open();
-
             object? result = command.ExecuteScalar();
-
             return result == null || result == DBNull.Value
                 ? 0
                 : Convert.ToInt32(result);
@@ -125,11 +111,9 @@ namespace CKM_ManagementSystem.DL
         public DataTable SelectDataTable(string storedProcedureName, params SqlParameter[] parameters)
         {
             var dataTable = new DataTable();
-
             using var connection = new SqlConnection(_connectionString);
             using var command = CreateCommand(connection, storedProcedureName, parameters);
             using var adapter = new SqlDataAdapter(command);
-
             adapter.Fill(dataTable);
             return dataTable;
         }
@@ -138,36 +122,33 @@ namespace CKM_ManagementSystem.DL
         {
             using var connection = new SqlConnection(_connectionString);
             using var command = CreateCommand(connection, storedProcedureName, parameters);
-
             await connection.OpenAsync();
-            using var reader = await command.ExecuteReaderAsync();
 
             var table = new DataTable();
             using (var reader = await command.ExecuteReaderAsync())
             {
                 table.Load(reader);
             }
-                if (parameters != null)
+
+            if (parameters != null)
+            {
+                for (int i = 0; i < parameters.Length; i++)
                 {
-                    for (int i = 0; i < parameters.Length; i++)
+                    if (parameters[i].Direction == ParameterDirection.Output || parameters[i].Direction == ParameterDirection.InputOutput)
                     {
-                        if (parameters[i].Direction == ParameterDirection.Output || parameters[i].Direction == ParameterDirection.InputOutput)
-                        {
-                            parameters[i].Value = command.Parameters[parameters[i].ParameterName].Value;
-                        }
+                        parameters[i].Value = command.Parameters[parameters[i].ParameterName].Value;
                     }
                 }
+            }
             return table;
         }
 
         public DataSet SelectDataSet(string storedProcedureName, params SqlParameter[] parameters)
         {
             var dataSet = new DataSet();
-
             using var connection = new SqlConnection(_connectionString);
             using var command = CreateCommand(connection, storedProcedureName, parameters);
             using var adapter = new SqlDataAdapter(command);
-
             adapter.Fill(dataSet);
             return dataSet;
         }
@@ -175,7 +156,6 @@ namespace CKM_ManagementSystem.DL
         public async Task<string> SelectJsonAsync(string storedProcedureName, params SqlParameter[] parameters)
         {
             var table = await SelectDataTableAsync(storedProcedureName, parameters);
-
             var rows = table.Rows
                 .Cast<DataRow>()
                 .Select(row => table.Columns
@@ -184,35 +164,29 @@ namespace CKM_ManagementSystem.DL
                         col => col.ColumnName,
                         col => row[col] == DBNull.Value ? null : row[col]
                     ));
-
             return JsonSerializer.Serialize(rows);
         }
+
         public async Task<List<T>> ExecuteReaderAsync<T>(
             string storedProcedureName,
             Func<SqlDataReader, T> map,
             params SqlParameter[] parameters)
         {
             ArgumentNullException.ThrowIfNull(map);
-
             var results = new List<T>();
-
             using var connection = new SqlConnection(_connectionString);
             using var command = CreateCommand(
                 connection,
                 storedProcedureName,
                 parameters);
-
             await connection.OpenAsync();
-
             using var reader = await command.ExecuteReaderAsync();
-
             while (await reader.ReadAsync())
             {
                 results.Add(map(reader));
             }
-
             return results;
-        }      
+        }
 
         #region Helpers
 
@@ -228,29 +202,28 @@ namespace CKM_ManagementSystem.DL
                 CommandType = CommandType.StoredProcedure,
                 CommandTimeout = _commandTimeout
             };
-
             if (parameters is { Length: > 0 })
             {
                 command.Parameters.AddRange(NormalizeParameters(parameters));
             }
-        public async Task<bool> ExecuteAsync(string storedProcedure, params SqlParameter[] parameters){
+            return command;
+        }
+
+        public async Task<bool> ExecuteWithOutputAsync(string storedProcedure, params SqlParameter[] parameters)
+        {
             using var connection = new SqlConnection(_connectionString);
-            using var command = new SqlCommand( storedProcedure, connection);
-
+            using var command = new SqlCommand(storedProcedure, connection);
             command.CommandType = CommandType.StoredProcedure;
-            command.CommandTimeout= _commandTimeout;
-
-            if(parameters != null && parameters.Length > 0)
+            command.CommandTimeout = _commandTimeout;
+            if (parameters != null && parameters.Length > 0)
             {
-                command.Parameters.AddRange (NormalizeParameters(parameters));
-
+                command.Parameters.AddRange(NormalizeParameters(parameters));
             }
             await connection.OpenAsync();
             await command.ExecuteNonQueryAsync();
-
-            if(parameters != null)
+            if (parameters != null)
             {
-                for(int i = 0;i< parameters.Length; i++)
+                for (int i = 0; i < parameters.Length; i++)
                 {
                     if (parameters[i].Direction == ParameterDirection.Output || parameters[i].Direction == ParameterDirection.InputOutput)
                     {
@@ -258,13 +231,9 @@ namespace CKM_ManagementSystem.DL
                     }
                 }
             }
-
             return true;
         }
 
-        private  SqlParameter[] NormalizeParameters(SqlParameter[] parameters)
-            return command;
-        }
         private SqlParameter[] NormalizeParameters(SqlParameter[] parameters)
         {
             foreach (var parameter in parameters)
@@ -276,7 +245,6 @@ namespace CKM_ManagementSystem.DL
                     parameter.Value = DBNull.Value;
                 }
             }
-
             return parameters;
         }
 
@@ -286,7 +254,7 @@ namespace CKM_ManagementSystem.DL
             connection.Open();
             using SqlCommand command = new SqlCommand(storedProcedureName, connection);
             command.CommandType = CommandType.StoredProcedure;
-            if(parameters != null && parameters.Length > 0)
+            if (parameters != null && parameters.Length > 0)
             {
                 NormalizeParameters(parameters);
                 command.Parameters.AddRange(parameters);
@@ -299,22 +267,19 @@ namespace CKM_ManagementSystem.DL
         {
             using var connection = new SqlConnection(_connectionString);
             using var command = new SqlCommand(storedProcedure, connection);
+            command.CommandType = CommandType.StoredProcedure;
 
-            command.CommandType= CommandType.StoredProcedure;
-            
-
-            if(parameters != null && parameters.Length > 0)
+            if (parameters != null && parameters.Length > 0)
             {
                 NormalizeParameters(parameters);
                 command.Parameters.AddRange(parameters);
             }
-            using SqlDataAdapter adapter= new SqlDataAdapter(command);
+            using SqlDataAdapter adapter = new SqlDataAdapter(command);
             DataTable dataTable = new DataTable();
-
             adapter.Fill(dataTable);
-
             return dataTable;
         }
 
+        #endregion
     }
 }
