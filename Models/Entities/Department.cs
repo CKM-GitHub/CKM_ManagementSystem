@@ -33,6 +33,7 @@ namespace CKM_ManagementSystem.Models.Entities
         public bool Status { get; set; } = true;
 
         [Column("Created_Date")]
+
         public DateTime? CreatedDate { get; set; }
 
         [Column("Updated_Date")]

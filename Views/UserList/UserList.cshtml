@@ -1,0 +1,348 @@
+﻿@using CKM_ManagementSystem.Models.ViewModels.User
+@model CKM_ManagementSystem.Models.ViewModels.User.PagedResponse<UserListViewModel>
+
+@{
+    ViewData["Title"] = "User Management";
+
+    string? currentSearch = ViewBag.SearchText as string;
+    bool? currentStatus = ViewBag.Status as bool?;
+    string? currentDept = ViewBag.DepartmentCode as string;
+    string? currentRole = ViewBag.RoleCode as string;
+    int currentPage = ViewBag.PageNumber ?? 1;
+    int pageSize = 10; 
+    int totalItems = Model.TotalCount;
+    int startItem = totalItems > 0 ? (currentPage - 1) * pageSize + 1 : 0;
+    int endItem = totalItems > 0 ? Math.Min(currentPage * pageSize, totalItems) : 0;
+    int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+    if (totalPages < 1) totalPages = 1;
+}
+
+<link rel="stylesheet" href="~/css/UserList.css" />
+<link rel="stylesheet" href="~/css/Alert_Modal.css" asp-append-version="true" />
+
+<h1 class="text-center fw-bold mb-4 header-text">User Management</h1>
+<div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3 mb-4">
+    <div class="col">
+        <div class="card h-100 shadow-sm p-3 d-flex flex-row align-items-center gap-3 border-0">
+            <div class="stat-icon-box bg-light text-primary"><i class="fas fa-users"></i></div>
+            <div>
+                <div class="text-secondary small">Total Users</div>
+                <div class="fs-4 fw-bold text-dark">@Model.OverallTotalCount</div>
+                <div class="small text-muted">All registered users <i class="far fa-question-circle"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-100 shadow-sm p-3 d-flex flex-row align-items-center gap-3 border-0">
+            <div class="stat-icon-box bg-success bg-opacity-10 text-success"><i class="fas fa-user-check"></i></div>
+            <div>
+                <div class="text-secondary small">Active Users</div>
+                <div class="fs-4 fw-bold text-dark">@Model.OverallActiveCount</div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-100 shadow-sm p-3 d-flex flex-row align-items-center gap-3 border-0">
+            <div class="stat-icon-box bg-warning bg-opacity-10 text-warning"><i class="fas fa-user-slash"></i></div>
+            <div>
+                <div class="text-secondary small">Inactive Users</div>
+                <div class="fs-4 fw-bold text-dark">@Model.OverallInactiveCount</div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-100 shadow-sm p-3 d-flex flex-row align-items-center gap-3 border-0">
+            <div class="stat-icon-box bg-purple bg-opacity-10 text-purple"><i class="fas fa-building" style="color: #a855f7;"></i></div>
+            <div>
+                <div class="text-secondary small">Departments</div>
+                <div class="fs-4 fw-bold text-dark">@Model.DepartmentCount</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form method="get" asp-controller="UserList" asp-action="UserList" class="card shadow-sm p-3 mb-4 border-0">
+    <div class="d-flex flex-wrap align-items-center gap-2 justify-content-between">
+        <div class="d-flex flex-wrap align-items-center gap-2 flex-grow-1 search-form-container">
+            <div class="search-wrapper">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" name="searchText" value="@currentSearch" class="form-control text-secondary small search-input-with-icon" placeholder="Search users by name, email, or code">
+            </div>
+            <div class="search-wrapper">
+                <select name="departmentCode" class="form-select  text-secondary small">
+                    <option value="">All Departments</option>
+                    @foreach (var dept in Model.Departments)
+                    {
+                        var deptName = dept.DepartmentName ?? string.Empty;
+                        var shortName = deptName.Length > 25 ?
+                        deptName[..15] + "..."
+                        : deptName;
+                        <option value="@dept.DepartmentCode"
+                                title="@(deptName.Length > 25 ? deptName : null)"
+                                selected="@(ViewBag.DepartmentCode == dept.DepartmentCode ? "selected" : null)">
+                            @shortName
+                        </option>
+                    }
+                </select>
+            </div>    
+            <div class="search-wrapper">
+                <select name="roleCode" class="form-select text-secondary small">
+                    <option value="">All Roles</option>
+                    @foreach (var role in Model.Roles)
+                    {
+                        var roleName = role.RoleName ?? string.Empty;
+                        var shortName = roleName.Length > 25
+                        ? roleName[..15] + "..."
+                        : roleName;
+
+                        <option value="@role.RoleCode"
+                                title="@(roleName.Length > 25 ? roleName : null)"
+                                selected="@(ViewBag.RoleCode == role.RoleCode ? "selected" : null)">
+                            @shortName
+                        </option>
+                    }
+
+                </select>
+            </div>      
+            <div class="search-wrapper">
+                <select name="status" class="form-select text-secondary small">
+                    <option value="">All Status</option>
+                    <option value="true" selected="@(currentStatus == true)">Active</option>
+                    <option value="false" selected="@(currentStatus == false)">Inactive</option>
+                </select>
+            </div>         
+            <div class="search-btn">
+                <button type="submit" class="btn btn-primary px-3"><i class="fas fa-search me-1"></i> Search User</button>
+            </div>            
+            @* <a asp-action="UserList" class="btn btn-outline-secondary btn-sm px-3">Clear</a> *@
+        </div>
+        <div>
+            <a class="btn btn-primary px-3" asp-controller="UserCreate" asp-action="UserCreate" asp-route-source="list"><i class="fas fa-plus me-1"></i> Add New User</a>
+        </div>
+        
+    </div>
+</form>
+@*
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success mt-2 d-flex align-items-center justify-content-between" role="alert">
+        <span>@TempData["SuccessMessage"]</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger mt-2 d-flex align-items-center justify-content-between" role="alert">
+        <span>@TempData["ErrorMessage"]</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+} 
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-check-circle-fill text-success"
+                           style="font-size: 50px;"></i>
+                    </div>
+                    <p class="mb-0">
+                        @TempData["SuccessMessage"]
+                    </p>
+                </div>
+                <div class="modal-footer border-0 justify-content-center">
+                    <button type="button"
+                            class="btn btn-success px-4"
+                            data-bs-dismiss="modal">OK
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-x-circle-fill text-danger"
+                           style="font-size: 50px;"></i>
+                    </div>
+                    <p class="mb-0">
+                        @TempData["ErrorMessage"]
+                    </p>
+                </div>
+                <div class="modal-footer border-0 justify-content-center">
+                    <button type="button"
+                            class="btn btn-danger px-4"
+                            data-bs-dismiss="modal">OK
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+} *@
+@if (TempData["SuccessMessage"] is string successMessage)
+{
+    <input type="hidden"
+           id="successMessage"
+           value="@successMessage" />
+}
+
+@if (TempData["ErrorMessage"] is string errorMessage)
+{
+    <input type="hidden"
+           id="errorMessage"
+           value="@errorMessage" />
+}
+
+<partial name="AlertModal" />
+
+<div class="card shadow-sm border-0 mb-4 rounded-3">
+    <div class="table-responsive">
+        <table class="table table-custom align-middle mb-0 bg-white border-0 rounded-3 overflow-hidden">
+            @if (Model.Data != null && Model.Data.Count > 0)
+            {
+                <thead class="bg-light text-secondary small">
+                    <tr>
+                        <th class="w-5 ps-4 text-center">No.</th>
+                        <th class="w-12">Employee Code</th>
+                        <th class="w-15">Name</th>
+                        <th class="w-18">Email</th>
+                        <th class="w-19">Department</th>
+                        <th class="w-19">System Role</th>
+                        <th class="w-7">Status</th>
+                        <th class="w-5  pe-4 ">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int index = startItem;
+                        foreach (var user in Model.Data)
+                        {
+                          @* string roleBadgeClass = "badge-role-viewer";
+                            string roleName = user.RoleName?.ToLower() ?? "";
+                            if (roleName.Contains("manager")) { roleBadgeClass = "badge-role-manager"; }
+                            else if (roleName.Contains("admin")) { roleBadgeClass = "badge-role-admin"; }
+                            else if (roleName.Contains("teamleader")) { roleBadgeClass = "badge-role-leader"; }
+                            else if (roleName.Contains("member")) { roleBadgeClass = "badge-role-member"; }  *@
+                            <tr>
+                                <td class="ps-4">@index</td>
+                                <td>@user.StaffCode</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="rounded-circle border border-1 p-0 me-2">
+                                            <img src="@(string.IsNullOrEmpty(user.ImageUrl) ? "https://api.dicebear.com/10.x/thumbs/svg?seed=Felix" : user.ImageUrl)"
+                                                 alt=""
+                                                 class="rounded-circle"
+                                                 width="34"
+                                                 height="34">
+                                        </div>
+                                        <span class="text-truncate custom-tooltip" data-tooltip-title="@user.Name">
+                                            @user.Name
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="text-truncate custom-tooltip" data-tooltip-title="@user.Email">
+                                    @user.Email
+                                </td>
+                                <td>
+                                    <div class="text-truncate custom-tooltip" data-tooltip-title="@user.DepartmentName">
+                                        @user.DepartmentName
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="text-truncate custom-tooltip" data-tooltip-title="@user.RoleName">
+                                        @user.RoleName
+                                    </div>
+                                </td>
+                                <td>
+                                    @if (user.Status)
+                                    {
+                                        <span class="badge bg-light text-success border border-light rounded-pill badge-status active">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-light text-danger border border-light rounded-pill badge-status inactive">Inactive</span>
+                                    }
+                                </td>
+                                <td class="text-end pe-4 text-muted">
+                                    <form asp-controller="UserList" asp-action="UserUpdate" method="get" class="d-inline me-2">
+                                        <input type="hidden" name="staffCode" value="@user.StaffCode" />
+                                        <button type="submit" class="p-0 border-0 bg-transparent edit-icon" title="Update">
+                                            <i class="far fa-pen-to-square"></i>
+                                        </button>
+                                    </form>
+                                    <form asp-controller="UserList"
+                                          asp-action="DeleteUser"
+                                          method="post"
+                                          class="d-inline me-2 delete-form">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="staffCode" value="@user.StaffCode" />
+                                        <button type="button" class="p-0 border-0 bg-transparent delete-icon" id="confirmdel" title="Delete">
+                                            <i class="far fa-trash-can"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            index++;
+                        }
+                    }
+                </tbody>
+            }
+            else
+            {
+                <tbody style="height : 550px;" class="rounded">
+                    <tr>
+                        <td colspan="8" class="empty-state text-center align-middle" style="vertical-align: middle;padding: 0;">
+                            <img src="https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3d2RmYnFtZ2ZodjdzaHUxOGNtamowcXpoOGE5bjFtajNqMHh1cHNzYyZlcD12MV9naWZzX3JlbGF0ZWQmY3Q9Zw/1ngspjOjDggxO/giphy.gif"
+                                 alt="Empty state animation"
+                                 style="width: 100%; height: auto; object-fit: cover; display: block;">
+                        </td>
+                    </tr>
+                </tbody>
+            }
+        </table>
+    </div> 
+    @if (totalPages > 1 || totalItems > 0)
+    {
+        <div class="d-flex flex-wrap justify-content-between align-items-center p-3 border-top bg-white" style=" border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
+            <div class="small text-secondary mb-2 mb-md-0">
+                Showing @startItem-@endItem of @totalItems users
+            </div>
+            <nav aria-label="Page navigation">
+                <ul class="pagination mb-0">
+                    <li class="page-item @(currentPage == 1 ? "disabled" : "")" style="margin-right: 5px;">
+                        <a class="page-link" href="@Url.Action("UserList", "UserList", new { searchText = currentSearch, status = currentStatus, departmentCode = currentDept, roleCode = currentRole, pageNumber = currentPage - 1 })">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    @for (int i = 1; i <= totalPages; i++)
+                    {
+                        <li class="page-item @(currentPage == i ? "active" : "")">
+                            <a class="page-link paging-btn" href="@Url.Action("UserList", "UserList", new { searchText = currentSearch, status = currentStatus, departmentCode = currentDept, roleCode = currentRole, pageNumber = i })">@i</a>
+                        </li>
+                    }
+                    <li class="page-item @(currentPage == totalPages ? "disabled" : "")" style="margin-right: 5px;">
+                        <a class="page-link" href="@Url.Action("UserList", "UserList", new { searchText = currentSearch, status = currentStatus, departmentCode = currentDept, roleCode = currentRole, pageNumber = currentPage + 1 })">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    }
+</div>
+
+
+@section Scripts {
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/Alert_Modal.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/js/UserList.js" asp-append-version="true"></script>
+}
