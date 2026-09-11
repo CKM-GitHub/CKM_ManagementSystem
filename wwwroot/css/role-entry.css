@@ -1,0 +1,176 @@
+﻿﻿
+/* Base Page & Backgrounds */
+body {
+    color: var(--white) !important;
+    font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif !important;
+}
+
+/* Card Container (Background White) */
+.role-entry-card {
+    background-color: var(--white) !important;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+    padding: 2.5rem;
+    max-width: 720px;
+    margin: 2rem auto;
+}
+
+/* Main Header - 32px Bold (Dark Blue Text on White Card) */
+.role-entry-title,
+.main-header,
+h1 {
+    color: var(--dark-blue) !important;
+    font-weight: bold;
+    font-size: 32px !important;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+}
+
+/* Subheaders & Table Headers - 16px Bold */
+.permissions-table-wrapper table thead th,
+.parent-menu-title,
+.subheader,
+h2, h3, h4 {
+    font-size: 16px !important;
+    font-weight: bold;
+    color: var(--dark-blue) !important;
+}
+
+/* Labels, Body Text & Controls - 14px */
+.form-label-custom {
+    color: var(--dark-blue) !important;
+    font-size: 14px !important;
+    font-weight: bold;
+    margin-bottom: 0.4rem;
+    display: inline-block;
+}
+
+.form-control {
+    font-size: 14px !important;
+    color: var(--dark-blue) !important;
+    background-color: var(--light-gray) !important;
+    border: 1px solid var(--border-color);
+}
+
+    .form-control:focus {
+        border-color: var(--primary-blue) !important;
+        box-shadow: 0 0 0 0.2rem rgba(8, 125, 241, 0.2) !important;
+        background-color: var(--white) !important;
+    }
+
+/* Sub-text / Validation Error - 12px */
+small,
+.form-text {
+    font-size: 12px !important;
+}
+
+.field-validation-error {
+    color: var(--error-color) !important;
+    font-size: 12px !important;
+}
+
+.text-muted {
+    color: var(--gray) !important;
+    font-size: 12px !important;
+}
+
+/* Table Customization & Scrollbar Controls */
+.permissions-table-wrapper {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    max-height: 380px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+    .permissions-table-wrapper table {
+        width: 100% !important;
+        table-layout: fixed;
+        margin-bottom: 0;
+    }
+
+        .permissions-table-wrapper table thead th {
+            position: sticky;
+            top: 0;
+            background-color: var(--light-gray) !important;
+            z-index: 2;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* Option A: Ellipsis Text Control for Table Cells */
+        .permissions-table-wrapper table td.menu-cell {
+            max-width: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+.menu-title-wrapper {
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.parent-menu-title,
+.child-menu-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.tree-icon {
+    flex-shrink: 0;
+    color: var(--gray) !important;
+}
+
+.parent-menu-row {
+    background-color: var(--light-gray) !important;
+}
+
+.child-menu-row td {
+    font-size: 14px !important;
+    color: var(--dark-blue) !important;
+}
+
+/* Custom Checkbox Alignment & Styling */
+.form-check-input {
+    cursor: pointer;
+    border-color: var(--border-color);
+}
+
+    .form-check-input:checked {
+        background-color: var(--primary-blue) !important;
+        border-color: var(--primary-blue) !important;
+    }
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--primary-blue) !important;
+    border: 1px solid var(--primary-blue) !important;
+    color: var(--white) !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    transition: background-color 0.2s ease;
+}
+
+    .btn-primary:hover {
+        background-color: var(--primary-blue-hover) !important;
+        border-color: var(--primary-blue-hover) !important;
+    }
+
+.btn-outline-secondary {
+    border: 1px solid var(--gray) !important;
+    color: var(--dark-blue) !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    transition: all 0.2s ease;
+}
+
+    .btn-outline-secondary:hover {
+        background-color: var(--gray) !important;
+        color: var(--white) !important;
+    }
