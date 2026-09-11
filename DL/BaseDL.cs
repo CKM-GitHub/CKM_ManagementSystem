@@ -1,25 +1,39 @@
+<<<<<<< HEAD
 ﻿using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Text.Json;
 using Microsoft.Data.SqlClient;
 using System.Linq;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+=======
+﻿using System;
+using System.Data;
+using Microsoft.Data.SqlClient;
+>>>>>>> 5-rolelist
 using Microsoft.Extensions.Configuration;
 
 namespace CKM_ManagementSystem.DL
 {
     public class BaseDL
     {
+<<<<<<< HEAD
         protected readonly string _connectionString;
         protected readonly int _commandTimeout;
 
         public BaseDL(IConfiguration configuration)
         {
 
+=======
+        private readonly string _connectionString;
+
+        public BaseDL(IConfiguration configuration)
+        {
+>>>>>>> 5-rolelist
             _connectionString =
                 configuration.GetConnectionString("DefaultConnection")
                 ?? throw new InvalidOperationException(
                     "DefaultConnection was not found.");
+<<<<<<< HEAD
 
             _commandTimeout = 30;
         }
@@ -38,12 +52,40 @@ namespace CKM_ManagementSystem.DL
             if (parameters is { Length: > 0 })
             {
                 command.Parameters.AddRange(NormalizeParameters(parameters));
+=======
+        }
+
+        public string InsertUpdateDeleteData(
+            string storedProcedureName,
+            params SqlParameter[] parameters)
+        {
+            using SqlConnection connection =
+                new SqlConnection(_connectionString);
+
+            connection.Open();
+
+            using SqlTransaction transaction =
+                connection.BeginTransaction();
+
+            using SqlCommand command = new SqlCommand(
+                storedProcedureName,
+                connection,
+                transaction);
+
+            command.CommandType = CommandType.StoredProcedure;
+
+            if (parameters != null && parameters.Length > 0)
+            {
+                ChangeToDBNull(parameters);
+                command.Parameters.AddRange(parameters);
+>>>>>>> 5-rolelist
             }
 
             try
             {
                 command.ExecuteNonQuery();
                 transaction.Commit();
+<<<<<<< HEAD
                 return "true";
             }
             catch
@@ -272,10 +314,84 @@ namespace CKM_ManagementSystem.DL
                 if (parameter.Value == null ||
                     parameter.Value == DBNull.Value ||
                     string.IsNullOrWhiteSpace(parameter.Value.ToString()))
+=======
+
+                return "true";
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+
+                return "Error: " + ex.Message;
+            }
+        }
+
+        public object? ExecuteScalar(
+            string storedProcedureName,
+            params SqlParameter[] parameters)
+        {
+            using SqlConnection connection =
+                new SqlConnection(_connectionString);
+
+            connection.Open();
+
+            using SqlCommand command =
+                new SqlCommand(storedProcedureName, connection);
+
+            command.CommandType = CommandType.StoredProcedure;
+
+            if (parameters != null && parameters.Length > 0)
+            {
+                ChangeToDBNull(parameters);
+                command.Parameters.AddRange(parameters);
+            }
+
+            return command.ExecuteScalar();
+        }
+
+        public DataTable SelectData(
+            string storedProcedureName,
+            params SqlParameter[] parameters)
+        {
+            DataTable dt = new DataTable();
+
+            using SqlConnection connection =
+                new SqlConnection(_connectionString);
+
+            using SqlCommand command =
+                new SqlCommand(storedProcedureName, connection);
+
+            command.CommandType = CommandType.StoredProcedure;
+
+            if (parameters != null && parameters.Length > 0)
+            {
+                ChangeToDBNull(parameters);
+                command.Parameters.AddRange(parameters);
+            }
+
+            using SqlDataAdapter adapter = new SqlDataAdapter(command);
+            adapter.Fill(dt);
+
+            return dt;
+        }
+
+        private static void ChangeToDBNull(SqlParameter[] parameters)
+        {
+            foreach (SqlParameter parameter in parameters)
+            {
+                if (parameter.SqlDbType == SqlDbType.Structured)
+                {
+                    continue;
+                }
+
+                if (parameter.Value == null ||
+                    (parameter.Value is string strValue && string.IsNullOrWhiteSpace(strValue)))
+>>>>>>> 5-rolelist
                 {
                     parameter.Value = DBNull.Value;
                 }
             }
+<<<<<<< HEAD
 
             return parameters;
         }
@@ -316,5 +432,8 @@ namespace CKM_ManagementSystem.DL
             return dataTable;
         }
 
+=======
+        }
+>>>>>>> 5-rolelist
     }
 }

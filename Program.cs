@@ -1,15 +1,22 @@
 using CKM_ManagementSystem.BL;
+<<<<<<< HEAD
 using CKM_ManagementSystem.Data;
 using CKM_ManagementSystem.MenuBL;
 using CKM_ManagementSystem.DL;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.InteropServices;
+=======
+using CKM_ManagementSystem.DL;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+>>>>>>> 5-rolelist
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 
+<<<<<<< HEAD
 builder.Services.AddSession();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -35,12 +42,22 @@ builder.Services.AddScoped<BaseDL>();
 builder.Services.AddScoped<UserEntryBL>();
 builder.Services.AddScoped<UserListBL>();
 builder.Services.AddScoped<PasswordService>();
+=======
+
+builder.Services.AddScoped<BaseDL>();
+builder.Services.AddScoped<RoleBL>();
+
+>>>>>>> 5-rolelist
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
 if (!app.Environment.IsDevelopment())
 {
+<<<<<<< HEAD
     app.UseExceptionHandler("Error/500");
+=======
+    app.UseExceptionHandler("/Home/Error");
+>>>>>>> 5-rolelist
     app.UseHsts();
 }
 
