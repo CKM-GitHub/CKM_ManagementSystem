@@ -2,14 +2,16 @@
 ﻿using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Text.Json;
-using Microsoft.Data.SqlClient;
 using System.Linq;
+<<<<<<< HEAD
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 =======
 ﻿using System;
 using System.Data;
 using Microsoft.Data.SqlClient;
 >>>>>>> 5-rolelist
+=======
+>>>>>>> 6965226a693b609dd1b9c8ef35a323efe44ee0fc
 using Microsoft.Extensions.Configuration;
 
 namespace CKM_ManagementSystem.DL
@@ -22,6 +24,7 @@ namespace CKM_ManagementSystem.DL
 
         public BaseDL(IConfiguration configuration)
         {
+<<<<<<< HEAD
 
 =======
         private readonly string _connectionString;
@@ -29,6 +32,8 @@ namespace CKM_ManagementSystem.DL
         public BaseDL(IConfiguration configuration)
         {
 >>>>>>> 5-rolelist
+=======
+>>>>>>> 6965226a693b609dd1b9c8ef35a323efe44ee0fc
             _connectionString =
                 configuration.GetConnectionString("DefaultConnection")
                 ?? throw new InvalidOperationException(
@@ -37,20 +42,29 @@ namespace CKM_ManagementSystem.DL
 
             _commandTimeout = 30;
         }
-        public string InsertUpdateDeleteData(string storedProcedureName, params SqlParameter[] parameters)
+
+        public string InsertUpdateDeleteData(
+            string storedProcedureName,
+            params SqlParameter[] parameters)
         {
             using var connection = new SqlConnection(_connectionString);
             connection.Open();
 
             using var transaction = connection.BeginTransaction();
-            using var command = new SqlCommand(storedProcedureName, connection, transaction)
-            {
-                CommandType = CommandType.StoredProcedure,
-                CommandTimeout = _commandTimeout
-            };
+
+            using var command =
+                new SqlCommand(
+                    storedProcedureName,
+                    connection,
+                    transaction)
+                {
+                    CommandType = CommandType.StoredProcedure,
+                    CommandTimeout = _commandTimeout
+                };
 
             if (parameters is { Length: > 0 })
             {
+<<<<<<< HEAD
                 command.Parameters.AddRange(NormalizeParameters(parameters));
 =======
         }
@@ -79,6 +93,10 @@ namespace CKM_ManagementSystem.DL
                 ChangeToDBNull(parameters);
                 command.Parameters.AddRange(parameters);
 >>>>>>> 5-rolelist
+=======
+                command.Parameters.AddRange(
+                    NormalizeParameters(parameters));
+>>>>>>> 6965226a693b609dd1b9c8ef35a323efe44ee0fc
             }
 
             try
@@ -86,46 +104,72 @@ namespace CKM_ManagementSystem.DL
                 command.ExecuteNonQuery();
                 transaction.Commit();
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6965226a693b609dd1b9c8ef35a323efe44ee0fc
                 return "true";
             }
             catch
             {
                 transaction.Rollback();
+
                 return "false";
             }
         }
-        public async Task<int> ExecuteNonQueryAsync(string storedProcedureName, params SqlParameter[] parameters)
-        {
-            using var connection = new SqlConnection(_connectionString);
-            using var command = CreateCommand(connection, storedProcedureName, parameters);
 
-            if (parameters != null && parameters.Length > 0)
-            {
-                command.Parameters.AddRange(
-                    NormalizeParameters(parameters));
-            }
+        public async Task<int> ExecuteNonQueryAsync(
+            string storedProcedureName,
+            params SqlParameter[] parameters)
+        {
+            using var connection =
+                new SqlConnection(_connectionString);
+
+            using var command =
+                CreateCommand(
+                    connection,
+                    storedProcedureName,
+                    parameters);
 
             await connection.OpenAsync();
 
             return await command.ExecuteNonQueryAsync();
         }
-        public async Task<int> ExecuteNonQueryWithErrorCodeAsync(string storedProcedureName, params SqlParameter[] parameters)
-        {
-            using var connection = new SqlConnection(_connectionString);
-            using var command = CreateCommand(connection, storedProcedureName, parameters);
 
-            var errorParameter = command.Parameters
-                .Cast<SqlParameter>()
-                .FirstOrDefault(p =>
-                    p.ParameterName.Equals("@ErrorCode", StringComparison.OrdinalIgnoreCase) ||
-                    p.ParameterName.Equals("@Error_Code", StringComparison.OrdinalIgnoreCase));
+        public async Task<int> ExecuteNonQueryWithErrorCodeAsync(
+            string storedProcedureName,
+            params SqlParameter[] parameters)
+        {
+            using var connection =
+                new SqlConnection(_connectionString);
+
+            using var command =
+                CreateCommand(
+                    connection,
+                    storedProcedureName,
+                    parameters);
+
+            var errorParameter =
+                command.Parameters
+                    .Cast<SqlParameter>()
+                    .FirstOrDefault(p =>
+                        p.ParameterName.Equals(
+                            "@ErrorCode",
+                            StringComparison.OrdinalIgnoreCase)
+                        ||
+                        p.ParameterName.Equals(
+                            "@Error_Code",
+                            StringComparison.OrdinalIgnoreCase));
 
             if (errorParameter == null)
             {
-                errorParameter = new SqlParameter("@ErrorCode", SqlDbType.Int)
-                {
-                    Direction = ParameterDirection.Output
-                };
+                errorParameter =
+                    new SqlParameter(
+                        "@ErrorCode",
+                        SqlDbType.Int)
+                    {
+                        Direction = ParameterDirection.Output
+                    };
 
                 command.Parameters.Add(errorParameter);
             }
@@ -138,97 +182,158 @@ namespace CKM_ManagementSystem.DL
                 ? 0
                 : Convert.ToInt32(errorParameter.Value);
         }
-        public async Task<bool> ExecuteAsync(string storedProcedure, params SqlParameter[] parameters)
+
+        public async Task<bool> ExecuteAsync(
+            string storedProcedure,
+            params SqlParameter[] parameters)
         {
-            await ExecuteNonQueryAsync(storedProcedure, parameters);
+            await ExecuteNonQueryAsync(
+                storedProcedure,
+                parameters);
+
             return true;
         }
 
-        public int ExecuteScalar(string storedProcedureName, params SqlParameter[] parameters)
+        public int ExecuteScalar(
+            string storedProcedureName,
+            params SqlParameter[] parameters)
         {
-            using var connection = new SqlConnection(_connectionString);
-            using var command = CreateCommand(connection, storedProcedureName, parameters);
+            using var connection =
+                new SqlConnection(_connectionString);
 
-            if (parameters != null && parameters.Length > 0)
-            {
-                command.Parameters.AddRange(
-                    NormalizeParameters(parameters));
-            }
+            using var command =
+                CreateCommand(
+                    connection,
+                    storedProcedureName,
+                    parameters);
 
             connection.Open();
 
             object? result = command.ExecuteScalar();
 
-            return result == null || result == DBNull.Value
+            return result == null ||
+                   result == DBNull.Value
                 ? 0
                 : Convert.ToInt32(result);
         }
 
-        public DataTable SelectDataTable(string storedProcedureName, params SqlParameter[] parameters)
+        public DataTable SelectDataTable(
+            string storedProcedureName,
+            params SqlParameter[] parameters)
         {
             var dataTable = new DataTable();
 
-            using var connection = new SqlConnection(_connectionString);
-            using var command = CreateCommand(connection, storedProcedureName, parameters);
-            using var adapter = new SqlDataAdapter(command);
+            using var connection =
+                new SqlConnection(_connectionString);
+
+            using var command =
+                CreateCommand(
+                    connection,
+                    storedProcedureName,
+                    parameters);
+
+            using var adapter =
+                new SqlDataAdapter(command);
 
             adapter.Fill(dataTable);
+
             return dataTable;
         }
 
-        public async Task<DataTable> SelectDataTableAsync(string storedProcedureName, params SqlParameter[]? parameters)
+        public async Task<DataTable> SelectDataTableAsync(
+            string storedProcedureName,
+            params SqlParameter[]? parameters)
         {
-            using var connection = new SqlConnection(_connectionString);
-            using var command = CreateCommand(connection, storedProcedureName, parameters);
+            using var connection =
+                new SqlConnection(_connectionString);
+
+            using var command =
+                CreateCommand(
+                    connection,
+                    storedProcedureName,
+                    parameters);
 
             await connection.OpenAsync();
-            using var reader = await command.ExecuteReaderAsync();
 
             var table = new DataTable();
-            using (var reader = await command.ExecuteReaderAsync())
+
+            using (var reader =
+                   await command.ExecuteReaderAsync())
             {
                 table.Load(reader);
             }
-                if (parameters != null)
+
+            if (parameters != null)
+            {
+                for (int i = 0;
+                     i < parameters.Length;
+                     i++)
                 {
-                    for (int i = 0; i < parameters.Length; i++)
+                    if (parameters[i].Direction ==
+                            ParameterDirection.Output
+                        ||
+                        parameters[i].Direction ==
+                            ParameterDirection.InputOutput)
                     {
-                        if (parameters[i].Direction == ParameterDirection.Output || parameters[i].Direction == ParameterDirection.InputOutput)
-                        {
-                            parameters[i].Value = command.Parameters[parameters[i].ParameterName].Value;
-                        }
+                        parameters[i].Value =
+                            command.Parameters[
+                                parameters[i].ParameterName
+                            ].Value;
                     }
                 }
+            }
+
             return table;
         }
 
-        public DataSet SelectDataSet(string storedProcedureName, params SqlParameter[] parameters)
+        public DataSet SelectDataSet(
+            string storedProcedureName,
+            params SqlParameter[] parameters)
         {
             var dataSet = new DataSet();
 
-            using var connection = new SqlConnection(_connectionString);
-            using var command = CreateCommand(connection, storedProcedureName, parameters);
-            using var adapter = new SqlDataAdapter(command);
+            using var connection =
+                new SqlConnection(_connectionString);
+
+            using var command =
+                CreateCommand(
+                    connection,
+                    storedProcedureName,
+                    parameters);
+
+            using var adapter =
+                new SqlDataAdapter(command);
 
             adapter.Fill(dataSet);
+
             return dataSet;
         }
 
-        public async Task<string> SelectJsonAsync(string storedProcedureName, params SqlParameter[] parameters)
+        public async Task<string> SelectJsonAsync(
+            string storedProcedureName,
+            params SqlParameter[] parameters)
         {
-            var table = await SelectDataTableAsync(storedProcedureName, parameters);
+            var table =
+                await SelectDataTableAsync(
+                    storedProcedureName,
+                    parameters);
 
-            var rows = table.Rows
-                .Cast<DataRow>()
-                .Select(row => table.Columns
-                    .Cast<DataColumn>()
-                    .ToDictionary(
-                        col => col.ColumnName,
-                        col => row[col] == DBNull.Value ? null : row[col]
-                    ));
+            var rows =
+                table.Rows
+                    .Cast<DataRow>()
+                    .Select(row =>
+                        table.Columns
+                            .Cast<DataColumn>()
+                            .ToDictionary(
+                                col => col.ColumnName,
+                                col =>
+                                    row[col] == DBNull.Value
+                                        ? null
+                                        : row[col]));
 
             return JsonSerializer.Serialize(rows);
         }
+
         public async Task<List<T>> ExecuteReaderAsync<T>(
             string storedProcedureName,
             Func<SqlDataReader, T> map,
@@ -238,15 +343,19 @@ namespace CKM_ManagementSystem.DL
 
             var results = new List<T>();
 
-            using var connection = new SqlConnection(_connectionString);
-            using var command = CreateCommand(
-                connection,
-                storedProcedureName,
-                parameters);
+            using var connection =
+                new SqlConnection(_connectionString);
+
+            using var command =
+                CreateCommand(
+                    connection,
+                    storedProcedureName,
+                    parameters);
 
             await connection.OpenAsync();
 
-            using var reader = await command.ExecuteReaderAsync();
+            using var reader =
+                await command.ExecuteReaderAsync();
 
             while (await reader.ReadAsync())
             {
@@ -254,65 +363,50 @@ namespace CKM_ManagementSystem.DL
             }
 
             return results;
-        }      
+        }
 
         #region Helpers
 
-        protected SqlParameter CreateParameter(string parameterName, object? value)
+        protected SqlParameter CreateParameter(
+            string parameterName,
+            object? value)
         {
-            return new SqlParameter(parameterName, value ?? DBNull.Value);
+            return new SqlParameter(
+                parameterName,
+                value ?? DBNull.Value);
         }
 
-        private SqlCommand CreateCommand(SqlConnection connection, string storedProcedureName, SqlParameter[]? parameters)
+        private SqlCommand CreateCommand(
+            SqlConnection connection,
+            string storedProcedureName,
+            SqlParameter[]? parameters)
         {
-            var command = new SqlCommand(storedProcedureName, connection)
-            {
-                CommandType = CommandType.StoredProcedure,
-                CommandTimeout = _commandTimeout
-            };
+            var command =
+                new SqlCommand(
+                    storedProcedureName,
+                    connection)
+                {
+                    CommandType = CommandType.StoredProcedure,
+                    CommandTimeout = _commandTimeout
+                };
 
             if (parameters is { Length: > 0 })
             {
-                command.Parameters.AddRange(NormalizeParameters(parameters));
-            }
-        public async Task<bool> ExecuteAsync(string storedProcedure, params SqlParameter[] parameters){
-            using var connection = new SqlConnection(_connectionString);
-            using var command = new SqlCommand( storedProcedure, connection);
-
-            command.CommandType = CommandType.StoredProcedure;
-            command.CommandTimeout= _commandTimeout;
-
-            if(parameters != null && parameters.Length > 0)
-            {
-                command.Parameters.AddRange (NormalizeParameters(parameters));
-
-            }
-            await connection.OpenAsync();
-            await command.ExecuteNonQueryAsync();
-
-            if(parameters != null)
-            {
-                for(int i = 0;i< parameters.Length; i++)
-                {
-                    if (parameters[i].Direction == ParameterDirection.Output || parameters[i].Direction == ParameterDirection.InputOutput)
-                    {
-                        parameters[i].Value = command.Parameters[parameters[i].ParameterName].Value;
-                    }
-                }
+                command.Parameters.AddRange(
+                    NormalizeParameters(parameters));
             }
 
-            return true;
-        }
-
-        private  SqlParameter[] NormalizeParameters(SqlParameter[] parameters)
             return command;
         }
-        private SqlParameter[] NormalizeParameters(SqlParameter[] parameters)
+
+        private SqlParameter[] NormalizeParameters(
+            SqlParameter[] parameters)
         {
             foreach (var parameter in parameters)
             {
                 if (parameter.Value == null ||
                     parameter.Value == DBNull.Value ||
+<<<<<<< HEAD
                     string.IsNullOrWhiteSpace(parameter.Value.ToString()))
 =======
 
@@ -387,6 +481,10 @@ namespace CKM_ManagementSystem.DL
                 if (parameter.Value == null ||
                     (parameter.Value is string strValue && string.IsNullOrWhiteSpace(strValue)))
 >>>>>>> 5-rolelist
+=======
+                    string.IsNullOrWhiteSpace(
+                        parameter.Value.ToString()))
+>>>>>>> 6965226a693b609dd1b9c8ef35a323efe44ee0fc
                 {
                     parameter.Value = DBNull.Value;
                 }
@@ -396,44 +494,86 @@ namespace CKM_ManagementSystem.DL
             return parameters;
         }
 
-        public object? ExecuteScalarObject(string storedProcedureName, params SqlParameter[] parameters)
+        #endregion
+
+        public object? ExecuteScalarObject(
+            string storedProcedureName,
+            params SqlParameter[] parameters)
         {
-            using SqlConnection connection = new SqlConnection(_connectionString);
+            using SqlConnection connection =
+                new SqlConnection(_connectionString);
+
             connection.Open();
-            using SqlCommand command = new SqlCommand(storedProcedureName, connection);
-            command.CommandType = CommandType.StoredProcedure;
-            if(parameters != null && parameters.Length > 0)
+
+            using SqlCommand command =
+                new SqlCommand(
+                    storedProcedureName,
+                    connection);
+
+            command.CommandType =
+                CommandType.StoredProcedure;
+
+            command.CommandTimeout =
+                _commandTimeout;
+
+            if (parameters != null &&
+                parameters.Length > 0)
             {
                 NormalizeParameters(parameters);
+
                 command.Parameters.AddRange(parameters);
             }
-            object? result = command.ExecuteScalar();
-            return (result == DBNull.Value) ? null : result;
+
+            object? result =
+                command.ExecuteScalar();
+
+            return result == DBNull.Value
+                ? null
+                : result;
         }
 
-        public DataTable ExecuteDataTable(string storedProcedure, params SqlParameter[] parameters)
+        public DataTable ExecuteDataTable(
+            string storedProcedure,
+            params SqlParameter[] parameters)
         {
-            using var connection = new SqlConnection(_connectionString);
-            using var command = new SqlCommand(storedProcedure, connection);
+            using var connection =
+                new SqlConnection(_connectionString);
 
-            command.CommandType= CommandType.StoredProcedure;
-            
+            using var command =
+                new SqlCommand(
+                    storedProcedure,
+                    connection);
 
-            if(parameters != null && parameters.Length > 0)
+            command.CommandType =
+                CommandType.StoredProcedure;
+
+            command.CommandTimeout =
+                _commandTimeout;
+
+            if (parameters != null &&
+                parameters.Length > 0)
             {
                 NormalizeParameters(parameters);
+
                 command.Parameters.AddRange(parameters);
             }
-            using SqlDataAdapter adapter= new SqlDataAdapter(command);
-            DataTable dataTable = new DataTable();
+
+            using SqlDataAdapter adapter =
+                new SqlDataAdapter(command);
+
+            DataTable dataTable =
+                new DataTable();
 
             adapter.Fill(dataTable);
 
             return dataTable;
         }
+<<<<<<< HEAD
 
 =======
         }
 >>>>>>> 5-rolelist
+=======
+>>>>>>> 6965226a693b609dd1b9c8ef35a323efe44ee0fc
     }
 }
