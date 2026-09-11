@@ -1,0 +1,224 @@
+﻿
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
+    font-size: 14px;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+/* Page */
+.department-entry-page {
+    width: 100%;
+    min-height: calc(100vh - 70px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+    background: transparent;
+    box-sizing: border-box;
+}
+
+/* Card */
+.department-entry-card {
+    width: 100%;
+    max-width: 510px;
+    padding: 48px 30px 30px;
+    box-sizing: border-box;
+    background-color: var(--white);
+    border-radius: 8px;
+}
+
+/* Header */
+.department-entry-title {
+    margin: 0 0 22px;
+    text-align: center;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--dark-blue);
+}
+
+/* Form */
+.form-group {
+    margin-bottom: 17px;
+}
+
+    .form-group label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 14px;
+        font-weight: 400;
+        color: var(--dark-blue);
+    }
+
+/* Input */
+.form-control {
+    width: 100%;
+    height: 39px;
+    padding: 8px 10px;
+    box-sizing: border-box;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--white);
+    font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
+    font-size: 14px;
+    color: var(--dark-blue);
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .form-control:focus {
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 2px rgba(8, 125, 241, 0.14);
+    }
+
+    .form-control[readonly] {
+        background-color: #F3F4F6;
+        color: var(--dark-blue);
+    }
+
+/* Description */
+.description-box {
+    height: 107px;
+    min-height: 107px;
+    resize: vertical;
+}
+
+/* Validation */
+.validation-message {
+    display: block;
+    min-height: 16px;
+    margin-top: 4px;
+    font-size: 12px;
+    line-height: 18px;
+    color: var(--error-color);
+}
+
+.validation-summary {
+    font-size: 12px;
+    color: var(--error-color);
+}
+
+/* Status */
+.status-row {
+    display: flex;
+    align-items: center;
+    margin-top: 3px;
+    margin-bottom: 29px;
+}
+
+.status-title {
+    width: 145px;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--dark-blue);
+}
+
+.status-options {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 14px;
+    color: var(--dark-blue);
+    cursor: pointer;
+}
+
+    .radio-label input[type="radio"] {
+        width: 14px;
+        height: 14px;
+        margin: 0;
+        cursor: pointer;
+        accent-color: var(--primary-blue);
+    }
+
+/* Buttons */
+.button-row {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-clear,
+.btn-register {
+    flex: 1;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 4px;
+    font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--white);
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.1s ease;
+}
+
+.btn-clear {
+    background-color: var(--gray);
+}
+
+.btn-register {
+    background-color: var(--primary-blue);
+}
+
+    .btn-clear:hover,
+    .btn-register:hover {
+        color: var(--white);
+        text-decoration: none;
+        opacity: 0.9;
+    }
+
+    .btn-clear:active,
+    .btn-register:active {
+        color: var(--white);
+        text-decoration: none;
+        transform: translateY(1px);
+    }
+
+    .btn-clear:focus,
+    .btn-register:focus {
+        color: var(--white);
+        text-decoration: none;
+    }
+
+@media (max-width: 576px) {
+    .department-entry-page {
+        padding: 20px 14px;
+    }
+
+    .department-entry-card {
+        padding: 35px 22px 25px;
+    }
+
+    .department-entry-title {
+        font-size: 32px;
+    }
+
+    .status-row {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .status-title {
+        width: auto;
+    }
+
+    .button-row {
+        flex-direction: column;
+    }
+}

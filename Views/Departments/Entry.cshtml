@@ -1,0 +1,192 @@
+﻿@using CKM_ManagementSystem.Models.ViewModels.Departments
+@model DepartmentEntryViewModel
+
+@{
+    Layout = "_Layout";
+
+    bool isEditMode =
+        !string.IsNullOrWhiteSpace(Model.OriginalDepartmentCode);
+
+    ViewData["Title"] =
+        isEditMode
+            ? "Department Edit"
+            : "Department Entry";
+}
+
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/Alert_Modal.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/ckm-theme.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/Department_Entry.css"
+          asp-append-version="true" />
+}
+
+<div class="department-entry-page">
+
+    <div class="department-entry-card">
+
+        <h2 class="department-entry-title">
+            @(isEditMode
+                ? "Department Edit"
+                : "Department Entry")
+        </h2>
+
+        <form asp-controller="DepartmentEntry"
+              asp-action="@(isEditMode ? "Edit" : "Entry")"
+              method="post"
+              id="departmentEntryForm">
+
+            <div asp-validation-summary="ModelOnly"
+                 class="validation-summary">
+            </div>
+
+            <div class="form-group">
+
+                <label asp-for="DepartmentCode"></label>
+
+                <input asp-for="DepartmentCode"
+                       id="departmentCode"
+                       class="form-control"
+                       maxlength="30"
+                       autocomplete="off"
+                       placeholder="e.g. HR-001"
+                       readonly="@(isEditMode ? "readonly" : null)" />
+
+                <span asp-validation-for="DepartmentCode"
+                      class="validation-message">
+                </span>
+
+            </div>
+
+            <div class="form-group">
+
+                <label asp-for="DepartmentName"></label>
+
+                <input asp-for="DepartmentName"
+                       class="form-control"
+                       maxlength="150"
+                       placeholder="e.g. Human Resources"
+                       autocomplete="off" />
+
+                <span asp-validation-for="DepartmentName"
+                      class="validation-message">
+                </span>
+
+            </div>
+
+            <div class="form-group">
+
+                <label asp-for="Description"></label>
+
+                <textarea asp-for="Description"
+                          class="form-control description-box"
+                          placeholder="e.g. Handle employee management"
+                          maxlength="500">
+                </textarea>
+
+                <span asp-validation-for="Description"
+                      class="validation-message">
+                </span>
+
+            </div>
+
+            <div class="status-row">
+
+                <label class="status-title">
+                    Status
+                </label>
+
+                <div class="status-options">
+
+                    <label class="radio-label">
+
+                        <input type="radio"
+                               asp-for="Status"
+                               value="true" />
+
+                        Active
+
+                    </label>
+
+                    <label class="radio-label">
+
+                        <input type="radio"
+                               asp-for="Status"
+                               value="false" />
+
+                        Inactive
+
+                    </label>
+
+                </div>
+
+            </div>
+
+            <div class="button-row">
+
+                @if (isEditMode)
+                {
+                    <input type="hidden"
+                           asp-for="OriginalDepartmentCode" />
+
+                    <a asp-controller="DepartmentList"
+                       asp-action="Index"
+                       class="btn-clear">
+                        Cancel
+                    </a>
+
+                    <button type="submit"
+                            class="btn-register">
+                        Update
+                    </button>
+                }
+                else
+                {
+                    <button type="button"
+                            class="btn-clear"
+                            id="btnClear">
+                        Clear
+                    </button>
+
+                    <button type="submit"
+                            class="btn-register">
+                        Register
+                    </button>
+                }
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <input type="hidden"
+           id="successMessage"
+           value="@TempData["SuccessMessage"]" />
+}
+
+<input type="hidden"
+       id="departmentListUrl"
+       value="@Url.Action("Index", "DepartmentList")" />
+
+<partial name="AlertModal" />
+
+@section Scripts {
+    <script src="~/js/Alert_Modal.js"
+            asp-append-version="true"></script>
+
+    <partial name="_ValidationScriptsPartial" />
+
+    <script src="~/js/Department_Entry.js"
+            asp-append-version="true"></script>
+}
