@@ -3,7 +3,6 @@ using CKM_ManagementSystem.Data;
 using CKM_ManagementSystem.MenuBL;
 using CKM_ManagementSystem.DL;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.InteropServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,8 +29,6 @@ builder.Services.AddAuthentication("MyCookieAuth")
         options.ExpireTimeSpan = TimeSpan.FromHours(8);
     });
 
-
-builder.Services.AddScoped<BaseDL>();
 builder.Services.AddScoped<UserEntryBL>();
 builder.Services.AddScoped<UserListBL>();
 builder.Services.AddScoped<PasswordService>();
