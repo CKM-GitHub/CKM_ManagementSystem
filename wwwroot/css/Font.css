@@ -16,6 +16,7 @@ body {
     font-size: 32px;
     font-weight: 700;
     line-height: 1.2;
+    color: var(--dark-blue);
 }
 
 .subheader, h2, th {
