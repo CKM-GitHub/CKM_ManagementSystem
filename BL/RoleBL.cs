@@ -103,7 +103,7 @@ namespace CKM_ManagementSystem.BL
                 new SqlParameter("@RoleCode", (object?)roleCode ?? string.Empty)
             };
 
-            DataTable dtRolePerms = _bdl.ExecuteDataTable("sp_GetRolePermission", sqlprms);
+            DataTable dtRolePerms = _bdl.ExecuteDataTable("sp_GetMenuPermissions", sqlprms);
             StandardizeMenuColumns(dtRolePerms);
 
             var permDict = new Dictionary<int, (bool Read, bool Write, bool Delete)>();

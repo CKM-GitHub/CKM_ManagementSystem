@@ -10,6 +10,7 @@ namespace CKM_ManagementSystem.Models.ViewModels.Roles
         [RegularExpression(@"^[a-zA-Z0-9_-]+$", ErrorMessage = "Special characters are not allowed in Role Code.")]
         public string RoleCode { get; set; } = string.Empty;
 
+
         [Required(ErrorMessage = "Display Name is required.")]
         [StringLength(50, ErrorMessage = "Display Name cannot exceed 50 characters.")]
         public string DisplayName { get; set; } = string.Empty;
@@ -19,7 +20,10 @@ namespace CKM_ManagementSystem.Models.ViewModels.Roles
 
         public bool Status { get; set; } = true;
 
-        public List<RolePermissionViewModel> MenuPermissions { get; set; } = new List<RolePermissionViewModel>();
+        public bool IsEdit { get; set; }
+
+        public List<RolePermissionViewModel> MenuPermissions { get; set; }
+            = new List<RolePermissionViewModel>();
     }
 
     public class RolePermissionViewModel

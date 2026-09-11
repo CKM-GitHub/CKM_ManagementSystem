@@ -1,8 +1,13 @@
 ﻿$(document).ready(function () {
     
-    const isEditMode = window.RoleEntryConfig ? window.RoleEntryConfig.isEditMode : false;
-    const roleListUrl = window.RoleEntryConfig ? window.RoleEntryConfig.roleListUrl : '#';
+    const $roleForm = $('#roleForm');
 
+    const isEditMode =
+        $roleForm.data('edit-mode') === true ||
+        $roleForm.data('edit-mode') === 'true';
+
+    const roleListUrl =
+        $roleForm.data('role-list-url') || '#';
     if (!isEditMode) {
         $('#RoleCode').focus();
     }

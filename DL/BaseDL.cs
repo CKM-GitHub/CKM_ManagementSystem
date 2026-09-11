@@ -343,10 +343,15 @@ namespace CKM_ManagementSystem.DL
         }
 
         private SqlParameter[] NormalizeParameters(
-            SqlParameter[] parameters)
+    SqlParameter[] parameters)
         {
             foreach (var parameter in parameters)
             {
+                if (parameter.SqlDbType == SqlDbType.Structured)
+                {
+                    continue;
+                }
+
                 if (parameter.Value == null ||
                     parameter.Value == DBNull.Value ||
                     string.IsNullOrWhiteSpace(
@@ -358,7 +363,6 @@ namespace CKM_ManagementSystem.DL
 
             return parameters;
         }
-
         #endregion
 
         public object? ExecuteScalarObject(
