@@ -175,7 +175,7 @@
                     }
                 </div>
                 <div class="col-6">
-                    <button type="button" id="btnRegister" class="btn btn-primary w-100 py-2">
+                    <button type="submit" id="btnRegister" class="btn btn-primary w-100 py-2">
                         @(isEditMode ? "Update" : "Register")
                     </button>
                 </div>
@@ -190,7 +190,6 @@
     <partial name="_ValidationScriptsPartial" />
     <script src="~/js/Alert_Modal.js" asp-append-version="true"></script>
 
-    <!-- Global JS Config for external file -->
     <script>
         window.RoleEntryConfig = {
             isEditMode: @Html.Raw(Json.Serialize(isEditMode)),
@@ -198,6 +197,5 @@
         };
     </script>
 
-    <!-- External Script Call -->
     <script src="~/js/role-entry.js" asp-append-version="true"></script>
 }
