@@ -1,8 +1,7 @@
 ﻿using System.Data;
-using System.Linq;
 using System.Text.Json;
 using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Linq;
 
 namespace CKM_ManagementSystem.DL
 {
@@ -13,10 +12,12 @@ namespace CKM_ManagementSystem.DL
 
         public BaseDL(IConfiguration configuration)
         {
+
             _connectionString =
                 configuration.GetConnectionString("DefaultConnection")
                 ?? throw new InvalidOperationException(
                     "DefaultConnection was not found.");
+
             _commandTimeout = 30;
         }
 
@@ -52,25 +53,6 @@ namespace CKM_ManagementSystem.DL
             }
         }
 
-        public async Task<bool> ExecuteAsync(string storedProcedure, params SqlParameter[] parameters)
-        {
-            using var connection = new SqlConnection(_connectionString);
-            using var command = new SqlCommand(storedProcedure, connection);
-
-            command.CommandType = CommandType.StoredProcedure;
-            command.CommandTimeout = _commandTimeout;
-
-            if (parameters != null && parameters.Length > 0)
-            {
-                command.Parameters.AddRange(NormalizeParameters(parameters));
-
-            }
-            await connection.OpenAsync();
-            await command.ExecuteNonQueryAsync();
-
-            return true;
-        }
-
         public int ExecuteScalar(string storedProcedureName, params SqlParameter[] parameters)
         {
             using SqlConnection connection = new SqlConnection(_connectionString);
@@ -103,9 +85,21 @@ namespace CKM_ManagementSystem.DL
                 command.Parameters.AddRange(NormalizeParameters(parameters));
             }
             await connection.OpenAsync();
-            using var reader = await command.ExecuteReaderAsync();
             var table = new DataTable();
-            table.Load(reader);
+            using (var reader = await command.ExecuteReaderAsync())
+            {
+                table.Load(reader);
+            }
+                if (parameters != null)
+                {
+                    for (int i = 0; i < parameters.Length; i++)
+                    {
+                        if (parameters[i].Direction == ParameterDirection.Output || parameters[i].Direction == ParameterDirection.InputOutput)
+                        {
+                            parameters[i].Value = command.Parameters[parameters[i].ParameterName].Value;
+                        }
+                    }
+                }
             return table;
         }
         public async Task<string> SelectJsonAsync(string storedProcedure, params SqlParameter[] parameters)
@@ -120,12 +114,44 @@ namespace CKM_ManagementSystem.DL
                     ));
             return JsonSerializer.Serialize(rows);
         }
+        public async Task<bool> ExecuteAsync(string storedProcedure, params SqlParameter[] parameters){
+            using var connection = new SqlConnection(_connectionString);
+            using var command = new SqlCommand( storedProcedure, connection);
 
-        private SqlParameter[] NormalizeParameters(SqlParameter[] parameters)
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandTimeout= _commandTimeout;
+
+            if(parameters != null && parameters.Length > 0)
+            {
+                command.Parameters.AddRange (NormalizeParameters(parameters));
+
+            }
+            await connection.OpenAsync();
+            await command.ExecuteNonQueryAsync();
+
+            if(parameters != null)
+            {
+                for(int i = 0;i< parameters.Length; i++)
+                {
+                    if (parameters[i].Direction == ParameterDirection.Output || parameters[i].Direction == ParameterDirection.InputOutput)
+                    {
+                        parameters[i].Value = command.Parameters[parameters[i].ParameterName].Value;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        private  SqlParameter[] NormalizeParameters(SqlParameter[] parameters)
         {
             foreach (var parameter in parameters)
             {
-                if (parameter.Value == null || string.IsNullOrWhiteSpace(parameter.Value.ToString()))
+                if (parameter.Value == null)
+                {
+                    parameter.Value = DBNull.Value;
+                }
+                else if(parameter.Value is string str && string.IsNullOrWhiteSpace(str))
                 {
                     parameter.Value = DBNull.Value;
                 }

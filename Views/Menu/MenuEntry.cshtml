@@ -1,43 +1,49 @@
-﻿@using CKM_ManagementSystem.Models.ViewModels.Menu
-@model CreateMenuViewModel
+﻿@model CKM_ManagementSystem.Models.ViewModels.Menu.CreateMenuViewModel
 @{
-    ViewData["Title"] = "Menu Entry";
+    bool isEdit = Model?.MenuID.HasValue == true && Model.MenuID > 0;
+    ViewData["Title"] = isEdit ? "Menu Edit" : "Menu Entry";
+    var pageNum = Context.Request.Query["page"].ToString();
+    if (string.IsNullOrEmpty(pageNum))
+    {
+        pageNum = ViewBag.CurrentPage?.ToString() ?? "1";
+    }
 }
 <div class="container py-4">
     <div class="row justify-content-center">
         <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
             <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
                 <div class="card-header bg-white border-0 pt-4 pb-2 text-center">
-                    <h2 class="fw-bold text-dark mb-0">Menu Entry</h2>
+                    <h2 class="fw-bold text-dark mb-0">
+                        @(Model?.MenuID.HasValue == true && Model.MenuID > 0 ? "Menu Edit" : "Menu Entry")
+                    </h2>
                 </div>
                 <div class="menu-page-shell p-4">
-             
-                    <partial name = "AlertModal" />
+                    <partial name="AlertModal" />
 
-                    <form asp-action = "MenuEntry" method="post" id="menuForm">
-                        
+                    <form method="post" id="menuForm" asp-action="MenuEntry" asp-route-page ="@Context.Request.Query["page"]">
+                        <input type="hidden" asp-for="MenuID" />
                         <div class="mb-3">
                             <label asp-for="DisplayText" class="form-label fw-semibold text-secondary small">Display Text</label>
-                            <input asp-for="DisplayText"  class="form-control limit-input" placeholder="e.g. , Register User" maxlength="100"  />
+                            <input asp-for="DisplayText" class="form-control" placeholder="e.g. , Register User" maxlength="100"  />
                             <span asp-validation-for="DisplayText" class="text-danger small"></span>
                             <small class="text-danger char-limit-msg d-none">Maximum 100 characters reached!</small>
                         </div>
                         <div class="mb-3">
                             <label asp-for="ActionName" class="form-label fw-semibold text-secondary small">Action Name(Form Name)</label>
-                            <input asp-for="ActionName"  class="form-control limit-input" placeholder="e.g. , Register " maxlength="100"  />
+                            <input asp-for="ActionName" class="form-control" placeholder="e.g. , Register " maxlength="100" />
                             <span asp-validation-for="ActionName" class="text-danger small"></span>
                             <small class="text-danger char-limit-msg d-none">Maximum 100 characters reached!</small>
                         </div>
                         <div class="mb-3">
                             <label asp-for="ControllerName" class="form-label fw-semibold text-secondary small">Controller Name</label>
-                            <input asp-for="ControllerName"  class="form-control limit-input" placeholder="e.g. , Account" maxlength="100"  />
+                            <input asp-for="ControllerName" class="form-control" placeholder="e.g. , Account" maxlength="100" />
                             <span asp-validation-for="ControllerName" class="text-danger small"></span>
                             <small class="text-danger char-limit-msg d-none">Maximum 100 characters reached!</small>
                         </div>
                         
                         <div class="mb-3">
                             <label asp-for="IconClass" class="form-label fw-semibold text-secondary small">Icon Class</label>
-                            <input asp-for="IconClass" class="form-control limit-input" placeholder="e.g. , fas fa-user-plus" maxlength="50"   />
+                            <input asp-for="IconClass" class="form-control" placeholder="e.g. , fas fa-user-plus" maxlength="50" />
                             <span asp-validation-for="IconClass" class="text-danger small"></span>
                         </div>
                         
@@ -46,30 +52,33 @@
                             <label class="col-sm-4 form-label fw-semibold text-secondary d-block">Menu Type</label>
                             <div class="col-sm-8 d-flex gap-3">
                                 <div class="form-check">
-                                    <input asp-for="MenuType" class="form-check-input" type="radio"  id="typeParent" value="Parent"  />
+                                    <input asp-for="MenuType" class="form-check-input" type="radio"  id="typeParent" disabled="@isEdit" value="Parent"  />
                                     <label class="form-check-label" for="typeParent">Parent Menu</label>
                                 </div>
                                 <div class="form-check">
-                                    <input asp-for="MenuType" class="form-check-input" type="radio"  id="typeSub" value="Sub"  />
+                                    <input asp-for="MenuType" class="form-check-input" type="radio"  id="typeSub" value="Sub" disabled="@isEdit" />
                                     <label class="form-check-label" for="typeSub">Sub Menu</label>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="mb-3" >
+                        <input type="hidden" id="currentPageNum" name="currentPageNum" value="@pageNum" />
+                        <div class="mb-3">
                             <label asp-for="ParentMenuId" class="form-label fw-semibold text-secondary small">Parent Menu</label>
-                            <select asp-for="ParentMenuId" asp-items="Model.ParentMenuList" class="form-select"  id="ParentMenu">
-                                <option value="0">None (Root Level)</option>
+                            <select asp-for="ParentMenuId" asp-items="Model?.ParentMenuList" class="form-select" id="ParentMenu" disabled="@isEdit">
+                                <option value="" selected>None (Root Level)</option>
                             </select>
-                            <span asp-validation-for="ParentMenuId" class="text-danger small parent-menu-error"></span>
+                           @if(isEdit){
+                                <input type="hidden" asp-for="ParentMenuId" />
+                            }
+                            <span asp-validation-for="ParentMenuId" class="text-danger small"></span> 
                         </div>
                         <div class="mb-3">
                             <label asp-for="DisplayOrder" class="form-label fw-semibold text-secondary small">Display Order</label>
-                            <input asp-for="DisplayOrder"  type="text" id="DisplayOrder" class="form-control" placeholder="e.g. , 000 - 999" maxlength="3" />
+                            <input asp-for="DisplayOrder" type="text" id="DisplayOrder" class="form-control" placeholder="e.g. , 000 - 999" maxlength="3" />
                             <span asp-validation-for="DisplayOrder" class="text-danger small"></span>
                         </div>
                         <div class="row mb-3 d-flex align-items-center">
-                            <label class=" form-label fw-semibold text-secondary small d-block">Status</label>
+                            <label class="col-sm-4 form-label fw-semibold text-secondary small d-block status-title">Status</label>
                             <div class="col-sm-8 d-flex gap-3">
                                 <div class="form-check">
                                     <input asp-for="Status" class="form-check-input" type="radio"  id="statusActive" value="true" checked />
@@ -83,10 +92,20 @@
                         </div>
                         <div class="row g-2 pt-2">
                             <div class="col-6">
-                                <button type="reset" id="btnClear" class="btn btn-clear btn-secondary w-100 fw-bold">Clear</button>
+                                @if(isEdit)
+                                {
+                                    <a asp-controller="Menu" asp-action="MenuListView" asp-route-page="@Context.Request.Query["page"]" class="btn btn-cancel w-100 fw-bold">
+                                        Cancel
+                                    </a>
+                                } else
+                                {
+                                    <button type="reset" id="btnClear" class="btn btn-clear w-100 fw-bold">Clear</button>
+                                }
                             </div>
                             <div class="col-6">
-                                <button type="submit" id="btnRegister" class="btn btn-register w-100 fw-bold">Register</button>
+                                <button type="submit" id="btnRegister" class="btn btn-register w-100 fw-bold">
+                                    @(isEdit ? "Update" : "Register")
+                                </button>
                             </div>
                         </div>
                     </form>
@@ -100,11 +119,15 @@
     <script src="~/js/menu-entry.js" asp-append-version="true"></script>
     <script src="~/js/Alert_Modal.js" asp-append-version="true"></script>
     <script>
+        var isEditMode = @isEdit.ToString().ToLower();
         var successMessage = '@(TempData["SuccessMessage"] ?? "")';
+        var errorMessage = '@(TempData["ErrorMessage"] ?? "")';
+        var currentPage = '@pageNum';
+        var menuListUrl = '@Url.Action("MenuListView", "Menu")';
     </script>
 }
 @section Styles {
     <link rel="stylesheet" href="~/css/menu-entry.css" />
     <link rel="stylesheet" href="~/css/Alert_Modal.css" />
-    <link rel="stylesheet" href="~/css/ckm-theme.css" />
+    <link rel="stylesheet" href="~/css/ckm-theme.css" asp-append-version="true" />
 }

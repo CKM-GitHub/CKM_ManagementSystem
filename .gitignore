@@ -10,16 +10,3 @@ obj/
 **/bin/
 **/obj/
 
-
-bin/
-obj/
-.vs/
-
-*.user
-*.suo
-
-.vs/ 
-bin/
-obj/
-
-

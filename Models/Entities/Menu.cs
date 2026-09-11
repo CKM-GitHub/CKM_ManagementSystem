@@ -2,7 +2,7 @@
 {
     public class Menu
     {
-        public int MenuID { get; set; }
+        public int MenuID { get; set; } 
         public string MenuName { get; set; } = string.Empty;
         public string ActionName { get; set; } = string.Empty;
         public string ControllerName { get; set; } = string.Empty;
