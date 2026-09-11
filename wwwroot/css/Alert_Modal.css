@@ -1,6 +1,7 @@
 ﻿.alert-modal-content {
     border: none;
     border-radius: 8px;
+    color: #212529;
 }
 
 .alert-icon {
@@ -30,11 +31,13 @@
 .alert-title {
     font-size: 16px;
     font-weight: 700;
+    color: #212529;
 }
 
 .alert-message {
     margin-bottom: 20px;
     font-size: 14px;
+    color: #212529;
 }
 
 #deleteButtons {
@@ -42,7 +45,10 @@
     justify-content: center;
     gap: 10px;
 }
-
+#normalButtons .btn {
+    min-width: 120px;
+    height: 40px;
+}
 #deleteButtons.d-none {
     display: none !important;
 }

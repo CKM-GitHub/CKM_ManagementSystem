@@ -8,13 +8,15 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-// 1. DbContext Register 
+builder.Services.AddSession();
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<BaseDL>();
 builder.Services.AddScoped<DepartmentBL>();
 builder.Services.AddScoped<Menu_BL>();
+builder.Services.AddScoped<MainMenuBL>();
 
 // builder.Services.AddScoped<IMenuService, MenuService>();
 builder.Services.AddScoped<LoginUserBL>();
@@ -42,6 +44,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication();
+app.UseSession();
 app.UseAuthorization();
 
 

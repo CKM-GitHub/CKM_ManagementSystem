@@ -1,0 +1,351 @@
+﻿@using CKM_ManagementSystem.Models.ViewModels.Departments
+@model DepartmentListViewModel
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Department Management";
+}
+
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/ckm-theme.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/DepartmentList.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/Alert_Modal.css"
+          asp-append-version="true" />
+}
+
+<div class="department-list-page">
+
+    <h2 class="department-list-title">
+        Department Management
+    </h2>
+
+    <form asp-controller="DepartmentList"
+          asp-action="Index"
+          method="get"
+          class="search-section">
+
+        <div class="search-left">
+
+            <div class="search-box">
+                <input type="text"
+                       name="searchText"
+                       value="@Model.SearchText"
+                       class="form-control search-input"
+                       placeholder="Search department by name or code" />
+
+                <i class="bi bi-search search-icon"></i>
+            </div>
+
+            <select name="status"
+                    class="form-select status-select">
+
+                <option value="">
+                    All Status
+                </option>
+
+                <option value="true"
+                        selected="@(Model.Status == true)">
+                    Active
+                </option>
+
+                <option value="false"
+                        selected="@(Model.Status == false)">
+                    Inactive
+                </option>
+
+            </select>
+
+            <button type="submit"
+                    class="btn-search">
+                Search Department
+            </button>
+
+        </div>
+
+        <div class="search-right">
+
+            <a asp-controller="DepartmentEntry"
+               asp-action="Entry"
+               class="btn-add">
+                + Add Department
+            </a>
+
+        </div>
+
+    </form>
+
+    <div class="table-card">
+
+        <div class="table-responsive">
+
+            <table class="table department-table">
+
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Department Code</th>
+                        <th>Department Name</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                @{
+                    int rowNumber =
+                    ((Model.PageNumber - 1) * Model.PageSize) + 1;
+                }
+
+                <tbody>
+
+                    @if (Model.Departments.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="6"
+                                class="no-records">
+                                No departments found.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var department in Model.Departments)
+                        {
+                            <tr>
+
+                                <td>
+                                    @rowNumber
+                                </td>
+
+                                <td>
+                                    @department.DepartmentCode
+                                </td>
+
+                                <td>
+                                    <span class="text-limit"
+                                          title="@department.DepartmentName">
+
+                                        @(department.DepartmentName.Length > 30
+                                            ? department.DepartmentName.Substring(0, 30) + "..."
+                                            : department.DepartmentName)
+
+                                    </span>
+                                </td>
+
+                                <td>
+
+                                    @if (string.IsNullOrWhiteSpace(
+                                   department.Description))
+                                    {
+                                        <span>-</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-limit"
+                                              title="@department.Description">
+
+                                            @(department.Description.Length > 40
+                                                ? department.Description.Substring(0, 40) + "..."
+                                                : department.Description)
+
+                                        </span>
+                                    }
+
+                                </td>
+
+                                <td>
+
+                                    <span class="status-badge @(department.Status
+                                        ? "status-active"
+                                        : "status-inactive")">
+
+                                        @(department.Status
+                                            ? "Active"
+                                            : "Inactive")
+
+                                    </span>
+
+                                </td>
+
+                                <td class="action-column">
+
+                                    <a asp-controller="DepartmentEntry"
+                                       asp-action="Edit"
+                                       asp-route-departmentCode="@department.DepartmentCode"
+                                       class="icon-button edit-icon"
+                                       title="Edit">
+
+                                        <i class="bi bi-pencil-square"></i>
+
+                                    </a>
+
+                                    <button type="button"
+                                            class="icon-button delete-icon"
+                                            data-department-code="@department.DepartmentCode"
+                                            title="Delete">
+
+                                        <i class="bi bi-trash"></i>
+
+                                    </button>
+
+                                </td>
+
+                            </tr>
+
+                            rowNumber++;
+                        }
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div class="table-footer">
+
+            <div class="record-summary">
+
+                @if (Model.TotalRecords > 0)
+                {
+                    int startRecord =
+                    ((Model.PageNumber - 1) * Model.PageSize) + 1;
+
+                    int endRecord =
+                    Math.Min(
+                    Model.PageNumber * Model.PageSize,
+                    Model.TotalRecords);
+
+                    <span>
+                        Showing
+                        <strong>@startRecord–@endRecord</strong>
+                        of
+                        <strong>@Model.TotalRecords</strong>
+                        Departments
+                    </span>
+                }
+                else
+                {
+                    <span>
+                        Showing 0 Departments
+                    </span>
+                }
+
+            </div>
+
+            @if (Model.TotalPages > 1)
+            {
+                <nav class="pagination-container"
+                     aria-label="Department list pagination">
+
+                    <ul class="pagination">
+
+                        <li class="page-item @(Model.PageNumber == 1
+                            ? "disabled"
+                            : "")">
+
+                            <a class="page-link"
+                               asp-controller="DepartmentList"
+                               asp-action="Index"
+                               asp-route-searchText="@Model.SearchText"
+                               asp-route-status="@Model.Status"
+                               asp-route-pageNumber="@(Model.PageNumber - 1)">
+                                ‹
+                            </a>
+
+                        </li>
+
+                        @for (
+                       int pageNo = 1;
+                       pageNo <= Model.TotalPages;
+                       pageNo++)
+                        {
+                            <li class="page-item @(pageNo == Model.PageNumber
+                                ? "active"
+                                : "")">
+
+                                <a class="page-link"
+                                   asp-controller="DepartmentList"
+                                   asp-action="Index"
+                                   asp-route-searchText="@Model.SearchText"
+                                   asp-route-status="@Model.Status"
+                                   asp-route-pageNumber="@pageNo">
+
+                                    @pageNo
+
+                                </a>
+
+                            </li>
+                        }
+
+                        <li class="page-item @(Model.PageNumber == Model.TotalPages
+                            ? "disabled"
+                            : "")">
+
+                            <a class="page-link"
+                               asp-controller="DepartmentList"
+                               asp-action="Index"
+                               asp-route-searchText="@Model.SearchText"
+                               asp-route-status="@Model.Status"
+                               asp-route-pageNumber="@(Model.PageNumber + 1)">
+                                ›
+                            </a>
+
+                        </li>
+
+                    </ul>
+
+                </nav>
+            }
+
+        </div>
+
+    </div>
+
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <input type="hidden"
+           id="successMessage"
+           value="@TempData["SuccessMessage"]" />
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <input type="hidden"
+           id="errorMessage"
+           value="@TempData["ErrorMessage"]" />
+}
+
+<partial name="AlertModal" />
+
+<form asp-controller="DepartmentList"
+      asp-action="Delete"
+      method="post"
+      id="deleteDepartmentForm"
+      class="d-none">
+
+    @Html.AntiForgeryToken()
+
+    <input type="hidden"
+           name="departmentCode"
+           id="deleteDepartmentCode" />
+
+</form>
+
+@section Scripts {
+
+    <script src="~/js/Alert_Modal.js"
+            asp-append-version="true"></script>
+
+    <script src="~/js/DepartmentList.js"
+            asp-append-version="true"></script>
+}

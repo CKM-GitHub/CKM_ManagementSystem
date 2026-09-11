@@ -2,29 +2,18 @@
 @model DepartmentEntryViewModel
 
 @{
-    Layout = null;
-    ViewData["Title"] = "Department Entry";
+    Layout = "_Layout";
+
+    bool isEditMode =
+        !string.IsNullOrWhiteSpace(Model.OriginalDepartmentCode);
+
+    ViewData["Title"] =
+        isEditMode
+            ? "Department Edit"
+            : "Department Entry";
 }
 
-<!DOCTYPE html>
-
-<html lang="en">
-
-<head>
-
-    <meta charset="utf-8" />
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0" />
-
-    <title>@ViewData["Title"]</title>
-
-    <link rel="stylesheet"
-          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-
-    <link rel="stylesheet"
-          href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
-
+@section Styles {
     <link rel="stylesheet"
           href="~/css/Alert_Modal.css"
           asp-append-version="true" />
@@ -36,113 +25,129 @@
     <link rel="stylesheet"
           href="~/css/Department_Entry.css"
           asp-append-version="true" />
+}
 
-</head>
+<div class="department-entry-page">
 
+    <div class="department-entry-card">
 
-<body>
+        <h2 class="department-entry-title">
+            @(isEditMode
+                ? "Department Edit"
+                : "Department Entry")
+        </h2>
 
-    <div class="department-entry-page">
+        <form asp-controller="DepartmentEntry"
+              asp-action="@(isEditMode ? "Edit" : "Entry")"
+              method="post"
+              id="departmentEntryForm">
 
-        <div class="department-entry-card">
+            <div asp-validation-summary="ModelOnly"
+                 class="validation-summary">
+            </div>
 
-            <h2 class="department-entry-title">
-                Department Entry
-            </h2>
+            <div class="form-group">
 
+                <label asp-for="DepartmentCode"></label>
 
-            <form asp-controller="DepartmentEntry"
-                  asp-action="Entry"
-                  method="post"
-                  id="departmentEntryForm">
+                <input asp-for="DepartmentCode"
+                       id="departmentCode"
+                       class="form-control"
+                       maxlength="30"
+                       autocomplete="off"
+                       placeholder="e.g. HR-001"
+                       readonly="@(isEditMode ? "readonly" : null)" />
 
-                <div asp-validation-summary="ModelOnly"
-                     class="validation-summary">
-                </div>
+                <span asp-validation-for="DepartmentCode"
+                      class="validation-message">
+                </span>
 
+            </div>
 
-                <div class="form-group">
+            <div class="form-group">
 
-                    <label asp-for="DepartmentCode"></label>
+                <label asp-for="DepartmentName"></label>
 
-                    <input asp-for="DepartmentCode"
-                           id="departmentCode"
-                           class="form-control"
-                           autocomplete="off" />
+                <input asp-for="DepartmentName"
+                       class="form-control"
+                       maxlength="150"
+                       placeholder="e.g. Human Resources"
+                       autocomplete="off" />
 
-                    <span asp-validation-for="DepartmentCode"
-                          class="validation-message">
-                    </span>
+                <span asp-validation-for="DepartmentName"
+                      class="validation-message">
+                </span>
 
-                </div>
+            </div>
 
+            <div class="form-group">
 
-                <div class="form-group">
+                <label asp-for="Description"></label>
 
-                    <label asp-for="DepartmentName"></label>
+                <textarea asp-for="Description"
+                          class="form-control description-box"
+                          placeholder="e.g. Handle employee management"
+                          maxlength="500">
+                </textarea>
 
-                    <input asp-for="DepartmentName"
-                           class="form-control"
-                           autocomplete="off" />
+                <span asp-validation-for="Description"
+                      class="validation-message">
+                </span>
 
-                    <span asp-validation-for="DepartmentName"
-                          class="validation-message">
-                    </span>
+            </div>
 
-                </div>
+            <div class="status-row">
 
+                <label class="status-title">
+                    Status
+                </label>
 
-                <div class="form-group">
+                <div class="status-options">
 
-                    <label asp-for="Description"></label>
+                    <label class="radio-label">
 
-                    <textarea asp-for="Description"
-                              class="form-control description-box">
-                    </textarea>
+                        <input type="radio"
+                               asp-for="Status"
+                               value="true" />
 
-                    <span asp-validation-for="Description"
-                          class="validation-message">
-                    </span>
+                        Active
 
-                </div>
-
-
-                <div class="status-row">
-
-                    <label class="status-title">
-                        Status
                     </label>
 
-                    <div class="status-options">
+                    <label class="radio-label">
 
-                        <label class="radio-label">
+                        <input type="radio"
+                               asp-for="Status"
+                               value="false" />
 
-                            <input type="radio"
-                                   asp-for="Status"
-                                   value="true" />
+                        Inactive
 
-                            Active
-
-                        </label>
-
-
-                        <label class="radio-label">
-
-                            <input type="radio"
-                                   asp-for="Status"
-                                   value="false" />
-
-                            Inactive
-
-                        </label>
-
-                    </div>
+                    </label>
 
                 </div>
 
+            </div>
 
-                <div class="button-row">
+            <div class="button-row">
 
+                @if (isEditMode)
+                {
+                    <input type="hidden"
+                           asp-for="OriginalDepartmentCode" />
+
+                    <a asp-controller="DepartmentList"
+                       asp-action="Index"
+                       class="btn-clear">
+                        Cancel
+                    </a>
+
+                    <button type="submit"
+                            class="btn-register">
+                        Update
+                    </button>
+                }
+                else
+                {
                     <button type="button"
                             class="btn-clear"
                             id="btnClear">
@@ -153,41 +158,35 @@
                             class="btn-register">
                         Register
                     </button>
+                }
 
-                </div>
+            </div>
 
-            </form>
-
-        </div>
+        </form>
 
     </div>
 
+</div>
 
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <input type="hidden"
-               id="successMessage"
-               value="@TempData["SuccessMessage"]" />
-    }
+@if (TempData["SuccessMessage"] != null)
+{
+    <input type="hidden"
+           id="successMessage"
+           value="@TempData["SuccessMessage"]" />
+}
 
+<input type="hidden"
+       id="departmentListUrl"
+       value="@Url.Action("Index", "DepartmentList")" />
 
-    <partial name="AlertModal" />
+<partial name="AlertModal" />
 
-
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-
+@section Scripts {
     <script src="~/js/Alert_Modal.js"
-            asp-append-version="true">
-    </script>
+            asp-append-version="true"></script>
 
     <partial name="_ValidationScriptsPartial" />
 
     <script src="~/js/Department_Entry.js"
-            asp-append-version="true">
-    </script>
-
-</body>
-
-</html>
+            asp-append-version="true"></script>
+}

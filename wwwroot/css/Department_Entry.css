@@ -16,13 +16,13 @@ body {
 /* Page */
 .department-entry-page {
     width: 100%;
-    min-height: 100vh;
+    min-height: calc(100vh - 70px);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 40px 20px;
+    padding: 30px 20px;
+    background: transparent;
     box-sizing: border-box;
-    background: linear-gradient( 110deg, var(--dark-blue) 0%, #203D80 55%, #3159AD 100% );
 }
 
 /* Card */
