@@ -7,8 +7,9 @@ namespace CKM_ManagementSystem.Models.ViewModels.Roles
     {
         [Required(ErrorMessage = "Role Code is required.")]
         [StringLength(20, ErrorMessage = "Role Code cannot exceed 20 characters.")]
-        [RegularExpression(@"^[a-zA-Z0-9_\-]+$", ErrorMessage = "Role Code can only contain letters, numbers, underscores, and hyphens.")]
+        [RegularExpression(@"^[a-zA-Z0-9_-]+$", ErrorMessage = "Special characters are not allowed in Role Code.")]
         public string RoleCode { get; set; } = string.Empty;
+
 
         [Required(ErrorMessage = "Display Name is required.")]
         [StringLength(50, ErrorMessage = "Display Name cannot exceed 50 characters.")]
@@ -19,19 +20,20 @@ namespace CKM_ManagementSystem.Models.ViewModels.Roles
 
         public bool Status { get; set; } = true;
 
-        public bool IsEdit { get; set; } = false;
+        public bool IsEdit { get; set; }
 
-        public List<MenuPermissionViewModel> MenuPermissions { get; set; } = new List<MenuPermissionViewModel>();
+        public List<RolePermissionViewModel> MenuPermissions { get; set; }
+            = new List<RolePermissionViewModel>();
     }
 
-    public class MenuPermissionViewModel
+    public class RolePermissionViewModel
     {
         public int MenuId { get; set; }
         public string MenuName { get; set; } = string.Empty;
         public int? ParentId { get; set; }
-        public int Level { get; set; } = 0;
-        public bool CanRead { get; set; } = false;
-        public bool CanWrite { get; set; } = false;
-        public bool CanDelete { get; set; } = false;
+        public int Level { get; set; } = 0; 
+        public bool CanRead { get; set; }
+        public bool CanWrite { get; set; }
+        public bool CanDelete { get; set; }
     }
 }

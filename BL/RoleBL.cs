@@ -13,27 +13,25 @@ namespace CKM_ManagementSystem.BL
     {
         private readonly BaseDL _bdl;
 
-        public RoleBL(BaseDL bdl)
+        public RoleBL(BaseDL baseDL)
         {
-            _bdl = bdl ?? throw new ArgumentNullException(nameof(bdl));
+            _bdl = baseDL ?? throw new ArgumentNullException(nameof(baseDL));
         }
-
-        #region Role Save / Update / Get
 
         public string Role_Insert(Roles role, List<RolePermission> permissions)
         {
-            DataTable dtPermissions = ConvertPermissionsToDataTable(permissions);
-            return SaveRoleInfo(role, dtPermissions);
+            return SaveRoleInfo(role, permissions);
         }
 
         public string Role_Update(Roles role, List<RolePermission> permissions)
         {
-            DataTable dtPermissions = ConvertPermissionsToDataTable(permissions);
-            return SaveRoleInfo(role, dtPermissions);
+            return SaveRoleInfo(role, permissions);
         }
 
-        private string SaveRoleInfo(Roles role, DataTable dtPermissions)
+        private string SaveRoleInfo(Roles role, List<RolePermission> permissions)
         {
+            DataTable dtPermissions = ConvertPermissionsToDataTable(permissions);
+
             SqlParameter paramPermissions = new SqlParameter("@Permissions", SqlDbType.Structured)
             {
                 TypeName = "dbo.RolePermissionType",
@@ -52,37 +50,38 @@ namespace CKM_ManagementSystem.BL
             return _bdl.InsertUpdateDeleteData("sp_SaveRoleInfo", sqlprms);
         }
 
-        public DataTable GetRoleList()
-        {
-            return _bdl.SelectDataTable("sp_GetRoleList");
-        }
-
         public bool IsRoleCodeDuplicate(string roleCode)
         {
             SqlParameter[] sqlprms =
             {
-                new SqlParameter("@RoleCode", SqlDbType.NVarChar, 100)
-                {
-                    Value = string.IsNullOrWhiteSpace(roleCode) ? DBNull.Value : roleCode
-                }
+                new SqlParameter("@RoleCode", (object?)roleCode ?? string.Empty)
             };
 
-            object? scalarResult = _bdl.ExecuteScalarObject("sp_CheckDuplicateRoleCode", sqlprms);
-            return ParseBooleanResult(scalarResult);
+            object result = _bdl.ExecuteScalar("sp_CheckDuplicateRoleCode", sqlprms);
+
+            if (result != null && result != DBNull.Value)
+            {
+                return Convert.ToBoolean(result);
+            }
+
+            return false;
         }
 
         public bool IsRoleNameDuplicate(string roleName)
         {
             SqlParameter[] sqlprms =
             {
-                new SqlParameter("@RoleName", SqlDbType.NVarChar, 100)   // Fixed parameter name
-                {
-                    Value = string.IsNullOrWhiteSpace(roleName) ? DBNull.Value : roleName
-                }
+                new SqlParameter("@RoleCode", (object?)roleName ?? string.Empty)
             };
 
-            object? scalarResult = _bdl.ExecuteScalarObject("sp_CheckDuplicateRoleName", sqlprms); // Assuming correct SP name
-            return ParseBooleanResult(scalarResult);
+            object result = _bdl.ExecuteScalar("sp_CheckDuplicateRoleCode", sqlprms);
+
+            if (result != null && result != DBNull.Value)
+            {
+                return Convert.ToBoolean(result);
+            }
+
+            return false;
         }
 
         public DataTable GetRoleByCode(string roleCode)
@@ -91,7 +90,8 @@ namespace CKM_ManagementSystem.BL
             {
                 new SqlParameter("@RoleCode", (object?)roleCode ?? string.Empty)
             };
-            return _bdl.SelectDataTable("sp_GetRoleByCode", sqlprms);
+
+            return _bdl.ExecuteDataTable("sp_GetRoleByCode", sqlprms);
         }
 
         public DataTable GetRolePermissionsByCode(string roleCode)
@@ -103,7 +103,7 @@ namespace CKM_ManagementSystem.BL
                 new SqlParameter("@RoleCode", (object?)roleCode ?? string.Empty)
             };
 
-            DataTable dtRolePerms = _bdl.SelectDataTable("sp_GetRolePermission", sqlprms);
+            DataTable dtRolePerms = _bdl.ExecuteDataTable("sp_GetMenuPermissions", sqlprms);
             StandardizeMenuColumns(dtRolePerms);
 
             var permDict = new Dictionary<int, (bool Read, bool Write, bool Delete)>();
@@ -112,15 +112,11 @@ namespace CKM_ManagementSystem.BL
             {
                 foreach (DataRow row in dtRolePerms.Rows)
                 {
-                    int menuId = row["MenuId"] != DBNull.Value ? Convert.ToInt32(row["MenuId"]) : 0;
-                    bool canRead = dtRolePerms.Columns.Contains("CanRead") && row["CanRead"] != DBNull.Value && Convert.ToBoolean(row["CanRead"]);
-                    bool canWrite = dtRolePerms.Columns.Contains("CanWrite") && row["CanWrite"] != DBNull.Value && Convert.ToBoolean(row["CanWrite"]);
-                    bool canDelete = dtRolePerms.Columns.Contains("CanDelete") && row["CanDelete"] != DBNull.Value && Convert.ToBoolean(row["CanDelete"]);
-
-                    if (menuId > 0)
-                    {
-                        permDict[menuId] = (canRead, canWrite, canDelete);
-                    }
+                    int menuId = Convert.ToInt32(row["MenuId"] ?? 0);
+                    bool canRead = dtRolePerms.Columns.Contains("CanRead") && Convert.ToBoolean(row["CanRead"]);
+                    bool canWrite = dtRolePerms.Columns.Contains("CanWrite") && Convert.ToBoolean(row["CanWrite"]);
+                    bool canDelete = dtRolePerms.Columns.Contains("CanDelete") && Convert.ToBoolean(row["CanDelete"]);
+                    permDict[menuId] = (canRead, canWrite, canDelete);
                 }
             }
 
@@ -130,8 +126,7 @@ namespace CKM_ManagementSystem.BL
 
             foreach (DataRow row in dtAllMenus.Rows)
             {
-                int menuId = row["MenuId"] != DBNull.Value ? Convert.ToInt32(row["MenuId"]) : 0;
-
+                int menuId = Convert.ToInt32(row["MenuId"] ?? 0);
                 if (permDict.TryGetValue(menuId, out var p))
                 {
                     row["CanRead"] = p.Read;
@@ -151,7 +146,7 @@ namespace CKM_ManagementSystem.BL
 
         public DataTable GetAllMenus()
         {
-            DataTable dt = _bdl.SelectDataTable("sp_GetMenuList");
+            DataTable dt = _bdl.ExecuteDataTable("sp_GetMenuList");
             StandardizeMenuColumns(dt);
 
             if (dt == null || dt.Rows.Count == 0 || !dt.Columns.Contains("MenuId") || !dt.Columns.Contains("ParentId"))
@@ -168,10 +163,9 @@ namespace CKM_ManagementSystem.BL
             DataTable sortedDt = dt.Clone();
             HashSet<int> addedMenuIds = new HashSet<int>();
 
-            var rootMenus = rowsList
-                .Where(r => r["ParentId"] == DBNull.Value || (r["ParentId"] != DBNull.Value && Convert.ToInt32(r["ParentId"]) == 0))
-                .OrderBy(r => GetDisplayOrder(r))
-                .ToList();
+            var rootMenus = rowsList.Where(r => r["ParentId"] == DBNull.Value || Convert.ToInt32(r["ParentId"]) == 0)
+                                    .OrderBy(r => GetDisplayOrder(r))
+                                    .ToList();
 
             foreach (var root in rootMenus)
             {
@@ -188,175 +182,210 @@ namespace CKM_ManagementSystem.BL
             return sortedDt;
         }
 
-        #endregion
-
-        #region Paging, ViewModels & Delete
-
-        public RoleListPagedViewModel GetRoleListPaged(int pageNumber, int pageSize, string searchKeyword, int? status)
+        public RoleListPagedViewModel GetRoleListPaged(
+    int pageNumber,
+    int pageSize,
+    string searchKeyword,
+    int? status)
         {
-            SqlParameter[] prmsCount =
+            SqlParameter[] sqlprms =
             {
-                new SqlParameter("@SearchKeyword", string.IsNullOrWhiteSpace(searchKeyword) ? (object)DBNull.Value : searchKeyword),
-                new SqlParameter("@Status", status.HasValue ? (object)status.Value : DBNull.Value)
-            };
+        new SqlParameter(
+            "@SearchKeyword",
+            string.IsNullOrWhiteSpace(searchKeyword)
+                ? (object)DBNull.Value
+                : searchKeyword),
 
-            DataTable dtCount = _bdl.SelectDataTable("sp_GetRoleList", prmsCount);
-            int totalRecords = dtCount?.Rows.Count ?? 0;
+        new SqlParameter(
+            "@Status",
+            status.HasValue
+                ? (object)status.Value
+                : DBNull.Value),
 
-            SqlParameter[] prmsData =
+        new SqlParameter(
+            "@Offset",
+            (pageNumber - 1) * pageSize),
+
+        new SqlParameter(
+            "@PageSize",
+            pageSize)
+    };
+
+            DataSet ds =
+                _bdl.SelectDataSet(
+                    "sp_GetRoleListPaged",
+                    sqlprms);
+
+            DataTable dtData =
+                ds.Tables.Count > 0
+                    ? ds.Tables[0]
+                    : new DataTable();
+
+            int totalRecords = 0;
+
+            if (ds.Tables.Count > 1 &&
+                ds.Tables[1].Rows.Count > 0)
             {
-                new SqlParameter("@SearchKeyword", string.IsNullOrWhiteSpace(searchKeyword) ? (object)DBNull.Value : searchKeyword),
-                new SqlParameter("@Status", status.HasValue ? (object)status.Value : DBNull.Value),
-                new SqlParameter("@Offset", (pageNumber - 1) * pageSize),
-                new SqlParameter("@PageSize", pageSize)
-            };
+                totalRecords =
+                    Convert.ToInt32(
+                        ds.Tables[1].Rows[0][0]);
+            }
 
-            DataTable dtData = _bdl.SelectDataTable("sp_GetRoleListPaged", prmsData);
+            var roles =
+                new List<RoleEntryViewModel>();
 
-            var roles = new List<RoleEntryViewModel>();
-
-            if (dtData != null)
+            foreach (DataRow row in dtData.Rows)
             {
-                foreach (DataRow row in dtData.Rows)
+                roles.Add(new RoleEntryViewModel
                 {
-                    string code = dtData.Columns.Contains("RoleCode") ? row["RoleCode"]?.ToString() ?? ""
-                                : dtData.Columns.Contains("Role_Code") ? row["Role_Code"]?.ToString() ?? "" : "";
+                    RoleCode =
+                        row["RoleCode"]?.ToString() ?? "",
 
-                    string name = dtData.Columns.Contains("DisplayName") ? row["DisplayName"]?.ToString() ?? ""
-                                : dtData.Columns.Contains("Role_Name") ? row["Role_Name"]?.ToString() ?? "" : "";
+                    DisplayName =
+                        row["DisplayName"]?.ToString() ?? "",
 
-                    roles.Add(new RoleEntryViewModel
-                    {
-                        RoleCode = code,
-                        DisplayName = name,
-                        Description = dtData.Columns.Contains("Description") && row["Description"] != DBNull.Value
-                                        ? row["Description"]?.ToString() ?? "" : "",
-                        Status = ParseStatus(row["Status"])
-                    });
-                }
+                    Description =
+                        row["Description"] == DBNull.Value
+                            ? ""
+                            : row["Description"]?.ToString() ?? "",
+
+                    Status =
+                        ParseStatus(row["Status"])
+                });
             }
 
             return new RoleListPagedViewModel
             {
                 PageNumber = pageNumber,
                 PageSize = pageSize,
-                SearchKeyword = searchKeyword,
+                SearchKeyword = searchKeyword ?? string.Empty,
                 Status = status,
                 TotalRecords = totalRecords,
                 Roles = roles
             };
         }
-
-        public List<MenuPermissionViewModel> GetMenuPermissions(string? roleCode = null)
+        public RoleEntryViewModel? GetRoleByCodeViewModel(
+            string roleCode)
         {
-            SqlParameter[] prms =
+            DataTable dt =
+                GetRoleByCode(roleCode);
+
+            if (dt.Rows.Count == 0)
             {
-                new SqlParameter("@RoleCode", string.IsNullOrEmpty(roleCode) ? (object)DBNull.Value : roleCode)
-            };
-
-            DataTable dt = _bdl.SelectDataTable("sp_GetMenuPermissions", prms);
-            var list = new List<MenuPermissionViewModel>();
-
-            if (dt != null)
-            {
-                foreach (DataRow row in dt.Rows)
-                {
-                    int menuId = row.Table.Columns.Contains("MenuId")
-                        ? Convert.ToInt32(row["MenuId"])
-                        : Convert.ToInt32(row["MenuID"]);
-
-                    int? parentId = null;
-                    if (row.Table.Columns.Contains("ParentId") && row["ParentId"] != DBNull.Value)
-                        parentId = Convert.ToInt32(row["ParentId"]);
-                    else if (row.Table.Columns.Contains("ParentMenuId") && row["ParentMenuId"] != DBNull.Value)
-                        parentId = Convert.ToInt32(row["ParentMenuId"]);
-
-                    int level = 0;
-                    if (row.Table.Columns.Contains("Level") && row["Level"] != DBNull.Value)
-                        level = Convert.ToInt32(row["Level"]);
-
-                    list.Add(new MenuPermissionViewModel
-                    {
-                        MenuId = menuId,
-                        MenuName = row["MenuName"]?.ToString() ?? string.Empty,
-                        ParentId = parentId,
-                        Level = level,
-                        CanRead = row.Table.Columns.Contains("CanRead") && row["CanRead"] != DBNull.Value && Convert.ToBoolean(row["CanRead"]),
-                        CanWrite = row.Table.Columns.Contains("CanWrite") && row["CanWrite"] != DBNull.Value && Convert.ToBoolean(row["CanWrite"]),
-                        CanDelete = row.Table.Columns.Contains("CanDelete") && row["CanDelete"] != DBNull.Value && Convert.ToBoolean(row["CanDelete"])
-                    });
-                }
+                return null;
             }
-
-            return list;
-        }
-
-        public RoleEntryViewModel? GetRoleByCodeViewModel(string roleCode)
-        {
-            DataTable dt = GetRoleByCode(roleCode);
-            if (dt == null || dt.Rows.Count == 0) return null;
 
             DataRow row = dt.Rows[0];
 
-            string code = dt.Columns.Contains("RoleCode") ? row["RoleCode"]?.ToString() ?? ""
-                        : dt.Columns.Contains("Role_Code") ? row["Role_Code"]?.ToString() ?? "" : "";
+            string code =
+                dt.Columns.Contains("RoleCode")
+                    ? row["RoleCode"]?.ToString() ?? ""
+                    : dt.Columns.Contains("Role_Code")
+                        ? row["Role_Code"]?.ToString() ?? ""
+                        : "";
 
-            string name = dt.Columns.Contains("DisplayName") ? row["DisplayName"]?.ToString() ?? ""
-                        : dt.Columns.Contains("Role_Name") ? row["Role_Name"]?.ToString() ?? "" : "";
+            string name =
+                dt.Columns.Contains("DisplayName")
+                    ? row["DisplayName"]?.ToString() ?? ""
+                    : dt.Columns.Contains("Role_Name")
+                        ? row["Role_Name"]?.ToString() ?? ""
+                        : "";
 
-            string desc = dt.Columns.Contains("Description") && row["Description"] != DBNull.Value
-                        ? row["Description"]?.ToString() ?? "" : "";
+            string description =
+                dt.Columns.Contains("Description") &&
+                row["Description"] != DBNull.Value
+                    ? row["Description"]?.ToString() ?? ""
+                    : "";
 
             return new RoleEntryViewModel
             {
                 RoleCode = code,
                 DisplayName = name,
-                Description = desc,
-                Status = dt.Columns.Contains("Status") ? ParseStatus(row["Status"]) : false
+                Description = description,
+                Status =
+                    dt.Columns.Contains("Status")
+                        ? ParseStatus(row["Status"])
+                        : false
             };
         }
 
-        public (bool Success, string Message) DeleteRole(string roleCode)
+        public (bool Success, string Message) DeleteRole(
+            string roleCode)
         {
-            var role = GetRoleByCodeViewModel(roleCode);
+            var role =
+                GetRoleByCodeViewModel(roleCode);
+
             if (role == null)
-                return (false, "Role not found.");
+            {
+                return (
+                    false,
+                    "Role not found.");
+            }
 
             if (role.Status)
-                return (false, "Cannot delete an active role.");
+            {
+                return (
+                    false,
+                    "Cannot delete an active role.");
+            }
 
-            SqlParameter[] prms = { new SqlParameter("@RoleCode", (object?)roleCode ?? DBNull.Value) };
-            string result = _bdl.InsertUpdateDeleteData("sp_DeleteRole", prms);
+            SqlParameter[] prms =
+            {
+        new SqlParameter(
+            "@RoleCode",
+            (object?)roleCode ?? DBNull.Value)
+    };
 
-            if (string.IsNullOrEmpty(result) || result.Equals("true", StringComparison.OrdinalIgnoreCase) || result == "1")
-                return (true, "Role deleted successfully.");
+            string result =
+                _bdl.InsertUpdateDeleteData(
+                    "sp_DeleteRole",
+                    prms);
 
-            return (false, "An error occurred while deleting the role: " + result);
+            if (string.IsNullOrEmpty(result) ||
+                result.Equals(
+                    "true",
+                    StringComparison.OrdinalIgnoreCase) ||
+                result == "1")
+            {
+                return (
+                    true,
+                    "Role deleted successfully.");
+            }
+
+            return (
+                false,
+                "An error occurred while deleting the role: "
+                + result);
         }
 
-        #endregion
-
-        #region Private Helpers
-
-        private static bool ParseBooleanResult(object? scalarResult)
+        private static bool ParseStatus(
+            object? statusObj)
         {
-            if (scalarResult == null || scalarResult == DBNull.Value)
+            if (statusObj == null ||
+                statusObj == DBNull.Value)
+            {
                 return false;
+            }
 
-            if (scalarResult is bool b) return b;
-            if (int.TryParse(scalarResult.ToString(), out int val)) return val > 0;
+            if (statusObj is bool status)
+            {
+                return status;
+            }
 
-            return scalarResult.ToString()!.Equals("true", StringComparison.OrdinalIgnoreCase);
-        }
+            if (int.TryParse(
+                statusObj.ToString(),
+                out int value))
+            {
+                return value == 1;
+            }
 
-        private static bool ParseStatus(object? statusObj)
-        {
-            if (statusObj == null || statusObj == DBNull.Value) return false;
-            if (statusObj is bool b) return b;
-            if (int.TryParse(statusObj.ToString(), out int val)) return val == 1;
+            string text =
+                statusObj.ToString()!.Trim();
 
-            string str = statusObj.ToString()!.Trim();
-            return str.Equals("true", StringComparison.OrdinalIgnoreCase) || str == "1";
+            return text.Equals(
+                       "true",
+                       StringComparison.OrdinalIgnoreCase)
+                   || text == "1";
         }
 
         private static void AppendMenuAndChildren(DataRow currentMenu, List<DataRow> allRows, DataTable targetTable, HashSet<int> addedIds, int currentLevel)
@@ -433,7 +462,5 @@ namespace CKM_ManagementSystem.BL
             dt.Columns.Add("CanDelete", typeof(bool));
             return dt;
         }
-
-        #endregion
     }
 }

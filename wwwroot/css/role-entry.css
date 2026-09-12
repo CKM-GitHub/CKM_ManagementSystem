@@ -1,9 +1,11 @@
+﻿﻿
+/* Base Page & Backgrounds */
 body {
     color: var(--white) !important;
     font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif !important;
 }
 
-
+/* Card Container (Background White) */
 .role-entry-card {
     background-color: var(--white) !important;
     border-radius: 12px;
@@ -13,7 +15,7 @@ body {
     margin: 2rem auto;
 }
 
-
+/* Main Header - 32px Bold (Dark Blue Text on White Card) */
 .role-entry-title,
 .main-header,
 h1 {
@@ -25,7 +27,7 @@ h1 {
     line-height: 1.2;
 }
 
-
+/* Subheaders & Table Headers - 16px Bold */
 .permissions-table-wrapper table thead th,
 .parent-menu-title,
 .subheader,
@@ -35,7 +37,7 @@ h2, h3, h4 {
     color: var(--dark-blue) !important;
 }
 
-
+/* Labels, Body Text & Controls - 14px */
 .form-label-custom {
     color: var(--dark-blue) !important;
     font-size: 14px !important;
@@ -57,7 +59,7 @@ h2, h3, h4 {
         background-color: var(--white) !important;
     }
 
-
+/* Sub-text / Validation Error - 12px */
 small,
 .form-text {
     font-size: 12px !important;
@@ -73,7 +75,7 @@ small,
     font-size: 12px !important;
 }
 
-
+/* Table Customization & Scrollbar Controls */
 .permissions-table-wrapper {
     border: 1px solid var(--border-color);
     border-radius: 8px;
@@ -96,7 +98,7 @@ small,
             border-bottom: 1px solid var(--border-color);
         }
 
-
+        /* Option A: Ellipsis Text Control for Table Cells */
         .permissions-table-wrapper table td.menu-cell {
             max-width: 0;
             white-space: nowrap;
@@ -134,7 +136,7 @@ small,
     color: var(--dark-blue) !important;
 }
 
-
+/* Custom Checkbox Alignment & Styling */
 .form-check-input {
     cursor: pointer;
     border-color: var(--border-color);
@@ -145,7 +147,7 @@ small,
         border-color: var(--primary-blue) !important;
     }
 
-
+/* Buttons */
 .btn-primary {
     background-color: var(--primary-blue) !important;
     border: 1px solid var(--primary-blue) !important;
@@ -172,17 +174,3 @@ small,
         background-color: var(--gray) !important;
         color: var(--white) !important;
     }
-
-
-.tooltip .tooltip-arrow {
-    display: none !important;
-}
-
-.tooltip-inner {
-    background-color: var(--dark-blue, #1e293b) !important;
-    color: #ffffff !important;
-    font-size: 12px !important;
-    padding: 6px 10px !important;
-    border-radius: 6px !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-}

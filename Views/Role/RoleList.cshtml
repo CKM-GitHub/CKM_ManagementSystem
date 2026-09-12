@@ -6,10 +6,7 @@
 }
 
 @section Styles {
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
-
+    
     <link rel="stylesheet" href="~/css/role-list.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/Alert_Modal.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/ckm-theme.css" asp-append-version="true" />
@@ -102,16 +99,18 @@
                                     }
                                 </td>
                                 <td class="text-center align-middle">
-                                    <a asp-action="RoleEntry" asp-controller="Role" asp-route-code="@item.RoleCode"
+                                    <a asp-action="RoleEntry" asp-controller="Role" asp-route-id="@item.RoleCode"
                                        class="text-primary text-decoration-none mx-2 shadow-none"
                                        style="outline: none;" title="Edit Role">
                                         <i class="bi bi-pencil-square" style="font-size: 1.15rem;"></i>
                                     </a>
 
                                     <button type="button"
-                                            class="text-danger border-0 bg-transparent p-0 mx-2 shadow-none"
+                                            class="text-danger border-0 bg-transparent p-0 mx-2 shadow-none delete-role-btn"
                                             style="outline: none;"
-                                            onclick="deleteRole('@item.RoleCode')" title="Delete Role">
+                                            data-role-code="@item.RoleCode"
+                                            data-delete-url="@Url.Action("DeleteRole", "Role")"
+                                            title="Delete Role">
                                         <i class="bi bi-trash" style="font-size: 1.15rem;"></i>
                                     </button>
                                 </td>
@@ -184,45 +183,5 @@
 
 @section Scripts {
     <script src="~/js/Alert_Modal.js" asp-append-version="true"></script>
-
-    <script>
-        function deleteRole(roleCode) {
-            var deleteMessage = "Are you sure you want to delete this role?";
-
-            showDelete(deleteMessage, function () {
-                var token = $('input[name="__RequestVerificationToken"]').val();
-
-                $('#alertModal').modal('hide');
-
-                setTimeout(function () {
-                    $.ajax({
-                        url: '@Url.Action("DeleteRole", "Role")',
-                        type: 'POST',
-                        data: {
-                            roleCode: roleCode,
-                            __RequestVerificationToken: token
-                        },
-                        success: function (res) {
-                            if (res.success) {
-                                showSuccess(res.message || 'Role has been deleted successfully.');
-
-                                $('#alertModal').one('hidden.bs.modal', function () {
-                                    location.reload();
-                                });
-                            } else {
-                                showError(res.message || 'Failed to delete the role.');
-                            }
-                        },
-                        error: function (xhr, status, error) {
-                            var errMsg = "A system error occurred: " + error;
-                            if (xhr.responseJSON && xhr.responseJSON.message) {
-                                errMsg = xhr.responseJSON.message;
-                            }
-                            showError(errMsg);
-                        }
-                    });
-                }, 350);
-            });
-        }
-    </script>
+    <script src="~/js/role-list.js" asp-append-version="true"></script>
 }

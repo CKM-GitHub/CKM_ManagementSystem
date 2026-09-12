@@ -38,7 +38,6 @@
     const modal = bootstrap.Modal.getOrCreateInstance(alertModal);
     modal.show();
 }
-
 /*Success function*/
 function showSuccess(message, onOk) {
     showAlert(

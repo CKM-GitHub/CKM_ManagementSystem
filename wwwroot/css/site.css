@@ -1,11 +1,11 @@
 html {
-    font-size: 14px;
+  font-size: 14px;
 }
 
 @media (min-width: 768px) {
-    html {
-        font-size: 16px;
-    }
+  html {
+    font-size: 16px;
+  }
 }
 .footer-link {
     color: #FFFFFF;
@@ -17,10 +17,9 @@ html {
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
-<<<<<<< HEAD
 html , body{
   position: relative;
   min-height: 100%;
@@ -36,18 +35,3 @@ body {
   background-repeat: no-repeat;
   background-attachment: fixed;
 }
-=======
-html {
-    position: relative;
-    min-height: 100%;
-}
-
-html body {
-    background-color: #1a1a1a;
-    margin-bottom: 60px;
-    background-image: url(/images/system_img/background_img.png);
-    background-size: cover;
-    background-repeat: no-repeat;
-}
- 
->>>>>>> 5-rolelist
