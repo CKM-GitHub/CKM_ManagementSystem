@@ -1,15 +1,13 @@
-using Microsoft.Data.SqlClient;
+using System;
 using System.Data;
-using System.Text.Json;
-using System.Linq;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 
 namespace CKM_ManagementSystem.DL
 {
     public class BaseDL
     {
-        protected readonly string _connectionString;
-        protected readonly int _commandTimeout;
+        private readonly string _connectionString;
 
         public BaseDL(IConfiguration configuration)
         {
@@ -17,151 +15,153 @@ namespace CKM_ManagementSystem.DL
                 configuration.GetConnectionString("DefaultConnection")
                 ?? throw new InvalidOperationException(
                     "DefaultConnection was not found.");
-            _commandTimeout = 30;
         }
 
-        public string InsertUpdateDeleteData(string storedProcedureName, params SqlParameter[] parameters)
+        public string InsertUpdateDeleteData(
+            string storedProcedureName,
+            params SqlParameter[] parameters)
         {
-            using var connection = new SqlConnection(_connectionString);
+            using SqlConnection connection =
+                new SqlConnection(_connectionString);
+
             connection.Open();
-            using var transaction = connection.BeginTransaction();
-            using var command = new SqlCommand(storedProcedureName, connection, transaction)
+
+            using SqlTransaction transaction =
+                connection.BeginTransaction();
+
+            using SqlCommand command = new SqlCommand(
+                storedProcedureName,
+                connection,
+                transaction);
+
+            command.CommandType = CommandType.StoredProcedure;
+
+            if (parameters != null && parameters.Length > 0)
             {
-                CommandType = CommandType.StoredProcedure,
-                CommandTimeout = _commandTimeout
-            };
-            if (parameters is { Length: > 0 })
-            {
-                command.Parameters.AddRange(NormalizeParameters(parameters));
+                ChangeToDBNull(parameters);
+                command.Parameters.AddRange(parameters);
             }
+
             try
             {
                 command.ExecuteNonQuery();
                 transaction.Commit();
+
                 return "true";
             }
-            catch
+            catch (Exception ex)
             {
                 transaction.Rollback();
-                return "false";
+
+                return "Error: " + ex.Message;
             }
         }
 
-        public async Task<int> ExecuteNonQueryAsync(string storedProcedureName, params SqlParameter[] parameters)
+        public int ExecuteScalar(
+            string storedProcedureName,
+            params SqlParameter[] parameters)
         {
-            using var connection = new SqlConnection(_connectionString);
-            using var command = CreateCommand(connection, storedProcedureName, parameters);
-            if (parameters != null && parameters.Length > 0)
-            {
-                command.Parameters.AddRange(NormalizeParameters(parameters));
-            }
-            await connection.OpenAsync();
-            return await command.ExecuteNonQueryAsync();
+            object? value = ExecuteScalarObject(storedProcedureName, parameters);
+            return value == null || value == DBNull.Value ? 0 : Convert.ToInt32(value);
         }
 
-        public async Task<int> ExecuteNonQueryWithErrorCodeAsync(string storedProcedureName, params SqlParameter[] parameters)
+        public object? ExecuteScalarObject(
+            string storedProcedureName,
+            params SqlParameter[] parameters)
         {
-            using var connection = new SqlConnection(_connectionString);
-            using var command = CreateCommand(connection, storedProcedureName, parameters);
-            var errorParameter = command.Parameters
-                .Cast<SqlParameter>()
-                .FirstOrDefault(p =>
-                    p.ParameterName.Equals("@ErrorCode", StringComparison.OrdinalIgnoreCase) ||
-                    p.ParameterName.Equals("@Error_Code", StringComparison.OrdinalIgnoreCase));
-            if (errorParameter == null)
-            {
-                errorParameter = new SqlParameter("@ErrorCode", SqlDbType.Int)
-                {
-                    Direction = ParameterDirection.Output
-                };
-                command.Parameters.Add(errorParameter);
-            }
+            using SqlConnection connection = new SqlConnection(_connectionString);
+            connection.Open();
+
+            using SqlCommand command = CreateCommand(connection, storedProcedureName, parameters);
+            object? result = command.ExecuteScalar();
+            return result == DBNull.Value ? null : result;
+        }
+
+        public DataTable SelectData(
+            string storedProcedureName,
+            params SqlParameter[] parameters)
+            => ExecuteDataTable(storedProcedureName, parameters);
+
+        public DataTable SelectDataTable(
+            string storedProcedureName,
+            params SqlParameter[] parameters)
+            => ExecuteDataTable(storedProcedureName, parameters);
+
+        public DataTable ExecuteDataTable(
+            string storedProcedureName,
+            params SqlParameter[] parameters)
+        {
+            DataTable dt = new DataTable();
+
+            using SqlConnection connection =
+                new SqlConnection(_connectionString);
+            connection.Open();
+
+            using SqlCommand command =
+                CreateCommand(connection, storedProcedureName, parameters);
+
+            using SqlDataAdapter adapter = new SqlDataAdapter(command);
+            adapter.Fill(dt);
+
+            return dt;
+        }
+
+        public DataSet SelectDataSet(
+            string storedProcedureName,
+            params SqlParameter[] parameters)
+        {
+            DataSet dataSet = new DataSet();
+
+            using SqlConnection connection = new SqlConnection(_connectionString);
+            connection.Open();
+            using SqlCommand command = CreateCommand(connection, storedProcedureName, parameters);
+            using SqlDataAdapter adapter = new SqlDataAdapter(command);
+            adapter.Fill(dataSet);
+
+            return dataSet;
+        }
+
+        public async Task<DataTable> SelectDataTableAsync(
+            string storedProcedureName,
+            params SqlParameter[] parameters)
+        {
+            using SqlConnection connection = new SqlConnection(_connectionString);
             await connection.OpenAsync();
+            using SqlCommand command = CreateCommand(connection, storedProcedureName, parameters);
+            using SqlDataReader reader = await command.ExecuteReaderAsync();
+
+            DataTable table = new DataTable();
+            table.Load(reader);
+            return table;
+        }
+
+        public async Task<int> ExecuteNonQueryWithErrorCodeAsync(
+            string storedProcedureName,
+            params SqlParameter[] parameters)
+        {
+            using SqlConnection connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+            using SqlCommand command = CreateCommand(connection, storedProcedureName, parameters);
             await command.ExecuteNonQueryAsync();
-            return errorParameter.Value == DBNull.Value
+
+            SqlParameter? errorParameter = command.Parameters.Cast<SqlParameter>()
+                .FirstOrDefault(parameter =>
+                    string.Equals(parameter.ParameterName, "@ErrorCode", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(parameter.ParameterName, "@Error_Code", StringComparison.OrdinalIgnoreCase));
+
+            return errorParameter?.Value == null || errorParameter.Value == DBNull.Value
                 ? 0
                 : Convert.ToInt32(errorParameter.Value);
         }
 
-        public async Task<bool> ExecuteAsync(string storedProcedure, params SqlParameter[] parameters)
+        public async Task<int> ExecuteAsync(
+            string storedProcedureName,
+            params SqlParameter[] parameters)
         {
-            await ExecuteNonQueryAsync(storedProcedure, parameters);
-            return true;
-        }
-
-        public int ExecuteScalar(string storedProcedureName, params SqlParameter[] parameters)
-        {
-            using var connection = new SqlConnection(_connectionString);
-            using var command = CreateCommand(connection, storedProcedureName, parameters);
-            if (parameters != null && parameters.Length > 0)
-            {
-                command.Parameters.AddRange(NormalizeParameters(parameters));
-            }
-            connection.Open();
-            object? result = command.ExecuteScalar();
-            return result == null || result == DBNull.Value
-                ? 0
-                : Convert.ToInt32(result);
-        }
-
-        public DataTable SelectDataTable(string storedProcedureName, params SqlParameter[] parameters)
-        {
-            var dataTable = new DataTable();
-            using var connection = new SqlConnection(_connectionString);
-            using var command = CreateCommand(connection, storedProcedureName, parameters);
-            using var adapter = new SqlDataAdapter(command);
-            adapter.Fill(dataTable);
-            return dataTable;
-        }
-
-        public async Task<DataTable> SelectDataTableAsync(string storedProcedureName, params SqlParameter[]? parameters)
-        {
-            using var connection = new SqlConnection(_connectionString);
-            using var command = CreateCommand(connection, storedProcedureName, parameters);
+            using SqlConnection connection = new SqlConnection(_connectionString);
             await connection.OpenAsync();
-
-            var table = new DataTable();
-            using (var reader = await command.ExecuteReaderAsync())
-            {
-                table.Load(reader);
-            }
-
-            if (parameters != null)
-            {
-                for (int i = 0; i < parameters.Length; i++)
-                {
-                    if (parameters[i].Direction == ParameterDirection.Output ||
-                        parameters[i].Direction == ParameterDirection.InputOutput)
-                    {
-                        parameters[i].Value = command.Parameters[parameters[i].ParameterName].Value;
-                    }
-                }
-            }
-            return table;
-        }
-
-        public DataSet SelectDataSet(string storedProcedureName, params SqlParameter[] parameters)
-        {
-            var dataSet = new DataSet();
-            using var connection = new SqlConnection(_connectionString);
-            using var command = CreateCommand(connection, storedProcedureName, parameters);
-            using var adapter = new SqlDataAdapter(command);
-            adapter.Fill(dataSet);
-            return dataSet;
-        }
-
-        public async Task<string> SelectJsonAsync(string storedProcedureName, params SqlParameter[] parameters)
-        {
-            var table = await SelectDataTableAsync(storedProcedureName, parameters);
-            var rows = table.Rows
-                .Cast<DataRow>()
-                .Select(row => table.Columns
-                    .Cast<DataColumn>()
-                    .ToDictionary(
-                        col => col.ColumnName,
-                        col => row[col] == DBNull.Value ? null : row[col]
-                    ));
-            return JsonSerializer.Serialize(rows);
+            using SqlCommand command = CreateCommand(connection, storedProcedureName, parameters);
+            return await command.ExecuteNonQueryAsync();
         }
 
         public async Task<List<T>> ExecuteReaderAsync<T>(
@@ -169,112 +169,54 @@ namespace CKM_ManagementSystem.DL
             Func<SqlDataReader, T> map,
             params SqlParameter[] parameters)
         {
-            ArgumentNullException.ThrowIfNull(map);
-            var results = new List<T>();
-            using var connection = new SqlConnection(_connectionString);
-            using var command = CreateCommand(connection, storedProcedureName, parameters);
+            using SqlConnection connection = new SqlConnection(_connectionString);
             await connection.OpenAsync();
-            using var reader = await command.ExecuteReaderAsync();
+            using SqlCommand command = CreateCommand(connection, storedProcedureName, parameters);
+            using SqlDataReader reader = await command.ExecuteReaderAsync();
+
+            var results = new List<T>();
             while (await reader.ReadAsync())
             {
                 results.Add(map(reader));
             }
+
             return results;
         }
 
-        #region Helpers
-
-        protected SqlParameter CreateParameter(string parameterName, object? value)
-        {
-            return new SqlParameter(parameterName, value ?? DBNull.Value);
-        }
-
-        private SqlCommand CreateCommand(SqlConnection connection, string storedProcedureName, SqlParameter[]? parameters)
+        private static SqlCommand CreateCommand(
+            SqlConnection connection,
+            string storedProcedureName,
+            SqlParameter[]? parameters)
         {
             var command = new SqlCommand(storedProcedureName, connection)
             {
-                CommandType = CommandType.StoredProcedure,
-                CommandTimeout = _commandTimeout
+                CommandType = CommandType.StoredProcedure
             };
-            if (parameters is { Length: > 0 })
+
+            if (parameters != null && parameters.Length > 0)
             {
-                command.Parameters.AddRange(NormalizeParameters(parameters));
+                ChangeToDBNull(parameters);
+                command.Parameters.AddRange(parameters);
             }
+
             return command;
         }
 
-        public async Task<bool> ExecuteWithOutputAsync(string storedProcedure, params SqlParameter[] parameters)
+        private static void ChangeToDBNull(SqlParameter[] parameters)
         {
-            using var connection = new SqlConnection(_connectionString);
-            using var command = new SqlCommand(storedProcedure, connection);
-            command.CommandType = CommandType.StoredProcedure;
-            command.CommandTimeout = _commandTimeout;
-            if (parameters != null && parameters.Length > 0)
+            foreach (SqlParameter parameter in parameters)
             {
-                command.Parameters.AddRange(NormalizeParameters(parameters));
-            }
-            await connection.OpenAsync();
-            await command.ExecuteNonQueryAsync();
-            if (parameters != null)
-            {
-                for (int i = 0; i < parameters.Length; i++)
+                if (parameter.SqlDbType == SqlDbType.Structured)
                 {
-                    if (parameters[i].Direction == ParameterDirection.Output ||
-                        parameters[i].Direction == ParameterDirection.InputOutput)
-                    {
-                        parameters[i].Value = command.Parameters[parameters[i].ParameterName].Value;
-                    }
+                    continue;
                 }
-            }
-            return true;
-        }
 
-        private SqlParameter[] NormalizeParameters(SqlParameter[] parameters)
-        {
-            foreach (var parameter in parameters)
-            {
                 if (parameter.Value == null ||
-                    parameter.Value == DBNull.Value ||
-                    (parameter.Value is string strValue && string.IsNullOrWhiteSpace(strValue)) ||
-                    string.IsNullOrWhiteSpace(parameter.Value?.ToString()))
+                    (parameter.Value is string strValue && string.IsNullOrWhiteSpace(strValue)))
                 {
                     parameter.Value = DBNull.Value;
                 }
             }
-            return parameters;
-        }
-
-        #endregion
-
-        public object? ExecuteScalarObject(string storedProcedureName, params SqlParameter[] parameters)
-        {
-            using SqlConnection connection = new SqlConnection(_connectionString);
-            connection.Open();
-            using SqlCommand command = new SqlCommand(storedProcedureName, connection);
-            command.CommandType = CommandType.StoredProcedure;
-            if (parameters != null && parameters.Length > 0)
-            {
-                NormalizeParameters(parameters);
-                command.Parameters.AddRange(parameters);
-            }
-            object? result = command.ExecuteScalar();
-            return result == DBNull.Value ? null : result;
-        }
-
-        public DataTable ExecuteDataTable(string storedProcedure, params SqlParameter[] parameters)
-        {
-            using var connection = new SqlConnection(_connectionString);
-            using var command = new SqlCommand(storedProcedure, connection);
-            command.CommandType = CommandType.StoredProcedure;
-            if (parameters != null && parameters.Length > 0)
-            {
-                NormalizeParameters(parameters);
-                command.Parameters.AddRange(parameters);
-            }
-            using SqlDataAdapter adapter = new SqlDataAdapter(command);
-            DataTable dataTable = new DataTable();
-            adapter.Fill(dataTable);
-            return dataTable;
         }
     }
 }
