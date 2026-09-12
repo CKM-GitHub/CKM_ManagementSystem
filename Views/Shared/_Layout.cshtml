@@ -4,26 +4,36 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - CKM_ManagementSystem</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/Alert_Modal.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Font.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/ckm-theme.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/CKM_ManagementSystem.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.css" />
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
-    <header>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+    <div class="app-shell">
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - CKM_ManagementSystem - <a asp-area="" asp-controller="Home" asp-action="Privacy" class="footer-link"> Privacy</a>
+        <aside class="sidebar">
+            <div id="mainMenuContainer"></div>
+        </aside>
+
+    
+        <div class="main-area">
+            <header class="topbar">
+              <div id="profileContainer"></div>
+            </header>
+            <main class="page-content">
+                @RenderBody()
+            </main>
         </div>
-    </footer>
+    </div>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/Main_Menu.js" asp-append-version="true"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)

@@ -1,12 +1,54 @@
 ﻿document.addEventListener("DOMContentLoaded", function () {
 
-    const departmentCode = document.getElementById("departmentCode");
-    const form = document.getElementById("departmentEntryForm");
-    const clearButton = document.getElementById("btnClear");
+    const departmentCode =
+        document.getElementById("departmentCode");
 
-    if (departmentCode) {
-        departmentCode.focus();
+    const departmentName =
+        document.querySelector("[name='DepartmentName']");
+
+    const form =
+        document.getElementById("departmentEntryForm");
+
+    const clearButton =
+        document.getElementById("btnClear");
+
+
+    const isEditMode =
+        departmentCode &&
+        departmentCode.hasAttribute("readonly");
+
+
+    if (isEditMode) {
+
+        if (departmentName) {
+            departmentName.focus();
+        }
+
     }
+    else {
+
+        if (departmentCode) {
+
+            departmentCode.focus();
+
+            departmentCode.addEventListener(
+                "keydown",
+                function (event) {
+
+                    if (event.key === "Enter") {
+
+                        event.preventDefault();
+
+                        if (departmentName) {
+                            departmentName.focus();
+                        }
+                    }
+                }
+            );
+        }
+
+    }
+
 
     if (clearButton && form) {
         clearButton.addEventListener("click", function () {
@@ -37,17 +79,19 @@
             departmentCode.focus();
         });
     }
-    const successModalElement =
-        document.getElementById("successModal");
+    const successMessage = document.getElementById("successMessage");
 
-    if (successModalElement) {
-        const successModal =
-            new bootstrap.Modal(successModalElement);
+    const departmentListUrl = document.getElementById("departmentListUrl");
 
-        successModalElement.addEventListener("hidden.bs.modal", function () {
-            departmentCode.focus();
-        });
 
-        successModal.show();
+    if (successMessage) {
+        showSuccess(successMessage.value,
+            function () {
+                if (departmentListUrl) {
+                    window.location.href = departmentListUrl.value;
+                }
+            }
+        );
+
     }
 });

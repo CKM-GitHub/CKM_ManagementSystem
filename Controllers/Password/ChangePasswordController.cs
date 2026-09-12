@@ -6,7 +6,7 @@ using CKM_ManagementSystem.BL;
 
 namespace CKM_ManagementSystem.Controllers.Password
 {
-   // [Authorize]
+   [Authorize]
     [Route("Password")]
     public class ChangePasswordController : Controller
     {
@@ -36,13 +36,7 @@ namespace CKM_ManagementSystem.Controllers.Password
         [HttpGet("ChangePassword")]
         public IActionResult ChangePassword()
         {
-            HttpContext.Session.SetString("StaffCode", "CKM-0042"); // Test code *///// if want change password , TestUserxx-1 or TestUserxx (TestUser42)
-            var staffCode = HttpContext.Session.GetString("StaffCode");          
-
-            if (string.IsNullOrEmpty(staffCode))
-            {
-                return RedirectToAction("Login","LoginUsers");
-            } 
+            var staffCode = User.FindFirst("StaffCode")?.Value;
 
             var model = new ChangePasswordViewModel
             {
@@ -57,7 +51,7 @@ namespace CKM_ManagementSystem.Controllers.Password
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
-            var staffCode = HttpContext.Session.GetString("StaffCode");
+            var staffCode = User.FindFirst("StaffCode")?.Value;
             if (string.IsNullOrEmpty(staffCode))
             {
                 return RedirectToAction("Login", "LoginUsers");

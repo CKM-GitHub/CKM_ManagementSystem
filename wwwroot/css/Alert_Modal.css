@@ -1,0 +1,64 @@
+﻿.alert-modal-content {
+    border: none;
+    border-radius: 8px;
+    color: #212529;
+}
+
+.alert-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid;
+    border-radius: 50%;
+    font-size: 28px;
+}
+
+.alert-success {
+    color: #72c96b;
+}
+
+
+.alert-error {
+    color: #ff6666;
+}
+
+.alert-delete {
+    color: #ff6666;
+}
+
+.alert-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #212529;
+}
+
+.alert-message {
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #212529;
+}
+
+#deleteButtons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+#normalButtons .btn {
+    min-width: 120px;
+    height: 40px;
+}
+#deleteButtons.d-none {
+    display: none !important;
+}
+#deleteButtons .btn {
+    width: 110px;
+    height: 40px;
+}
+
+#normalButtons .btn {
+    min-width: 120px;
+    height: 40px;
+}

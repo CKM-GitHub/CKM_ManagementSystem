@@ -1,28 +1,38 @@
 ﻿document.addEventListener("DOMContentLoaded", function () {
-    var successModal = document.getElementById("successModal");
-    var errorModal = document.getElementById("errorModal");
+    const successMessage = document.getElementById("successMessage");
+    const errorMessage = document.getElementById("errorMessage");
+    const logoutForm = document.getElementById("logoutForm");
 
-    if (successModal) {
-        new bootstrap.Modal(successModal).show();
-    }
-    if (errorModal) {
-        new bootstrap.Modal(errorModal).show();
+    if (successMessage && typeof showSuccess === "function") {
+        showSuccess(successMessage.value, function () {
+            if (logoutForm) {
+                logoutForm.submit();
+            }
+        });
     }
 
-    const inputs = document.querySelectorAll(".change-password-wrapper input").forEach((input, index, inputs) => {
-        input.addEventListener("keydown", function (e) {
-            if (e.key === "Enter") {
-                e.preventDefault();
+    if (errorMessage && typeof showError === "function") {
+        showError(errorMessage.value);
+    }
+
+    const inputs = document.querySelectorAll(
+        ".change-password-wrapper input"
+    );
+
+    inputs.forEach(function (input, index) {
+        input.addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
 
                 const nextInput = inputs[index + 1];
 
                 if (nextInput) {
                     nextInput.focus();
-                } else {
+                }
+                else {
                     document.querySelector(".btn-save").focus();
                 }
             }
         });
     });
 });
-

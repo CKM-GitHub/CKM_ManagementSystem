@@ -1,40 +1,50 @@
-﻿html,
+﻿
+html,
 body {
     width: 100%;
     min-height: 100%;
     margin: 0;
     padding: 0;
+    font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
+    font-size: 14px;
 }
+
 body {
     overflow-x: hidden;
 }
+
+/* Page */
 .department-entry-page {
     width: 100%;
-    min-height: 100vh;
+    min-height: calc(100vh - 70px);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 40px 20px;
+    padding: 30px 20px;
+    background: transparent;
     box-sizing: border-box;
 }
 
+/* Card */
 .department-entry-card {
     width: 100%;
     max-width: 510px;
     padding: 48px 30px 30px;
     box-sizing: border-box;
-    background-color: #ffffff;
+    background-color: var(--white);
     border-radius: 8px;
 }
 
+/* Header */
 .department-entry-title {
     margin: 0 0 22px;
     text-align: center;
-    font-size: 25px;
+    font-size: 32px;
     font-weight: 700;
-    color: #222222;
+    color: var(--dark-blue);
 }
 
+/* Form */
 .form-group {
     margin-bottom: 17px;
 }
@@ -42,48 +52,60 @@ body {
     .form-group label {
         display: block;
         margin-bottom: 6px;
-        font-size: 16px;
+        font-size: 14px;
         font-weight: 400;
-        color: #333333;
+        color: var(--dark-blue);
     }
 
+/* Input */
 .form-control {
     width: 100%;
     height: 39px;
     padding: 8px 10px;
     box-sizing: border-box;
-    border: 1px solid #c8c8c8;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
-    background-color: #ffffff;
-    font-size: 15px;
-    color: #222222;
+    background-color: var(--white);
+    font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
+    font-size: 14px;
+    color: var(--dark-blue);
     outline: none;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
     .form-control:focus {
-        border-color: #1976ed;
-        box-shadow: 0 0 0 2px rgba(25, 118, 237, 0.14);
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 2px rgba(8, 125, 241, 0.14);
     }
 
+    .form-control[readonly] {
+        background-color: #F3F4F6;
+        color: var(--dark-blue);
+    }
+
+/* Description */
 .description-box {
     height: 107px;
     min-height: 107px;
     resize: vertical;
 }
 
+/* Validation */
 .validation-message {
     display: block;
     min-height: 16px;
     margin-top: 4px;
-    font-size: 13px;
-    color: #dc3545;
+    font-size: 12px;
+    line-height: 18px;
+    color: var(--error-color);
 }
 
-    .validation-message:empty {
-        display: none;
-    }
+.validation-summary {
+    font-size: 12px;
+    color: var(--error-color);
+}
 
+/* Status */
 .status-row {
     display: flex;
     align-items: center;
@@ -93,8 +115,9 @@ body {
 
 .status-title {
     width: 145px;
-    font-size: 16px;
-    color: #333333;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--dark-blue);
 }
 
 .status-options {
@@ -107,8 +130,8 @@ body {
     display: flex;
     align-items: center;
     gap: 7px;
-    font-size: 16px;
-    color: #444444;
+    font-size: 14px;
+    color: var(--dark-blue);
     cursor: pointer;
 }
 
@@ -117,9 +140,10 @@ body {
         height: 14px;
         margin: 0;
         cursor: pointer;
-        accent-color: #0d7df5;
+        accent-color: var(--primary-blue);
     }
 
+/* Buttons */
 .button-row {
     display: flex;
     gap: 10px;
@@ -129,31 +153,46 @@ body {
 .btn-register {
     flex: 1;
     height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border: none;
     border-radius: 4px;
-    font-size: 16px;
+    font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
+    font-size: 14px;
     font-weight: 600;
-    color: #ffffff;
+    color: var(--white);
+    text-decoration: none;
     cursor: pointer;
     transition: opacity 0.2s ease, transform 0.1s ease;
 }
 
 .btn-clear {
-    background-color: #7a838b;
+    background-color: var(--gray);
 }
 
 .btn-register {
-    background-color: #087df1;
+    background-color: var(--primary-blue);
 }
 
     .btn-clear:hover,
     .btn-register:hover {
+        color: var(--white);
+        text-decoration: none;
         opacity: 0.9;
     }
 
     .btn-clear:active,
     .btn-register:active {
+        color: var(--white);
+        text-decoration: none;
         transform: translateY(1px);
+    }
+
+    .btn-clear:focus,
+    .btn-register:focus {
+        color: var(--white);
+        text-decoration: none;
     }
 
 @media (max-width: 576px) {
@@ -163,6 +202,10 @@ body {
 
     .department-entry-card {
         padding: 35px 22px 25px;
+    }
+
+    .department-entry-title {
+        font-size: 32px;
     }
 
     .status-row {

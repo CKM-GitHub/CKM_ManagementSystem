@@ -13,6 +13,9 @@ namespace CKM_ManagementSystem.Models.Entities
         [Column("Department_Code")]
         public string DepartmentCode { get; set; } = string.Empty;
 
+        [NotMapped]
+        public string OriginalDepartmentCode { get; set; } =string.Empty;
+
         [Required]
         [StringLength(150)]
         [Column("Department_Name")]
@@ -30,6 +33,7 @@ namespace CKM_ManagementSystem.Models.Entities
         public bool Status { get; set; } = true;
 
         [Column("Created_Date")]
+
         public DateTime? CreatedDate { get; set; }
 
         [Column("Updated_Date")]
