@@ -1,13 +1,13 @@
 ﻿using System.Data;
-using CKM_ManagementSystem.Models.ViewModels.Departments;
-using CKM_ManagementSystem.Models.Entities;
 using CKM_ManagementSystem.DL;
+using CKM_ManagementSystem.Models.Entities;
+using CKM_ManagementSystem.Models.ViewModels.Departments;
 using Microsoft.Data.SqlClient;
 
 namespace CKM_ManagementSystem.BL
 {
     public class DepartmentBL
-    {   
+    {
         private readonly BaseDL bdl;
 
         public DepartmentBL(BaseDL baseDL)
@@ -19,10 +19,21 @@ namespace CKM_ManagementSystem.BL
         {
             SqlParameter[] sqlprms =
             {
-                new SqlParameter("@Department_Code", department.DepartmentCode),
-                new SqlParameter("@Department_Name", department.DepartmentName),
-                new SqlParameter("@Description", department.Description),
-                new SqlParameter("@Status", department.Status)
+                new SqlParameter(
+                    "@Department_Code",
+                    department.DepartmentCode),
+
+                new SqlParameter(
+                    "@Department_Name",
+                    department.DepartmentName),
+
+                new SqlParameter(
+                    "@Description",
+                    department.Description),
+
+                new SqlParameter(
+                    "@Status",
+                    department.Status)
             };
 
             return bdl.InsertUpdateDeleteData(
@@ -30,11 +41,14 @@ namespace CKM_ManagementSystem.BL
                 sqlprms);
         }
 
-        public bool IsDepartmentCodeDuplicate(string departmentCode)
+        public bool IsDepartmentCodeDuplicate(
+            string departmentCode)
         {
             SqlParameter[] sqlprms =
             {
-                new SqlParameter("@Department_Code", departmentCode)
+                new SqlParameter(
+                    "@Department_Code",
+                    departmentCode)
             };
 
             int count = bdl.ExecuteScalar(
@@ -44,11 +58,14 @@ namespace CKM_ManagementSystem.BL
             return count > 0;
         }
 
-        public bool IsDepartmentNameDuplicate(string departmentName)
+        public bool IsDepartmentNameDuplicate(
+            string departmentName)
         {
             SqlParameter[] sqlprms =
             {
-                new SqlParameter("@Department_Name", departmentName)
+                new SqlParameter(
+                    "@Department_Name",
+                    departmentName)
             };
 
             int count = bdl.ExecuteScalar(
@@ -57,6 +74,7 @@ namespace CKM_ManagementSystem.BL
 
             return count > 0;
         }
+
         public bool IsDepartmentNameDuplicateForUpdate(
             string departmentName,
             string originalDepartmentCode)
@@ -104,7 +122,7 @@ namespace CKM_ManagementSystem.BL
                     pageSize)
             };
 
-            DataTable dataTable = bdl.ExecuteDataTable(
+            DataTable dataTable = bdl.SelectDataTable(
                 "sp_Department_List",
                 sqlprms);
 
@@ -162,7 +180,7 @@ namespace CKM_ManagementSystem.BL
                     departmentCode)
             };
 
-            DataTable dataTable = bdl.ExecuteDataTable(
+            DataTable dataTable = bdl.SelectDataTable(
                 "sp_Department_GetByCode",
                 sqlprms);
 
@@ -238,6 +256,5 @@ namespace CKM_ManagementSystem.BL
                 "sp_Department_Delete",
                 sqlprms);
         }
-    
-}
+    }
 }

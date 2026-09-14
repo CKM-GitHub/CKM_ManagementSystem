@@ -10,10 +10,11 @@ namespace CKM_ManagementSystem.BL
     public class LoginUserBL
     {
         private readonly BaseDL bdl;
-        private readonly PasswordHasher<User> _passwordHasher = new();
-        public LoginUserBL (BaseDL baseDL)
+        private readonly PasswordService _passwordService;
+        public LoginUserBL(BaseDL baseDL, PasswordService passwordService)
         {
             bdl = baseDL;
+            _passwordService = passwordService;
         }
         public enum LoginStatus
         {
@@ -69,16 +70,11 @@ namespace CKM_ManagementSystem.BL
                 string staffCode = row["Staff_Code"]?.ToString() ?? string.Empty;
                 string passwordHash = row["Password"]?.ToString() ?? string.Empty;
 
-                PasswordVerificationResult verificationResult = _passwordHasher.VerifyHashedPassword(
-                                                                 new User
-                                                                 {
-                                                                     StaffCode = staffCode,
-                                                                     Email = model.Email ?? string.Empty
-                                                                 },
-                                                                 passwordHash,
-                                                                 model.Password ?? string.Empty
-                                                                );
-                if(verificationResult == PasswordVerificationResult.Failed)
+                bool isPasswordValid = _passwordService.VerifyPassword(
+                    passwordHash, 
+                    model.Password ?? string.Empty);
+
+                if (!isPasswordValid)
                 {
                     return new LoginResult
                     {
