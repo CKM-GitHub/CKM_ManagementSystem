@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
-namespace CKM_ManagementSystem.BL 
+namespace CKM_ManagementSystem.BL
 {
      public class ChangePasswordBL
      {
