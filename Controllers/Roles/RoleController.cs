@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using CKM_ManagementSystem.BL;
 using CKM_ManagementSystem.Models.Entities;
 using CKM_ManagementSystem.Models.ViewModels.Roles;
-
+using Microsoft.AspNetCore.Authorization;
 namespace CKM_ManagementSystem.Controllers
 {
     public class RoleController : Controller

@@ -29,7 +29,6 @@ builder.Services.AddScoped<Menu_BL>();
 builder.Services.AddScoped<MainMenuBL>();
 builder.Services.AddScoped<RoleBL>();
 builder.Services.AddScoped<ProjectBL>();
-// builder.Services.AddScoped<IMenuService, MenuService>();
 builder.Services.AddScoped<LoginUserBL>();
 builder.Services.AddScoped<ChangePasswordBL>();
 builder.Services.AddAuthentication("MyCookieAuth")
@@ -39,6 +38,10 @@ builder.Services.AddAuthentication("MyCookieAuth")
         options.LoginPath = "/LoginUsers/Login";
         options.ExpireTimeSpan = TimeSpan.FromHours(8);
     });
+builder.Services.AddAuthorization(options =>
+{
+    options.FallbackPolicy = options.DefaultPolicy;
+});
 
 builder.Services.AddScoped<UserEntryBL>();
 builder.Services.AddScoped<UserListBL>();
@@ -68,6 +71,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=DepartmentEntry}/{action=Entry}/{id?}");
+    pattern: "{controller=LoginUsers}/{action=Login}/{id?}");
 
 app.Run();
