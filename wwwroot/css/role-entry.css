@@ -1,4 +1,6 @@
-﻿body {
+﻿﻿
+/* Base Page & Backgrounds */
+body {
     color: var(--white) !important;
     font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif !important;
 }
@@ -160,17 +162,38 @@ small,
         border-color: var(--primary-blue-hover) !important;
     }
 
+/* Clear / Cancel Button (.btn-outline-secondary & #btnClear) */
+#btnClear,
+a.btn-outline-secondary,
+button.btn-outline-secondary,
 .btn-outline-secondary {
-    border: 1px solid var(--gray) !important;
-    color: var(--dark-blue) !important;
+    background-color: var(--gray, #6c757d) !important;
+    border: 1px solid var(--gray, #6c757d) !important;
+    color: #ffffff !important;
     font-size: 14px !important;
     font-weight: 600 !important;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease, border-color 0.2s ease !important;
 }
 
-    .btn-outline-secondary:hover {
-        background-color: var(--gray) !important;
-        color: var(--white) !important;
+    /* Hover, Focus, Active States - Fixed with fallback color */
+    #btnClear:hover,
+    #btnClear:focus,
+    #btnClear:active,
+    a.btn-outline-secondary:hover,
+    a.btn-outline-secondary:focus,
+    a.btn-outline-secondary:active,
+    button.btn-outline-secondary:hover,
+    button.btn-outline-secondary:focus,
+    button.btn-outline-secondary:active,
+    .btn-outline-secondary:hover,
+    .btn-outline-secondary:focus,
+    .btn-outline-secondary:active {
+        background-color: var(--gray-hover, #5a6268) !important;
+        border-color: var(--gray-hover, #545b62) !important;
+        color: #ffffff !important;
+        box-shadow: none !important;
+        opacity: 1 !important;
+        visibility: visible !important;
     }
 
 
