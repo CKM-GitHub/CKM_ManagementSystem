@@ -109,9 +109,9 @@ input[type="password"]::-ms-clear{
     cursor: pointer;
     padding-right: 14px;
 }
-.btn-primary-custom{
-    background-color: var(--primary-blue);
-    border:none;
+.btn-primary-custom {
+    background-color: var(--primary-blue) !important;
+    border: none;
     border-radius: 12px;
     padding: 12px;
     font-weight: 600;
