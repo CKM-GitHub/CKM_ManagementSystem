@@ -62,23 +62,37 @@
 }
 
 .clear-btn {
-    background-color: #ffffff;
+    background-color: var(--gray) !important;
+    color: var(--white) !important;
     border-color: #e2e8f0 !important;
+    width: 150px;
+    padding: 14px;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .clear-btn:hover {
-   background-color: #f8fafc;
+   background-color: #8a9299;
    border-color: #cbd5e1 !important;
+   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .create-btn {
-    background-color: #0052cc;
-    border-color: #0052cc;
+    background-color: var(--primary-blue) !important;
+    border-color: var(--primary-blue) !important;
+    color: var(--white) !important;
+    width: 150px;
+    padding: 14px;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.create-btn:hover {
-    background-color: #0047b3;
-    border-color: #0047b3;
+.create-btn:hover,
+.create-btn:focus {
+    background-color: var(--primary-blue-hover) !important;
+    border-color: var(--primary-blue-hover) !important;
+    color: var(--white) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .form-control:focus,
@@ -136,13 +150,14 @@
     visibility: visible;
     transform: translateY(0);
 }
+
 @media (max-width: 768px) {
     .avatar-preview-circle {
      width: 120px;
      height: 120px;
 
 
- }
+}
 
 .user-entry-card {
       padding: 1.5rem !important;
