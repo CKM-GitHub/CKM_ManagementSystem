@@ -148,7 +148,7 @@
                         @for(int i=1; i<= Model.TotalPages ; i++)
                         {
                             <a href="@Url.Action("MenuListView", new{page = i, searchTerm = Model.SearchTerm, selectedParentId = Model.SelectedParentId, statusFilters = Model.StatusFilters })"
-                                class="page-btn btn btn-sm @(i == Model.CurrentPage  ? "btn-primary active" : "btn-outline-secondary")">
+                                class="page-btn btn btn-sm @(i == Model.CurrentPage  ? "btn-primary-pagination active" : "btn-outline-secondary")">
                                 @i
                             </a>
                         }
