@@ -215,7 +215,7 @@ body {
 .profile-dropdown .dropdown-menu {
     min-width: 190px;
     padding: 6px 0;
-    background-color: #202225;
+    background-color: #001D58;
     border: none;
     border-radius: 6px;
 }
@@ -227,7 +227,7 @@ body {
 }
 
     .profile-dropdown .dropdown-item:hover {
-        background-color: #2b2e33;
+        background-color: rgba(255, 255, 255, 0.08);
         color: #ffffff;
     }
 

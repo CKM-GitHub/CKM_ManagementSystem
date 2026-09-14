@@ -9,7 +9,6 @@
             .then(html => {
                 mainMenuContainer.innerHTML = html;
 
-                restoreOpenMenu();
                 setActiveMenu();
                 setupMenuState();
             });
@@ -31,17 +30,23 @@
 function setActiveMenu() {
 
     const currentPath =
-        window.location.pathname.toLowerCase();
+        normalizePath(window.location.pathname);
 
     const menuLinks =
         document.querySelectorAll(
             ".menu-link, .submenu-link"
         );
 
+    let activeSubmenu = null;
+
     menuLinks.forEach(function (link) {
 
+        link.classList.remove("active");
+
         const linkPath =
-            new URL(link.href).pathname.toLowerCase();
+            normalizePath(
+                new URL(link.href).pathname
+            );
 
         if (linkPath === currentPath) {
 
@@ -52,12 +57,7 @@ function setActiveMenu() {
 
             if (submenu) {
 
-                submenu.classList.add("show");
-
-                localStorage.setItem(
-                    "openMainMenu",
-                    submenu.id
-                );
+                activeSubmenu = submenu;
 
                 const parentButton =
                     document.querySelector(
@@ -82,13 +82,39 @@ function setActiveMenu() {
             }
         }
     });
+
+
+    if (activeSubmenu) {
+
+        const collapse =
+            bootstrap.Collapse.getOrCreateInstance(
+                activeSubmenu,
+                {
+                    toggle: false
+                }
+            );
+
+        collapse.show();
+
+        localStorage.setItem(
+            "openMainMenu",
+            activeSubmenu.id
+        );
+
+        return;
+    }
+
+
+    restoreOpenMenu();
 }
 
 
 function setupMenuState() {
 
     const collapseMenus =
-        document.querySelectorAll(".submenu.collapse");
+        document.querySelectorAll(
+            ".submenu.collapse"
+        );
 
     collapseMenus.forEach(function (menu) {
 
@@ -113,6 +139,7 @@ function setupMenuState() {
                     );
 
                 if (savedMenu === menu.id) {
+
                     localStorage.removeItem(
                         "openMainMenu"
                     );
@@ -126,20 +153,32 @@ function setupMenuState() {
 function restoreOpenMenu() {
 
     const savedMenu =
-        localStorage.getItem("openMainMenu");
+        localStorage.getItem(
+            "openMainMenu"
+        );
 
     if (!savedMenu) {
         return;
     }
 
     const menu =
-        document.getElementById(savedMenu);
+        document.getElementById(
+            savedMenu
+        );
 
     if (!menu) {
         return;
     }
 
-    menu.classList.add("show");
+    const collapse =
+        bootstrap.Collapse.getOrCreateInstance(
+            menu,
+            {
+                toggle: false
+            }
+        );
+
+    collapse.show();
 
     const button =
         document.querySelector(
@@ -153,6 +192,29 @@ function restoreOpenMenu() {
             "true"
         );
 
-        button.classList.remove("collapsed");
+        button.classList.remove(
+            "collapsed"
+        );
     }
+}
+
+
+function normalizePath(path) {
+
+    if (!path) {
+        return "/";
+    }
+
+    let normalized =
+        path.toLowerCase();
+
+    if (
+        normalized.length > 1 &&
+        normalized.endsWith("/")
+    ) {
+        normalized =
+            normalized.slice(0, -1);
+    }
+
+    return normalized;
 }
