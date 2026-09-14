@@ -10,16 +10,16 @@
                 return;
             }
 
-            const deleteMessage = "Are you sure you want to delete this role?";
+            const deleteMessage =
+                "Are you sure you want to delete this role?";
 
             showDelete(deleteMessage, function () {
                 const tokenInput = document.querySelector(
                     'input[name="__RequestVerificationToken"]'
                 );
 
-                const token = tokenInput ? tokenInput.value : "";
-
-                $("#alertModal").modal("hide");
+                const token =
+                    tokenInput ? tokenInput.value : "";
 
                 setTimeout(function () {
                     $.ajax({
@@ -29,26 +29,25 @@
                             roleCode: roleCode,
                             __RequestVerificationToken: token
                         },
+
                         success: function (res) {
                             if (res.success) {
                                 showSuccess(
                                     res.message ||
-                                    "Role has been deleted successfully."
-                                );
-
-                                $("#alertModal").one(
-                                    "hidden.bs.modal",
+                                    "Role deleted successfully.",
                                     function () {
                                         location.reload();
                                     }
                                 );
-                            } else {
+                            }
+                            else {
                                 showError(
                                     res.message ||
                                     "Failed to delete the role."
                                 );
                             }
                         },
+
                         error: function (xhr, status, error) {
                             let errMsg =
                                 "A system error occurred: " + error;
@@ -57,7 +56,8 @@
                                 xhr.responseJSON &&
                                 xhr.responseJSON.message
                             ) {
-                                errMsg = xhr.responseJSON.message;
+                                errMsg =
+                                    xhr.responseJSON.message;
                             }
 
                             showError(errMsg);

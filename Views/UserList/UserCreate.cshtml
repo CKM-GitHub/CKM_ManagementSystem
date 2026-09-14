@@ -3,10 +3,8 @@
 @section Scripts {
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/UserCreate.js" asp-append-version="true"></script>
     <script src="~/js/Alert_Modal.js" asp-append-version="true"></script>
-    <partial name="AlertModal" />
 }
 
 <link rel="stylesheet" href="~/css/UserCreate.css" />
@@ -365,6 +363,9 @@
                     <button type="submit" class="btn px-4 py-2 rounded-3 fw-medium create-btn">Update</button>
                 }
             </div>
+
         </form>
     </div>
+    <partial name="AlertModal" />
+
 </div>

@@ -1,7 +1,16 @@
 ﻿document.addEventListener("DOMContentLoaded", function () {
-    const successMessage = document.getElementById("successMessage");
-    const errorMessage = document.getElementById("errorMessage");
-    const logoutForm = document.getElementById("logoutForm");
+
+    const successMessage =
+        document.getElementById("successMessage");
+
+    const errorMessage =
+        document.getElementById("errorMessage");
+
+    const logoutForm =
+        document.getElementById("logoutForm");
+
+    const cancelButton =
+        document.getElementById("cancelChangePassword");
 
     if (successMessage && typeof showSuccess === "function") {
         showSuccess(successMessage.value, function () {
@@ -15,24 +24,46 @@
         showError(errorMessage.value);
     }
 
-    const inputs = document.querySelectorAll(
-        ".change-password-wrapper input"
-    );
+    const inputs =
+        document.querySelectorAll(
+            ".change-password-wrapper input"
+        );
 
     inputs.forEach(function (input, index) {
-        input.addEventListener("keydown", function (event) {
-            if (event.key === "Enter") {
-                event.preventDefault();
 
-                const nextInput = inputs[index + 1];
+        input.addEventListener(
+            "keydown",
+            function (event) {
 
-                if (nextInput) {
-                    nextInput.focus();
-                }
-                else {
-                    document.querySelector(".btn-save").focus();
+                if (event.key === "Enter") {
+
+                    event.preventDefault();
+
+                    const nextInput =
+                        inputs[index + 1];
+
+                    if (nextInput) {
+                        nextInput.focus();
+                    }
+                    else {
+                        const saveButton =
+                            document.querySelector(".btn-save");
+
+                        if (saveButton) {
+                            saveButton.focus();
+                        }
+                    }
                 }
             }
-        });
+        );
     });
+
+    if (cancelButton) {
+        cancelButton.addEventListener(
+            "click",
+            function () {
+                window.history.back();
+            }
+        );
+    }
 });

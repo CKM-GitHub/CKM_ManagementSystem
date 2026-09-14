@@ -9,4 +9,5 @@ obj/
 .lh/
 **/bin/
 **/obj/
+node_modules/
 

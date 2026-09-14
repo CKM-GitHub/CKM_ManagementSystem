@@ -10,9 +10,11 @@ namespace CKM_ManagementSystem.Controllers.LoginUser
     public class LoginUsersController : Controller
     {
         private readonly LoginUserBL _loginUserBL;
-        public LoginUsersController(LoginUserBL loginUserBL)
+        private readonly MainMenuBL _mainMenuBL;
+        public LoginUsersController(LoginUserBL loginUserBL,MainMenuBL mainMenuBL)
         {
             _loginUserBL = loginUserBL;
+            _mainMenuBL = mainMenuBL;
         }
         public static class CustomClaimTypes
         {
@@ -40,21 +42,40 @@ namespace CKM_ManagementSystem.Controllers.LoginUser
                     new Claim(ClaimTypes.Email, result.UserEmail),
                     new Claim("StaffCode", result.Staff_Code ?? ""),
                 };
-                var cliamsIdentity = new ClaimsIdentity
+                var claimsIdentity = new ClaimsIdentity
                 (
                     claims, "MyCookieAuth"
                 );
 
                 var claimsPrincipal =
-                   new ClaimsPrincipal(cliamsIdentity);
+                   new ClaimsPrincipal(claimsIdentity);
 
 
                 await HttpContext.SignInAsync
                 (
-                    "MyCookieAuth", new ClaimsPrincipal(claimsPrincipal)
+                    "MyCookieAuth",
+                    claimsPrincipal
                 );
-                ViewBag.SuccessTitle = "Login successfully!";
-                ViewBag.SuccessMessage = $"Login Success! Logged in as: {result.UserEmail}, Staff Code: {result.Staff_Code}";
+                var menus = await _mainMenuBL.GetMainMenus(
+                    result.Staff_Code ?? "");
+                var firstMenu = menus.SelectMany(
+                    m => m.SubMenus != null && m.SubMenus.Count > 0
+                    ? m.SubMenus
+                    : new List<CKM_ManagementSystem.Models.ViewModels.MainMenu.MainMenuViewModel>
+                    {
+                        m
+                    })
+                    .FirstOrDefault(m =>
+                     !string.IsNullOrWhiteSpace(m.ControllerName) &&
+                     !string.IsNullOrWhiteSpace(m.ActionName));
+
+                if (firstMenu != null)
+                {
+                    return RedirectToAction(
+                        firstMenu.ActionName,
+                        firstMenu.ControllerName);
+                }
+                ViewBag.ErrorMessage = "No menu permission assigned.";
                 return View(model);
             }
             ViewBag.ErrorMessage = result.Message;
