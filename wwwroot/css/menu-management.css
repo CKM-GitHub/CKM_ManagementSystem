@@ -12,15 +12,15 @@
     font-weight: 700 !important;
 }
 .toolbar-input, .toolbar-btn, .add-btn, .menu-table td, .custom-modal-text {
-    font-size: 12px !important;
+    font-size: 14px !important;
     font-weight: 400;
 }
 .toolbar-btn, .action-btn, .custom-modal-btn{
     font-size: 14px;
     font-weight: 600;
 }
-.route-text, .status-badge, .footer-text, .page-btn {
-    font-size: 12px !important;
+.route-text, .footer-text, .page-btn {
+    font-size: 14px !important;
 }
 
 body {
@@ -131,12 +131,12 @@ body {
     appearance:none;
     -webkit-appearance:none;
 }
-.select-icon{
+.select-icon {
     position: absolute;
     right: 10px;
     top: 55%;
     transform: translateY(-50%);
-    color: var(--gray);
+    color: var(--dark-blue);
     pointer-events: none;
     z-index: 2;
 }
@@ -175,9 +175,11 @@ body {
     background: var(--primary-blue);
     color: var(--white);
 }
-
+btn-primary-pagination{
+    background-color: var(--primary-blue);
+}
 .btn-primary-search.toolbar-btn:hover, .btn-primary-add.add-btn:hover{
-    background: var(--primary-blue);
+    background: var(--primary-blue-hover);
     color: var(--white);
 }
 
@@ -219,7 +221,7 @@ body {
     vertical-align:middle;
     overflow: hidden;
     text-overflow: ellipsis;
-    font-size: 12px;
+    font-size: 14px;
 }
 
 .menu-table tbody tr:last-child td{
@@ -279,6 +281,7 @@ body {
     border-radius: 999px;
     font-weight: 600;
     line-height: 1;
+    font-size: 12px;
 }
 .status-active {
     background: #D1E7DD;
