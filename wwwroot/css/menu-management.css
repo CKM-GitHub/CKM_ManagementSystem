@@ -12,7 +12,7 @@
     font-weight: 700 !important;
 }
 .toolbar-input, .toolbar-btn, .add-btn, .menu-table td, .custom-modal-text {
-    font-size: 14px !important;
+    font-size: 12px !important;
     font-weight: 400;
 }
 .toolbar-btn, .action-btn, .custom-modal-btn{
@@ -20,7 +20,7 @@
     font-weight: 600;
 }
 .route-text, .status-badge, .footer-text, .page-btn {
-    font-size: 14px !important;
+    font-size: 12px !important;
 }
 
 body {
@@ -171,12 +171,12 @@ body {
 .delete-btn:hover{
     color: var(--error-color) !important;
 }
-.btn-primary.toolbar-btn, .btn-primary.add-btn {
+.btn-primary-search.toolbar-btn, .btn-primary-add.add-btn {
     background: var(--primary-blue);
     color: var(--white);
 }
 
-.btn-primary.toolbar-btn:hover, .btn-primary.add-btn:hover{
+.btn-primary-search.toolbar-btn:hover, .btn-primary-add.add-btn:hover{
     background: var(--primary-blue);
     color: var(--white);
 }
@@ -208,6 +208,7 @@ body {
     font-weight: 700;
     background: var(--white);
     white-space: nowrap;
+    font-size: 14px;
 }
 
 .menu-table tbody td{
@@ -218,6 +219,7 @@ body {
     vertical-align:middle;
     overflow: hidden;
     text-overflow: ellipsis;
+    font-size: 12px;
 }
 
 .menu-table tbody tr:last-child td{
