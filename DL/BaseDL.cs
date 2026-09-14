@@ -36,7 +36,7 @@ namespace CKM_ManagementSystem.DL
                     connection,
                     transaction)
                 {
-                    CommandType = CommandType.StoredProcedure,
+                    CommandType = GetCommandType(storedProcedureName),
                     CommandTimeout = _commandTimeout
                 };
 
@@ -329,7 +329,7 @@ namespace CKM_ManagementSystem.DL
                     storedProcedureName,
                     connection)
                 {
-                    CommandType = CommandType.StoredProcedure,
+                    CommandType = GetCommandType(storedProcedureName),
                     CommandTimeout = _commandTimeout
                 };
 
@@ -365,6 +365,11 @@ namespace CKM_ManagementSystem.DL
         }
         #endregion
 
+        private static CommandType GetCommandType(string commandText)
+        {
+            return commandText.Any(char.IsWhiteSpace)
+             ? CommandType.Text:CommandType.StoredProcedure;
+        }
         public object? ExecuteScalarObject(
             string storedProcedureName,
             params SqlParameter[] parameters)
@@ -379,8 +384,7 @@ namespace CKM_ManagementSystem.DL
                     storedProcedureName,
                     connection);
 
-            command.CommandType =
-                CommandType.StoredProcedure;
+          command.CommandType = GetCommandType(storedProcedureName);
 
             command.CommandTimeout =
                 _commandTimeout;
@@ -413,8 +417,7 @@ namespace CKM_ManagementSystem.DL
                     storedProcedure,
                     connection);
 
-            command.CommandType =
-                CommandType.StoredProcedure;
+           command.CommandType = GetCommandType(storedProcedure);
 
             command.CommandTimeout =
                 _commandTimeout;
