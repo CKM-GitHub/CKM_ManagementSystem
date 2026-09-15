@@ -169,30 +169,29 @@ body {
     min-width: 108px;
 }
 .edit-icon {
-    color: #0d6efd;
+    margin-right: 6px;
+    color: var(--primary-blue) !important;
 }
 
-    .edit-icon:hover {
-        background-color: #e8f1ff;
-        color: #084298;
-    }
+.edit-icon:hover {
+    background-color: #E8F1FF !important;
+    color: var(--primary-blue-hover) !important;
+}
 
 .delete-icon {
-    color: #dc3545;
-}
-
-    .delete-icon:hover {
-        background-color: #fdeaea;
-        color: #a71d2a;
-    }
-.delete-btn:hover{
     color: var(--error-color) !important;
 }
+
+.delete-icon:hover {
+    background-color: #FDEAEA !important;
+    color: var(--error-color) !important;
+}
+
 .btn-primary-search.toolbar-btn, .btn-primary-add.add-btn {
     background: var(--primary-blue);
     color: var(--white);
 }
-btn-primary-pagination{
+.btn-primary-pagination{
     background-color: var(--primary-blue);
 }
 .btn-primary-search.toolbar-btn:hover, .btn-primary-add.add-btn:hover{
@@ -239,6 +238,19 @@ btn-primary-pagination{
     overflow: hidden;
     text-overflow: ellipsis;
     font-size: 14px;
+}
+.action-btn-group {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-direction: row !important;
+    gap: 6px !important;
+    white-space: nowrap !important;
+}
+.action-column {
+    white-space: nowrap !important;
+    overflow: visible !important; 
+    text-overflow: clip !important;
 }
 
 .menu-table tbody tr:last-child td{
@@ -309,12 +321,26 @@ btn-primary-pagination{
     color: var(--error-color);
 }
 
-.action-btn{
+.action-btn {
     color: var(--gray);
     text-decoration: none;
     transition: color 0.2s ease;
+    border: none;
+    background: transparent;
+    padding: 0;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer;
 }
-
+.menu-table tbody td form,
+.delete-form {
+    display: inline-flex !important;
+    align-items: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    vertical-align: middle !important;
+}
 .action-btn:hover{
     color: var(--primary-blue);
 }
@@ -336,7 +362,24 @@ btn-primary-pagination{
     align-items: center;
     gap: 6px;
 }
-
+.icon-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    font-size: 16px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.action-column {
+    white-space: nowrap;
+}
 .page-btn{
     width: 30px !important;
     height: 30px !important;

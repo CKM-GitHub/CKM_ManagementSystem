@@ -230,13 +230,13 @@
 
                                 </td>
 
-                                <td class="text-center">
-
+                                <td class="text-center action-column">
+                                    <div class="action-btn-group">
                                     <a asp-controller="Menu"
                                        asp-action="MenuEntry"
                                        asp-route-menuId="@item.MenuID"
                                        asp-route-page="@Model.CurrentPage"
-                                       class="action-icon-btn edit-icon text-decoration-none"
+                                       class="action-btn edit-icon"
                                        title="Edit Menu">
 
                                         <i class="bi bi-pencil-square"></i>
@@ -259,7 +259,7 @@
                                                value="@Model.CurrentPage" />
 
                                         <button type="submit"
-                                                class="action-icon-btn delete-icon delete-btn"
+                                                class="action-btn delete-icon"
                                                 title="Delete Menu">
 
                                             <i class="bi bi-trash"></i>
@@ -267,7 +267,7 @@
                                         </button>
 
                                     </form>
-
+                                    </div>
                                 </td>
 
                             </tr>
