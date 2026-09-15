@@ -172,7 +172,9 @@ namespace CKM_ManagementSystem.Controllers.Menu
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("DeleteMenu")]
-        public async Task<IActionResult> DeleteMenuAsync(int menuId, int page=1)
+        public async Task<IActionResult> DeleteMenuAsync(
+    int menuId,
+    int page = 1)
         {
             try
             {
@@ -180,18 +182,25 @@ namespace CKM_ManagementSystem.Controllers.Menu
 
                 if (result.StatusCode == 1)
                 {
-                    TempData["SuccessMessage"] = result.StatusMessage;
+                    TempData["SuccessMessage"] =
+                        result.StatusMessage;
                 }
                 else
                 {
-                    TempData["ErrorMessage"] = result.StatusMessage;
+                    TempData["ErrorMessage"] =
+                        result.StatusMessage;
                 }
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Error occurred: " + ex.Message;
+                TempData["ErrorMessage"] =
+                    "Error occurred: " + ex.Message;
             }
-            return RedirectToAction(nameof(MenuListView), new {page = page});
+
+            return RedirectToAction(
+                nameof(MenuListView),
+                new { page }
+            );
         }
         private async Task<List<SelectListItem>> GetParentMenuListAsync()
         {

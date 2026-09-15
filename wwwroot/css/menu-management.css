@@ -168,6 +168,23 @@ body {
 .add-btn{
     min-width: 108px;
 }
+.edit-icon {
+    color: #0d6efd;
+}
+
+    .edit-icon:hover {
+        background-color: #e8f1ff;
+        color: #084298;
+    }
+
+.delete-icon {
+    color: #dc3545;
+}
+
+    .delete-icon:hover {
+        background-color: #fdeaea;
+        color: #a71d2a;
+    }
 .delete-btn:hover{
     color: var(--error-color) !important;
 }

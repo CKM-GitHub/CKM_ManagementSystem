@@ -19,7 +19,13 @@
                 </div>
                 <div class="menu-page-shell p-4">
                     <partial name="AlertModal" />
-
+                    <div id="menuEntryData"
+                         data-is-edit-mode="@isEdit.ToString().ToLower()"
+                         data-success-message="@(TempData["SuccessMessage"] ?? "")"
+                         data-error-message="@(TempData["ErrorMessage"] ?? "")"
+                         data-current-page="@pageNum"
+                         data-menu-list-url="@Url.Action("MenuListView", "Menu")">
+                    </div>
                     <form method="post" id="menuForm" asp-action="MenuEntry" asp-route-page ="@Context.Request.Query["page"]">
                         <input type="hidden" asp-for="MenuID" />
                         <div class="mb-3">
@@ -47,7 +53,6 @@
                             <span asp-validation-for="IconClass" class="text-danger small"></span>
                         </div>
                         
-                        <div id="msgContainer" data-success="@TempData["SuccessMessage"]"></div>
                         <div class="row mb-3 d-flex align-items-center">
                             <label class="col-sm-4 form-label fw-semibold text-secondary d-block">Menu Type</label>
                             <div class="col-sm-8 d-flex gap-3">
@@ -116,15 +121,12 @@
 </div>
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script src="~/js/menu-entry.js" asp-append-version="true"></script>
-    <script src="~/js/Alert_Modal.js" asp-append-version="true"></script>
-    <script>
-        var isEditMode = @isEdit.ToString().ToLower();
-        var successMessage = '@(TempData["SuccessMessage"] ?? "")';
-        var errorMessage = '@(TempData["ErrorMessage"] ?? "")';
-        var currentPage = '@pageNum';
-        var menuListUrl = '@Url.Action("MenuListView", "Menu")';
-    </script>
+
+    <script src="~/js/Alert_Modal.js"
+            asp-append-version="true"></script>
+
+    <script src="~/js/menu-entry.js"
+            asp-append-version="true"></script>
 }
 @section Styles {
     <link rel="stylesheet" href="~/css/menu-entry.css" />

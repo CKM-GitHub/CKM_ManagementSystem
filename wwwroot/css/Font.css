@@ -5,7 +5,7 @@
 
 body {
     font-family: var(--font-main);
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1.5;
     color: #333333;
     margin: 0;
@@ -24,7 +24,7 @@ th,
 .form-control,
 .form-select,
 .btn {
-    font-size: 12px;
+    font-size: 13px;
 }
 
 .main-header,
@@ -45,6 +45,25 @@ h2 {
 
 .body-text,
 .body-text-sm {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 400;
 }
+.action-icon-btn {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+    .action-icon-btn i {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+        line-height: 16px;
+        text-align: center;
+    }
