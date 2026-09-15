@@ -5,7 +5,7 @@
 
 body {
     font-family: var(--font-main);
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.5;
     color: #333333;
     margin: 0;
@@ -24,12 +24,12 @@ th,
 .form-control,
 .form-select,
 .btn {
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .main-header,
 h1 {
-    font-size: 28px;
+    font-size: 32px;
     font-weight: 700;
     line-height: 1.2;
     color: var(--dark-blue);
@@ -45,7 +45,7 @@ h2 {
 
 .body-text,
 .body-text-sm {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 400;
 }
 .action-icon-btn {
