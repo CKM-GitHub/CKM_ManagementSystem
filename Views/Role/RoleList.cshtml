@@ -99,20 +99,25 @@
                                     }
                                 </td>
                                 <td class="text-center align-middle">
-                                    <a asp-action="RoleEntry" asp-controller="Role" asp-route-id="@item.RoleCode"
-                                       class="text-primary text-decoration-none mx-2 shadow-none"
-                                       style="outline: none;" title="Edit Role">
-                                        <i class="bi bi-pencil-square" style="font-size: 1.15rem;"></i>
-                                    </a>
+                                    <div class="d-flex justify-content-center align-items-center gap-2">
 
-                                    <button type="button"
-                                            class="text-danger border-0 bg-transparent p-0 mx-2 shadow-none delete-role-btn"
-                                            style="outline: none;"
-                                            data-role-code="@item.RoleCode"
-                                            data-delete-url="@Url.Action("DeleteRole", "Role")"
-                                            title="Delete Role">
-                                        <i class="bi bi-trash" style="font-size: 1.15rem;"></i>
-                                    </button>
+                                        <a asp-action="RoleEntry"
+                                           asp-controller="Role"
+                                           asp-route-id="@item.RoleCode"
+                                           class="action-icon-btn edit-icon text-decoration-none"
+                                           title="Edit Role">
+                                            <i class="far fa-pen-to-square"></i>
+                                        </a>
+
+                                        <button type="button"
+                                                class="action-icon-btn delete-icon delete-role-btn"
+                                                data-role-code="@item.RoleCode"
+                                                data-delete-url="@Url.Action("DeleteRole", "Role")"
+                                                title="Delete Role">
+                                            <i class="far fa-trash-can"></i>
+                                        </button>
+
+                                    </div>
                                 </td>
                             </tr>
                         }
