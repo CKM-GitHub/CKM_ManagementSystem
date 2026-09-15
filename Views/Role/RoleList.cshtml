@@ -6,15 +6,19 @@
 }
 
 @section Styles {
-    
+
+    ```
     <link rel="stylesheet" href="~/css/role-list.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/Alert_Modal.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/ckm-theme.css" asp-append-version="true" />
+    ```
+
 }
 
 <div class="container-fluid px-4 px-md-5 pb-5">
     <h2 class="page-title">Role Management</h2>
 
+    ```
     @Html.AntiForgeryToken()
 
     <div class="custom-card">
@@ -98,6 +102,7 @@
                                         <span class="badge-status-inactive">Inactive</span>
                                     }
                                 </td>
+
                                 <td class="text-center align-middle">
                                     <div class="d-flex justify-content-center align-items-center gap-2">
 
@@ -125,68 +130,95 @@
                     else
                     {
                         <tr>
-                            <td colspan="6" class="text-center text-muted py-4">No records found.</td>
+                            <td colspan="6" class="text-center text-muted py-4">
+                                No records found.
+                            </td>
                         </tr>
                     }
                 </tbody>
             </table>
         </div>
 
-        <div class="table-footer d-flex justify-content-between align-items-center mt-3">
-            <div>
+        <div class="table-footer">
+            <div class="footer-text">
+
                 @{
-                    int startRecord = Model.TotalRecords == 0 ? 0 : ((Model.PageNumber - 1) * Model.PageSize) + 1;
-                    int endRecord = Math.Min(Model.PageNumber * Model.PageSize, Model.TotalRecords);
+                    int startRecord = Model.TotalRecords == 0
+                    ? 0
+                    : ((Model.PageNumber - 1) * Model.PageSize) + 1;
+
+                    int endRecord = Model.TotalRecords == 0
+                    ? 0
+                    : Math.Min(
+                    Model.PageNumber * Model.PageSize,
+                    Model.TotalRecords
+                    );
                 }
-                Showing @startRecord - @endRecord of @Model.TotalRecords records
+
+                Showing @startRecord-@endRecord of @Model.TotalRecords records
+
             </div>
 
-            <nav aria-label="Page navigation">
-                <ul class="pagination pagination-sm mb-0">
-                    <li class="page-item @(Model.PageNumber <= 1 ? "disabled" : "")">
-                        <a class="page-link"
-                           asp-action="RoleList"
-                           asp-route-pageNumber="@(Model.PageNumber - 1)"
-                           asp-route-searchKeyword="@Model.SearchKeyword"
-                           asp-route-status="@Model.Status">
-                            <i class="bi bi-chevron-left"></i>
-                        </a>
-                    </li>
+            @if (Model.TotalPages > 1)
+            {
+                <div class="pagination-box">
 
-                    @{
-                        int totalPagesToShow = Model.TotalPages > 0 ? Model.TotalPages : 1;
-                    }
-                    @for (int i = 1; i <= totalPagesToShow; i++)
+                    <a href="@Url.Action(
+                    "RoleList",
+                    new
                     {
-                        <li class="page-item @(i == (Model.PageNumber == 0 ? 1 : Model.PageNumber) ? "active" : "")">
-                            <a class="page-link"
-                               asp-action="RoleList"
-                               asp-route-pageNumber="@i"
-                               asp-route-searchKeyword="@Model.SearchKeyword"
-                               asp-route-status="@Model.Status">
-                                @i
-                            </a>
-                        </li>
+                        pageNumber = Model.PageNumber - 1,
+                        searchKeyword = Model.SearchKeyword,
+                        status = Model.Status
+                    })"
+                       class="page-btn btn btn-sm btn-outline-secondary @(Model.PageNumber <= 1 ? "disabled" : "")">
+
+                        <i class="bi bi-chevron-left"></i>
+
+                    </a>
+
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <a href="@Url.Action(
+                        "RoleList",
+                        new
+                        {
+                            pageNumber = i,
+                            searchKeyword = Model.SearchKeyword,
+                            status = Model.Status
+                        })"
+                           class="page-btn btn btn-sm @(i == Model.PageNumber ? "btn-primary-pagination active" : "btn-outline-secondary")">
+
+                            @i
+
+                        </a>
                     }
 
-                    <li class="page-item @(Model.PageNumber >= totalPagesToShow ? "disabled" : "")">
-                        <a class="page-link"
-                           asp-action="RoleList"
-                           asp-route-pageNumber="@(Model.PageNumber + 1)"
-                           asp-route-searchKeyword="@Model.SearchKeyword"
-                           asp-route-status="@Model.Status">
-                            <i class="bi bi-chevron-right"></i>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
+                    <a href="@Url.Action(
+                    "RoleList",
+                    new
+                    {
+                        pageNumber = Model.PageNumber + 1,
+                        searchKeyword = Model.SearchKeyword,
+                        status = Model.Status
+                    })"
+                       class="page-btn btn btn-sm btn-outline-secondary @(Model.PageNumber >= Model.TotalPages ? "disabled" : "")">
+
+                        <i class="bi bi-chevron-right"></i>
+
+                    </a>
+
+                </div>
+            }
+
         </div>
     </div>
+    ```
+
 </div>
 
 <partial name="AlertModal" />
 
 @section Scripts {
-    <script src="~/js/Alert_Modal.js" asp-append-version="true"></script>
-    <script src="~/js/role-list.js" asp-append-version="true"></script>
+     <script src="~/js/Alert_Modal.js" asp-append-version="true"></script> <script src="~/js/role-list.js" asp-append-version="true"></script>
 }
