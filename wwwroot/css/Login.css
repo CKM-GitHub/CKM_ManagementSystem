@@ -95,6 +95,7 @@ input[type="password"]::-ms-clear{
     border: none !important;
     background-color: transparent !important;
     box-shadow: none !important;
+    padding: 12px;
 }
 .password-input-custom{
     border-right: none;
