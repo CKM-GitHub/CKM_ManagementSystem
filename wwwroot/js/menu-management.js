@@ -41,7 +41,7 @@
         if ($parentMenu.length > 0) {
             $parentMenu.find('option').each(function () {
                 const $option = $(this);
-                const text = $option.text();
+                const text = $option.text().trim();
 
                 if (text.length > maxChars) {
                     $option.attr('title', text);
