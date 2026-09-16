@@ -95,8 +95,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row g-2 pt-2">
-                            <div class="col-6">
+                        <div class="row g-2 pt-2 button-row">
                                 @if(isEdit)
                                 {
                                     <a asp-controller="Menu" asp-action="MenuListView" asp-route-page="@Context.Request.Query["page"]" class="btn btn-cancel w-100 fw-bold">
@@ -106,12 +105,9 @@
                                 {
                                     <button type="reset" id="btnClear" class="btn btn-clear w-100 fw-bold">Clear</button>
                                 }
-                            </div>
-                            <div class="col-6">
                                 <button type="submit" id="btnRegister" class="btn btn-register w-100 fw-bold">
                                     @(isEdit ? "Update" : "Register")
                                 </button>
-                            </div>
                         </div>
                     </form>
                 </div>
