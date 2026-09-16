@@ -9,3 +9,33 @@
     --border-color: #C8C8C8;
     --light-gray: #F4F6F8;
 }
+/* Shared page layout */
+.ckm-page {
+    width: 100%;
+    min-height: 100%;
+    padding: 16px 24px 24px;
+    box-sizing: border-box;
+}
+
+/* List / table pages */
+.ckm-page-list {
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Entry / form pages */
+.ckm-page-form {
+    width: 100%;
+    min-height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Shared card */
+.ckm-card {
+    width: 100%;
+    box-sizing: border-box;
+    background-color: var(--white);
+    border-radius: 12px;
+}

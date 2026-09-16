@@ -5,16 +5,21 @@
     <div class="profile-dropdown dropdown">
 
         <button class="profile-button"
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false">
+        type="button"
+        data-bs-toggle="dropdown"
+        aria-expanded="false">
             @if (!string.IsNullOrWhiteSpace(Model.ImageURL))
             {
                 <img src="@Model.ImageURL"
-                     class="profile-image"
-                     alt="Profile" />
+                class="profile-image"
+                alt="Profile" />
             }
-            
+            else
+            {
+                <div class="profile-default-icon">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+            }
 
             <div class="profile-info">
                 <span class="profile-name">@Model.UserName</span>
