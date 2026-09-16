@@ -1,10 +1,12 @@
-﻿﻿.user-entry-card {
+﻿.user-entry-card {
+    width: 100%;
     max-width: 960px;
+    margin: 0 auto;
 }
 
 .avatar-preview-circle {
-    width: 160px;
-    height: 160px;
+    width: 150px;
+    height: 150px;
     border-color: #cbd5e1 !important;
     border: 2px dashed #adb5bd !important;
 }
@@ -53,8 +55,8 @@
 }
 
 .terms-checkbox:checked {
-        background-color: #2563eb;
-        border-color: #2563eb;
+    background-color: #2563eb;
+    border-color: #2563eb;
 }
 
 .form-actions {
@@ -150,16 +152,128 @@
     visibility: visible;
     transform: translateY(0);
 }
-
-@media (max-width: 768px) {
-    .avatar-preview-circle {
-     width: 120px;
-     height: 120px;
-
-
+@media (min-width: 992px) {
+    .user-entry-card {
+        width: 90%;
+        max-width: 1200px;
+    }
 }
 
-.user-entry-card {
-      padding: 1.5rem !important;
-   }
+@media (max-width: 768px) {
+    .user-entry-card {
+        max-width: 100% !important;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .avatar-preview-circle {
+        width: 120px;
+        height: 120px;
+    }
+
+    #default-icon {
+        font-size: 32px;
+    }
+
+    .upload-btn {
+        width: 110px;
+        height: 34px;
+        font-size: 10px;
+        border-radius: 10px;
+    }
+
+    .clear-btn,
+    .create-btn {
+        width: 130px;
+        padding: 12px;
+        font-size: 13px;
+    }
+
+    .tooltip-select::after {
+        max-width: 220px;
+        font-size: 11px;
+        padding: 6px 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .user-entry-card {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .avatar-preview-circle {
+        width: 96px;
+        height: 96px;
+        border-width: 2px !important;
+    }
+
+    #default-icon {
+        font-size: 26px;
+    }
+
+    .upload-btn {
+        width: 100%;
+        max-width: 140px;
+        height: 32px;
+        font-size: 10px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .clear-btn,
+    .create-btn {
+        width: 100%;
+        padding: 12px;
+        font-size: 13px;
+    }
+
+    #alertOkButton {
+        min-width: 100px;
+        width: 100%;
+    }
+
+    .tooltip-select::after {
+        left: 50%;
+        transform: translate(-50%, 4px);
+        max-width: 200px;
+        font-size: 11px;
+        text-align: center;
+    }
+
+    .tooltip-select[data-tooltip]:not([data-tooltip=""]):hover::after {
+        transform: translate(-50%, 0);
+    }
+}
+
+@media (max-width: 360px) {
+    .avatar-preview-circle {
+        width: 84px;
+        height: 84px;
+    }
+
+    #default-icon {
+        font-size: 22px;
+    }
+
+    .upload-btn {
+        max-width: 120px;
+        height: 30px;
+        font-size: 9px;
+    }
+
+    .clear-btn,
+    .create-btn {
+        width: 100%;
+        font-size: 12px;
+        padding: 10px;
+    }
+
+    .tooltip-select::after {
+        max-width: 170px;
+        font-size: 10px;
+    }
 }
