@@ -17,7 +17,7 @@ body, input, button, select, textarea, label, table, .modal-content {
 
     body.project-entry-bg {
         background-image: url('../images/system_img/background_img.png');
-        background-size: cover;
+        background-size: cover;p
         background-position: center;
         background-repeat: no-repeat;
         background-attachment: fixed;
