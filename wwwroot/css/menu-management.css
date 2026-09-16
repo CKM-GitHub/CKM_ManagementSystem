@@ -440,18 +440,6 @@ body {
         min-width: 140px;
     }
 }
-.profile-default-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    background-color: #f1f3f5;
-    color: #6c757d;
-    font-size: 22px;
-}
 @media(max-width:767.98px){
     .filter-card{
         padding: 16px;
