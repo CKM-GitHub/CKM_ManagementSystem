@@ -1,6 +1,4 @@
-﻿
-
-/* ========================================
+﻿/* ========================================
    Base Typography
 ======================================== */
 
@@ -35,12 +33,14 @@ table,
     padding: 16px 24px 24px;
     box-sizing: border-box;
 }
+
 .project-entry-card {
     width: 100%;
     padding: 32px;
     border-radius: 12px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 }
+
 .project-entry-btn {
     height: 42px;
     padding: 0 18px !important;
@@ -51,6 +51,8 @@ table,
     font-size: 14px !important;
     font-weight: 600;
 }
+
+
 /* ========================================
    Typography
 ======================================== */
@@ -100,6 +102,7 @@ small,
 
 .form-control,
 .form-select {
+    width: 100%;
     height: 42px;
     padding: 8px 12px;
     box-sizing: border-box;
@@ -118,6 +121,74 @@ small,
         background-color: #e9ecef;
         opacity: 1;
         cursor: not-allowed;
+    }
+
+
+/* ========================================
+   Project Manager
+======================================== */
+
+#ProjectManagerId {
+    width: 100% !important;
+    max-width: none !important;
+    height: 42px;
+    display: block;
+}
+
+
+/* ========================================
+   Status / Project Type Alignment
+======================================== */
+
+.option-row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 34px;
+    margin-bottom: 10px;
+}
+
+.option-row-label {
+    flex: 0 0 120px;
+    width: 120px;
+    margin: 0;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.option-row-items {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 18px;
+}
+
+    .option-row-items .form-check {
+        display: inline-flex;
+        align-items: center;
+        min-height: auto;
+        margin: 0;
+        padding: 0;
+    }
+
+    .option-row-items .form-check-input {
+        position: static;
+        width: 16px;
+        height: 16px;
+        margin: 0 7px 0 0;
+        flex-shrink: 0;
+    }
+
+    .option-row-items .form-check-label {
+        margin: 0;
+        color: #374151;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.4;
+        white-space: nowrap;
     }
 
 
@@ -160,6 +231,12 @@ small,
         white-space: nowrap !important;
         text-overflow: ellipsis !important;
     }
+
+#ProjectManagerId.select-truncate {
+    width: 100% !important;
+    max-width: none !important;
+    display: block;
+}
 
 
 /* ========================================
@@ -338,4 +415,26 @@ small,
 
 .btn-add-member-custom {
     background-color: #eef2ff;
+}
+
+
+/* ========================================
+   Responsive
+======================================== */
+
+@media (max-width: 768px) {
+    .option-row {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .option-row-label {
+        width: auto;
+        flex-basis: auto;
+    }
+
+    .option-row-items {
+        gap: 12px;
+    }
 }

@@ -15,6 +15,18 @@ function getOrCreateModal(elementId) {
         new bootstrap.Modal(el);
 }
 
+function getMemberImage(imageUrl) {
+    if (
+        imageUrl === null ||
+        imageUrl === undefined ||
+        String(imageUrl).trim() === ''
+    ) {
+        return '/images/default-avatar.png';
+    }
+
+    return String(imageUrl).trim();
+}
+
 function showSuccessAlert(message, title = 'Success!') {
     $('#alertIcon')
         .attr(
@@ -250,11 +262,13 @@ $(document).ready(function () {
                         $.each(
                             data,
                             function (i, item) {
-                                var img =
+                                var rawImg =
                                     item.image_URL ||
                                     item.image_Url ||
-                                    item.Image_URL ||
-                                    '/images/default-avatar.png';
+                                    item.Image_URL;
+
+                                var img =
+                                    getMemberImage(rawImg);
 
                                 var dept =
                                     item.department_Name ||
@@ -289,16 +303,20 @@ $(document).ready(function () {
 
                                         <td>
                                             <div class="d-flex align-items-center">
-                                                                                           <img
-                                                 src="${img}"
-                                                class="rounded-circle me-2 flex-shrink-0 member-avatar-fallback"
-                                                width="28"
-                                                height="28"
-                                                        />
+
+                                                <img
+                                                    src="${img}"
+                                                    onerror="this.onerror=null;this.src='/images/default-avatar.png';"
+                                                    class="rounded-circle me-2 flex-shrink-0 member-avatar-fallback"
+                                                    width="28"
+                                                    height="28"
+                                                    alt="Profile"
+                                                />
 
                                                 <span class="fw-semibold text-dark text-truncate">
                                                     ${staffCode}
                                                 </span>
+
                                             </div>
                                         </td>
 
@@ -321,6 +339,7 @@ $(document).ready(function () {
                                                 ${dept}
                                             </span>
                                         </td>
+
                                     </tr>
                                 `;
 
@@ -368,7 +387,9 @@ $(document).ready(function () {
                     $(this).data('name');
 
                 var img =
-                    $(this).data('img');
+                    getMemberImage(
+                        $(this).data('img')
+                    );
 
                 var row = `
                     <tr
@@ -379,21 +400,28 @@ $(document).ready(function () {
                         </td>
 
                         <td>
+
                             <div class="d-flex align-items-center">
-                                            <img
-                                                src="${img}"
-                                                class="rounded-circle me-2 flex-shrink-0 member-avatar-fallback"
-                                                width="28"
-                                                height="28"
-                                            />
+
+                                <img
+                                    src="${img}"
+                                    onerror="this.onerror=null;this.src='/images/default-avatar.png';"
+                                    class="rounded-circle me-2 flex-shrink-0 member-avatar-fallback"
+                                    width="28"
+                                    height="28"
+                                    alt="Profile"
+                                />
 
                                 <span class="fw-semibold text-dark text-truncate">
                                     ${code}
                                 </span>
+
                             </div>
+
                         </td>
 
                         <td class="text-secondary">
+
                             <span
                                 class="text-truncate-custom cursor-pointer"
                                 data-bs-toggle="tooltip"
@@ -401,9 +429,11 @@ $(document).ready(function () {
                                 title="${name}">
                                 ${name}
                             </span>
+
                         </td>
 
                         <td class="text-end">
+
                             <button
                                 type="button"
                                 class="btn btn-sm text-danger border-0 p-0 btn-remove-member me-2"
@@ -412,6 +442,7 @@ $(document).ready(function () {
                                 <i class="bi bi-trash"></i>
 
                             </button>
+
                         </td>
 
                     </tr>
@@ -752,15 +783,17 @@ $(document).ready(function () {
         }
     );
 });
+
 document.addEventListener(
     'error',
     function (event) {
-
         const img = event.target;
 
         if (
             img instanceof HTMLImageElement &&
-            img.classList.contains('member-avatar-fallback')
+            img.classList.contains(
+                'member-avatar-fallback'
+            )
         ) {
             if (
                 !img.src.endsWith(
