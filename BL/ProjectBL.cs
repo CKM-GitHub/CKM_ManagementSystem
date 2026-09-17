@@ -156,18 +156,18 @@ namespace CKM_ManagementSystem.BL
                                          StartDate = @StartDate, 
                                          EndDate = @EndDate, 
                                          Status = @Status,
+                                         ProjectType = @ProjectType,
                                          Updated_Date = GETDATE()
                                      WHERE ProjectCode = @ProjectCode";
                 }
                 else
                 {
                     queryProject = @"INSERT INTO Projects 
-                                       (ProjectCode, ProjectName, ProjectManagerId, GitRepositoryUrl, Description, StartDate, EndDate, Status, Created_Date, Updated_Date) 
-                                     VALUES 
-                                       (@ProjectCode, @ProjectName, @ProjectManagerId, @GitRepositoryUrl, @Description, @StartDate, @EndDate, @Status, GETDATE(), GETDATE())";
+                        (ProjectCode, ProjectName, ProjectManagerId, GitRepositoryUrl, Description, StartDate, EndDate, Status, ProjectType, Created_Date, Updated_Date) 
+                         VALUES 
+                        (@ProjectCode, @ProjectName, @ProjectManagerId, @GitRepositoryUrl, @Description, @StartDate, @EndDate, @Status, @ProjectType, GETDATE(), GETDATE())";
                 }
-
-                SqlParameter[] sqlprms =
+                    SqlParameter[] sqlprms =
                 {
                     new SqlParameter("@ProjectCode", (object)model.ProjectCode ?? DBNull.Value),
                     new SqlParameter("@ProjectName", (object)model.ProjectName ?? DBNull.Value),
@@ -176,7 +176,8 @@ namespace CKM_ManagementSystem.BL
                     new SqlParameter("@Description", string.IsNullOrEmpty(model.Description) ? DBNull.Value : model.Description),
                     new SqlParameter("@StartDate", model.StartDate == default(DateTime) ? DBNull.Value : model.StartDate),
                     new SqlParameter("@EndDate", model.EndDate == default(DateTime) ? DBNull.Value : model.EndDate),
-                    new SqlParameter("@Status", string.IsNullOrEmpty(model.Status) ? "Active" : model.Status)
+                    new SqlParameter("@Status", string.IsNullOrEmpty(model.Status) ? "Active" : model.Status),
+                    new SqlParameter("@ProjectType", string.IsNullOrEmpty(model.ProjectType) ? "SYS" : model.ProjectType)
                 };
 
                 string result = bdl.InsertUpdateDeleteData(queryProject, sqlprms);
@@ -222,7 +223,7 @@ namespace CKM_ManagementSystem.BL
         public ProjectEntryViewModel GetProjectById(string projectCode)
         {
             var model = new ProjectEntryViewModel();
-            string query = "SELECT ProjectCode, ProjectName, ProjectManagerId, GitRepositoryUrl, Description, StartDate, EndDate, Status FROM Projects WHERE ProjectCode = @ProjectCode";
+            string query = "SELECT ProjectCode, ProjectName, ProjectManagerId, GitRepositoryUrl, Description, StartDate, EndDate, Status, ProjectType FROM Projects WHERE ProjectCode = @ProjectCode";
             SqlParameter[] sqlprms = { new SqlParameter("@ProjectCode", projectCode) };
 
             DataTable dt = bdl.ExecuteDataTable(query, sqlprms);
@@ -237,6 +238,7 @@ namespace CKM_ManagementSystem.BL
                 model.StartDate = row["StartDate"] != DBNull.Value ? Convert.ToDateTime(row["StartDate"]) : DateTime.Today;
                 model.EndDate = row["EndDate"] != DBNull.Value ? Convert.ToDateTime(row["EndDate"]) : DateTime.Today;
                 model.Status = row["Status"] != DBNull.Value ? row["Status"].ToString()! : "Active";
+                model.ProjectType = row["ProjectType"] != DBNull.Value ? row["ProjectType"].ToString()! : "SYS";
                 model.IsEdit = true;
 
                 model.ProjectMembers = GetProjectMembers(projectCode);
