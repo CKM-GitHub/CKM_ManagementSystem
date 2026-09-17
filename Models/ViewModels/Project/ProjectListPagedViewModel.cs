@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace CKM_ManagementSystem.Models.ViewModels.Projects
+namespace CKM_ManagementSystem.Models.ViewModels.Project
 {
     public class ProjectListPagedViewModel
     {

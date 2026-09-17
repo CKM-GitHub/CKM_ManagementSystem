@@ -289,13 +289,12 @@ $(document).ready(function () {
 
                                         <td>
                                             <div class="d-flex align-items-center">
-                                                <img
-                                                    src="${img}"
-                                                    onerror="this.onerror=null;this.src='/images/default-avatar.png';"
-                                                    class="rounded-circle me-2 flex-shrink-0"
-                                                    width="28"
-                                                    height="28"
-                                                />
+                                                                                           <img
+                                                 src="${img}"
+                                                class="rounded-circle me-2 flex-shrink-0 member-avatar-fallback"
+                                                width="28"
+                                                height="28"
+                                                        />
 
                                                 <span class="fw-semibold text-dark text-truncate">
                                                     ${staffCode}
@@ -381,13 +380,12 @@ $(document).ready(function () {
 
                         <td>
                             <div class="d-flex align-items-center">
-                                <img
-                                    src="${img}"
-                                    onerror="this.onerror=null;this.src='/images/default-avatar.png';"
-                                    class="rounded-circle me-2 flex-shrink-0"
-                                    width="28"
-                                    height="28"
-                                />
+                                            <img
+                                                src="${img}"
+                                                class="rounded-circle me-2 flex-shrink-0 member-avatar-fallback"
+                                                width="28"
+                                                height="28"
+                                            />
 
                                 <span class="fw-semibold text-dark text-truncate">
                                     ${code}
@@ -754,3 +752,25 @@ $(document).ready(function () {
         }
     );
 });
+document.addEventListener(
+    'error',
+    function (event) {
+
+        const img = event.target;
+
+        if (
+            img instanceof HTMLImageElement &&
+            img.classList.contains('member-avatar-fallback')
+        ) {
+            if (
+                !img.src.endsWith(
+                    '/images/default-avatar.png'
+                )
+            ) {
+                img.src =
+                    '/images/default-avatar.png';
+            }
+        }
+    },
+    true
+);
