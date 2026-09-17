@@ -1,4 +1,8 @@
-﻿@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap');
+﻿
+
+/* ========================================
+   Base Typography
+======================================== */
 
 body,
 input,
@@ -13,18 +17,47 @@ table,
     color: #2b2f38;
 }
 
+
+    /* ========================================
+   Page Background
+======================================== */
+
     body.project-entry-bg {
         background-image: url('../images/system_img/background_img.png');
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
         background-attachment: fixed;
-        min-height: 100vh;
     }
 
+.project-entry-page {
+    width: 100%;
+    padding: 16px 24px 24px;
+    box-sizing: border-box;
+}
+.project-entry-card {
+    width: 100%;
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+.project-entry-btn {
+    height: 42px;
+    padding: 0 18px !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    font-weight: 600;
+}
+/* ========================================
+   Typography
+======================================== */
+
 .page-title,
-h1,
 .main-header {
+    margin: 0 0 16px;
     font-size: 32px !important;
     font-weight: 700 !important;
     line-height: 1.2;
@@ -32,8 +65,6 @@ h1,
 }
 
 .section-title,
-h2,
-h3,
 .modal-title,
 .subheader,
 .card-title {
@@ -42,19 +73,11 @@ h3,
     color: #1f2937;
 }
 
-.form-label,
-.form-control,
-.form-select,
-.btn,
-.table th,
-.table td {
-    font-size: 14px !important;
-}
-
 .form-label {
-    font-weight: 600;
+    margin-bottom: 6px;
     color: #374151;
-    margin-bottom: 0.35rem;
+    font-size: 14px !important;
+    font-weight: 600;
 }
 
 .form-text,
@@ -70,6 +93,38 @@ small,
     font-size: 11px !important;
 }
 
+
+/* ========================================
+   Form Controls
+======================================== */
+
+.form-control,
+.form-select {
+    height: 42px;
+    padding: 8px 12px;
+    box-sizing: border-box;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 14px !important;
+}
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 2px rgba(8, 125, 241, 0.14);
+    }
+
+    .form-control:disabled {
+        background-color: #e9ecef;
+        opacity: 1;
+        cursor: not-allowed;
+    }
+
+
+/* ========================================
+   Header / Member Elements
+======================================== */
+
 .icon-header-box,
 .folder-icon-box {
     width: 54px;
@@ -82,24 +137,34 @@ small,
     object-fit: cover;
 }
 
+
+/* ========================================
+   Dropdown Handling
+======================================== */
+
 #modalDeptSelect,
 .select-truncate {
     width: 100% !important;
     max-width: 200px !important;
-    text-overflow: ellipsis !important;
+    display: inline-block;
     overflow: hidden !important;
     white-space: nowrap !important;
-    display: inline-block;
+    text-overflow: ellipsis !important;
 }
 
     #modalDeptSelect option,
     .select-truncate option {
-        max-width: 200px !important;
         width: 200px !important;
+        max-width: 200px !important;
         overflow: hidden !important;
-        text-overflow: ellipsis !important;
         white-space: nowrap !important;
+        text-overflow: ellipsis !important;
     }
+
+
+/* ========================================
+   Modal
+======================================== */
 
 .modal-content {
     overflow: hidden;
@@ -109,12 +174,17 @@ small,
     overflow-x: hidden;
 }
 
+
+/* ========================================
+   Utilities
+======================================== */
+
 .text-truncate-custom {
-    max-width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
     display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     vertical-align: middle;
 }
 
@@ -122,11 +192,21 @@ small,
     cursor: pointer;
 }
 
+
+/* ========================================
+   Modal Member Table Scroll
+======================================== */
+
 .modal-table-container {
     max-height: 280px;
     overflow-y: auto;
     overflow-x: hidden;
 }
+
+
+/* ========================================
+   Fixed Width Utilities
+======================================== */
 
 .col-width-40 {
     width: 40px;
@@ -156,11 +236,16 @@ small,
     width: 150px;
 }
 
+
+/* ========================================
+   Modal Members Table
+======================================== */
+
 #tblModalMembers {
+    width: 100%;
+    table-layout: fixed;
     border-collapse: separate;
     border-spacing: 0;
-    table-layout: fixed;
-    width: 100%;
 }
 
     #tblModalMembers thead th {
@@ -168,8 +253,8 @@ small,
         top: 0;
         z-index: 1;
         background-color: #f8f9fa;
-        white-space: nowrap;
         overflow: hidden;
+        white-space: nowrap;
         text-overflow: ellipsis;
     }
 
@@ -190,14 +275,19 @@ small,
     }
 
     #tblModalMembers td {
-        white-space: nowrap;
         overflow: hidden;
+        white-space: nowrap;
         text-overflow: ellipsis;
     }
 
+
+/* ========================================
+   Selected Members Table
+======================================== */
+
 #tblSelectedMembers {
-    table-layout: fixed;
     width: 100%;
+    table-layout: fixed;
 }
 
     #tblSelectedMembers th:nth-child(1) {
@@ -216,92 +306,36 @@ small,
         width: 70px;
     }
 
-    #tblSelectedMembers td,
-    #tblSelectedMembers th {
-        white-space: nowrap;
+    #tblSelectedMembers th,
+    #tblSelectedMembers td {
         overflow: hidden;
+        white-space: nowrap;
         text-overflow: ellipsis;
     }
+
+
+/* ========================================
+   Table Interaction
+======================================== */
+
+.table th,
+.table td {
+    font-size: 14px !important;
+}
 
 .table-hover tbody tr:hover {
     background-color: #f8fafc;
 }
 
-.form-control:focus,
-.form-select:focus {
-    border-color: #0d6efd;
-    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
-}
 
-.form-control:disabled {
-    background-color: #e9ecef;
-    opacity: 1;
-    cursor: not-allowed;
+/* ========================================
+   Buttons
+======================================== */
+
+.btn {
+    font-size: 14px !important;
 }
 
 .btn-add-member-custom {
     background-color: #eef2ff;
 }
-
-/* Department Entry style Clear / Cancel */
-.btn-clear-project {
-    height: 42px;
-    min-width: 80px;
-    padding: 0 20px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    border-radius: 4px;
-    background-color: var(--gray);
-    color: var(--white);
-    font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    text-decoration: none;
-    cursor: pointer;
-    transition: opacity 0.2s ease, transform 0.1s ease;
-}
-
-    .btn-clear-project:hover {
-        color: var(--white);
-        text-decoration: none;
-        opacity: 0.9;
-    }
-
-    .btn-clear-project:active {
-        color: var(--white);
-        text-decoration: none;
-        transform: translateY(1px);
-    }
-
-    .btn-clear-project:focus {
-        color: var(--white);
-        text-decoration: none;
-    }
-
-/* Department List style remove-member icon */
-.member-action-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-    padding: 0;
-    border: none;
-    border-radius: 6px;
-    background: transparent;
-    font-size: 16px;
-    text-decoration: none;
-    cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.member-delete-icon {
-    color: var(--error-color);
-}
-
-    .member-delete-icon:hover {
-        background-color: #FDEAEA;
-        color: var(--error-color);
-    }

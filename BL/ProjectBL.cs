@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Text.RegularExpressions;
 using CKM_ManagementSystem.Models.Entities;
-using CKM_ManagementSystem.Models.ViewModels.Projects;
+using CKM_ManagementSystem.Models.ViewModels.Project;
 using CKM_ManagementSystem.DL;
 using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Mvc.Rendering;

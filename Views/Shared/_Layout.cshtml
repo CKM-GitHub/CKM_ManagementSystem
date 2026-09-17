@@ -3,37 +3,100 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>@ViewData["Title"] - CKM_ManagementSystem</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet"href="~/lib/fontawesome/css/all.min.css"asp-append-version="true" />
-    <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
-    <link rel="stylesheet" href="~/css/Alert_Modal.css" asp-append-version="true"/>
-    <link rel="stylesheet"href="~/css/Main_Menu.css"asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/Font.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/ckm-theme.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/CKM_ManagementSystem.styles.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.css" />
+    <link rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="~/images/system_img/browsertab.png"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="~/lib/fontawesome/css/all.min.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/Alert_Modal.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/Main_Menu.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/Font.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/ckm-theme.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/CKM_ManagementSystem.styles.css"
+          asp-append-version="true" />
+    
     @await RenderSectionAsync("Styles", required: false)
 </head>
+
 <body>
+
     <div class="app-shell">
 
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div id="mainMenuContainer"></div>
         </aside>
 
-    
+        <div class="sidebar-overlay"
+             id="sidebarOverlay">
+        </div>
+
+
         <div class="main-area">
+
             <header class="topbar">
-              <div id="profileContainer"></div>
+
+                <div class="topbar-left">
+
+                    <button type="button"
+                            class="mobile-menu-button"
+                            id="mobileMenuButton"
+                            aria-label="Open menu">
+
+                        <i class="bi bi-list"></i>
+
+                    </button>
+
+                    <div id="subNavigationContainer"></div>
+
+                </div>
+
+
+                <div id="profileContainer"></div>
+
             </header>
+
+
             <main class="page-content">
                 @RenderBody()
             </main>
+
         </div>
+
     </div>
+
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
     <script src="~/js/Main_Menu.js"
@@ -43,5 +106,6 @@
             asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>

@@ -1,4 +1,4 @@
-﻿@model CKM_ManagementSystem.Models.ViewModels.Projects.ProjectEntryViewModel
+﻿@model CKM_ManagementSystem.Models.ViewModels.Project.ProjectEntryViewModel
 
 @{
     Layout = "_Layout";
@@ -11,24 +11,32 @@
           asp-append-version="true" />
 }
 
-<div class="container py-5">
+<div class="container-fluid project-entry-page">
     <div class="row justify-content-center">
         <div class="col-md-10 col-lg-8">
-            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+
+            <div class="project-entry-card bg-white">
 
                 <div class="text-center mb-4">
 
-                    <div class="d-inline-flex align-items-center justify-content-center bg-primary text-white rounded-3 mb-3 icon-header-box">
+                    <div class="d-inline-flex
+                                align-items-center
+                                justify-content-center
+                                bg-primary
+                                text-white
+                                rounded-3
+                                mb-3
+                                icon-header-box">
                         <i class="bi bi-folder-fill fs-3"></i>
                     </div>
 
-                    <h1 class="main-header mb-1">
+                    <h1 class="main-header">
                         @(Model.IsEdit
                             ? "Edit Project"
                             : "Create New Project")
                     </h1>
 
-                    <p class="text-muted small-text">
+                    <p class="text-muted small-text mb-0">
                         @(Model.IsEdit
                             ? "Update existing project details."
                             : "Set up the basic information for your new project to get started.")
@@ -55,6 +63,8 @@
                          class="text-danger mb-3 small-text">
                     </div>
 
+
+                    <!-- Project Code / Project Name -->
                     <div class="row g-3 mb-3">
 
                         <div class="col-md-6">
@@ -66,8 +76,8 @@
 
                             <input asp-for="ProjectCode"
                                    id="ProjectCode"
-                                   class="form-control rounded-3 py-2"
-                                   placeholder="Enter project Code"
+                                   class="form-control"
+                                   placeholder="Enter project code"
                                    maxlength="50"
                                    disabled="@(Model.IsEdit ? "disabled" : null)" />
 
@@ -82,6 +92,7 @@
 
                         </div>
 
+
                         <div class="col-md-6">
 
                             <label class="form-label">
@@ -91,7 +102,7 @@
 
                             <input asp-for="ProjectName"
                                    id="ProjectName"
-                                   class="form-control rounded-3 py-2"
+                                   class="form-control"
                                    placeholder="Enter project name"
                                    maxlength="200" />
 
@@ -108,6 +119,8 @@
 
                     </div>
 
+
+                    <!-- Manager / Git Link -->
                     <div class="row g-3 mb-3">
 
                         <div class="col-md-6">
@@ -120,7 +133,7 @@
                             <select asp-for="ProjectManagerId"
                                     id="ProjectManagerId"
                                     asp-items="@(ViewBag.Managers as List<SelectListItem>)"
-                                    class="form-select rounded-3 py-2 select-truncate">
+                                    class="form-select select-truncate">
 
                                 <option value=""
                                         selected
@@ -140,6 +153,7 @@
 
                         </div>
 
+
                         <div class="col-md-6">
 
                             <label class="form-label">
@@ -148,13 +162,16 @@
 
                             <div class="input-group">
 
-                                <span class="input-group-text bg-white border-end-0 text-muted rounded-start-3">
+                                <span class="input-group-text
+                                             bg-white
+                                             border-end-0
+                                             text-muted">
                                     <i class="bi bi-link-45deg fs-5"></i>
                                 </span>
 
                                 <input asp-for="GitRepositoryUrl"
                                        id="GitRepositoryUrl"
-                                       class="form-control border-start-0 rounded-end-3 py-2"
+                                       class="form-control border-start-0"
                                        placeholder="https://github.com/company/repo" />
 
                             </div>
@@ -171,6 +188,8 @@
 
                     </div>
 
+
+                    <!-- Description -->
                     <div class="mb-3">
 
                         <label class="form-label">
@@ -179,7 +198,7 @@
 
                         <textarea asp-for="Description"
                                   id="Description"
-                                  class="form-control rounded-3"
+                                  class="form-control project-description"
                                   rows="3"
                                   placeholder="Enter project description"></textarea>
 
@@ -188,11 +207,14 @@
                         </span>
 
                         <div class="form-help-text text-muted">
-                            Provide a brief overview of the project, its goals, and objectives.
+                            Provide a brief overview of the project,
+                            its goals, and objectives.
                         </div>
 
                     </div>
 
+
+                    <!-- Dates -->
                     <div class="row g-3 mb-4">
 
                         <div class="col-md-6">
@@ -205,7 +227,7 @@
                             <input asp-for="StartDate"
                                    type="date"
                                    id="StartDate"
-                                   class="form-control rounded-3 py-2"
+                                   class="form-control"
                                    value="@(Model.StartDate?.ToString("yyyy-MM-dd"))" />
 
                             <span asp-validation-for="StartDate"
@@ -219,6 +241,7 @@
 
                         </div>
 
+
                         <div class="col-md-6">
 
                             <label class="form-label">
@@ -229,7 +252,7 @@
                             <input asp-for="EndDate"
                                    type="date"
                                    id="EndDate"
-                                   class="form-control rounded-3 py-2"
+                                   class="form-control"
                                    value="@(Model.EndDate?.ToString("yyyy-MM-dd"))" />
 
                             <span asp-validation-for="EndDate"
@@ -245,6 +268,8 @@
 
                     </div>
 
+
+                    <!-- Status -->
                     <div class="row align-items-center mb-4">
 
                         <div class="col-auto">
@@ -256,23 +281,21 @@
                         <div class="col-auto">
 
                             <div class="form-check form-check-inline me-3">
-
                                 <input class="form-check-input"
                                        type="radio"
                                        asp-for="Status"
                                        value="Active"
                                        id="statusActive"
-                                       checked="@(Model.Status == "Active" || string.IsNullOrEmpty(Model.Status))" />
+                                       checked="@(Model.Status == "Active"
+                                           || string.IsNullOrEmpty(Model.Status))" />
 
                                 <label class="form-check-label fw-medium"
                                        for="statusActive">
                                     Active
                                 </label>
-
                             </div>
 
                             <div class="form-check form-check-inline me-3">
-
                                 <input class="form-check-input"
                                        type="radio"
                                        asp-for="Status"
@@ -284,11 +307,9 @@
                                        for="statusCompleted">
                                     Completed
                                 </label>
-
                             </div>
 
                             <div class="form-check form-check-inline me-3">
-
                                 <input class="form-check-input"
                                        type="radio"
                                        asp-for="Status"
@@ -300,11 +321,9 @@
                                        for="statusOnHold">
                                     On Hold
                                 </label>
-
                             </div>
 
                             <div class="form-check form-check-inline">
-
                                 <input class="form-check-input"
                                        type="radio"
                                        asp-for="Status"
@@ -316,13 +335,14 @@
                                        for="statusInactive">
                                     Inactive
                                 </label>
-
                             </div>
 
                         </div>
 
                     </div>
 
+
+                    <!-- Project Type -->
                     <div class="row align-items-center mb-4">
 
                         <div class="col-auto">
@@ -334,23 +354,21 @@
                         <div class="col-auto">
 
                             <div class="form-check form-check-inline me-3">
-
                                 <input class="form-check-input"
                                        type="radio"
                                        asp-for="ProjectType"
                                        value="SYS"
                                        id="projectTypeSYS"
-                                       checked="@(Model.ProjectType == "SYS" || string.IsNullOrEmpty(Model.ProjectType))" />
+                                       checked="@(Model.ProjectType == "SYS"
+                                           || string.IsNullOrEmpty(Model.ProjectType))" />
 
                                 <label class="form-check-label fw-medium"
                                        for="projectTypeSYS">
                                     SYS - System
                                 </label>
-
                             </div>
 
                             <div class="form-check form-check-inline me-3">
-
                                 <input class="form-check-input"
                                        type="radio"
                                        asp-for="ProjectType"
@@ -362,11 +380,9 @@
                                        for="projectTypeBPO">
                                     BPO - Business Process Outsourcing
                                 </label>
-
                             </div>
 
                             <div class="form-check form-check-inline">
-
                                 <input class="form-check-input"
                                        type="radio"
                                        asp-for="ProjectType"
@@ -378,25 +394,34 @@
                                        for="projectTypeHR">
                                     HR - Human Resources
                                 </label>
-
                             </div>
 
                         </div>
 
                     </div>
 
+
                     <hr class="text-muted opacity-25 my-4" />
 
+
+                    <!-- Project Members -->
                     <div class="mb-4">
 
-                        <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex
+                                    justify-content-between
+                                    align-items-center
+                                    mb-3">
 
                             <h2 class="section-title mb-0">
                                 Project Members
                             </h2>
 
                             <button type="button"
-                                    class="btn btn-add-member-custom text-primary border-0 rounded-3 btn-sm fw-medium px-3"
+                                    class="btn
+                                           btn-add-member-custom
+                                           project-entry-btn
+                                           text-primary
+                                           border-0"
                                     data-bs-toggle="modal"
                                     data-bs-target="#memberModal">
                                 + Add Member
@@ -404,13 +429,18 @@
 
                         </div>
 
-                        <div class="table-responsive border rounded-3">
 
-                            <table class="table table-hover align-middle mb-0"
+                        <div class="table-responsive
+                                    border
+                                    rounded-3">
+
+                            <table class="table
+                                          table-hover
+                                          align-middle
+                                          mb-0"
                                    id="tblSelectedMembers">
 
                                 <thead class="bg-light text-muted">
-
                                     <tr>
                                         <th class="text-center col-width-50">
                                             NO.
@@ -428,13 +458,12 @@
                                             Action
                                         </th>
                                     </tr>
-
                                 </thead>
 
                                 <tbody>
 
-                                    @if (Model.ProjectMembers != null &&
-                                    Model.ProjectMembers.Any())
+                                    @if (Model.ProjectMembers != null
+                                    && Model.ProjectMembers.Any())
                                     {
                                         int no = 1;
 
@@ -443,44 +472,55 @@
                                             <tr data-staffcode="@member.Staff_Code"
                                                 data-img="@member.Image_URL">
 
-                                                <td class="text-center text-muted row-no">
+                                                <td class="text-center
+                                                           text-muted
+                                                           row-no">
                                                     @no
                                                 </td>
 
                                                 <td>
-
                                                     <div class="d-flex align-items-center">
 
-                                                        <img src="@(string.IsNullOrEmpty(member.Image_URL) ? "/images/default-avatar.png" : member.Image_URL)"
-                                                             onerror="this.onerror=null;this.src='/images/default-avatar.png';"
-                                                             class="rounded-circle me-2 flex-shrink-0 member-avatar" />
+                                                        <img src="@(string.IsNullOrEmpty(member.Image_URL)
+                                                                      ? "/images/default-avatar.png"
+                                                                      : member.Image_URL)"
+                                                             class="rounded-circle
+                                                                    me-2
+                                                                    flex-shrink-0
+                                                                    member-avatar
+                                                                    member-avatar-fallback" />
 
-                                                        <span class="fw-semibold text-dark">
+                                                        <span class="fw-semibold
+                                                                     text-dark
+                                                                     text-truncate">
                                                             @member.Staff_Code
                                                         </span>
 
                                                     </div>
-
                                                 </td>
 
                                                 <td class="text-secondary">
-
-                                                    <span class="text-truncate-custom cursor-pointer"
+                                                    <span class="text-truncate-custom
+                                                                 cursor-pointer"
                                                           data-bs-toggle="tooltip"
+                                                          data-bs-placement="top"
                                                           title="@member.Name">
                                                         @member.Name
                                                     </span>
-
                                                 </td>
 
                                                 <td class="text-end">
 
                                                     <button type="button"
-                                                            class="member-action-btn member-delete-icon btn-remove-member"
+                                                            class="btn
+                                                                   btn-sm
+                                                                   text-danger
+                                                                   border-0
+                                                                   p-0
+                                                                   btn-remove-member
+                                                                   me-2"
                                                             title="Remove Member">
-
                                                         <i class="bi bi-trash"></i>
-
                                                     </button>
 
                                                 </td>
@@ -493,14 +533,12 @@
                                     else
                                     {
                                         <tr id="emptyMemberRow">
-
                                             <td colspan="4"
-                                                class="text-center text-muted py-3">
-
+                                                class="text-center
+                                                       text-muted
+                                                       py-3">
                                                 No project members added.
-
                                             </td>
-
                                         </tr>
                                     }
 
@@ -512,26 +550,29 @@
 
                     </div>
 
-                    <div class="d-flex justify-content-end gap-2 pt-3">
+
+                    <!-- Main Buttons -->
+                    <div class="d-flex
+                                justify-content-end
+                                gap-2
+                                pt-3">
 
                         <button type="button"
                                 id="btnClear"
-                                class="btn-clear-project">
-
-                            @(Model.IsEdit
-                                ? "Cancel"
-                                : "Clear")
-
+                                class="btn
+                                       btn-outline-secondary
+                                       project-entry-btn">
+                            @(Model.IsEdit ? "Cancel" : "Clear")
                         </button>
 
                         <button type="submit"
                                 id="btnRegister"
-                                class="btn btn-primary rounded-3 px-4 py-2 fw-medium">
-
+                                class="btn
+                                       btn-primary
+                                       project-entry-btn">
                             @(Model.IsEdit
                                 ? "Update Project"
                                 : "+ Create Project")
-
                         </button>
 
                     </div>
@@ -539,20 +580,32 @@
                 </form>
 
             </div>
+
         </div>
     </div>
 </div>
 
+
+<!-- Member Modal -->
 <div class="modal fade"
      id="memberModal"
      tabindex="-1"
      aria-hidden="true">
 
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-dialog
+                modal-lg
+                modal-dialog-centered">
 
-        <div class="modal-content rounded-4 border-0 shadow-lg">
+        <div class="modal-content
+                    rounded-4
+                    border-0
+                    shadow-lg">
 
-            <div class="modal-header border-0 pb-0 px-4 pt-4">
+            <div class="modal-header
+                        border-0
+                        pb-0
+                        px-4
+                        pt-4">
 
                 <h2 class="modal-title">
                     Manage Project Members
@@ -560,10 +613,12 @@
 
                 <button type="button"
                         class="btn-close"
-                        data-bs-dismiss="modal">
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
                 </button>
 
             </div>
+
 
             <div class="modal-body p-4">
 
@@ -573,19 +628,19 @@
 
                         <input type="text"
                                id="modalSearchText"
-                               class="form-control rounded-3 py-2"
+                               class="form-control"
                                placeholder="Staff Name / Code" />
 
                     </div>
 
+
                     <div class="col-md-4">
 
                         <select id="modalDeptSelect"
-                                class="form-select rounded-3 py-2 select-truncate"
+                                class="form-select select-truncate"
                                 asp-items="@(ViewBag.Departments as List<SelectListItem>)">
 
-                            <option value=""
-                                    selected>
+                            <option value="" selected>
                                 All Departments
                             </option>
 
@@ -593,11 +648,15 @@
 
                     </div>
 
+
                     <div class="col-md-3">
 
                         <button type="button"
                                 id="btnModalSearch"
-                                class="btn btn-primary rounded-3 w-100 py-2 fw-medium">
+                                class="btn
+                                       btn-primary
+                                       project-entry-btn
+                                       w-100">
 
                             <i class="bi bi-search me-1"></i>
                             Search
@@ -608,18 +667,37 @@
 
                 </div>
 
-                <div class="table-responsive border rounded-3 modal-table-container">
 
-                    <table class="table table-hover align-middle mb-0"
+                <div class="table-responsive
+                            border
+                            rounded-3
+                            modal-table-container">
+
+                    <table class="table
+                                  table-hover
+                                  align-middle
+                                  mb-0"
                            id="tblModalMembers">
 
                         <thead class="bg-light text-muted">
 
                             <tr>
-                                <th class="text-center col-width-45"></th>
-                                <th class="col-width-130">STAFF CODE</th>
-                                <th>STAFF NAME</th>
-                                <th>DEPARTMENT NAME</th>
+
+                                <th class="text-center col-width-45">
+                                </th>
+
+                                <th class="col-width-130">
+                                    STAFF CODE
+                                </th>
+
+                                <th>
+                                    STAFF NAME
+                                </th>
+
+                                <th>
+                                    DEPARTMENT NAME
+                                </th>
+
                             </tr>
 
                         </thead>
@@ -628,10 +706,10 @@
 
                             <tr>
                                 <td colspan="4"
-                                    class="text-center text-muted py-3">
-
+                                    class="text-center
+                                           text-muted
+                                           py-3">
                                     Click search to find staff members.
-
                                 </td>
                             </tr>
 
@@ -643,17 +721,26 @@
 
             </div>
 
-            <div class="modal-footer border-0 px-4 pb-4 pt-0">
+
+            <div class="modal-footer
+                        border-0
+                        px-4
+                        pb-4
+                        pt-0">
 
                 <button type="button"
-                        class="btn btn-outline-secondary rounded-3 px-4 py-2"
+                        class="btn
+                               btn-outline-secondary
+                               project-entry-btn"
                         data-bs-dismiss="modal">
                     Cancel
                 </button>
 
                 <button type="button"
                         id="btnAddSelectedMembers"
-                        class="btn btn-primary rounded-3 px-4 py-2 fw-medium">
+                        class="btn
+                               btn-primary
+                               project-entry-btn">
                     Add Members
                 </button>
 
@@ -663,7 +750,9 @@
     </div>
 </div>
 
+
 @await Html.PartialAsync("~/Views/Shared/AlertModal.cshtml")
+
 
 @section Scripts {
 

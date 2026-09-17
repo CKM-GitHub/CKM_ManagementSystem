@@ -5,14 +5,16 @@ body {
     min-height: 100%;
     font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
     font-size: 14px;
-    overflow:hidden;
+    overflow: hidden;
 }
 
 body {
     overflow-x: hidden;
 }
 
+
 /* Logo */
+
 .logo-container {
     display: flex;
     align-items: center;
@@ -26,7 +28,9 @@ body {
     object-fit: contain;
 }
 
-/* Main layout */
+
+/* Main Layout */
+
 .app-shell {
     display: flex;
     width: 100%;
@@ -43,6 +47,7 @@ body {
     overflow-y: auto;
     overflow-x: hidden;
 }
+
 .main-area {
     flex: 1;
     min-width: 0;
@@ -56,27 +61,48 @@ body {
     background-repeat: no-repeat;
 }
 
+
+/* Topbar */
+
 .topbar {
-    height: 70px;
-    flex-shrink: 0;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 16px;
+}
+
+.topbar-left {
+    min-width: 0;
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    overflow: hidden;
+}
+
+#profileContainer {
+    margin-left: auto;
+    flex: 0 0 auto;
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    padding: 0 20px;
-    background: transparent;
-    border-bottom: none;
-
 }
+
+/* Page Content */
 
 .page-content {
     flex: 1;
     min-height: 0;
+    padding: 0;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 0;
     color: #ffffff;
 }
-/* Sidebar menu */
+
+
+/* Main Menu */
+
 .main-menu {
     width: 100%;
 }
@@ -87,7 +113,9 @@ body {
     padding-top: 8px;
 }
 
-/* Menu items */
+
+/* Menu Items */
+
 .menu-link,
 .menu-parent {
     width: 100%;
@@ -110,7 +138,9 @@ body {
         color: #ffffff;
     }
 
-/* Parent menu */
+
+/* Parent Menu */
+
 .menu-parent {
     justify-content: space-between;
 }
@@ -121,7 +151,9 @@ body {
     gap: 10px;
 }
 
-/* Menu icons */
+
+/* Menu Icons */
+
 .menu-link i,
 .menu-parent i,
 .submenu-link i {
@@ -129,7 +161,9 @@ body {
     text-align: center;
 }
 
+
 /* Submenu */
+
 .submenu {
     background-color: #001D58;
 }
@@ -150,7 +184,6 @@ body {
         color: #ffffff;
     }
 
-    /* Active menu */
     .menu-link.active,
     .submenu-link.active {
         background-color: rgba(255, 255, 255, 0.12);
@@ -163,7 +196,9 @@ body {
     color: #ffffff;
 }
 
+
 /* Profile */
+
 .profile-dropdown {
     position: relative;
 }
@@ -171,31 +206,33 @@ body {
 .profile-button {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 6px 10px;
+    gap: 8px;
+    padding: 4px 8px;
     border: none;
     background: transparent;
     color: #ffffff;
     cursor: pointer;
 }
-.profile-default-icon {
-    width: 42px;
-    height: 42px;
+
+.profile-default-icon,
+.profile-image {
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.profile-default-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
     background-color: #f1f3f5;
     color: #6c757d;
-    font-size: 22px;
+    font-size: 19px;
 }
+
 .profile-image {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
     object-fit: cover;
-    flex-shrink: 0;
 }
 
 .profile-info {
@@ -203,19 +240,17 @@ body {
     flex-direction: column;
     align-items: flex-start;
     line-height: 1.2;
-
 }
 
 .profile-name {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
     color: #ffffff;
 }
 
 .profile-role {
-    font-size: 12px;
+    font-size: 11px;
     color: #001D58;
-   
 }
 
 .profile-button > .bi-chevron-down {
@@ -223,7 +258,9 @@ body {
     font-size: 12px;
 }
 
-/* Profile dropdown */
+
+/* Profile Dropdown */
+
 .profile-dropdown .dropdown-menu {
     min-width: 190px;
     padding: 6px 0;
@@ -243,11 +280,172 @@ body {
         color: #ffffff;
     }
 
+
 /* Logout */
+
 .profile-dropdown .logout-item {
     color: red;
 }
 
 .profile-dropdown .dropdown-item.logout-item:hover {
     color: red;
+}
+
+
+/* Mobile Menu Button */
+
+.mobile-menu-button {
+    display: none;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #001D58;
+    font-size: 26px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.sidebar-overlay {
+    display: none;
+}
+
+
+/* Sub Navigation */
+
+#subNavigationContainer {
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+}
+
+    #subNavigationContainer:empty {
+        display: none;
+    }
+
+.sub-navigation {
+    min-height: 48px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 0;
+    background: transparent;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+}
+
+.sub-nav-link {
+    position: relative;
+    height: 48px;
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    color: var(--gray);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: default;
+    flex-shrink: 0;
+}
+
+    .sub-nav-link.active {
+        color: var(--primary-blue);
+        font-weight: 600;
+    }
+
+        .sub-nav-link.active::after {
+            content: "";
+            position: absolute;
+            left: 12px;
+            right: 12px;
+            bottom: 0;
+            height: 2px;
+            border-radius: 2px;
+            background-color: var(--primary-blue);
+        }
+
+
+/* Tablet / Mobile Sidebar */
+
+@media (max-width: 991.98px) {
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 230px;
+        min-width: 230px;
+        height: 100vh;
+        z-index: 1050;
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
+    }
+
+        .sidebar.mobile-open {
+            transform: translateX(0);
+        }
+
+    .main-area {
+        width: 100%;
+    }
+
+    .mobile-menu-button {
+        display: inline-flex !important;
+    }
+
+    .sidebar-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 1040;
+        display: block;
+        background-color: rgba(0, 0, 0, 0.35);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.25s ease, visibility 0.25s ease;
+    }
+
+        .sidebar-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+    .profile-info {
+        display: none;
+    }
+
+    .profile-button > .bi-chevron-down {
+        display: none;
+    }
+}
+
+
+/* Mobile Sub Navigation */
+
+@media (max-width: 767.98px) {
+
+    .topbar {
+        gap: 8px;
+    }
+
+    .topbar-left {
+        gap: 6px;
+    }
+
+    .sub-navigation {
+        min-height: 42px;
+        padding: 0;
+        gap: 4px;
+    }
+
+    .sub-nav-link {
+        height: 42px;
+        padding: 0 10px;
+        font-size: 13px;
+    }
 }

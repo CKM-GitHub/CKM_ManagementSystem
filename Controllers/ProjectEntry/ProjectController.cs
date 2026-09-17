@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using CKM_ManagementSystem.BL;
-using CKM_ManagementSystem.Models.ViewModels.Projects;
+using CKM_ManagementSystem.Models.ViewModels.Project;
 using System.Linq;
 
 namespace CKM_ManagementSystem.Controllers
