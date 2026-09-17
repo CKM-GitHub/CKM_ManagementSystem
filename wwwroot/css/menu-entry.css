@@ -50,17 +50,7 @@
     opacity: 0.8;
 }
 
-.btn-register {
-    background-color: var(--primary-blue);
-    color: var(--white);
-    border: none;
-    padding: 0.6rem;
-    border-radius: 6px;
-}
 
-.btn-register:hover {
-    color: var(--white);
-}
 
 .modal-dialog {
     display: flex !important;
@@ -81,27 +71,69 @@ textarea.border-danger{
     font-size: 14px !important;
 }
 
+.button-row {
+    display: flex !important;
+    gap: 10px !important;
+    width: 100%;
+}
+
+.btn-register,
+.btn-clear,
+.btn-cancel {
+    flex: 1 !important;
+    height: 42px !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: none !important;
+    border-radius: 4px !important;
+    font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: var(--white) !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+    transition: opacity 0.2s ease, transform 0.1s ease !important;
+}
+
+.btn-register {
+    background-color: var(--primary-blue) !important;
+}
+
 .btn-clear,
 .btn-cancel {
     background-color: var(--gray) !important;
-    color: var(--white) !important;
-    border: none !important;
-    padding: 0.6rem !important;
-    border-radius: 6px !important;
-    text-decoration: none !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
-    font-size: 14px !important;
 }
 
-.btn-clear:hover,
-.btn-cancel:hover {
-    background-color: var(--gray) !important;
-    color: var(--white) !important;
-}
+    .btn-register:hover,
+    .btn-clear:hover,
+    .btn-cancel:hover {
+        color: var(--white) !important;
+        text-decoration: none !important;
+        opacity: 0.9 !important;
+    }
 
+    .btn-register:active,
+    .btn-clear:active,
+    .btn-cancel:active {
+        color: var(--white) !important;
+        text-decoration: none !important;
+        transform: translateY(1px) !important;
+    }
+
+    .btn-register:focus,
+    .btn-clear:focus,
+    .btn-cancel:focus {
+        color: var(--white) !important;
+        text-decoration: none !important;
+    }
+
+@media (max-width: 576px) {
+    .button-row {
+        flex-direction: column !important;
+    }
+}
 .menu-center {
     padding: 70px;
 }

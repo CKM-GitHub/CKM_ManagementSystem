@@ -241,6 +241,7 @@ $(document).ready(function () {
         });
 
         var selectedStatus = $('input[name="Status"]:checked').val() || 'Active';
+        var selectedProjectType = $('input[name="ProjectType"]:checked').val() || 'SYS';
 
         var payload = {
             ProjectCode: codeVal,
@@ -251,10 +252,10 @@ $(document).ready(function () {
             StartDate: $('#StartDate').val(),
             EndDate: $('#EndDate').val(),
             Status: selectedStatus,
+            ProjectType: selectedProjectType,
             IsEdit: isEditMode,
             ProjectMembers: membersList
         };
-
         var token = $('input[name="__RequestVerificationToken"]').val();
         var $btn = $('#btnRegister');
         $btn.prop('disabled', true).text(isEditMode ? 'Updating...' : 'Creating...');

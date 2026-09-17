@@ -173,8 +173,8 @@ namespace CKM_ManagementSystem.Controllers.Menu
         [ValidateAntiForgeryToken]
         [ActionName("DeleteMenu")]
         public async Task<IActionResult> DeleteMenuAsync(
-    int menuId,
-    int page = 1)
+            int menuId,
+            int page = 1)
         {
             try
             {

@@ -4,13 +4,24 @@
         document.getElementById("mainMenuContainer");
 
     if (mainMenuContainer) {
+        const cachedMenu = sessionStorage.getItem("mainMenuHtml");
+        if (cachedMenu) {
+            mainMenuContainer.innerHTML = cachedMenu;
+
+            setActiveMenu();
+            setupMenuState();
+        }
         fetch("/MainMenu/Index")
             .then(response => response.text())
             .then(html => {
-                mainMenuContainer.innerHTML = html;
-
-                setActiveMenu();
-                setupMenuState();
+                sessionStorage.setItem(
+                    "mainMenuHtml", html
+                );
+                if (html !== cachedMenu) {
+                    mainMenuContainer.innerHTML = html;
+                    setActiveMenu();
+                    setupMenuState();
+                }
             });
     }
 
