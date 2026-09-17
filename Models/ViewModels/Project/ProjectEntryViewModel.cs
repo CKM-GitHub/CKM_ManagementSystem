@@ -42,11 +42,6 @@ namespace CKM_ManagementSystem.Models.ViewModels.Project
         public string Status { get; set; } = "Active";
         public string ProjectType { get; set; } = "SYS";
 
-
-       
-        public string ProjectType { get; set; } = "SYS";
-
-
         public bool IsEdit { get; set; } = false;
 
 
