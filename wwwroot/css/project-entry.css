@@ -418,6 +418,43 @@ small,
 }
 
 
+/* Department Entry style Clear / Cancel button */
+.btn-clear-project {
+    height: 42px;
+    padding: 0 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--gray);
+    color: var(--white);
+    font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.1s ease;
+}
+
+    .btn-clear-project:hover {
+        color: var(--white);
+        text-decoration: none;
+        opacity: 0.9;
+    }
+
+    .btn-clear-project:active {
+        color: var(--white);
+        text-decoration: none;
+        transform: translateY(1px);
+    }
+
+    .btn-clear-project:focus {
+        color: var(--white);
+        text-decoration: none;
+    }
+
+
 /* ========================================
    Responsive
 ======================================== */
