@@ -1,7 +1,7 @@
 ﻿.menu-page-shell {
     font-size: 14px;
     color: var(--dark-blue);
-    padding: 12px 14px 20px;
+    padding: 16px 24px 24px;
 }
 .menu-page-shell .page-title{
     font-size: 32px !important;
@@ -25,7 +25,6 @@
 
 body {
     margin: 0;
-    min-height: 100vh;
     font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
 }
 
@@ -35,7 +34,7 @@ body {
 }
 
 .page-header{
-    margin-bottom: 14px;
+    margin-bottom: 16px;
 }
 
 .page-title {
@@ -47,17 +46,17 @@ body {
 
 .filter-card, .table-card {
     background: var(--white);
-    border-radius: 16px;
+    border-radius: 12px;
     border: 1px solid rgba(255,255,255, 0.15);
     box-shadow: 0 8px 24px rgba(16, 24, 40 , 0.08);
 }
 
 .filter-card{
-    padding: 20px;
+    padding: 20px 24px;
 }
 
 .table-card{
-    padding: 18px 18px 10px;
+    padding: 20px 24px ;
 }
 
 .toolbar-row{
@@ -118,7 +117,7 @@ body {
 
 .toolbar-input{
     width: 100%;
-    height: 38px;
+    height: 42px;
     border: 1px solid var(--border-color);
     border-radius: 8px;
     background: var(--light-gray);
@@ -149,7 +148,7 @@ body {
     box-shadow: 0 0 0 3px rgba(21, 94, 239, 0.1);
 }
 .toolbar-btn, .add-btn{
-    height: 36px;
+    height: 42px;
     padding: 0 16px;
     border-radius: 8px;
     font-weight: 600;
@@ -408,7 +407,6 @@ body {
     .toolbar-left{
         width: 100%;
         flex-wrap: wrap;
-        flex-wrap: wrap;
         gap: 10px;
     }
     .toolbar-right{
@@ -417,8 +415,8 @@ body {
     }
     
     .toolbar-btn{
-        height: 36px !important;
-        min-height: 36px !important;
+        height: 42px !important;
+        min-height: 42px !important;
         width: 100% !important;
         min-width: 100% !important;
         display: flex !important;
@@ -466,15 +464,34 @@ body {
         width: 100% !important;
         min-width: 100% !important;
     }
-    .table-footer{
+    .table-footer {
         flex-direction: column;
         align-items: center;
+        justify-content: center;
         gap: 12px;
+        text-align: center;
+    }
+
+    .footer-text {
+        width: 100%;
+        text-align: center;
+    }
+
+    .pagination-box {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .page-btn {
+        width: 34px !important;
+        height: 34px !important;
+        font-size: 12px !important;
     }
 }
 @media(max-width: 575.98px){
     .menu-page-shell {
-        padding: 10px;
+        padding: 16px;
     }
     .filter-card{
         padding: 14px;

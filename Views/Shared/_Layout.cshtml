@@ -19,20 +19,36 @@
 <body>
     <div class="app-shell">
 
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div id="mainMenuContainer"></div>
         </aside>
 
-    
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
         <div class="main-area">
+
             <header class="topbar">
-              <div id="profileContainer"></div>
+
+                <button type="button"
+                        class="mobile-menu-button"
+                        id="mobileMenuButton"
+                        aria-label="Open menu">
+                    <i class="bi bi-list"></i>
+                </button>
+
+                <div id="profileContainer"></div>
+
             </header>
+            <div id="subNavigationContainer">
+
+            </div>
             <main class="page-content">
                 @RenderBody()
             </main>
+
         </div>
     </div>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 

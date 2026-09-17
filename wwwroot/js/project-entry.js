@@ -290,3 +290,12 @@ $(document).ready(function () {
         });
     });
 });
+document.querySelectorAll('.member-avatar-fallback').forEach(function (img) {
+    img.addEventListener('error', function () {
+        if (this.src.endsWith('/images/default-avatar.png')) {
+            return;
+        }
+
+        this.src = '/images/default-avatar.png';
+    });
+});

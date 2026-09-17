@@ -1,69 +1,84 @@
-﻿/* Google Fonts Import */
+﻿
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap');
+/* ========================================
+   Base Typography
+======================================== */
 
-
-/* Global Font Family & Base Typography Setup */
-
-body, input, button, select, textarea, label, table, .modal-content {
+body,
+input,
+button,
+select,
+textarea,
+label,
+table,
+.modal-content {
     font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif !important;
-    font-size: 14px; /* Body Base Size */
-
+    font-size: 14px;
     color: #2b2f38;
 }
 
 
-    /* Background Setup */
+    /* ========================================
+   Page Background
+======================================== */
 
     body.project-entry-bg {
         background-image: url('../images/system_img/background_img.png');
-        background-size: cover;p
+        background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
         background-attachment: fixed;
-        min-height: 100vh;
     }
 
+.project-entry-page {
+    width: 100%;
+    padding: 16px 24px 24px;
+    box-sizing: border-box;
+}
+.project-entry-card {
+    width: 100%;
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+.project-entry-btn {
+    height: 42px;
+    padding: 0 18px !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    font-weight: 600;
+}
+/* ========================================
+   Typography
+======================================== */
 
-/* 1. Main Header (32px Bold) */
-
-.page-title, h1, .main-header {
+.page-title,
+.main-header {
+    margin: 0 0 16px;
     font-size: 32px !important;
     font-weight: 700 !important;
     line-height: 1.2;
     color: #111827;
 }
 
-
-/* 2. Subheader (16px Bold) */
-
-.section-title, h2, h3, .modal-title, .subheader, .card-title {
+.section-title,
+.modal-title,
+.subheader,
+.card-title {
     font-size: 16px !important;
     font-weight: 700 !important;
     color: #1f2937;
 }
 
-
-/* 3. Primary Elements (14px) */
-
-.form-label,
-.form-control,
-.form-select,
-.btn,
-.table th,
-.table td {
-    font-size: 14px !important;
-}
-
-
 .form-label {
-    font-weight: 600;
+    margin-bottom: 6px;
     color: #374151;
-    margin-bottom: 0.35rem;
+    font-size: 14px !important;
+    font-weight: 600;
 }
-
-
-/* 4. Small Text & Guidance (12px / 11px) */
 
 .form-text,
 .text-muted,
@@ -74,22 +89,47 @@ small,
     font-size: 12px !important;
 }
 
-
 .form-help-text {
     font-size: 11px !important;
 }
 
 
-/* Header Folder Icon Box */
+/* ========================================
+   Form Controls
+======================================== */
+
+.form-control,
+.form-select {
+    height: 42px;
+    padding: 8px 12px;
+    box-sizing: border-box;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 14px !important;
+}
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 2px rgba(8, 125, 241, 0.14);
+    }
+
+    .form-control:disabled {
+        background-color: #e9ecef;
+        opacity: 1;
+        cursor: not-allowed;
+    }
+
+
+/* ========================================
+   Header / Member Elements
+======================================== */
 
 .icon-header-box,
 .folder-icon-box {
     width: 54px;
     height: 54px;
 }
-
-
-/* Member Avatar Image Fix */
 
 .member-avatar {
     width: 28px;
@@ -98,59 +138,64 @@ small,
 }
 
 
-/* Dropdown Overflow & Width Fix */
+/* ========================================
+   Dropdown Handling
+======================================== */
 
 #modalDeptSelect,
 .select-truncate {
     width: 100% !important;
     max-width: 200px !important;
-    text-overflow: ellipsis !important;
+    display: inline-block;
     overflow: hidden !important;
     white-space: nowrap !important;
-    display: inline-block;
+    text-overflow: ellipsis !important;
 }
-
 
     #modalDeptSelect option,
     .select-truncate option {
-        max-width: 200px !important;
         width: 200px !important;
+        max-width: 200px !important;
         overflow: hidden !important;
-        text-overflow: ellipsis !important;
         white-space: nowrap !important;
+        text-overflow: ellipsis !important;
     }
 
 
-/* Modal and Input Stack Management */
+/* ========================================
+   Modal
+======================================== */
 
 .modal-content {
     overflow: hidden;
 }
-
 
 .modal-body {
     overflow-x: hidden;
 }
 
 
-/* Text Truncation Utility for Table Content */
+/* ========================================
+   Utilities
+======================================== */
 
 .text-truncate-custom {
-    max-width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
     display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     vertical-align: middle;
 }
-
 
 .cursor-pointer {
     cursor: pointer;
 }
 
 
-/* Custom Scrollbar & Container for Member Selection Modal Table */
+/* ========================================
+   Modal Member Table Scroll
+======================================== */
 
 .modal-table-container {
     max-height: 280px;
@@ -159,157 +204,137 @@ small,
 }
 
 
-/* Fixed Width Classes for Headers */
+/* ========================================
+   Fixed Width Utilities
+======================================== */
 
 .col-width-40 {
     width: 40px;
 }
 
-
 .col-width-45 {
     width: 45px;
 }
-
 
 .col-width-50 {
     width: 50px;
 }
 
-
 .col-width-60 {
     width: 60px;
 }
-
 
 .col-width-130 {
     width: 130px;
 }
 
-
 .col-width-140 {
     width: 140px;
 }
-
 
 .col-width-150 {
     width: 150px;
 }
 
 
-/* Table Fixed Layout - Modal Members */
+/* ========================================
+   Modal Members Table
+======================================== */
 
 #tblModalMembers {
+    width: 100%;
+    table-layout: fixed;
     border-collapse: separate;
     border-spacing: 0;
-    table-layout: fixed;
-    width: 100%;
 }
-
 
     #tblModalMembers thead th {
         position: sticky;
         top: 0;
         z-index: 1;
         background-color: #f8f9fa;
-        white-space: nowrap;
         overflow: hidden;
+        white-space: nowrap;
         text-overflow: ellipsis;
     }
-
 
     #tblModalMembers th:nth-child(1) {
         width: 45px;
     }
 
-    /* Checkbox Column */
-
     #tblModalMembers th:nth-child(2) {
         width: 130px;
     }
-
-    /* Staff Code Column */
 
     #tblModalMembers th:nth-child(3) {
         width: 35%;
     }
 
-    /* Staff Name Column */
-
     #tblModalMembers th:nth-child(4) {
         width: 40%;
     }
 
-    /* Department Name Column */
-
-
     #tblModalMembers td {
-        white-space: nowrap;
         overflow: hidden;
+        white-space: nowrap;
         text-overflow: ellipsis;
     }
 
 
-/* Selected Members Table Styling */
+/* ========================================
+   Selected Members Table
+======================================== */
 
 #tblSelectedMembers {
-    table-layout: fixed;
     width: 100%;
+    table-layout: fixed;
 }
-
 
     #tblSelectedMembers th:nth-child(1) {
         width: 50px;
     }
 
-    /* NO. Column */
-
     #tblSelectedMembers th:nth-child(2) {
         width: 140px;
     }
-
-    /* Staff Code Column */
 
     #tblSelectedMembers th:nth-child(3) {
         width: auto;
     }
 
-    /* Staff Name Column */
-
     #tblSelectedMembers th:nth-child(4) {
         width: 70px;
     }
 
-    /* Action Column */
-
-
-    #tblSelectedMembers td,
-    #tblSelectedMembers th {
-        white-space: nowrap;
+    #tblSelectedMembers th,
+    #tblSelectedMembers td {
         overflow: hidden;
+        white-space: nowrap;
         text-overflow: ellipsis;
     }
 
 
-/* Form Interactivity & Hover States */
+/* ========================================
+   Table Interaction
+======================================== */
+
+.table th,
+.table td {
+    font-size: 14px !important;
+}
 
 .table-hover tbody tr:hover {
     background-color: #f8fafc;
 }
 
 
-.form-control:focus,
-.form-select:focus {
-    border-color: #0d6efd;
-    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+/* ========================================
+   Buttons
+======================================== */
+
+.btn {
+    font-size: 14px !important;
 }
-
-
-.form-control:disabled {
-    background-color: #e9ecef;
-    opacity: 1;
-    cursor: not-allowed;
-}
-
 
 .btn-add-member-custom {
     background-color: #eef2ff;

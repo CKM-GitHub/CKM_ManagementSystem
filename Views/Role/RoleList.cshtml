@@ -7,18 +7,18 @@
 
 @section Styles {
 
-    ```
+    
     <link rel="stylesheet" href="~/css/role-list.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/Alert_Modal.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/ckm-theme.css" asp-append-version="true" />
-    ```
+    
 
 }
 
-<div class="container-fluid px-4 px-md-5 pb-5">
+<div class="container-fluid role-list-page">
     <h2 class="page-title">Role Management</h2>
 
-    ```
+    
     @Html.AntiForgeryToken()
 
     <div class="custom-card">
@@ -111,7 +111,7 @@
                                            asp-route-id="@item.RoleCode"
                                            class="action-icon-btn edit-icon text-decoration-none"
                                            title="Edit Role">
-                                            <i class="far fa-pen-to-square"></i>
+                                            <i class="bi bi-pencil-square"></i>
                                         </a>
 
                                         <button type="button"
@@ -119,7 +119,7 @@
                                                 data-role-code="@item.RoleCode"
                                                 data-delete-url="@Url.Action("DeleteRole", "Role")"
                                                 title="Delete Role">
-                                            <i class="far fa-trash-can"></i>
+                                            <i class="bi bi-trash"></i>
                                         </button>
 
                                     </div>

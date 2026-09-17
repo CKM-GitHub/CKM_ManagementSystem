@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace CKM_ManagementSystem.Models.ViewModels.Projects
+namespace CKM_ManagementSystem.Models.ViewModels.Project
 {
     public class ProjectEntryViewModel
     {
@@ -27,6 +27,7 @@ namespace CKM_ManagementSystem.Models.ViewModels.Projects
         public DateTime? EndDate { get; set; }
 
         public string Status { get; set; } = "Active";
+        public string ProjectType { get; set; } = "SYS";
 
         public bool IsEdit { get; set; } = false;
 
