@@ -2,26 +2,6 @@
 
 @{
     ViewData["Title"] = "Menu Management";
-
-    var successMessage =
-        TempData["SuccessMessage"]?.ToString();
-
-    var errorMessage =
-        TempData["ErrorMessage"]?.ToString();
-}
-
-@if (!string.IsNullOrWhiteSpace(successMessage))
-{
-    <input type="hidden"
-           id="successMessage"
-           value="@successMessage" />
-}
-
-@if (!string.IsNullOrWhiteSpace(errorMessage))
-{
-    <input type="hidden"
-           id="errorMessage"
-           value="@errorMessage" />
 }
 
 <partial name="AlertModal" />
@@ -383,6 +363,12 @@
 </div>
 
 @section Scripts {
+
+    <script>
+        var successMessage = '@(TempData["SuccessMessage"] ?? "")';
+        var errorMessage = '@(TempData["ErrorMessage"] ?? "")';
+        var menuListUrl = '@Url.Action("MenuListView", "Menu")';
+    </script>
     <script src="~/js/Alert_Modal.js"
             asp-append-version="true"></script>
 
