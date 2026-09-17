@@ -111,7 +111,7 @@
         color: var(--dark-blue);
         font-weight: bold;
         font-size: 16px;
-        padding: 14px 10px;
+        padding: 14px 14px;
         border-bottom: 1px solid var(--light-gray);
         background-color: var(--white);
         vertical-align: middle;
@@ -121,7 +121,7 @@
     .project-table td {
         color: var(--dark-blue);
         font-size: 14px;
-        padding: 16px 10px;
+        padding: 16px 14px;
         border-bottom: 1px solid var(--light-gray);
         vertical-align: middle;
         overflow: hidden;
