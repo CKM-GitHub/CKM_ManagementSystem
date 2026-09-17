@@ -1,50 +1,46 @@
-﻿/* Google Fonts Import */
+﻿@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap');
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap');
-
-
-/* Global Font Family & Base Typography Setup */
-
-body, input, button, select, textarea, label, table, .modal-content {
+body,
+input,
+button,
+select,
+textarea,
+label,
+table,
+.modal-content {
     font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif !important;
-    font-size: 14px; /* Body Base Size */
-
+    font-size: 14px;
     color: #2b2f38;
 }
 
-
-    /* Background Setup */
-
     body.project-entry-bg {
         background-image: url('../images/system_img/background_img.png');
-        background-size: cover;p
+        background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
         background-attachment: fixed;
         min-height: 100vh;
     }
 
-
-/* 1. Main Header (32px Bold) */
-
-.page-title, h1, .main-header {
+.page-title,
+h1,
+.main-header {
     font-size: 32px !important;
     font-weight: 700 !important;
     line-height: 1.2;
     color: #111827;
 }
 
-
-/* 2. Subheader (16px Bold) */
-
-.section-title, h2, h3, .modal-title, .subheader, .card-title {
+.section-title,
+h2,
+h3,
+.modal-title,
+.subheader,
+.card-title {
     font-size: 16px !important;
     font-weight: 700 !important;
     color: #1f2937;
 }
-
-
-/* 3. Primary Elements (14px) */
 
 .form-label,
 .form-control,
@@ -55,15 +51,11 @@ body, input, button, select, textarea, label, table, .modal-content {
     font-size: 14px !important;
 }
 
-
 .form-label {
     font-weight: 600;
     color: #374151;
     margin-bottom: 0.35rem;
 }
-
-
-/* 4. Small Text & Guidance (12px / 11px) */
 
 .form-text,
 .text-muted,
@@ -74,13 +66,9 @@ small,
     font-size: 12px !important;
 }
 
-
 .form-help-text {
     font-size: 11px !important;
 }
-
-
-/* Header Folder Icon Box */
 
 .icon-header-box,
 .folder-icon-box {
@@ -88,17 +76,11 @@ small,
     height: 54px;
 }
 
-
-/* Member Avatar Image Fix */
-
 .member-avatar {
     width: 28px;
     height: 28px;
     object-fit: cover;
 }
-
-
-/* Dropdown Overflow & Width Fix */
 
 #modalDeptSelect,
 .select-truncate {
@@ -110,7 +92,6 @@ small,
     display: inline-block;
 }
 
-
     #modalDeptSelect option,
     .select-truncate option {
         max-width: 200px !important;
@@ -120,20 +101,13 @@ small,
         white-space: nowrap !important;
     }
 
-
-/* Modal and Input Stack Management */
-
 .modal-content {
     overflow: hidden;
 }
 
-
 .modal-body {
     overflow-x: hidden;
 }
-
-
-/* Text Truncation Utility for Table Content */
 
 .text-truncate-custom {
     max-width: 100%;
@@ -144,13 +118,9 @@ small,
     vertical-align: middle;
 }
 
-
 .cursor-pointer {
     cursor: pointer;
 }
-
-
-/* Custom Scrollbar & Container for Member Selection Modal Table */
 
 .modal-table-container {
     max-height: 280px;
@@ -158,45 +128,33 @@ small,
     overflow-x: hidden;
 }
 
-
-/* Fixed Width Classes for Headers */
-
 .col-width-40 {
     width: 40px;
 }
-
 
 .col-width-45 {
     width: 45px;
 }
 
-
 .col-width-50 {
     width: 50px;
 }
-
 
 .col-width-60 {
     width: 60px;
 }
 
-
 .col-width-130 {
     width: 130px;
 }
-
 
 .col-width-140 {
     width: 140px;
 }
 
-
 .col-width-150 {
     width: 150px;
 }
-
-
-/* Table Fixed Layout - Modal Members */
 
 #tblModalMembers {
     border-collapse: separate;
@@ -204,7 +162,6 @@ small,
     table-layout: fixed;
     width: 100%;
 }
-
 
     #tblModalMembers thead th {
         position: sticky;
@@ -216,31 +173,21 @@ small,
         text-overflow: ellipsis;
     }
 
-
     #tblModalMembers th:nth-child(1) {
         width: 45px;
     }
-
-    /* Checkbox Column */
 
     #tblModalMembers th:nth-child(2) {
         width: 130px;
     }
 
-    /* Staff Code Column */
-
     #tblModalMembers th:nth-child(3) {
         width: 35%;
     }
 
-    /* Staff Name Column */
-
     #tblModalMembers th:nth-child(4) {
         width: 40%;
     }
-
-    /* Department Name Column */
-
 
     #tblModalMembers td {
         white-space: nowrap;
@@ -248,39 +195,26 @@ small,
         text-overflow: ellipsis;
     }
 
-
-/* Selected Members Table Styling */
-
 #tblSelectedMembers {
     table-layout: fixed;
     width: 100%;
 }
 
-
     #tblSelectedMembers th:nth-child(1) {
         width: 50px;
     }
-
-    /* NO. Column */
 
     #tblSelectedMembers th:nth-child(2) {
         width: 140px;
     }
 
-    /* Staff Code Column */
-
     #tblSelectedMembers th:nth-child(3) {
         width: auto;
     }
 
-    /* Staff Name Column */
-
     #tblSelectedMembers th:nth-child(4) {
         width: 70px;
     }
-
-    /* Action Column */
-
 
     #tblSelectedMembers td,
     #tblSelectedMembers th {
@@ -289,13 +223,9 @@ small,
         text-overflow: ellipsis;
     }
 
-
-/* Form Interactivity & Hover States */
-
 .table-hover tbody tr:hover {
     background-color: #f8fafc;
 }
-
 
 .form-control:focus,
 .form-select:focus {
@@ -303,14 +233,75 @@ small,
     box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
 }
 
-
 .form-control:disabled {
     background-color: #e9ecef;
     opacity: 1;
     cursor: not-allowed;
 }
 
-
 .btn-add-member-custom {
     background-color: #eef2ff;
 }
+
+/* Department Entry style Clear / Cancel */
+.btn-clear-project {
+    height: 42px;
+    min-width: 80px;
+    padding: 0 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 4px;
+    background-color: var(--gray);
+    color: var(--white);
+    font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.1s ease;
+}
+
+    .btn-clear-project:hover {
+        color: var(--white);
+        text-decoration: none;
+        opacity: 0.9;
+    }
+
+    .btn-clear-project:active {
+        color: var(--white);
+        text-decoration: none;
+        transform: translateY(1px);
+    }
+
+    .btn-clear-project:focus {
+        color: var(--white);
+        text-decoration: none;
+    }
+
+/* Department List style remove-member icon */
+.member-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    font-size: 16px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.member-delete-icon {
+    color: var(--error-color);
+}
+
+    .member-delete-icon:hover {
+        background-color: #FDEAEA;
+        color: var(--error-color);
+    }

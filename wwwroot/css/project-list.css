@@ -1,0 +1,309 @@
+﻿body {
+    background: var(--dark-blue);
+    min-height: 100vh;
+    font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
+}
+
+.page-title {
+    color: var(--dark-blue);
+    font-weight: bold;
+    font-size: 32px;
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    letter-spacing: 0.5px;
+}
+
+.custom-card {
+    background-color: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    padding: 18px 24px;
+    margin-bottom: 20px;
+    border: none;
+}
+
+.filter-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.filter-left-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.search-input-group {
+    position: relative;
+    width: 220px;
+}
+
+    .search-input-group .form-control {
+        padding-right: 32px;
+        border-radius: 6px;
+        border: 1px solid var(--border-color);
+        height: 38px;
+        font-size: 14px;
+        color: var(--dark-blue);
+    }
+
+    .search-input-group .search-icon {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gray);
+        font-size: 14px;
+        pointer-events: none;
+    }
+
+.custom-select {
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    height: 38px;
+    font-size: 14px;
+    width: 140px;
+    color: var(--dark-blue);
+}
+
+.btn-search-menu,
+.btn-add-project {
+    background-color: var(--primary-blue);
+    color: var(--white);
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 14px;
+    height: 38px;
+    padding: 0 16px;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-decoration: none;
+}
+
+.btn-add-project {
+    padding: 0 18px;
+}
+
+    .btn-search-menu:hover,
+    .btn-add-project:hover {
+        background-color: var(--primary-blue-hover);
+        color: var(--white);
+        text-decoration: none;
+    }
+
+.project-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 0;
+    table-layout: fixed;
+}
+
+    .project-table th {
+        color: var(--dark-blue);
+        font-weight: bold;
+        font-size: 16px;
+        padding: 14px 10px;
+        border-bottom: 1px solid var(--light-gray);
+        background-color: var(--white);
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    .project-table td {
+        color: var(--dark-blue);
+        font-size: 14px;
+        padding: 16px 10px;
+        border-bottom: 1px solid var(--light-gray);
+        vertical-align: middle;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .project-table tbody tr:hover {
+        background-color: var(--light-gray);
+    }
+
+.table-text-truncate {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.git-repo-text {
+    color: var(--primary-blue);
+    text-decoration: none;
+    cursor: default;
+}
+
+/* Status badges */
+
+.badge-status-active,
+.badge-status-completed,
+.badge-status-onhold,
+.badge-status-inactive,
+.badge-status-default {
+    min-width: 80px;
+    height: 28px;
+    padding: 0 10px;
+    border-radius: 14px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.badge-status-active {
+    background-color: #D1E7DD;
+    color: var(--success-color);
+}
+
+.badge-status-completed {
+    background-color: #DCEBFF;
+    color: var(--primary-blue);
+}
+
+.badge-status-onhold {
+    background-color: #FFF3CD;
+    color: #856404;
+}
+
+.badge-status-inactive {
+    background-color: #F8D7DA;
+    color: var(--error-color);
+}
+
+.badge-status-default {
+    background-color: var(--light-gray);
+    color: var(--dark-blue);
+}
+
+/* Department List style Actions */
+
+.action-column {
+    white-space: nowrap;
+    text-align: left;
+}
+
+.icon-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    font-size: 16px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.edit-icon {
+    margin-right: 6px;
+    color: var(--primary-blue);
+}
+
+    .edit-icon:hover {
+        background-color: #E8F1FF;
+        color: var(--primary-blue-hover);
+    }
+
+.delete-icon {
+    color: var(--error-color);
+}
+
+    .delete-icon:hover {
+        background-color: #FDEAEA;
+        color: var(--error-color);
+    }
+
+/* Footer */
+
+.table-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 18px;
+    color: var(--gray);
+    font-size: 14px;
+}
+
+.footer-text {
+    color: var(--gray);
+    font-size: 14px;
+}
+
+.pagination-box {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.page-btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+    .page-btn.active {
+        background-color: var(--primary-blue);
+        border-color: var(--primary-blue);
+        color: var(--white);
+    }
+
+        .page-btn.active:hover {
+            background-color: var(--primary-blue-hover);
+            color: var(--white);
+        }
+
+    .page-btn.disabled {
+        opacity: 0.45;
+        pointer-events: none;
+    }
+
+@media (max-width: 992px) {
+    .filter-container {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .filter-left-group {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .search-input-group,
+    .custom-select,
+    .btn-search-menu,
+    .btn-add-project {
+        width: 100%;
+    }
+
+    .table-footer {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+    }
+}
