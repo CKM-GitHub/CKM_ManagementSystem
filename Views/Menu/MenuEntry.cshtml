@@ -1,4 +1,5 @@
-﻿@model CKM_ManagementSystem.Models.ViewModels.Menu.CreateMenuViewModel
+﻿@using CKM_ManagementSystem.Models.ViewModels.Menu
+@model CreateMenuViewModel
 @{
     bool isEdit = Model?.MenuID.HasValue == true && Model.MenuID > 0;
     ViewData["Title"] = isEdit ? "Menu Edit" : "Menu Entry";
@@ -19,30 +20,24 @@
                 </div>
                 <div class="menu-page-shell p-4">
                     <partial name="AlertModal" />
-                    <div id="menuEntryData"
-                         data-is-edit-mode="@isEdit.ToString().ToLower()"
-                         data-success-message="@(TempData["SuccessMessage"] ?? "")"
-                         data-error-message="@(TempData["ErrorMessage"] ?? "")"
-                         data-current-page="@pageNum"
-                         data-menu-list-url="@Url.Action("MenuListView", "Menu")">
-                    </div>
+
                     <form method="post" id="menuForm" asp-action="MenuEntry" asp-route-page ="@Context.Request.Query["page"]">
                         <input type="hidden" asp-for="MenuID" />
                         <div class="mb-3">
                             <label asp-for="DisplayText" class="form-label fw-semibold text-secondary small">Display Text</label>
-                            <input asp-for="DisplayText" class="form-control" placeholder="e.g. , Register User" maxlength="100"  />
+                            <input asp-for="DisplayText" id="DisplayText" name="DisplayText" class="form-control" placeholder="e.g. , Register User" maxlength="100"  />
                             <span asp-validation-for="DisplayText" class="text-danger small"></span>
                             <small class="text-danger char-limit-msg d-none">Maximum 100 characters reached!</small>
                         </div>
                         <div class="mb-3">
                             <label asp-for="ActionName" class="form-label fw-semibold text-secondary small">Action Name(Form Name)</label>
-                            <input asp-for="ActionName" class="form-control" placeholder="e.g. , Register " maxlength="100" />
+                            <input asp-for="ActionName" name="ActionName" class="form-control" placeholder="e.g. , Register " maxlength="100" />
                             <span asp-validation-for="ActionName" class="text-danger small"></span>
                             <small class="text-danger char-limit-msg d-none">Maximum 100 characters reached!</small>
                         </div>
                         <div class="mb-3">
                             <label asp-for="ControllerName" class="form-label fw-semibold text-secondary small">Controller Name</label>
-                            <input asp-for="ControllerName" class="form-control" placeholder="e.g. , Account" maxlength="100" />
+                            <input asp-for="ControllerName" name="ControllerName" class="form-control" placeholder="e.g. , Account" maxlength="100" />
                             <span asp-validation-for="ControllerName" class="text-danger small"></span>
                             <small class="text-danger char-limit-msg d-none">Maximum 100 characters reached!</small>
                         </div>
@@ -53,6 +48,7 @@
                             <span asp-validation-for="IconClass" class="text-danger small"></span>
                         </div>
                         
+                        <div id="msgContainer" data-success="@TempData["SuccessMessage"]"></div>
                         <div class="row mb-3 d-flex align-items-center">
                             <label class="col-sm-4 form-label fw-semibold text-secondary d-block">Menu Type</label>
                             <div class="col-sm-8 d-flex gap-3">
@@ -95,7 +91,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row g-2 pt-2 button-row">
+                        <div class="row g-2 pt-2">
+                            <div class="col-6">
                                 @if(isEdit)
                                 {
                                     <a asp-controller="Menu" asp-action="MenuListView" asp-route-page="@Context.Request.Query["page"]" class="btn btn-cancel w-100 fw-bold">
@@ -105,9 +102,12 @@
                                 {
                                     <button type="reset" id="btnClear" class="btn btn-clear w-100 fw-bold">Clear</button>
                                 }
+                            </div>
+                            <div class="col-6">
                                 <button type="submit" id="btnRegister" class="btn btn-register w-100 fw-bold">
                                     @(isEdit ? "Update" : "Register")
                                 </button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -117,12 +117,15 @@
 </div>
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-
-    <script src="~/js/Alert_Modal.js"
-            asp-append-version="true"></script>
-
-    <script src="~/js/menu-entry.js"
-            asp-append-version="true"></script>
+    <script src="~/js/menu-entry.js" asp-append-version="true"></script>
+    <script src="~/js/Alert_Modal.js" asp-append-version="true"></script>
+    <script>
+        var isEditMode = @isEdit.ToString().ToLower();
+        var successMessage = '@(TempData["SuccessMessage"] ?? "")';
+        var errorMessage = '@(TempData["ErrorMessage"] ?? "")';
+        var currentPage = '@pageNum';
+        var menuListUrl = '@Url.Action("MenuListView", "Menu")';
+    </script>
 }
 @section Styles {
     <link rel="stylesheet" href="~/css/menu-entry.css" />

@@ -1,9 +1,10 @@
-﻿using CKM_ManagementSystem.BL;
-using CKM_ManagementSystem.Models.ViewModels.Menu;
+﻿using CKM_ManagementSystem.Data;
+using CKM_ManagementSystem.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CKM_ManagementSystem.MenuBL;
+using CKM_ManagementSystem.Models.ViewModels.Menu;
 
 namespace CKM_ManagementSystem.Controllers.Menu
 {
@@ -15,6 +16,7 @@ namespace CKM_ManagementSystem.Controllers.Menu
         {
             _menuBL = menuBL;
         }
+
         [HttpGet]
         public async Task<IActionResult> MenuListView(string? searchTerm, int? selectedParentId, bool? statusFilters, int page = 1)
         {
@@ -33,17 +35,17 @@ namespace CKM_ManagementSystem.Controllers.Menu
         }
 
         [HttpGet]
-        public async Task<IActionResult> MenuEntry(int? MenuID, int page=1)
+        public async Task<IActionResult> MenuEntry(int? MenuID, int page = 1)
         {
             ViewBag.CurrentPage = page;
             var model = new CreateMenuViewModel
             {
                 ParentMenuList = await _menuBL.GetParentMenusForDropdownAsync()
             };
-            if(MenuID.HasValue && MenuID > 0)
+            if (MenuID.HasValue && MenuID > 0)
             {
                 var menu = await _menuBL.GetMenuByIdAsync(MenuID.Value);
-                if(menu == null)
+                if (menu == null)
                 {
                     TempData["ErrorMessage"] = "The menu item could not be found.";
                     return RedirectToAction(nameof(MenuListView));
@@ -64,7 +66,7 @@ namespace CKM_ManagementSystem.Controllers.Menu
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> MenuEntry(CreateMenuViewModel model, int page=1)
+        public async Task<IActionResult> MenuEntry(CreateMenuViewModel model, int page = 1)
         {
             ViewBag.CurrentPage = page;
             bool isSubMenu = string.Equals(model.MenuType, "Sub", StringComparison.OrdinalIgnoreCase);
@@ -72,6 +74,7 @@ namespace CKM_ManagementSystem.Controllers.Menu
             {
                 ModelState.AddModelError("ParentMenuId", "Please Select Parent Menu.");
             }
+
             if (!ModelState.IsValid)
             {
                 model.ParentMenuList = await _menuBL.GetParentMenusForDropdownAsync();
@@ -117,7 +120,7 @@ namespace CKM_ManagementSystem.Controllers.Menu
                 }
                 if (statusCode == 0)
                 {
-                    if(statusMessage.Contains("Parent Menu", StringComparison.OrdinalIgnoreCase))
+                    if (statusMessage.Contains("Parent Menu", StringComparison.OrdinalIgnoreCase))
                     {
                         ModelState.AddModelError("ParentMenuId", statusMessage);
                     }
@@ -148,18 +151,19 @@ namespace CKM_ManagementSystem.Controllers.Menu
                     model.ParentMenuList = await _menuBL.GetParentMenusForDropdownAsync();
                     return View("MenuEntry", model);
                 }
-                
+
                 TempData["ErrorMessage"] = statusMessage ?? "Unexpected status returned";
                 model.ParentMenuList = await _menuBL.GetParentMenusForDropdownAsync();
                 return View("MenuEntry", model);
             }
             catch (Exception ex)
             {
-                if(ex.Message.Contains("String or binary data would be truncated") || 
+                if (ex.Message.Contains("String or binary data would be truncated") ||
                         (ex.InnerException != null && ex.InnerException.Message.Contains("String or binary data would be truncated")))
                 {
                     TempData["ErrorMessage"] = "The input text exceeds the maximum charcher limit allowed.";
-                } else
+                }
+                else
                 {
                     TempData["ErrorMessage"] = "A system error has occurred. Please wait a moment and try again";
                 }
@@ -172,9 +176,7 @@ namespace CKM_ManagementSystem.Controllers.Menu
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("DeleteMenu")]
-        public async Task<IActionResult> DeleteMenuAsync(
-            int menuId,
-            int page = 1)
+        public async Task<IActionResult> DeleteMenuAsync(int menuId, int page = 1)
         {
             try
             {
@@ -182,25 +184,18 @@ namespace CKM_ManagementSystem.Controllers.Menu
 
                 if (result.StatusCode == 1)
                 {
-                    TempData["SuccessMessage"] =
-                        result.StatusMessage;
+                    TempData["SuccessMessage"] = result.StatusMessage;
                 }
                 else
                 {
-                    TempData["ErrorMessage"] =
-                        result.StatusMessage;
+                    TempData["ErrorMessage"] = result.StatusMessage;
                 }
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] =
-                    "Error occurred: " + ex.Message;
+                TempData["ErrorMessage"] = "Error occurred: " + ex.Message;
             }
-
-            return RedirectToAction(
-                nameof(MenuListView),
-                new { page }
-            );
+            return RedirectToAction(nameof(MenuListView), new { page = page });
         }
         private async Task<List<SelectListItem>> GetParentMenuListAsync()
         {

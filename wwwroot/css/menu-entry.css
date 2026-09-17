@@ -70,7 +70,6 @@ input.border-danger,
 select.border-danger,
 textarea.border-danger{
     border-color: var(--error-color, #DC3545) !important;
-    background-color: var(--primary-blue);
     color: var(--white);
     font-size: 14px !important;
 }
