@@ -63,7 +63,6 @@
                          class="text-danger mb-3 small-text">
                     </div>
 
-
                     <!-- Project Code / Project Name -->
                     <div class="row g-3 mb-3">
 
@@ -92,7 +91,6 @@
 
                         </div>
 
-
                         <div class="col-md-6">
 
                             <label class="form-label">
@@ -118,7 +116,6 @@
                         </div>
 
                     </div>
-
 
                     <!-- Manager / Git Link -->
                     <div class="row g-3 mb-3">
@@ -152,7 +149,6 @@
                             </div>
 
                         </div>
-
 
                         <div class="col-md-6">
 
@@ -188,7 +184,6 @@
 
                     </div>
 
-
                     <!-- Description -->
                     <div class="mb-3">
 
@@ -212,7 +207,6 @@
                         </div>
 
                     </div>
-
 
                     <!-- Dates -->
                     <div class="row g-3 mb-4">
@@ -241,7 +235,6 @@
 
                         </div>
 
-
                         <div class="col-md-6">
 
                             <label class="form-label">
@@ -268,19 +261,17 @@
 
                     </div>
 
-
                     <!-- Status -->
-                    <div class="row align-items-center mb-4">
+                    <div class="option-row">
 
-                        <div class="col-auto">
-                            <label class="form-label mb-0 me-3">
-                                Status
-                            </label>
-                        </div>
+                        <label class="option-row-label">
+                            Status
+                        </label>
 
-                        <div class="col-auto">
+                        <div class="option-row-items">
 
-                            <div class="form-check form-check-inline me-3">
+                            <div class="form-check">
+
                                 <input class="form-check-input"
                                        type="radio"
                                        asp-for="Status"
@@ -289,13 +280,15 @@
                                        checked="@(Model.Status == "Active"
                                            || string.IsNullOrEmpty(Model.Status))" />
 
-                                <label class="form-check-label fw-medium"
+                                <label class="form-check-label"
                                        for="statusActive">
                                     Active
                                 </label>
+
                             </div>
 
-                            <div class="form-check form-check-inline me-3">
+                            <div class="form-check">
+
                                 <input class="form-check-input"
                                        type="radio"
                                        asp-for="Status"
@@ -303,13 +296,15 @@
                                        id="statusCompleted"
                                        checked="@(Model.Status == "Completed")" />
 
-                                <label class="form-check-label fw-medium"
+                                <label class="form-check-label"
                                        for="statusCompleted">
                                     Completed
                                 </label>
+
                             </div>
 
-                            <div class="form-check form-check-inline me-3">
+                            <div class="form-check">
+
                                 <input class="form-check-input"
                                        type="radio"
                                        asp-for="Status"
@@ -317,13 +312,15 @@
                                        id="statusOnHold"
                                        checked="@(Model.Status == "On Hold")" />
 
-                                <label class="form-check-label fw-medium"
+                                <label class="form-check-label"
                                        for="statusOnHold">
                                     On Hold
                                 </label>
+
                             </div>
 
-                            <div class="form-check form-check-inline">
+                            <div class="form-check">
+
                                 <input class="form-check-input"
                                        type="radio"
                                        asp-for="Status"
@@ -331,29 +328,28 @@
                                        id="statusInactive"
                                        checked="@(Model.Status == "Inactive")" />
 
-                                <label class="form-check-label fw-medium"
+                                <label class="form-check-label"
                                        for="statusInactive">
                                     Inactive
                                 </label>
+
                             </div>
 
                         </div>
 
                     </div>
 
-
                     <!-- Project Type -->
-                    <div class="row align-items-center mb-4">
+                    <div class="option-row">
 
-                        <div class="col-auto">
-                            <label class="form-label mb-0 me-3">
-                                Project Type
-                            </label>
-                        </div>
+                        <label class="option-row-label">
+                            Project Type
+                        </label>
 
-                        <div class="col-auto">
+                        <div class="option-row-items">
 
-                            <div class="form-check form-check-inline me-3">
+                            <div class="form-check">
+
                                 <input class="form-check-input"
                                        type="radio"
                                        asp-for="ProjectType"
@@ -362,13 +358,15 @@
                                        checked="@(Model.ProjectType == "SYS"
                                            || string.IsNullOrEmpty(Model.ProjectType))" />
 
-                                <label class="form-check-label fw-medium"
+                                <label class="form-check-label"
                                        for="projectTypeSYS">
                                     SYS - System
                                 </label>
+
                             </div>
 
-                            <div class="form-check form-check-inline me-3">
+                            <div class="form-check">
+
                                 <input class="form-check-input"
                                        type="radio"
                                        asp-for="ProjectType"
@@ -376,13 +374,15 @@
                                        id="projectTypeBPO"
                                        checked="@(Model.ProjectType == "BPO")" />
 
-                                <label class="form-check-label fw-medium"
+                                <label class="form-check-label"
                                        for="projectTypeBPO">
                                     BPO - Business Process Outsourcing
                                 </label>
+
                             </div>
 
-                            <div class="form-check form-check-inline">
+                            <div class="form-check">
+
                                 <input class="form-check-input"
                                        type="radio"
                                        asp-for="ProjectType"
@@ -390,19 +390,18 @@
                                        id="projectTypeHR"
                                        checked="@(Model.ProjectType == "HR")" />
 
-                                <label class="form-check-label fw-medium"
+                                <label class="form-check-label"
                                        for="projectTypeHR">
                                     HR - Human Resources
                                 </label>
+
                             </div>
 
                         </div>
 
                     </div>
 
-
                     <hr class="text-muted opacity-25 my-4" />
-
 
                     <!-- Project Members -->
                     <div class="mb-4">
@@ -428,7 +427,6 @@
                             </button>
 
                         </div>
-
 
                         <div class="table-responsive
                                     border
@@ -469,8 +467,13 @@
 
                                         foreach (var member in Model.ProjectMembers)
                                         {
+                                            var memberImage =
+                                            string.IsNullOrWhiteSpace(member.Image_URL)
+                                            ? "/images/default-avatar.png"
+                                            : member.Image_URL;
+
                                             <tr data-staffcode="@member.Staff_Code"
-                                                data-img="@member.Image_URL">
+                                                data-img="@memberImage">
 
                                                 <td class="text-center
                                                            text-muted
@@ -479,16 +482,17 @@
                                                 </td>
 
                                                 <td>
+
                                                     <div class="d-flex align-items-center">
 
-                                                        <img src="@(string.IsNullOrEmpty(member.Image_URL)
-                                                                      ? "/images/default-avatar.png"
-                                                                      : member.Image_URL)"
+                                                        <img src="@memberImage"
+                                                             onerror="this.onerror=null;this.src='/images/default-avatar.png';"
                                                              class="rounded-circle
                                                                     me-2
                                                                     flex-shrink-0
                                                                     member-avatar
-                                                                    member-avatar-fallback" />
+                                                                    member-avatar-fallback"
+                                                             alt="Profile" />
 
                                                         <span class="fw-semibold
                                                                      text-dark
@@ -497,9 +501,11 @@
                                                         </span>
 
                                                     </div>
+
                                                 </td>
 
                                                 <td class="text-secondary">
+
                                                     <span class="text-truncate-custom
                                                                  cursor-pointer"
                                                           data-bs-toggle="tooltip"
@@ -507,6 +513,7 @@
                                                           title="@member.Name">
                                                         @member.Name
                                                     </span>
+
                                                 </td>
 
                                                 <td class="text-end">
@@ -520,7 +527,9 @@
                                                                    btn-remove-member
                                                                    me-2"
                                                             title="Remove Member">
+
                                                         <i class="bi bi-trash"></i>
+
                                                     </button>
 
                                                 </td>
@@ -533,12 +542,14 @@
                                     else
                                     {
                                         <tr id="emptyMemberRow">
+
                                             <td colspan="4"
                                                 class="text-center
                                                        text-muted
                                                        py-3">
                                                 No project members added.
                                             </td>
+
                                         </tr>
                                     }
 
@@ -549,7 +560,6 @@
                         </div>
 
                     </div>
-
 
                     <!-- Main Buttons -->
                     <div class="d-flex
@@ -585,7 +595,6 @@
     </div>
 </div>
 
-
 <!-- Member Modal -->
 <div class="modal fade"
      id="memberModal"
@@ -619,7 +628,6 @@
 
             </div>
 
-
             <div class="modal-body p-4">
 
                 <div class="row g-2 mb-3">
@@ -633,21 +641,20 @@
 
                     </div>
 
-
                     <div class="col-md-4">
 
                         <select id="modalDeptSelect"
                                 class="form-select select-truncate"
                                 asp-items="@(ViewBag.Departments as List<SelectListItem>)">
 
-                            <option value="" selected>
+                            <option value=""
+                                    selected>
                                 All Departments
                             </option>
 
                         </select>
 
                     </div>
-
 
                     <div class="col-md-3">
 
@@ -666,7 +673,6 @@
                     </div>
 
                 </div>
-
 
                 <div class="table-responsive
                             border
@@ -721,7 +727,6 @@
 
             </div>
 
-
             <div class="modal-footer
                         border-0
                         px-4
@@ -750,9 +755,7 @@
     </div>
 </div>
 
-
 @await Html.PartialAsync("~/Views/Shared/AlertModal.cshtml")
-
 
 @section Scripts {
 
