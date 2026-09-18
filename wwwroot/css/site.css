@@ -28,10 +28,6 @@ html , body{
   width: 100%;
 }
 
-.page-content {
-    padding: 10px;
-}
-
 body {
   background-image: url('/images/system_img/background_img.png');
   background-size: cover;

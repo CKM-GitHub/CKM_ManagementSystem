@@ -1,5 +1,6 @@
 ﻿@using CKM_ManagementSystem.Models.ViewModels.User
-@model CKM_ManagementSystem.Models.ViewModels.User.PagedResponse<UserListViewModel>
+@using CKM_ManagementSystem.Models.ViewModels.Common
+@model UserListViewModel
 
 @{
     ViewData["Title"] = "User Management";
@@ -10,11 +11,12 @@
     string? currentRole = ViewBag.RoleCode as string;
     int currentPage = ViewBag.PageNumber ?? 1;
     int pageSize = 10; 
-    int totalItems = Model.TotalCount;
+    int totalItems = Model.PagedData.TotalCount;
     int startItem = totalItems > 0 ? (currentPage - 1) * pageSize + 1 : 0;
-    int endItem = totalItems > 0 ? Math.Min(currentPage * pageSize, totalItems) : 0;
+    int endItem = totalItems > 0
+    ? Math.Min(currentPage * pageSize, totalItems)
+    : 0;
     int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
-    if (totalPages < 1) totalPages = 1;
 }
 
 <link rel="stylesheet" href="~/css/UserList.css" />
@@ -206,7 +208,7 @@
 <div class="card shadow-sm border-0 mb-4 rounded-3">
     <div class="table-responsive">
         <table class="table table-custom align-middle mb-0 bg-white border-0 rounded-3 overflow-hidden">
-            @if (Model.Data != null && Model.Data.Count > 0)
+                @if (Model.PagedData.Data != null && Model.PagedData.Data.Count > 0)
             {
                 <thead class="bg-light text-secondary small">
                     <tr>
@@ -223,7 +225,7 @@
                 <tbody>
                     @{
                         int index = startItem;
-                        foreach (var user in Model.Data)
+                        foreach (var user in Model.PagedData.Data)
                         {
                           @* string roleBadgeClass = "badge-role-viewer";
                             string roleName = user.RoleName?.ToLower() ?? "";

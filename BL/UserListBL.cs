@@ -1,4 +1,6 @@
 ﻿using CKM_ManagementSystem.DL;
+using CKM_ManagementSystem.Models.ViewModels;
+using CKM_ManagementSystem.Models.ViewModels.Common;
 using CKM_ManagementSystem.Models.ViewModels.User;
 using Microsoft.Data.SqlClient;
 using System.Data;
@@ -13,7 +15,7 @@ namespace CKM_ManagementSystem.BL
         {
             _bdl = baseDL;
         }
-        public async Task<PagedResponse<UserListViewModel>> GetUserListAsync(
+        public async Task<UserListViewModel> GetUserListAsync(
         string? searchText,
         bool? status,
         string? departmentCode,
@@ -33,7 +35,7 @@ namespace CKM_ManagementSystem.BL
             int departmentCount = 0;
             int totalCount = 0;
 
-            var users = new List<UserListViewModel>();
+            var users = new List<UserListItemViewModel>();
             var departments = new List<DepartmentDropdownViewModel>();
             var roles = new List<RoleDropdownViewModel>();
 
@@ -90,7 +92,7 @@ namespace CKM_ManagementSystem.BL
             {
                 foreach (DataRow row in dataSet.Tables[0].Rows)
                 {
-                    users.Add(new UserListViewModel
+                    users.Add(new UserListItemViewModel
                     {
                         StaffCode = row["Staff_Code"]?.ToString() ?? string.Empty,
                         Name = row["Name"]?.ToString() ?? string.Empty,
@@ -130,22 +132,28 @@ namespace CKM_ManagementSystem.BL
                     });
                 }
             }
-            var response = new PagedResponse<UserListViewModel>
+            var pagedData = new PagedResponse<UserListItemViewModel>
             {
                 Data = users,
-                Departments = departments,
-                Roles = roles,
-                ErrorCode = errorCode != 0
-                    ? errorCode
-                    : headerErrorCode,
-                OverallTotalCount = overallTotalCount,
-                OverallActiveCount = overallActiveCount,
-                OverallInactiveCount = overallInactiveCount,
-                DepartmentCount = departmentCount,
                 TotalCount = totalCount,
                 PageNumber = pageNumber,
                 PageSize = pageSize
             };
+
+            var response = new UserListViewModel
+            {
+                PagedData = pagedData,
+                OverallTotalCount = overallTotalCount,
+                OverallActiveCount = overallActiveCount,
+                OverallInactiveCount = overallInactiveCount,
+                DepartmentCount = departmentCount,
+                Departments = departments,
+                Roles = roles,
+                ErrorCode = errorCode != 0
+                ? errorCode
+                : headerErrorCode
+            };
+
             return response;
         }
         public async Task<(int ErrorCode, string? UserName)> DeleteUserAsync(string staffCode)
@@ -175,19 +183,19 @@ namespace CKM_ManagementSystem.BL
 
             return (errorCode, userName);
         }
-    
-    public async Task<UserCreateViewModel?> GetUserByStaffCodeAsync(string staffCode)
+
+        public async Task<UserCreateViewModel?> GetUserByStaffCodeAsync(string staffCode)
         {
             if (string.IsNullOrWhiteSpace(staffCode))
                 return null;
 
             var parameters = new[]
             {
-            new SqlParameter("@Staff_Code", SqlDbType.NVarChar, 50)
-            {
-                Value = staffCode
-            }
-        };
+                new SqlParameter("@Staff_Code", SqlDbType.NVarChar, 50)
+                {
+                    Value = staffCode
+                }
+            };
 
             DataTable table = await _bdl.SelectDataTableAsync(
                 "sp_GetUserByStaffCode",
@@ -206,10 +214,10 @@ namespace CKM_ManagementSystem.BL
                 Gender = row["Gender"]?.ToString() ?? string.Empty,
                 DepartmentCode = row["Department_Code"]?.ToString() ?? string.Empty,
                 RoleCode = row["Role_Code"]?.ToString() ?? string.Empty,
-                Status = row["Status"] != DBNull.Value &&Convert.ToBoolean(row["Status"]),
+                Status = row["Status"] != DBNull.Value && Convert.ToBoolean(row["Status"]),
                 ImageUrl = row["Image_URL"]?.ToString() ?? string.Empty
             };
-        }   
+        }
 
         public async Task<List<DepartmentDropdownViewModel>> GetDepartmentsAsync()
         {
