@@ -2,7 +2,7 @@
 @model DepartmentListViewModel
 
 @{
-    Layout = "_Layout";
+    // Layout = "_Layout";
     ViewData["Title"] = "Department Management";
 }
 
@@ -129,14 +129,11 @@
                                 </td>
 
                                 <td>
-                                    <span class="text-limit"
-                                          title="@department.DepartmentName">
-
-                                        @(department.DepartmentName.Length > 30
-                                            ? department.DepartmentName.Substring(0, 30) + "..."
-                                            : department.DepartmentName)
-
-                                    </span>
+                                   <span class="text-limit"
+                                         data-tooltip-truncate
+                                         data-tooltip-text="@department.DepartmentName">
+                                         @department.DepartmentName
+                                   </span>
                                 </td>
 
                                 <td>
@@ -149,12 +146,9 @@
                                     else
                                     {
                                         <span class="text-limit"
-                                              title="@department.Description">
-
-                                            @(department.Description.Length > 40
-                                                ? department.Description.Substring(0, 40) + "..."
-                                                : department.Description)
-
+                                              data-tooltip-truncate
+                                              data-tooltip-text="@department.Description">
+                                              @department.Description
                                         </span>
                                     }
 

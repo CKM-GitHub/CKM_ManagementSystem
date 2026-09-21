@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using CKM_ManagementSystem.Models.Validation;
 
 namespace CKM_ManagementSystem.Models.ViewModels.User;
-public class UserCreateViewModel  : IValidatableObject
+public class UserCreateViewModel : IValidatableObject
 {
     public string Mode { get; set; } = "Entry";
 

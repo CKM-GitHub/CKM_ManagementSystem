@@ -37,6 +37,10 @@ namespace CKM_ManagementSystem.Models.Entities
         [StringLength(20)]
         public string Status { get; set; } = "Active";
 
+        [Required]
+        [StringLength(10)]
+        public string ProjectType { get; set; } = "SYS";
+
         public DateTime Created_Date { get; set; } = DateTime.Now;
 
         public DateTime? Updated_Date { get; set; }

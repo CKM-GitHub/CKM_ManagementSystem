@@ -33,6 +33,17 @@
         <ul class="dropdown-menu dropdown-menu-end">
             <li>
                 <a class="dropdown-item"
+                    asp-controller="UserCreate"
+                    asp-action="UserCreate"
+                    asp-route-mode="Update"
+                   asp-route-source="Profile"
+                    asp-route-staffCode="@Model.StaffCode">
+                    <i class="bi bi-person me-2"></i>
+                    User Info
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item"
                    asp-controller="ChangePassword"
                    asp-action="ChangePassword">
                     <i class="bi bi-key me-2"></i>

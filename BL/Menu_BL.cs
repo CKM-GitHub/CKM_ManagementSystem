@@ -98,7 +98,7 @@ namespace CKM_ManagementSystem.MenuBL
 
             return MapDataRowToMenuListItem(dt.Rows[0], dt.Columns);
         }
-        public async Task<MenuListViewModel> GetPagedMenuListAsync(string? searchTerm, int? parentMenuId, bool? statusFilters = null, int page = 1, int pageSize = 10)
+        public async Task<MenuListViewModel> GetPagedMenuListAsync(string? searchTerm, int? parentMenuId, bool? statusFilters = null, int page = 1, int pageSize = 6)
         {
             var totalCountParam = new SqlParameter
             {
@@ -121,7 +121,7 @@ namespace CKM_ManagementSystem.MenuBL
                     .ToList();
             int totalItems = (totalCountParam.Value != DBNull.Value) ? Convert.ToInt32(totalCountParam.Value) : 0;
 
-            int validPageSize = pageSize > 0 ? pageSize : 10;
+            int validPageSize = pageSize > 0 ? pageSize : 6;
             return new MenuListViewModel
             {
                 SearchTerm = searchTerm,

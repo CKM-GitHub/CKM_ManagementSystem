@@ -1,8 +1,5 @@
-﻿
-
-.user-list-page {
+﻿.user-list-page {
     width: 100%;
-    padding: 16px 24px 24px;
     box-sizing: border-box;
 }
 
@@ -196,11 +193,8 @@
     width: 20%;
 }
 
-
-
-
-.table-custom thead th {
-    height: 60px;
+/*.table-custom thead th {
+    height: 50px;
     padding-top: 12px;
     padding-bottom: 12px;
     vertical-align: bottom;
@@ -211,12 +205,12 @@
 }
 
 .table-custom tbody td {
-    height: 55px;
+    height: 50px;
     max-width: 150px;
     vertical-align: middle;
     border-bottom: 1px solid #e9ecef !important;
     font-size: 14px;
-}
+}*/
 
 .empty-state {
     padding: 48px 16px;

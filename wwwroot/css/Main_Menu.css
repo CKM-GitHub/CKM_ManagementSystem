@@ -94,12 +94,12 @@ body {
 .page-content {
     flex: 1;
     min-height: 0;
-    padding: 0;
+    height: calc(100dvh - 48px);
+    padding: 0 24px;
     overflow-y: auto;
     overflow-x: hidden;
     color: #ffffff;
 }
-
 
 /* Main Menu */
 
@@ -112,7 +112,6 @@ body {
     flex-direction: column;
     padding-top: 8px;
 }
-
 
 /* Menu Items */
 
@@ -322,7 +321,11 @@ body {
     flex: 1;
     overflow: hidden;
 }
-
+.sub-nav-separator {
+    color: var(--gray);
+    font-size: 14px;
+    flex-shrink: 0;
+}
     #subNavigationContainer:empty {
         display: none;
     }
@@ -359,16 +362,6 @@ body {
         font-weight: 600;
     }
 
-        .sub-nav-link.active::after {
-            content: "";
-            position: absolute;
-            left: 12px;
-            right: 12px;
-            bottom: 0;
-            height: 2px;
-            border-radius: 2px;
-            background-color: var(--primary-blue);
-        }
 
 
 /* Tablet / Mobile Sidebar */

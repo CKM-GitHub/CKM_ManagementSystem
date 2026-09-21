@@ -121,21 +121,16 @@
     table-layout: fixed;
 }
 
-    .role-table th {
+    /*.role-table th {
         color: var(--dark-blue);
         font-weight: bold;
-        font-size: 16px; /* Subheader Size */
-        padding: 14px 10px;
+        font-size: 16px;*/ /* Subheader Size */
+        /*padding: 14px 10px;
         border-bottom: 1px solid var(--border-color);
         background-color: var(--white);
-    }
+    }*/
 
-    .role-table td {
-        color: var(--dark-blue);
-        font-size: 14px; /* Body Text Size */
-        padding: 16px 10px;
-        border-bottom: 1px solid var(--border-color);
-        vertical-align: middle;
+    .role-table td {        
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;

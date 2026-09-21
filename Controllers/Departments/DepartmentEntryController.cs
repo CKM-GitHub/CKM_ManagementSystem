@@ -136,7 +136,9 @@ namespace CKM_ManagementSystem.Controllers.Departments
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+
         public IActionResult Edit(
+
             DepartmentEntryViewModel model)
         {
             if (string.IsNullOrWhiteSpace(
@@ -196,17 +198,20 @@ namespace CKM_ManagementSystem.Controllers.Departments
 
             Department department = new Department
             {
+                OriginalDepartmentCode =
+        model.OriginalDepartmentCode,
+
                 DepartmentCode =
-                    model.OriginalDepartmentCode,
+        model.OriginalDepartmentCode,
 
                 DepartmentName =
-                    model.DepartmentName,
+        model.DepartmentName,
 
                 Description =
-                    model.Description,
+        model.Description,
 
                 Status =
-                    model.Status
+        model.Status
             };
 
             string result =

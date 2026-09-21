@@ -145,22 +145,24 @@ body {
     width: 100%;
     margin-bottom: 0;
     border-collapse: collapse;
+    table-layout:fixed;
     background-color: var(--white);
     color: var(--dark-blue);
     font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
 }
 
-    .department-table thead th {
-        padding: 14px 16px;
+    /*.department-table thead th {*/
+/*      padding: 14px 16px;
         background-color: var(--white);
         color: var(--dark-blue);
         border-bottom: 1px solid var(--border-color);
-        text-align: left;
         vertical-align: middle;
         font-size: 16px;
-        font-weight: 700;
+        font-weight: 700;*/
+        /*text-align: left;
         white-space: nowrap;
     }
+
 
     .department-table tbody td {
         padding: 16px;
@@ -169,7 +171,7 @@ body {
         border-bottom: 1px solid var(--border-color);
         vertical-align: middle;
         font-size: 14px;
-    }
+    }*/
 
     .department-table tbody tr:hover td {
         background-color: var(--light-gray);
@@ -201,7 +203,7 @@ body {
     }
 
 .text-limit {
-    display: inline-block;
+    display:block;
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;

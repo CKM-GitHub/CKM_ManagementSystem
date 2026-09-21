@@ -6,148 +6,269 @@
 }
 
 @section Styles {
+    <link rel="stylesheet"
+          href="~/css/role-list.css"
+          asp-append-version="true" />
 
-    
-    <link rel="stylesheet" href="~/css/role-list.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/Alert_Modal.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/ckm-theme.css" asp-append-version="true" />
-    
+    <link rel="stylesheet"
+          href="~/css/Alert_Modal.css"
+          asp-append-version="true" />
 
+    <link rel="stylesheet"
+          href="~/css/ckm-theme.css"
+          asp-append-version="true" />
 }
 
 <div class="container-fluid role-list-page">
-    <h2 class="page-title">Role Management</h2>
 
-    
+    <h2 class="page-title">
+        Role Management
+    </h2>
+
     @Html.AntiForgeryToken()
 
     <div class="custom-card">
-        <form method="get" asp-action="RoleList" asp-controller="Role" id="searchForm">
-            <input type="hidden" name="pageNumber" value="1" />
+
+        <form method="get"
+              asp-action="RoleList"
+              asp-controller="Role"
+              id="searchForm">
+
+            <input type="hidden"
+                   name="pageNumber"
+                   value="1" />
 
             <div class="filter-container">
+
                 <div class="filter-left-group">
+
                     <div class="search-input-group">
-                        <input type="text" name="searchKeyword" class="form-control" placeholder="Search role by name or code.." value="@Model.SearchKeyword" />
+
+                        <input type="text"
+                               name="searchKeyword"
+                               class="form-control"
+                               placeholder="Search role by name or code.."
+                               value="@Model.SearchKeyword" />
+
                         <i class="bi bi-search search-icon"></i>
+
                     </div>
 
-                    <select name="status" class="form-select custom-select">
-                        <option value="">All Status</option>
-                        <option value="1" selected="@(Model.Status == 1)">Active</option>
-                        <option value="0" selected="@(Model.Status == 0)">Inactive</option>
+                    <select name="status"
+                            class="form-select custom-select">
+
+                        <option value="">
+                            All Status
+                        </option>
+
+                        <option value="1"
+                                selected="@(Model.Status == 1)">
+                            Active
+                        </option>
+
+                        <option value="0"
+                                selected="@(Model.Status == 0)">
+                            Inactive
+                        </option>
+
                     </select>
 
-                    <button type="submit" class="btn btn-search-menu">
-                        <i class="bi bi-search me-1"></i> Search Role
+                    <button type="submit"
+                            class="btn btn-search-menu">
+
+                        <i class="bi bi-search me-1"></i>
+                        Search Role
+
                     </button>
+
                 </div>
 
                 <div>
-                    <a asp-action="RoleEntry" asp-controller="Role" class="btn btn-add-role">
-                        <i class="bi bi-plus-lg me-1"></i> Add New Role
+
+                    <a asp-action="RoleEntry"
+                       asp-controller="Role"
+                       class="btn btn-add-role">
+
+                        <i class="bi bi-plus-lg me-1"></i>
+                        Add New Role
+
                     </a>
+
                 </div>
+
             </div>
+
         </form>
+
     </div>
 
     <div class="custom-card">
+
         <div class="table-responsive">
-            <table class="role-table" style="table-layout: fixed; width: 100%;">
+
+            <table class="role-table"
+                   style="table-layout: fixed; width: 100%;">
+
                 <thead>
+
                     <tr>
-                        <th style="width: 60px;">No.</th>
-                        <th style="width: 140px;">Code</th>
-                        <th style="width: 180px;">Role Name</th>
-                        <th style="width: 250px;">Description</th>
-                        <th style="width: 110px;">Status</th>
-                        <th style="width: 110px; text-align: center;">Actions</th>
+
+                        <th style="width: 60px;">
+                            No.
+                        </th>
+
+                        <th style="width: 140px;">
+                            Code
+                        </th>
+
+                        <th style="width: 180px;">
+                            Role Name
+                        </th>
+
+                        <th style="width: 250px;">
+                            Description
+                        </th>
+
+                        <th style="width: 110px;">
+                            Status
+                        </th>
+
+                        <th style="width: 110px; text-align: center;">
+                            Actions
+                        </th>
+
                     </tr>
+
                 </thead>
+
                 <tbody>
-                    @if (Model.Roles != null && Model.Roles.Any())
+
+                    @if (Model.Roles != null &&
+                    Model.Roles.Any())
                     {
-                        int index = ((Model.PageNumber - 1) * Model.PageSize) + 1;
+                        int index =
+                        ((Model.PageNumber - 1) *
+                        Model.PageSize) + 1;
+
                         foreach (var item in Model.Roles)
                         {
+                            var descriptionText =
+                            string.IsNullOrWhiteSpace(
+                            item.Description)
+                            ? "-"
+                            : item.Description;
+
                             <tr>
-                                <td>@(index++)</td>
 
-                                <td class="fw-medium">
-                                    <span class="table-text-truncate" title="@item.RoleCode">
-                                        @item.RoleCode
-                                    </span>
+                                <td>
+                                    @(index++)
                                 </td>
 
-                                <td class="fw-semibold">
-                                    <span class="table-text-truncate" title="@item.DisplayName">
-                                        @item.DisplayName
-                                    </span>
+                                <td class="fw-medium"
+                                    data-tooltip-truncate
+                                    data-tooltip-text="@item.RoleCode">
+
+                                    @item.RoleCode
+
                                 </td>
 
-                                <td class="text-secondary">
-                                    <span class="table-text-truncate" title="@item.Description">
-                                        @(string.IsNullOrWhiteSpace(item.Description) ? "-" : item.Description)
-                                    </span>
+                                <td class="fw-semibold"
+                                    data-tooltip-truncate
+                                    data-tooltip-text="@item.DisplayName">
+
+                                    @item.DisplayName
+
+                                </td>
+
+                                <td class="text-secondary"
+                                    data-tooltip-truncate
+                                    data-tooltip-text="@descriptionText">
+
+                                    @descriptionText
+
                                 </td>
 
                                 <td>
+
                                     @if (item.Status)
                                     {
-                                        <span class="badge-status-active">Active</span>
+                                        <span class="badge-status-active">
+                                            Active
+                                        </span>
                                     }
                                     else
                                     {
-                                        <span class="badge-status-inactive">Inactive</span>
+                                        <span class="badge-status-inactive">
+                                            Inactive
+                                        </span>
                                     }
+
                                 </td>
 
                                 <td class="text-center align-middle">
+
                                     <div class="d-flex justify-content-center align-items-center gap-2">
 
                                         <a asp-action="RoleEntry"
                                            asp-controller="Role"
                                            asp-route-id="@item.RoleCode"
                                            class="action-icon-btn edit-icon text-decoration-none"
-                                           title="Edit Role">
+                                           aria-label="Edit Role">
+
                                             <i class="bi bi-pencil-square"></i>
+
                                         </a>
 
                                         <button type="button"
                                                 class="action-icon-btn delete-icon delete-role-btn"
                                                 data-role-code="@item.RoleCode"
                                                 data-delete-url="@Url.Action("DeleteRole", "Role")"
-                                                title="Delete Role">
+                                                aria-label="Delete Role">
+
                                             <i class="bi bi-trash"></i>
+
                                         </button>
 
                                     </div>
+
                                 </td>
+
                             </tr>
                         }
                     }
                     else
                     {
                         <tr>
-                            <td colspan="6" class="text-center text-muted py-4">
+
+                            <td colspan="6"
+                                class="text-center text-muted py-4">
+
                                 No records found.
+
                             </td>
+
                         </tr>
                     }
+
                 </tbody>
+
             </table>
+
         </div>
 
         <div class="table-footer">
+
             <div class="footer-text">
 
                 @{
-                    int startRecord = Model.TotalRecords == 0
+                    int startRecord =
+                    Model.TotalRecords == 0
                     ? 0
-                    : ((Model.PageNumber - 1) * Model.PageSize) + 1;
+                    : ((Model.PageNumber - 1) *
+                    Model.PageSize) + 1;
 
-                    int endRecord = Model.TotalRecords == 0
+                    int endRecord =
+                    Model.TotalRecords == 0
                     ? 0
                     : Math.Min(
                     Model.PageNumber * Model.PageSize,
@@ -164,29 +285,31 @@
                 <div class="pagination-box">
 
                     <a href="@Url.Action(
-                    "RoleList",
-                    new
-                    {
-                        pageNumber = Model.PageNumber - 1,
-                        searchKeyword = Model.SearchKeyword,
-                        status = Model.Status
-                    })"
+                        "RoleList",
+                        new
+                        {
+                            pageNumber = Model.PageNumber - 1,
+                            searchKeyword = Model.SearchKeyword,
+                            status = Model.Status
+                        })"
                        class="page-btn btn btn-sm btn-outline-secondary @(Model.PageNumber <= 1 ? "disabled" : "")">
 
                         <i class="bi bi-chevron-left"></i>
 
                     </a>
 
-                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    @for (int i = 1;
+                   i <= Model.TotalPages;
+                   i++)
                     {
                         <a href="@Url.Action(
-                        "RoleList",
-                        new
-                        {
-                            pageNumber = i,
-                            searchKeyword = Model.SearchKeyword,
-                            status = Model.Status
-                        })"
+                            "RoleList",
+                            new
+                            {
+                                pageNumber = i,
+                                searchKeyword = Model.SearchKeyword,
+                                status = Model.Status
+                            })"
                            class="page-btn btn btn-sm @(i == Model.PageNumber ? "btn-primary-pagination active" : "btn-outline-secondary")">
 
                             @i
@@ -195,13 +318,13 @@
                     }
 
                     <a href="@Url.Action(
-                    "RoleList",
-                    new
-                    {
-                        pageNumber = Model.PageNumber + 1,
-                        searchKeyword = Model.SearchKeyword,
-                        status = Model.Status
-                    })"
+                        "RoleList",
+                        new
+                        {
+                            pageNumber = Model.PageNumber + 1,
+                            searchKeyword = Model.SearchKeyword,
+                            status = Model.Status
+                        })"
                        class="page-btn btn btn-sm btn-outline-secondary @(Model.PageNumber >= Model.TotalPages ? "disabled" : "")">
 
                         <i class="bi bi-chevron-right"></i>
@@ -212,13 +335,21 @@
             }
 
         </div>
+
     </div>
-    ```
 
 </div>
 
 <partial name="AlertModal" />
 
 @section Scripts {
-     <script src="~/js/Alert_Modal.js" asp-append-version="true"></script> <script src="~/js/role-list.js" asp-append-version="true"></script>
+
+    <script src="~/js/Alert_Modal.js"
+            asp-append-version="true">
+    </script>
+
+    <script src="~/js/role-list.js"
+            asp-append-version="true">
+    </script>
+
 }

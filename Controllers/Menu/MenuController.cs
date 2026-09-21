@@ -20,7 +20,7 @@ namespace CKM_ManagementSystem.Controllers.Menu
         [HttpGet]
         public async Task<IActionResult> MenuListView(string? searchTerm, int? selectedParentId, bool? statusFilters, int page = 1)
         {
-            int pageSize = 10;
+            int pageSize = 6;
 
             var viewModel = await _menuBL.GetPagedMenuListAsync(
                 searchTerm,

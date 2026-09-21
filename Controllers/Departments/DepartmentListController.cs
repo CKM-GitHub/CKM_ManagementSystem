@@ -24,7 +24,7 @@ namespace CKM_ManagementSystem.Controllers.Departments
                     searchText,
                     status,
                     pageNumber,
-                    10);
+                    6);
 
             return View(
                 "~/Views/Departments/List.cshtml",
