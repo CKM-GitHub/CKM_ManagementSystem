@@ -573,9 +573,16 @@ $(document).ready(function () {
             }
 
             if (
-                $('#valProjectCode').text() !== '' ||
-                $('#valProjectName').text() !== '' ||
-                $('#valEndDate').text() !== ''
+                (!isEditMode &&
+                    $('#valProjectCode')
+                        .text()
+                        .trim() !== '') ||
+                $('#valProjectName')
+                    .text()
+                    .trim() !== '' ||
+                $('#valEndDate')
+                    .text()
+                    .trim() !== ''
             ) {
                 return;
             }
