@@ -8,6 +8,7 @@
     ViewData["Title"] =
         isEditMode ? "Edit User Role" : "User Role Entry";
 }
+
 @section Styles {
     <link rel="stylesheet" href="~/css/Alert_Modal.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/ckm-theme.css" asp-append-version="true" />
@@ -19,13 +20,16 @@
         <h4 class="role-entry-title">
             @(isEditMode ? "Edit User Role" : "User Role Entry")
         </h4>
+
         <form id="roleForm"
               method="post"
               asp-action="RoleEntry"
               asp-controller="Role"
               data-edit-mode="@isEditMode.ToString().ToLower()"
               data-role-list-url="@Url.Action("RoleList", "Role")">
+
             <input type="hidden" asp-for="IsEdit" />
+
             <div asp-validation-summary="ModelOnly"
                  class="text-danger mb-3 small">
             </div>
@@ -126,12 +130,15 @@
                                 <th style="padding-left: 1.5rem; width: 55%;">
                                     Menu Structure
                                 </th>
+
                                 <th class="text-center" style="width: 15%;">
                                     Read
                                 </th>
+
                                 <th class="text-center" style="width: 15%;">
                                     Write
                                 </th>
+
                                 <th class="text-center" style="width: 15%;">
                                     Delete
                                 </th>
@@ -204,10 +211,12 @@
                                                asp-for="MenuPermissions[i].Level" />
 
                                         <td class="menu-cell"
-                                            style="padding-left: @(paddingLeftRem.ToString("0.0"))rem;"
-                                            title="@currentMenu.MenuName">
+                                            style="padding-left: @(paddingLeftRem.ToString("0.0"))rem;">
 
-                                            <div class="menu-title-wrapper">
+                                            <div class="menu-title-wrapper"
+                                                 data-tooltip-truncate
+                                                 data-tooltip-text="@currentMenu.MenuName">
+
                                                 @if (isParent)
                                                 {
                                                     <span class="parent-menu-title fw-bold text-dark">
@@ -226,6 +235,7 @@
                                                         @currentMenu.MenuName
                                                     </span>
                                                 }
+
                                             </div>
                                         </td>
 
@@ -249,6 +259,7 @@
                                                    asp-for="MenuPermissions[i].CanDelete"
                                                    id="delete_@i" />
                                         </td>
+
                                     </tr>
                                 }
                             }
