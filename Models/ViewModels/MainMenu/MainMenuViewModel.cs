@@ -2,6 +2,7 @@
 {
     public class MainMenuViewModel
     {
+        public string StaffCode { get; set; } = string.Empty;
         public int MenuID { get; set; }
         public string MenuName { get; set; }= string.Empty;
 

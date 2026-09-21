@@ -22,7 +22,13 @@
 
         <div class="d-flex align-items-center justify-content-center position-relative py-1 mb-3">
             <h1 class="text-center fw-bold mb-0 user-entry-title">
-                @(Model.Mode == "Entry" ? "User Entry" : "User Update")
+                @(
+                    ViewBag.Source == "Profile"
+                          ? "User Info"
+                          : Model.Mode == "Entry"
+                           ?"User Entry"
+                           :"User Update"
+                )
             </h1>
         </div>
 

@@ -28,7 +28,7 @@ namespace CKM_ManagementSystem.BL
             foreach (DataRow row in dataTable.Rows)
             {
                 MainMenuViewModel menu = new MainMenuViewModel
-                {
+                { StaffCode = staffCode,
                     MenuID = Convert.ToInt32(row["MenuID"]),
                     MenuName = row["MenuName"].ToString() ?? string.Empty,
                     ActionName = row["ActionName"].ToString() ?? string.Empty,
@@ -39,10 +39,10 @@ namespace CKM_ManagementSystem.BL
                     ParentMenuId = row["ParentMenuId"] == DBNull.Value
                     ? null : Convert.ToInt32(row["ParentMenuId"]),
 
-                    UserName = row["UserName"].ToString()??string.Empty,
-                    ImageURL= row["ImageURL"]==DBNull.Value
+                    UserName = row["UserName"].ToString() ?? string.Empty,
+                    ImageURL = row["ImageURL"] == DBNull.Value
                     ? null : row["ImageURL"].ToString(),
-                    RoleName = row["RoleName"].ToString()??string.Empty
+                    RoleName = row["RoleName"].ToString() ?? string.Empty
                 };
                 menuList.Add(menu);
             }
@@ -54,14 +54,27 @@ namespace CKM_ManagementSystem.BL
 
             foreach(MainMenuViewModel parentMenu in parentMenus)
             {
-                parentMenu.SubMenus=menuList
-               .Where(menu=> menu.ParentMenuId == parentMenu.MenuID)
-               .OrderBy(menu=>menu.DisplayOrder) 
-               .ToList();
+                BuildMenuTree(
+                    parentMenu,
+                    menuList);
 
             }
 
             return parentMenus;
+        }
+        private void BuildMenuTree(
+            MainMenuViewModel parent,
+            List<MainMenuViewModel>allMenus)
+        {
+            parent.SubMenus = allMenus
+                .Where(menu => menu.ParentMenuId == parent.MenuID)
+                .OrderBy(menu => menu.DisplayOrder)
+                .ToList();
+
+            foreach (var child in parent.SubMenus)
+            {
+                BuildMenuTree(child,allMenus);
+            }
         }
     }
 }

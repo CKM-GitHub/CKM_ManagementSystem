@@ -22,8 +22,9 @@ namespace CKM_ManagementSystem.Controllers.User
         }
 
         [HttpGet]
-        public async Task<IActionResult> UserCreate(string mode = "Entry",string? staffCode = null)
+        public async Task<IActionResult> UserCreate(string mode = "Entry",string? staffCode = null ,string? source =null)
         {
+            ViewBag.Source = source;
             var model = staffCode != null ? await _userListBL.GetUserByStaffCodeAsync(staffCode)
                                             : new UserCreateViewModel();
 

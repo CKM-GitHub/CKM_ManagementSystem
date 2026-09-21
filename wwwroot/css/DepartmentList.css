@@ -145,6 +145,7 @@ body {
     width: 100%;
     margin-bottom: 0;
     border-collapse: collapse;
+    table-layout:fixed;
     background-color: var(--white);
     color: var(--dark-blue);
     font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
@@ -202,7 +203,7 @@ body {
     }
 
 .text-limit {
-    display: inline-block;
+    display:block;
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
