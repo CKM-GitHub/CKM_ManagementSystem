@@ -11,6 +11,12 @@
     font-size: 16px !important;
     font-weight: 700 !important;
 }
+.menu-table td span,
+.menu-table td code {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 .toolbar-input, .toolbar-btn, .add-btn, .menu-table td, .custom-modal-text {
     font-size: 14px !important;
     font-weight: 400;
@@ -160,13 +166,6 @@ body {
     text-decoration:none;
 }
 
-.toolbar-btn{
-    min-width: 123px;
-}
-
-.add-btn{
-    min-width: 108px;
-}
 .edit-icon {
     margin-right: 6px;
     color: var(--primary-blue) !important;
@@ -300,8 +299,7 @@ body {
 .route-text, .parent-text{
     color: var(--dark-blue);
 }
-
-.status-badge{
+.status-badge {
     display: inline-flex;
     align-items: center;
     gap: 5px;
@@ -398,6 +396,28 @@ body {
     border-color: var(--primary-blue);
     color: var(--white);
 }
+.task-status-search .toolbar-btn,
+.toolbar-right .add-btn,
+.toolbar-btn,
+.add-btn {
+    height: 42px !important;
+    width: 200px !important;
+    min-width: 200px !important;
+    max-width: 200px !important;
+    padding: 0 16px !important;
+    box-sizing: border-box !important;
+}
+
+@media (min-width: 992px) {
+    .task-status-search .toolbar-btn,
+    .toolbar-right .add-btn,
+    .toolbar-btn,
+    .add-btn {
+        width: 200px !important;
+        min-width: 200px !important;
+        max-width: 200px !important;
+    }
+}
 @media (max-width: 991.98px){
     .toolbar-row{
         flex-direction: column;
@@ -413,56 +433,42 @@ body {
         width: 100%;
         justify-content: flex-start;
     }
+    .search-box-wrapper,
+    .select-box-wrapper,
+    .task-status-search .search-box-wrapper {
+        width: 100% !important;
+        min-width: 100% !important;
+    }
+
+    .toolbar-btn,
+    .add-btn,
+    .task-status-search .toolbar-btn,
+    .toolbar-right .add-btn {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+    }
     
-    .toolbar-btn{
-        height: 42px !important;
-        min-height: 42px !important;
-        width: 100% !important;
-        min-width: 100% !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        padding: 0 16px !important;
-        margin: 0 !important;
-        box-sizing: border-box !important;
-    }
-    .add-btn{
-        width: 100% !important;
-    }
-    .search-box-wrapper{
-        width: 100% !important;
-        min-width: 100% !important;
-    }
-    .select-box-wrapper{
-        flex: 1;
-        min-width: 140px;
-    }
 }
 @media(max-width:767.98px){
     .filter-card{
         padding: 16px;
     }
-    .toolbar-row{
+    .toolbar-row, .toolbar-left, .toolbar-right{
         flex-direction: column;
         align-items:stretch;
         gap: 12px;
-    }
-    .toolbar-left{
-        flex-direction: column;
-        align-items:stretch;
-        width: 100%;
-        gap: 12px;
-    }
-    .toolbar-right{
         width: 100%;
     }
+
     .search-box-wrapper, .select-box-wrapper{
         width: 100% !important;
         min-width: 100% !important;
     }
     .toolbar-btn, .add-btn {
         width: 100% !important;
-        min-width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
     }
     .table-footer {
         flex-direction: column;
@@ -499,28 +505,7 @@ body {
     .table-card{
         padding: 14px 14px 8px;
     }
-    .toolbar-left{
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-    }
-    .search-box-wrapper,
-    .select-box-wrapper,
-    .toolbar-btn,
-    .add-btn{
-        width: 100%;
-        min-width: 100%;
-    }
-    .toolbar-right{
-        justify-content: stretch;
-    }
-    .toolbar-right .add-btn{
-        width: 100%;
-    }
-    .table-footer{
-        flex-direction: column;
-        align-items: center;
-    }
+    
     .menu-table{
         min-width: 900px;
     }

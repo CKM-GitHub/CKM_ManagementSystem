@@ -1,0 +1,246 @@
+﻿@model CKM_ManagementSystem.Models.ViewModels.TaskStatuses.TaskStatusesPagesResultViewModel
+@{
+    ViewData["Title"] = "Task Status Management";
+
+    var successMessage = TempData["SuccessMessage"]?.ToString();
+    var errorMessage = TempData["ErrorMessage"]?.ToString();
+}
+
+@if (!string.IsNullOrWhiteSpace(successMessage))
+{
+    <input type="hidden" id="successMessage" value="@successMessage" />
+}
+
+@if (!string.IsNullOrWhiteSpace(errorMessage))
+{
+    <input type="hidden" id="errorMessage" value="@errorMessage" />
+}
+
+<partial name="AlertModal" />
+
+<div class="menu-page-shell">
+
+    <div class="menu-page-container">
+        <div class="page-header text-center">
+            <h2 class="page-title">
+                Task Status Management
+            </h2>
+        </div>
+    </div>
+
+    <div class="filter-card mb-3">
+        <form method="get" asp-action="TaskStatusesListView" class="toolbar-row">
+            <div class="toolbar-left task-status-search">
+                <div class="search-box-wrapper">
+                    <i class="bi bi-search search-icon"></i>
+                    <input type="text"
+                           name="Search"
+                           class="form-control toolbar-input search-input"
+                           placeholder="Search task status by name or code"
+                           value="@Model.Search" />
+                </div>
+
+                <button type="submit" class="btn btn-primary-search toolbar-btn">
+                    <i class="bi bi-search me-2"></i> Search Status
+                </button>
+            </div>
+
+            <div class="toolbar-right">
+                <button type="button"
+                        class="btn btn-primary-add add-btn"
+                        data-bs-toggle="modal"
+                        data-bs-target="#addTaskStatusModal">
+                    <i class="bi bi-plus me-2"></i> Add New Task Status
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="modal fade p-10" id="addTaskStatusModal" tabindex="-1" aria-labelledby="addTaskStatusModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content style-modal">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold" id="addTaskStatusModalLabel">Add New Task Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-10">
+                    <form id="createTaskStatusForm">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" id="statusMode" name="Mode" value="Create" />
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Code <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="statusCode" name="Status_Code" maxlength="50" placeholder="e.g. IN_PROGRESS" required />
+                            <span class="text-danger small d-none" id="errorStatusCode"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="statusName" name="Status_Name" maxlength="100" placeholder="e.g. In Progress" required />
+                            <span class="text-danger small d-none" id="errorStatusName"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Description</label>
+                            <textarea class="form-control" id="description" name="Description" rows="3" placeholder="Enter status description..."></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Sort Order</label>
+                            <input type="number" class="form-control" id="sortOrder" name="SortOrder" placeholder="e.g. 1" value="0" />
+                            <span class="text-danger small d-none" id="errorSortOrder"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <button type="button" class="btn btn-cancel custom-modal-btn" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-register custom-modal-btn px-4" id="btnSaveTaskStatus">Save Task Status</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-card">
+        <div class="table-responsive">
+            <table class="table menu-table align-middle mb-0 table-layout-fixed">
+                <thead>
+                    <tr>
+                        <th class="col-no text-center">No.</th>
+                        <th class="col-code">Code</th>
+                        <th class="col-name">Name</th>
+                        <th class="col-desc">Description</th>
+                        <th class="col-order text-center">Sort Order</th>
+                        <th class="col-actions text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.PagedData?.Data != null && Model.PagedData.Data.Any())
+                    {
+                        int index = ((Model.PagedData.PageNumber - 1) * Model.PagedData.PageSize) + 1;
+                        foreach (var item in Model.PagedData.Data)
+                        {
+                            <tr>
+                                <td class="text-center">@index</td>
+                                <td>
+                                    <code class="route-text text-truncate d-inline-block w-100"
+                                          data-tooltip-truncate
+                                          data-tooltip-text="@item.Status_Code">
+                                        @item.Status_Code
+                                    </code>
+                                </td>
+                                <td class="menu-name">
+                                    <span class="text-truncate d-inline-block w-100"
+                                          data-tooltip-truncate
+                                          data-tooltip-text="@item.Status_Name">
+                                        @item.Status_Name
+                                    </span>
+                                </td>
+                                <td class="col-desc">
+                                    @if (string.IsNullOrWhiteSpace(item.Description))
+                                    {
+                                        <div class="d-block">-</div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-truncate d-inline-block w-100"
+                                              data-tooltip-truncate
+                                              data-tooltip-text="@item.Description">
+                                              @item.Description
+                                        </span>
+                                    }
+                                </td>
+                                <td class="text-center">@item.SortOrder.ToString("D2")</td>
+                                <td class="text-center action-column">
+                                    <div class="action-btn-group">
+                                        <button type="button"
+                                                class="action-btn edit-icon btn-edit"
+                                                data-code="@item.Status_Code"
+                                                title="Edit Status">
+                                                <i class="bi bi-pencil-square"></i>
+                                        </button>
+                                        <form asp-controller="TaskStatuses"
+                                                asp-action="DeleteTaskStatuses"
+                                                method="post"
+                                                class="delete-form">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="statusCode" value="@item.Status_Code" />
+                                                <button type="button" class="action-icon-btn delete-icon" title="Delete">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            index++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                                No task statuses found.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <form id="antiForgeryForm">
+                @Html.AntiForgeryToken()
+            </form>
+        </div>
+
+        <div class="table-footer">
+            <div class="footer-text">
+                @{
+                    int totalItems = Model.PagedData?.TotalCount ?? 0;
+                    int currentPage = Model.PagedData?.PageNumber ?? 1;
+                    int pageSize = Model.PagedData?.PageSize ?? 10;
+
+                    int startItem = totalItems == 0 ? 0 : ((currentPage - 1) * pageSize) + 1;
+                    int endItem = totalItems == 0 ? 0 : Math.Min(currentPage * pageSize, totalItems);
+                }
+                Showing @startItem-@endItem of @totalItems records
+            </div>
+            @if (Model.PagedData != null && Model.PagedData.TotalPages > 1)
+            {
+                <div class="pagination-box">
+                    <a href="@Url.Action("TaskStatusesListView", new { PageNumber = Model.PagedData.PageNumber - 1, Search = Model.Search })"
+                       class="page-btn btn btn-sm btn-outline-secondary @(Model.PagedData.PageNumber <= 1 ? "disabled" : "")">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+                    @for (int i = 1; i <= Model.PagedData.TotalPages; i++)
+                    {
+                        <a href="@Url.Action("TaskStatusesListView", new { PageNumber = i, Search = Model.Search })"
+                           class="page-btn btn btn-sm @(i == Model.PagedData.PageNumber ? "btn-primary-pagination active" : "btn-outline-secondary")">
+                            @i
+                        </a>
+                    }
+                    <a href="@Url.Action("TaskStatusesListView", new { PageNumber = Model.PagedData.PageNumber + 1, Search = Model.Search })"
+                       class="page-btn btn btn-sm btn-outline-secondary @(Model.PagedData.PageNumber >= Model.PagedData.TotalPages ? "disabled" : "")">
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        var successMessage = '@successMessage';
+        var errorMessage = '@errorMessage';
+    </script>
+    <script src="~/js/Alert_Modal.js" asp-append-version="true"></script>
+    <script src="~/js/task-status.js" asp-append-version="true"></script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/menu-management.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Alert_Modal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/ckm-theme.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/task-statuses.css" asp-append-version="true" />
+}

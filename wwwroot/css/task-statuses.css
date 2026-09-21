@@ -1,0 +1,48 @@
+﻿.task-status-search {
+    flex: 0 0 auto;
+}
+.task-status-search .search-box-wrapper {
+    width: 300px;
+    min-width: 280px;
+}
+#addTaskStatusModal {
+    font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
+    font-weight: bold !important;
+    font-size: 14px !important;
+}
+#addTaskStatusModal .form-control{
+    font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
+    font-weight: bold !important;
+    font-size: 14px !important;
+}
+#addTaskStatusModal .custom-input-font{
+    font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
+}
+#addTaskStatusModal .modal-body{
+    padding: 1.5rem;
+}
+#addTaskStatusModal .modal-title{
+    font-size: 32px !important;
+}
+#addTaskStatusModal .style-modal {
+    border-radius: 12px;
+    background-color: var(--white);
+}
+
+#addTaskStatusModal .custom-modal-btn {
+    height: 40px;
+    border-radius: 8px;
+}
+
+#addTaskStatusModal .btn-register {
+    background-color: var(--primary-blue, #155ee2);
+    color: var(--white);
+    border: none;
+}
+
+#addTaskStatusModal .btn-cancel {
+    background-color: #6c757d;
+    color: var(--white);
+    border: none;
+}
+

@@ -31,6 +31,7 @@ builder.Services.AddScoped<RoleBL>();
 builder.Services.AddScoped<ProjectBL>();
 builder.Services.AddScoped<LoginUserBL>();
 builder.Services.AddScoped<ChangePasswordBL>();
+builder.Services.AddScoped<TaskStatusesBL>();
 builder.Services.AddAuthentication("MyCookieAuth")
     .AddCookie("MyCookieAuth", options =>
     {
