@@ -35,3 +35,72 @@ body {
   background-repeat: no-repeat;
   background-attachment: fixed;
 }
+
+/*the global table part*/
+.app-table-wrapper {
+    flex: 1;
+    width: 100%;
+    min-height: 0;
+    overflow-x: auto;
+    overflow-y: auto; 
+    background: #ffffff;
+    border-radius: 8px;
+}
+
+.app-table-wrapper::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.app-table-wrapper::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 4px;
+}
+
+.app-table-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.app-table {
+    width: 100%;
+    min-width: 650px;
+    border-collapse: collapse;
+    font-size: 0.85rem; 
+    color: #334155;
+}
+
+.app-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background-color: #f8fafc;
+    color: #475569;
+    font-weight: 600;
+    font-size: 16px;
+    padding: 10px 12px;
+    border-bottom: 1px solid #e2e8f0;
+    white-space: nowrap;
+}
+
+.app-table tbody td {
+    padding: 8px 12px; 
+    font-size: 14px;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f5f9;
+    white-space: nowrap;
+}
+
+.app-table tbody tr:hover {
+    background-color: #f8fafc;
+    transition: background-color 0.15s ease-in-out;
+}
+
+@media (max-width: 768px) {
+    .app-table {
+        font-size: 0.8rem;
+    }
+    .app-table thead th,
+    .app-table tbody td {
+        padding: 6px 8px;
+    }
+}

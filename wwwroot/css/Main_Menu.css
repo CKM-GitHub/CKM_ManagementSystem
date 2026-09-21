@@ -5,7 +5,7 @@ body {
     min-height: 100%;
     font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
     font-size: 14px;
-    overflow:hidden;
+    overflow:hidden!important;
 }
 
 body {
@@ -30,7 +30,8 @@ body {
 .app-shell {
     display: flex;
     width: 100%;
-    min-height: 100vh;
+    height: 100vh; 
+    overflow: auto;
 }
 
 .sidebar {
@@ -43,17 +44,23 @@ body {
     overflow-y: auto;
     overflow-x: hidden;
 }
+
 .main-area {
     flex: 1;
     min-width: 0;
     height: 100vh;
+    padding: 0;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-    background-image: url('/images/system_img/background_img.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    overflow: auto;
+}
+
+.page-content {
+    flex: 1;
+    min-height: 0;
+    padding: 0 20px;
+    overflow: auto;
+    box-sizing: border-box;
 }
 
 .topbar {
@@ -68,14 +75,6 @@ body {
 
 }
 
-.page-content {
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 0;
-    color: #ffffff;
-}
 /* Sidebar menu */
 .main-menu {
     width: 100%;

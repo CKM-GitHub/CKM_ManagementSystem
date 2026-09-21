@@ -10,8 +10,8 @@
 <link rel="stylesheet" href="~/css/UserCreate.css" />
 <link rel="stylesheet" href="~/css/ckm-theme.css" asp-append-version="true" />
 
-<div class="container d-flex justify-content-center align-items-center min-vh-100 py-5">
-    <div class="card border-0 rounded-4 shadow p-4 p-md-5 bg-white w- user-entry-card">
+<div class="container d-flex justify-content-center align-items-center pt-1">
+    <div class="card border-0 rounded-4 shadow pt-3 pt-md-4 pb-4 pb-md-5 px-4 px-md-5 bg-white w- user-entry-card">
         @if (TempData["SuccessMessage"] is string successMessage)
         {
             var redirectUrl = Url.Action("UserList", "UserList");
@@ -20,7 +20,7 @@
             <input type="hidden" id="redirectUrl" value="@redirectUrl" />
         }
 
-        <div class="d-flex align-items-center justify-content-center position-relative mb-4 mb-md-5">
+        <div class="d-flex align-items-center justify-content-center position-relative py-1 mb-3">
             <h1 class="text-center fw-bold mb-0 user-entry-title">
                 @(Model.Mode == "Entry" ? "User Entry" : "User Update")
             </h1>
@@ -111,7 +111,7 @@
                 <span asp-validation-for="ImageFile" class="text-danger small"></span>
             </div>
 
-            <div class="col-12 col-md-8 ps-md-4">
+            <div class="col-12 col-md-8 ps-md-2">
                 <div class="row g-3">
                     <div class="col-12">
                         <div class="row align-items-center">
@@ -282,7 +282,7 @@
                 </div>
             </div>
 
-            <div class="col-12 d-flex flex-column flex-sm-row justify-content-end gap-2 gap-sm-3 mt-4 mt-md-5 pt-3 border-top form-actions">
+            <div class="col-12 d-flex flex-column flex-sm-row justify-content-end gap-2 gap-sm-3 mt-3 pt-2 border-top form-actions">
                 @if (Model.Mode == "Entry")
                 {
                     <button type="button" class="btn btn-light px-4 py-2 rounded-3 fw-medium border clear-btn" id="clearBtn">Clear</button>

@@ -21,7 +21,7 @@ namespace CKM_ManagementSystem.BL
         public async Task<TaskPriorityListViewModel> TaskPriorityListAsync(
             string? Search,
             int PageNumber = 1,
-            int PageSize = 10,
+            int PageSize = 6,
             int TotalCount = 0)
         {
             if(PageNumber < 1)

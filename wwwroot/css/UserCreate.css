@@ -1,12 +1,12 @@
 ﻿.user-entry-card {
-    width: 100%;
-    max-width: 960px;
     margin: 0 auto;
+    max-width: 600px;
+    min-height: 60vh;
 }
 
 .avatar-preview-circle {
-    width: 150px;
-    height: 150px;
+    width: 130px;
+    height: 130px;
     border-color: #cbd5e1 !important;
     border: 2px dashed #adb5bd !important;
 }

@@ -21,7 +21,7 @@ namespace CKM_ManagementSystem.BL
         string? departmentCode,
         string? roleCode,
         int pageNumber = 1,
-        int pageSize = 10)
+        int pageSize = 6)
         {
             if (pageNumber < 1)
                 pageNumber = 1;

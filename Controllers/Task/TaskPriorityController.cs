@@ -17,7 +17,7 @@ namespace CKM_ManagementSystem.Controllers.Task
         public async Task<IActionResult> TaskPriorityList(
             string? Search,
             int PageNumber = 1,
-            int PageSize = 10)
+            int PageSize = 6)
         {
             ViewBag.SearchText = Search;
             ViewBag.PageNumber = PageNumber;
