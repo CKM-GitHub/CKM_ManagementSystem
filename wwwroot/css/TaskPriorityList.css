@@ -114,6 +114,7 @@
     border: 1px solid #e5e7eb;
     color: var(--white);
     border-radius: 6px;
+    min-width: 140px;
 }
 
 .btn-light:hover {
@@ -121,6 +122,10 @@
    color: var(--white);
    border-color: #cbd5e1 !important;
    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-create{
+    min-width:140px;
 }
 
 .custom-table thead th {

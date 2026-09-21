@@ -1,147 +1,280 @@
-﻿/* =========================================================
-   USER LIST PAGE & COMPACT LAYOUT
-   ========================================================= */
-
-.user-list-page {
-    width: 98%;
-    margin: 0 auto;
+﻿.user-list-page {
+    width: 100%;
     box-sizing: border-box;
 }
 
-/* Stat Box Layout */
+.header-text {
+    margin: 0 0 16px !important;
+    color: var(--dark-blue);
+    font-size: 32px !important;
+    font-weight: 700 !important;
+    line-height: 1.2;
+}
+
+.user-list-page .card {
+    border-radius: 12px !important;
+}
+
 .stat-icon-box {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
+    width: 48px;
+    height: 48px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
+    border-radius: 50%;
+    font-size: 20px;
 }
 
-/* Primary Button Styles */
-.btn-primary {
+.user-list-page .btn-primary {
     background-color: var(--primary-blue) !important;
     border-color: var(--primary-blue) !important;
+    color: var(--white) !important;
 }
 
-    .btn-primary:hover,
-    .btn-primary:focus {
+    .user-list-page .btn-primary:hover,
+    .user-list-page .btn-primary:focus {
         background-color: var(--primary-blue-hover) !important;
         border-color: var(--primary-blue-hover) !important;
         color: var(--white) !important;
     }
 
-/* Role Badges */
+
+.user-list-page .form-control,
+.user-list-page .form-select {
+    height: 42px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 14px !important;
+}
+
+    .user-list-page .form-control:hover,
+    .user-list-page .form-select:hover {
+        border-color: var(--primary-blue);
+    }
+
+    .user-list-page .form-control:focus,
+    .user-list-page .form-select:focus {
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 2px rgba(8, 125, 241, 0.14);
+    }
+
+.search-input-with-icon {
+    padding-left: 38px;
+    color: var(--gray);
+    font-size: 14px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    z-index: 1;
+    transform: translateY(-50%);
+    color: var(--gray);
+    pointer-events: none;
+}
+
+.search-form-container {
+    min-width: 0;
+}
+
+.search-wrapper {
+    position: relative;
+    flex: 0 1 auto;
+}
+
+    .search-wrapper .search-input-with-icon {
+        width: 320px;
+        max-width: 100%;
+    }
+
+    .search-wrapper select {
+        width: 220px;
+        max-width: 100%;
+    }
+
+        .search-wrapper select[name="status"] {
+            width: 120px;
+        }
+
+.search-btn {
+    flex: 0 0 auto;
+}
+
+.search-form-container + div {
+    flex: 0 0 auto;
+}
+
+.user-list-page .search-btn .btn,
+.user-list-page .search-form-container + div .btn {
+    height: 42px;
+    padding: 0 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
 .badge-role-manager {
     background-color: #f3e8ff;
     color: #7e22ce;
 }
 
 .badge-role-admin {
-    background-color: #FFF9E6;
-    color: #FFC107;
+    background-color: #fff9e6;
+    color: #ffc107;
 }
 
-.badge-role-member, .badge-role-viewer {
+.badge-role-member,
+.badge-role-viewer {
     background-color: #dcfce7;
     color: #15803d;
 }
 
-/* Status Badges */
 .badge-status {
     display: inline-flex;
     align-items: center;
-    padding: 2px 10px;
-    font-size: 12px;
+    padding: 4px 12px;
 }
 
+    .badge-status::before {
+        margin-right: 4px;
+        font-size: 16px;
+    }
+
     .badge-status.active {
+        background-color: #f2ffed !important;
         color: var(--success-color) !important;
-        background-color: #F2FFED !important;
     }
 
     .badge-status.inactive {
+        background-color: #ffeded !important;
         color: var(--error-color) !important;
-        background-color: #FFEDED !important;
     }
 
-/* Search Filter Spacing Fixes */
-.search-form-container {
-    min-width: 0;
-}
-
-.search-wrapper {
-    flex: 0 1 auto;
-    position: relative;
-}
-
-    .search-wrapper .search-input-with-icon {
-        width: 280px;
-        max-width: 100%;
-        padding-left: 36px;
-        font-size: 0.85rem;
+    .badge-status.active::before {
+        color: var(--success-color);
     }
 
-    .search-wrapper select {
-        width: 180px;
-        max-width: 100%;
-        font-size: 0.85rem;
+    .badge-status.inactive::before {
+        color: var(--error-color);
     }
 
-        .search-wrapper select[name="status"] {
-            width: 110px;
-        }
 
-.search-icon {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #6c757d;
-    z-index: 1;
-    pointer-events: none;
+.w-5 {
+    width: 5%;
 }
 
-.form-control:focus,
-.form-select:focus {
-    border-color: #0d6efd;
-    box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.2);
+.w-10 {
+    width: 10%;
 }
 
-/* Action Icon Buttons */
+.w-12 {
+    width: 12%;
+}
+
+.w-15 {
+    width: 15%;
+}
+
+.w-18 {
+    width: 18%;
+}
+
+.w-19 {
+    width: 19%;
+}
+
+.w-20 {
+    width: 20%;
+}
+
+/*.table-custom thead th {
+    height: 50px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    vertical-align: bottom;
+    border-bottom: 1px solid var(--border-color) !important;
+    background-color: var(--light-gray);
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.table-custom tbody td {
+    height: 50px;
+    max-width: 150px;
+    vertical-align: middle;
+    border-bottom: 1px solid #e9ecef !important;
+    font-size: 14px;
+}*/
+
+.empty-state {
+    padding: 48px 16px;
+    text-align: center;
+    vertical-align: middle;
+    color: #adb5bd;
+}
+
+    .empty-state i {
+        display: block;
+        margin-bottom: 24px;
+        font-size: 8rem;
+        opacity: 0.6;
+    }
+
+    .empty-state span {
+        display: block;
+    }
+
 .action-buttons {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 12px;
     white-space: nowrap;
 }
+
+    .action-buttons form {
+        margin: 0;
+        padding: 0;
+    }
 
 .action-icon-btn {
     width: 28px;
     height: 28px;
     padding: 0;
-    border: 0;
-    background: transparent;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 4px;
-    transition: background-color 0.2s ease;
+    border: 0;
+    background: transparent;
+    line-height: 1;
+    cursor: pointer;
 }
 
+    .action-icon-btn i {
+        width: 16px;
+        height: 16px;
+        font-size: 16px;
+        line-height: 16px;
+        text-align: center;
+    }
+
 .edit-icon {
-    color: #0d6efd;
+    color: var(--primary-blue);
 }
 
     .edit-icon:hover {
         background-color: #e8f1ff;
-        color: #084298;
+        color: var(--primary-blue-hover);
     }
 
 .delete-icon {
-    color: #dc3545;
+    color: var(--error-color);
 }
 
     .delete-icon:hover {
@@ -149,47 +282,132 @@
         color: #a71d2a;
     }
 
-/* Pagination Styling */
 .paging-btn {
-    padding: 4px 12px;
-    border: 1px solid #dee2e6;
-    background: white;
-    color: #333;
-    border-radius: 4px;
+    margin-right: 5px;
+    padding: 6px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--white);
+    color: var(--dark-blue);
+    font-size: 14px;
     cursor: pointer;
-    font-size: 13px;
     transition: all 0.2s ease;
 }
 
     .paging-btn:hover,
     .paging-btn.active {
-        background: #007bff;
-        color: white;
-        border-color: #007bff;
+        background: var(--primary-blue);
+        border-color: var(--primary-blue);
+        color: var(--white);
     }
 
-/* SweetAlert / Confirmation Modal Customization */
-.custom-cancel-btn {
-    background-color: #6c757d !important;
-    min-width: 110px !important;
-    font-size: 14px !important;
-    padding: 8px 16px !important;
-    border-radius: 6px !important;
+    .paging-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+#alertModal .modal-content {
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+#alertIcon i {
+    font-size: 16px;
+}
+
+.alert-success-icon i {
+    color: var(--success-color);
+}
+
+.alert-danger-icon i {
+    color: var(--error-color);
+}
+
+.alert-icon.alert-success {
+    background-color: #d1e7dd;
+    color: #0f5132;
+}
+
+.alert-icon.alert-delete {
+    background-color: #f8d7da;
+}
+
+#normalButtons .btn,
+#deleteButtons .btn {
+    min-width: 100px;
+    height: 42px;
+    padding: 0 18px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+#alertOkButton {
+    min-width: 120px;
+    height: 42px;
+    background-color: var(--gray);
+    color: var(--white);
+    border-radius: 8px;
+}
+
+    #alertOkButton:hover {
+        background-color: #5c636a;
+        color: var(--white);
+    }
+
+.swal2-actions-right {
+    justify-content: flex-end !important;
+    gap: 15px !important;
+    padding: 5px 0 0 !important;
+    margin-right: 20px !important;
+}
+
+.custom-modal-title {
+    font-size: 16px !important;
+}
+
+.custom-cancel-btn,
+.custom-confirm-btn {
+    min-width: 140px !important;
+    height: 42px !important;
+    padding: 0 20px !important;
+    margin: 0 8px !important;
     border: none !important;
-    color: #fff !important;
+    border-radius: 8px !important;
+    color: var(--white) !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.5px !important;
+    transition: all 0.2s ease !important;
+}
+
+.custom-cancel-btn {
+    background-color: var(--gray) !important;
 }
 
 .custom-confirm-btn {
-    background-color: #dc3545 !important;
-    min-width: 110px !important;
-    font-size: 14px !important;
-    padding: 8px 16px !important;
-    border-radius: 6px !important;
-    border: none !important;
-    color: #fff !important;
+    background-color: var(--error-color) !important;
 }
 
-/* Tooltip Customization */
+    .custom-confirm-btn:hover,
+    .custom-confirm-btn:focus {
+        background-color: #c82333 !important;
+        box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+    }
+
+.custom-cancel-btn:hover,
+.custom-cancel-btn:focus {
+    background-color: #5a6268 !important;
+    box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+}
+
+.custom-confirm-btn:active {
+    background-color: #bd2130 !important;
+}
+
+.custom-cancel-btn:active {
+    background-color: #4e555b !important;
+}
+
 .custom-tooltip-item {
     position: relative;
 }
@@ -199,35 +417,194 @@
     position: absolute;
     top: 100%;
     left: 50%;
-    transform: translateX(-50%);
-    margin-top: 6px;
-    padding: 4px 12px;
-    background-color: #333;
-    color: #ffffff;
-    font-size: 12px;
-    border-radius: 4px;
-    white-space: nowrap;
     z-index: 1050;
+    transform: translateX(-50%);
+    margin-top: 8px;
+    padding: 6px 16px;
+    border-radius: 8px;
+    background-color: #4a4a4a;
+    color: var(--white);
+    font-size: 14px;
+    white-space: nowrap;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
+
+    .custom-tooltip-box::before {
+        content: "";
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 6px;
+        border-style: solid;
+        border-color: transparent transparent #4a4a4a transparent;
+    }
 
 .custom-tooltip-item:hover .custom-tooltip-box {
     display: block;
 }
 
-/* Mobile Responsive Adjustments */
+@media (max-width: 999px) {
+
+    .search-wrapper .search-input-with-icon {
+        width: 300px;
+    }
+
+    .search-wrapper select {
+        width: 200px;
+    }
+}
+
+
 @media (max-width: 767.98px) {
+
     .search-form-container,
     .search-wrapper,
-    .search-wrapper .search-input-with-icon,
-    .search-wrapper select,
     .search-btn,
-    .search-btn button {
+    .search-form-container + div {
         width: 100%;
     }
+
+        .search-wrapper .search-input-with-icon,
+        .search-wrapper select,
+        .search-wrapper select[name="status"] {
+            width: 100%;
+        }
+
+        .search-btn button,
+        .search-form-container + div a {
+            width: 100%;
+        }
 
     .custom-cancel-btn,
     .custom-confirm-btn {
         width: 100% !important;
+        min-width: 100% !important;
         margin: 4px 0 !important;
+        font-size: 14px !important;
     }
+
+    .swal2-actions,
+    .swal2-actions-right {
+        width: 100% !important;
+        flex-direction: column-reverse !important;
+    }
+
+    .swal2-actions-right {
+        justify-content: center !important;
+        width: 90% !important;
+        margin-right: 0 !important;
+    }
+}
+.action-icon-btn {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    cursor: pointer;
+    line-height: 1;
+}
+
+    .action-icon-btn i {
+        font-size: 16px;
+        line-height: 1;
+        font-weight: 400;
+    }
+
+.edit-icon {
+    color: var(--primary-blue);
+}
+
+    .edit-icon:hover {
+        background-color: #E8F1FF;
+        color: var(--primary-blue-hover);
+    }
+
+.delete-icon {
+    color: var(--error-color);
+}
+
+    .delete-icon:hover {
+        background-color: #FDEAEA;
+        color: var(--error-color);
+    }
+
+@media (max-width: 576px) {
+
+    .user-list-page {
+        padding: 16px;
+    }
+
+    .swal2-actions-right {
+        align-items: stretch !important;
+        flex-direction: column-reverse !important;
+    }
+
+    .custom-cancel-btn,
+    .custom-confirm-btn {
+        min-width: 120px !important;
+    }
+}
+
+.pagination-footer {
+    gap: 12px;
+}
+
+    .pagination-footer nav {
+        margin-left: auto;
+    }
+
+    .pagination-footer .pagination {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin: 0;
+    }
+
+    .pagination-footer .page-item {
+        margin: 0 !important;
+    }
+
+    .pagination-footer .page-link {
+        min-width: 36px;
+        height: 36px;
+        padding: 0 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+    }
+
+
+@media (max-width: 767.98px) {
+
+    .pagination-footer {
+        flex-direction: column;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center;
+    }
+
+        .pagination-footer nav {
+            width: 100%;
+            margin-left: 0;
+        }
+
+        .pagination-footer .pagination {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .pagination-footer .page-link {
+            min-width: 34px;
+            height: 34px;
+            padding: 0 8px;
+            font-size: 12px;
+        }
 }

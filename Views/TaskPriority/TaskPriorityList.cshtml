@@ -92,12 +92,22 @@
                             @foreach (var priority in Model.PagedData.Data)
                             {
                                 <tr>
-                                    <td class="ps-3">@index</td>
+                                    <td class="text-end ps-3">@index</td>
                                     <td>@priority.Priority_Code</td>
-                                    <td>@priority.Priority_Name</td>
-                                    <td class="text-muted text-truncate"
+                                    <td class="text-muted text-truncate tooltip-cell"
+                                        style="max-width: 170px;"
+                                        data-toggle="tooltip"
+                                        data-container="body"
+                                        data-placement="top"
+                                        data-title="@priority.Priority_Name">
+                                        @priority.Priority_Name
+                                    </td>
+                                    <td class="text-muted text-truncate tooltip-cell"
                                         style="max-width: 300px;"
-                                        title="@(string.IsNullOrWhiteSpace(priority.Description) ? "No description" : priority.Description)">
+                                        data-toggle="tooltip"
+                                        data-container="body"
+                                        data-placement="top"
+                                        data-title="@(string.IsNullOrWhiteSpace(priority.Description) ? "No description" : priority.Description)">
                                         @(string.IsNullOrWhiteSpace(priority.Description) ? "-" : priority.Description)
                                     </td>
                                     <td class="text-center">@priority.SortOrder</td>
@@ -189,7 +199,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content custom-modal">
                 <div class="modal-header border-0 pb-0">
-                    <!-- HTML Tag ပြင်ဆင်ထားသောနေရာ -->
+
                     <h1 class="modal-title fw-bold" id="createTaskPriorityModalLabel">
                         @(Model.Entry.Mode == "Edit" ? "Edit Task Priority" : "Add New Task Priority")
                     </h1>
