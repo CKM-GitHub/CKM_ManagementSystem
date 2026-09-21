@@ -77,7 +77,13 @@
             *@
 
             <h1 class="text-center fw-bold mb-0 user-entry-title">
-                @(Model.Mode == "Entry" ? "User Entry" : "User Update")
+                @(
+                    ViewBag.Source == "Profile"
+                          ? "User Info"
+                          : Model.Mode == "Entry"
+                           ?"User Entry"
+                           :"User Update"
+                )
             </h1>
         </div>
 

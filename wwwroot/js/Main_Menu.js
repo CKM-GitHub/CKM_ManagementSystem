@@ -36,7 +36,19 @@
         fetch("/MainMenu/Profile")
             .then(response => response.text())
             .then(html => {
+
                 profileContainer.innerHTML = html;
+
+                const dropdownToggle =
+                    profileContainer.querySelector(
+                        '[data-bs-toggle="dropdown"]'
+                    );
+
+                if (dropdownToggle) {
+                    bootstrap.Dropdown.getOrCreateInstance(
+                        dropdownToggle
+                    );
+                }
             });
     }
 });
@@ -101,25 +113,13 @@ function setActiveMenu() {
 
     if (activeSubmenu) {
 
-        const collapse =
-            bootstrap.Collapse.getOrCreateInstance(
-                activeSubmenu,
-                {
-                    toggle: false
-                }
-            );
-
-        collapse.show();
-
+        activeSubmenu.classList.add("show");
         localStorage.setItem(
             "openMainMenu",
             activeSubmenu.id
         );
-
         return;
     }
-
-
     restoreOpenMenu();
 }
 
@@ -185,15 +185,16 @@ function restoreOpenMenu() {
         return;
     }
 
-    const collapse =
-        bootstrap.Collapse.getOrCreateInstance(
-            menu,
-            {
+    document.querySelectorAll(".submenu.show").forEach(function (openMenu) {
+        if (openMenu.id !== savedMenu) {
+            const openCollapse = bootstrap.Collapse.getOrCreateInstance(
+                openMenu, {
                 toggle: false
             }
-        );
-
-    collapse.show();
+            );
+            openCollapse.hide();
+        }
+    });
 
     const button =
         document.querySelector(

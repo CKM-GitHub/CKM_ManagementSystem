@@ -1,29 +1,20 @@
 ﻿@model List<CKM_ManagementSystem.Models.ViewModels.MainMenu.MainMenuViewModel>
 
-@{
-    string currentController = ViewBag.CurrentController?.ToString() ?? "";
-
-    string currentAction = ViewBag.CurrentAction?.ToString() ?? "";
-}
-@if (Model != null && Model.Count > 0)
+@if(Model != null && Model.Count > 0)
 {
     <nav class="sub-navigation">
-        @foreach(var menu in Model)
+        @for (int i=0; i<Model.Count; i++)
         {
-            bool isActive = string.Equals(
-                currentController,
-                menu.ControllerName,
-                StringComparison.OrdinalIgnoreCase
-            )
-            &&
-            string.Equals(
-                currentAction,
-                menu.ActionName,
-                StringComparison.CurrentCultureIgnoreCase
-            );
-            <span class="sub-nav-link @(isActive ? "active" : "")">
-                @menu.MenuName
+            bool isCurrentPage = i == Model.Count - 1;
+            <span class="sub-nav-link @(isCurrentPage ? "active": "")">
+                @Model[i].MenuName
             </span>
+            @if (i < Model.Count - 1)
+            {
+                <span class="sub-nav-separator">
+                    &gt;
+                </span>
+            }
         }
     </nav>
 }

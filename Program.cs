@@ -53,7 +53,7 @@ app.UseSession();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("Error/500");
+    app.UseExceptionHandler("/Error/500");
     app.UseHsts();
 }
 
