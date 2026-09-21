@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="~/css/role-entry.css" asp-append-version="true" />
 }
 
-<div class="container py-4">
+<div class="container role-entry-page">
     <div class="role-entry-card">
         <h4 class="role-entry-title">
             @(isEditMode ? "Edit User Role" : "User Role Entry")
@@ -272,7 +272,7 @@
                     {
                         <a asp-action="RoleList"
                            asp-controller="Role"
-                           class="btn btn-outline-secondary w-100 py-2 text-center text-decoration-none">
+                           class="btn btn-outline-secondary role-entry-btn w-100 text-center text-decoration-none">
                             Cancel
                         </a>
                     }
@@ -280,7 +280,7 @@
                     {
                         <button type="button"
                                 id="btnClear"
-                                class="btn btn-outline-secondary w-100 py-2">
+                                class="btn btn-outline-secondary role-entry-btn w-100">
                             Clear
                         </button>
                     }
@@ -289,7 +289,7 @@
                 <div class="col-6">
                     <button type="submit"
                             id="btnRegister"
-                            class="btn btn-primary w-100 py-2">
+                            class="btn btn-primary role-entry-btn w-100">
                         @(isEditMode ? "Update" : "Register")
                     </button>
                 </div>

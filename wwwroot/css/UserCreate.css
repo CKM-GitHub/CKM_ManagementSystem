@@ -1,12 +1,12 @@
 ﻿.user-entry-card {
-    width: 100%;
-    max-width: 960px;
     margin: 0 auto;
+    max-width: 600px;
+    min-height: 60vh;
 }
 
 .avatar-preview-circle {
-    width: 150px;
-    height: 150px;
+    width: 130px;
+    height: 130px;
     border-color: #cbd5e1 !important;
     border: 2px dashed #adb5bd !important;
 }
@@ -25,12 +25,12 @@
     font-size: 11px;
 }
 
-.upload-btn:hover {
-     background-color: #2563eb !important;
-     border-color: #2563eb !important;
-     color: #fff !important;
-     text-decoration: none;
-}
+    .upload-btn:hover {
+        background-color: #2563eb !important;
+        border-color: #2563eb !important;
+        color: #fff !important;
+        text-decoration: none;
+    }
 
 .gender-radio:checked {
     background-color: #2563eb;
@@ -45,19 +45,19 @@
     border-color: #cbd5e1;
 }
 
-.status-radio:checked {
-    background-color: #2563eb;
-    border-color: #2563eb;
- }
+    .status-radio:checked {
+        background-color: #2563eb;
+        border-color: #2563eb;
+    }
 
 .terms-checkbox {
     border-color: #cbd5e1;
 }
 
-.terms-checkbox:checked {
-    background-color: #2563eb;
-    border-color: #2563eb;
-}
+    .terms-checkbox:checked {
+        background-color: #2563eb;
+        border-color: #2563eb;
+    }
 
 .form-actions {
     border-color: #f1f5f9 !important;
@@ -73,11 +73,11 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.clear-btn:hover {
-   background-color: #8a9299;
-   border-color: #cbd5e1 !important;
-   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+    .clear-btn:hover {
+        background-color: #8a9299;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
 .create-btn {
     background-color: var(--primary-blue) !important;
@@ -89,13 +89,13 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.create-btn:hover,
-.create-btn:focus {
-    background-color: var(--primary-blue-hover) !important;
-    border-color: var(--primary-blue-hover) !important;
-    color: var(--white) !important;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+    .create-btn:hover,
+    .create-btn:focus {
+        background-color: var(--primary-blue-hover) !important;
+        border-color: var(--primary-blue-hover) !important;
+        color: var(--white) !important;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
 .form-control:focus,
 .form-select:focus {
@@ -109,7 +109,7 @@
 }
 
 .alert-success-icon i {
-    color: #198754; 
+    color: #198754;
 }
 
 #alertOkButton {
@@ -119,8 +119,8 @@
 }
 
 #alertOkButton:hover {
-     background-color: #5c636a;
-     color: white;
+    background-color: #5c636a;
+    color: white;
 }
 
 .tooltip-select::after {
@@ -152,10 +152,11 @@
     visibility: visible;
     transform: translateY(0);
 }
+
 @media (min-width: 992px) {
     .user-entry-card {
         width: 90%;
-        max-width: 1200px;
+        max-width: 1000px;
     }
 }
 

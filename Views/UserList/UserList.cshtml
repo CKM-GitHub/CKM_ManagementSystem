@@ -1,5 +1,6 @@
 ﻿@using CKM_ManagementSystem.Models.ViewModels.User
-@model CKM_ManagementSystem.Models.ViewModels.User.PagedResponse<UserListViewModel>
+@using CKM_ManagementSystem.Models.ViewModels.Common
+@model UserListViewModel
 
 @{
     ViewData["Title"] = "User Management";
@@ -9,21 +10,22 @@
     string? currentDept = ViewBag.DepartmentCode as string;
     string? currentRole = ViewBag.RoleCode as string;
     int currentPage = ViewBag.PageNumber ?? 1;
-    int pageSize = 10; 
-    int totalItems = Model.TotalCount;
+    int pageSize = ViewBag.PageSize ?? 7;
+    int totalItems = Model.PagedData.TotalCount;
     int startItem = totalItems > 0 ? (currentPage - 1) * pageSize + 1 : 0;
-    int endItem = totalItems > 0 ? Math.Min(currentPage * pageSize, totalItems) : 0;
+    int endItem = totalItems > 0
+    ? Math.Min(currentPage * pageSize, totalItems)
+    : 0;
     int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
-    if (totalPages < 1) totalPages = 1;
 }
 
 <link rel="stylesheet" href="~/css/UserList.css" />
 <link rel="stylesheet" href="~/css/Alert_Modal.css" asp-append-version="true" />
 <div class="user-list-page">
 <h1 class="text-center fw-bold mb-4 header-text">User Management</h1>
-<div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3 mb-4">
+<div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3 mb-3">
     <div class="col">
-        <div class="card h-100 shadow-sm p-3 d-flex flex-row align-items-center gap-3 border-0">
+        <div class="card h-100 shadow-sm p-2 d-flex flex-row align-items-center gap-2 border-0">
             <div class="stat-icon-box bg-light text-primary"><i class="fas fa-users"></i></div>
             <div>
                 <div class="text-secondary small">Total Users</div>
@@ -33,7 +35,7 @@
         </div>
     </div>
     <div class="col">
-        <div class="card h-100 shadow-sm p-3 d-flex flex-row align-items-center gap-3 border-0">
+        <div class="card h-100 shadow-sm p-2 d-flex flex-row align-items-center gap-3 border-0">
             <div class="stat-icon-box bg-success bg-opacity-10 text-success"><i class="fas fa-user-check"></i></div>
             <div>
                 <div class="text-secondary small">Active Users</div>
@@ -42,7 +44,7 @@
         </div>
     </div>
     <div class="col">
-        <div class="card h-100 shadow-sm p-3 d-flex flex-row align-items-center gap-3 border-0">
+        <div class="card h-100 shadow-sm p-2 d-flex flex-row align-items-center gap-3 border-0">
             <div class="stat-icon-box bg-warning bg-opacity-10 text-warning"><i class="fas fa-user-slash"></i></div>
             <div>
                 <div class="text-secondary small">Inactive Users</div>
@@ -51,7 +53,7 @@
         </div>
     </div>
     <div class="col">
-        <div class="card h-100 shadow-sm p-3 d-flex flex-row align-items-center gap-3 border-0">
+        <div class="card h-100 shadow-sm p-2 d-flex flex-row align-items-center gap-3 border-0">
             <div class="stat-icon-box bg-purple bg-opacity-10 text-purple"><i class="fas fa-building" style="color: #a855f7;"></i></div>
             <div>
                 <div class="text-secondary small">Departments</div>
@@ -61,7 +63,7 @@
     </div>
 </div>
 
-<form method="get" asp-controller="UserList" asp-action="UserList" class="card shadow-sm p-3 mb-4 border-0">
+<form method="get" asp-controller="UserList" asp-action="UserList" class="card shadow-sm p-3 mb-3 border-0">
     <div class="d-flex flex-wrap align-items-center gap-2 justify-content-between">
         <div class="d-flex flex-wrap align-items-center gap-2 flex-grow-1 search-form-container">
             <div class="search-wrapper">
@@ -122,71 +124,7 @@
         
     </div>
 </form>
-@*
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success mt-2 d-flex align-items-center justify-content-between" role="alert">
-        <span>@TempData["SuccessMessage"]</span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-}
 
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger mt-2 d-flex align-items-center justify-content-between" role="alert">
-        <span>@TempData["ErrorMessage"]</span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-} 
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-sm">
-            <div class="modal-content">
-                <div class="modal-body text-center">
-                    <div class="mb-3">
-                        <i class="bi bi-check-circle-fill text-success"
-                           style="font-size: 50px;"></i>
-                    </div>
-                    <p class="mb-0">
-                        @TempData["SuccessMessage"]
-                    </p>
-                </div>
-                <div class="modal-footer border-0 justify-content-center">
-                    <button type="button"
-                            class="btn btn-success px-4"
-                            data-bs-dismiss="modal">OK
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-}
-
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-body text-center">
-                    <div class="mb-3">
-                        <i class="bi bi-x-circle-fill text-danger"
-                           style="font-size: 50px;"></i>
-                    </div>
-                    <p class="mb-0">
-                        @TempData["ErrorMessage"]
-                    </p>
-                </div>
-                <div class="modal-footer border-0 justify-content-center">
-                    <button type="button"
-                            class="btn btn-danger px-4"
-                            data-bs-dismiss="modal">OK
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-} *@
 @if (TempData["SuccessMessage"] is string successMessage)
 {
     <input type="hidden"
@@ -206,7 +144,7 @@
 <div class="card shadow-sm border-0 mb-4 rounded-3">
     <div class="table-responsive">
         <table class="table table-custom align-middle mb-0 bg-white border-0 rounded-3 overflow-hidden">
-            @if (Model.Data != null && Model.Data.Count > 0)
+                @if (Model.PagedData.Data != null && Model.PagedData.Data.Count > 0)
             {
                 <thead class="bg-light text-secondary small">
                     <tr>
@@ -223,7 +161,7 @@
                 <tbody>
                     @{
                         int index = startItem;
-                        foreach (var user in Model.Data)
+                        foreach (var user in Model.PagedData.Data)
                         {
                           @* string roleBadgeClass = "badge-role-viewer";
                             string roleName = user.RoleName?.ToLower() ?? "";
@@ -232,7 +170,7 @@
                             else if (roleName.Contains("teamleader")) { roleBadgeClass = "badge-role-leader"; }
                             else if (roleName.Contains("member")) { roleBadgeClass = "badge-role-member"; }  *@
                             <tr>
-                                <td class="ps-4">@index</td>
+                                <td class="text end ps-4">@index</td>
                                 <td>@user.StaffCode</td>
                                 <td>
                                     <div class="d-flex align-items-center">
@@ -281,7 +219,7 @@
                                                 <button type="submit"
                                                         class="action-icon-btn edit-icon"
                                                         title="Update">
-                                                    <i class="far fa-pen-to-square"></i>
+                                                    <i class="bi bi-pencil-square"></i>
                                                 </button>
                                             </form>
 
@@ -300,7 +238,7 @@
                                                         class="action-icon-btn delete-icon"
                                                         id="confirmdel"
                                                         title="Delete">
-                                                    <i class="far fa-trash-can"></i>
+                                                    <i class="bi bi-trash"></i>
                                                 </button>
                                             </form>
                                         </div>
@@ -327,8 +265,9 @@
     </div> 
     @if (totalPages > 1 || totalItems > 0)
     {
-        <div class="d-flex flex-wrap justify-content-between align-items-center p-3 border-top bg-white" style=" border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
-            <div class="small text-secondary mb-2 mb-md-0">
+            <div class="d-flex flex-wrap justify-content-between align-items-center p-3 border-top bg-white pagination-footer"
+                 style="border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
+                <div class="small text-secondary mb-2 mb-md-0">
                 Showing @startItem-@endItem of @totalItems users
             </div>
             <nav aria-label="Page navigation">

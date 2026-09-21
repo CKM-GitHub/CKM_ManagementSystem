@@ -1,16 +1,17 @@
 ﻿body {
     background: var(--dark-blue);
-    min-height: 100vh;
     font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
 }
-
+.role-list-page {
+    padding: 0px 24px 24px;
+    margin-top:--16px;
+}
 .page-title {
     color: var(--dark-blue);
     font-weight: bold;
     font-size: 32px; /* Main Header Size */
     text-align: center;
-    margin-top: 20px;
-    margin-bottom: 20px;
+    margin:0 0 16px;
     letter-spacing: 0.5px;
 }
 
@@ -18,7 +19,7 @@
     background-color: var(--white);
     border-radius: 12px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-    padding: 18px 24px;
+    padding: 20px 24px;
     margin-bottom: 20px;
     border: none;
 }
@@ -45,9 +46,9 @@
 
     .search-input-group .form-control {
         padding-right: 32px;
-        border-radius: 6px;
+        border-radius: 8px;
         border: 1px solid var(--border-color);
-        height: 38px;
+        height: 42px;
         font-size: 14px; /* Body Text Size */
         color: var(--dark-blue);
     }
@@ -62,9 +63,9 @@
     }
 
 .custom-select {
-    border-radius: 6px;
+    border-radius: 8px;
     border: 1px solid var(--border-color);
-    height: 38px;
+    height: 42px;
     font-size: 14px; /* Body Text Size */
     width: 140px;
     color: var(--dark-blue);
@@ -73,10 +74,10 @@
 .btn-search-menu {
     background-color: var(--primary-blue);
     color: var(--white);
-    border-radius: 6px;
+    height:42px;
+    border-radius: 8px;
     font-weight:bold;
     font-size: 14px; /* Subheader / Button Size */
-    height: 38px;
     padding: 0 16px;
     border: none;
     display: inline-flex;
@@ -93,10 +94,10 @@
 .btn-add-role {
     background-color: var(--primary-blue);
     color: var(--white);
-    border-radius: 6px;
+    border-radius: 8px;
     font-weight: bold;
     font-size: 14px; /* Subheader / Button Size */
-    height: 38px;
+    height: 42px;
     padding: 0 18px;
     border: none;
     text-decoration: none;
@@ -120,21 +121,16 @@
     table-layout: fixed;
 }
 
-    .role-table th {
+    /*.role-table th {
         color: var(--dark-blue);
         font-weight: bold;
-        font-size: 16px; /* Subheader Size */
-        padding: 14px 10px;
-        border-bottom: 1px solid var(--light-gray);
+        font-size: 16px;*/ /* Subheader Size */
+        /*padding: 14px 10px;
+        border-bottom: 1px solid var(--border-color);
         background-color: var(--white);
-    }
+    }*/
 
-    .role-table td {
-        color: var(--dark-blue);
-        font-size: 14px; /* Body Text Size */
-        padding: 16px 10px;
-        border-bottom: 1px solid var(--light-gray);
-        vertical-align: middle;
+    .role-table td {        
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -194,7 +190,11 @@
 }
 
 
-
+.role-list-page > .page-title {
+    margin-top: 0 !important;
+    margin-bottom: 16px !important;
+    padding-top: 0 !important;
+}
 .edit-icon {
     color: #0d6efd;
 }
@@ -222,10 +222,11 @@
     font-size: 14px; /* Body Text Size */
 }
 
-.pagination-wrapper {
+.pagination-box{
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 5px;
+    flex-wrap:wrap;
 }
 
 .page-btn {
@@ -241,7 +242,43 @@
     font-size: 14px; /* Body Text Size */
     text-decoration: none;
 }
+.action-icon-btn {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    cursor: pointer;
+    line-height: 1;
+}
 
+    .action-icon-btn i {
+        font-size: 16px;
+        line-height: 1;
+        font-weight: 400;
+    }
+
+.edit-icon {
+    color: var(--primary-blue);
+}
+
+    .edit-icon:hover {
+        background-color: #E8F1FF;
+        color: var(--primary-blue-hover);
+    }
+
+.delete-icon {
+    color: var(--error-color);
+}
+
+    .delete-icon:hover {
+        background-color: #FDEAEA;
+        color: var(--error-color);
+    }
     .page-btn.active {
         background-color: var(--primary-blue);
         color: var(--white);
@@ -254,3 +291,30 @@
         cursor: not-allowed;
         background-color: var(--light-gray);
     }
+@media (max-width: 767.98px) {
+
+    .table-footer {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        text-align: center;
+    }
+
+    .footer-text {
+        width: 100%;
+        text-align: center;
+    }
+
+    .pagination-box {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .page-btn {
+        width: 34px;
+        height: 34px;
+        font-size: 12px;
+    }
+}

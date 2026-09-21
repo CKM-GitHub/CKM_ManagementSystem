@@ -3,14 +3,18 @@
     font-size: 14px;
     color: var(--dark-blue);
 }
-
+.menu-entry-page {
+    width: 100%;
+    padding: 16px 24px 24px;
+    box-sizing: border-box;
+}
 .menu-page-shell {
     color: var(--dark-blue);
     padding: 20px !important;
 }
 
 .card {
-    border-radius: 15px !important;
+    border-radius: 12px !important;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
 }
 .card-body {
@@ -30,11 +34,11 @@
 
 .form-control,
 .form-select {
-    border-color: var(--border-color);
-    padding: 0.55rem 0.75rem;
+    height: 42px;
+    padding: 0 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
     font-size: 14px !important;
-    border-radius: 6px;
-    height: 40px;
     font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
 }
 
@@ -66,7 +70,6 @@ input.border-danger,
 select.border-danger,
 textarea.border-danger{
     border-color: var(--error-color, #DC3545) !important;
-    background-color: var(--primary-blue);
     color: var(--white);
     font-size: 14px !important;
 }
@@ -87,7 +90,7 @@ textarea.border-danger{
     align-items: center !important;
     justify-content: center !important;
     border: none !important;
-    border-radius: 4px !important;
+    border-radius: 8px !important;
     font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif !important;
     font-size: 14px !important;
     font-weight: 600 !important;

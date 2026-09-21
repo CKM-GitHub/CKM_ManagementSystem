@@ -23,7 +23,7 @@ namespace CKM_ManagementSystem.Controllers.User
             string? departmentCode,
             string? roleCode,
             int pageNumber = 1,
-            int pageSize = 10)
+            int pageSize = 6)
         {
             ViewBag.SearchText = searchText;
             ViewBag.Status = status;

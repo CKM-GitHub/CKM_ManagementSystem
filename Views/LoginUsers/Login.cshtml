@@ -10,19 +10,26 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - CKM Management System</title>
+    <link rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="~/images/system_img/browsertab.png"
+          asp-append-version="true" />
+
     <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/lib/fontawesome/css/all.css" /></head>
+    <link rel="stylesheet" href="~/lib/fontawesome/css/all.css" />
     <link rel="stylesheet" href="~/css/Login.css" />
     <link rel="stylesheet" href="~/css/ckm-theme.css" />
     <link rel="stylesheet" href="~/css/Alert_Modal.css" />
+</head>
 <body>
 <div class="login-body" data-error="@ViewBag.ErrorMessage" data-success-title="@ViewBag.SuccessTitle" data-success-message="@ViewBag.SuccessMessage">
     <div class="container-fluid">
         <div class="row justify-content-center">
             <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
                 <div class="login-card p-4 p-sm-5">
-                    <div class="d-flex align-items-center justify-content-center mb-4">
+                    <div class="logo-wrapper text-center">
                         <img src="~/images/system_img/login_logo.png" alt="CKM Logo" class="logo-img" onerror="this.style.display='none'" />
                     </div>
                     <h2 class="login-title fw-bold mb-1">Sign In</h2>
@@ -55,7 +62,7 @@
                         </div>
                         <button type="submit" class="btn-primary-custom w-100">Sign In</button>
                     </form>
-                    <div class="copyright-text text-center mt-4">
+                    <div class="copyright-text text-center">
                         &copy; 2026 CKM Management System. All rights reserved.
                     </div>
                 </div>

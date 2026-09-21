@@ -39,6 +39,7 @@ main, .container, .container-fluid{
     margin: 0 auto;
     justify-content: center;
     font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
+    padding: 2.5rem 2rem !important;
 }
 .login-title{
     color: var(--dark-blue);
@@ -60,6 +61,10 @@ input[type="password"]::-ms-clear{
     max-width: 280px;
     width: 100%;
     height: auto;
+}
+.logo-wrapper{
+    margin-top: 0.5rem;
+    margin-bottom: 0.55rem;
 }
 .input-group-text-custom{
     color: var(--gray);
@@ -127,4 +132,6 @@ input[type="password"]::-ms-clear{
 .copyright-text{
     color: var(--gray);
     font-size: 0.85rem;
+    margin-top: 1.75rem !important;
+    margin-bottom: 0.25rem;
 }

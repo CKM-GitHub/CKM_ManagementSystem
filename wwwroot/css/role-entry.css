@@ -1,64 +1,97 @@
-﻿/* Base Page & Backgrounds */
+﻿/* ================================
+   Role Entry Page
+================================ */
+
 body {
     color: var(--white) !important;
     font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif !important;
 }
 
-/* Card Container (Background White) */
+.role-entry-page {
+    width: 100%;
+    padding: 16px 24px 24px;
+    box-sizing: border-box;
+}
+
 .role-entry-card {
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 32px;
+    box-sizing: border-box;
     background-color: var(--white) !important;
     border-radius: 12px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
-    padding: 2.5rem;
-    max-width: 720px;
-    margin: 2rem auto;
 }
 
-/* Main Header - 32px Bold (Dark Blue Text on White Card) */
-.role-entry-title,
-.main-header,
-h1 {
+
+/* ================================
+   Title
+================================ */
+
+.role-entry-title {
+    margin: 0 0 16px;
     color: var(--dark-blue) !important;
-    font-weight: bold;
     font-size: 32px !important;
-    text-align: center;
-    margin-bottom: 1.5rem;
+    font-weight: 700;
     line-height: 1.2;
+    text-align: center;
 }
 
-/* Subheaders & Table Headers - 16px Bold */
-.permissions-table-wrapper table thead th,
-.parent-menu-title,
-.subheader,
-h2, h3, h4 {
-    font-size: 16px !important;
-    font-weight: bold;
-    color: var(--dark-blue) !important;
-}
 
-/* Labels, Body Text & Controls - 14px */
+/* ================================
+   Labels
+================================ */
+
 .form-label-custom {
-    color: var(--dark-blue) !important;
-    font-size: 14px !important;
-    font-weight: bold;
-    margin-bottom: 0.4rem;
     display: inline-block;
-}
-
-.form-control {
-    font-size: 14px !important;
+    margin-bottom: 6px;
     color: var(--dark-blue) !important;
-    background-color: var(--light-gray) !important;
-    border: 1px solid var(--border-color);
+    font-size: 14px !important;
+    font-weight: 600;
 }
 
-    .form-control:focus {
-        border-color: var(--primary-blue) !important;
-        box-shadow: 0 0 0 0.2rem rgba(8, 125, 241, 0.2) !important;
-        background-color: var(--white) !important;
-    }
 
-/* Sub-text / Validation Error - 12px */
+/* ================================
+   Form Controls
+================================ */
+
+.role-entry-card input.form-control {
+    width: 100%;
+    height: 42px;
+    padding: 8px 10px;
+    box-sizing: border-box;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--light-gray) !important;
+    color: var(--dark-blue) !important;
+    font-size: 14px !important;
+}
+
+.role-entry-card textarea.form-control {
+    width: 100%;
+    min-height: 100px;
+    padding: 8px 10px;
+    box-sizing: border-box;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--light-gray) !important;
+    color: var(--dark-blue) !important;
+    font-size: 14px !important;
+    resize: vertical;
+}
+
+.role-entry-card .form-control:focus {
+    border-color: var(--primary-blue) !important;
+    background-color: var(--white) !important;
+    box-shadow: 0 0 0 2px rgba(8, 125, 241, 0.14) !important;
+}
+
+
+/* ================================
+   Validation / Small Text
+================================ */
+
 small,
 .form-text {
     font-size: 12px !important;
@@ -74,13 +107,17 @@ small,
     font-size: 12px !important;
 }
 
-/* Table Customization & Scrollbar Controls */
+
+/* ================================
+   Permission Table
+================================ */
+
 .permissions-table-wrapper {
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
     max-height: 380px;
     overflow-y: auto;
     overflow-x: hidden;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
 }
 
     .permissions-table-wrapper table {
@@ -89,19 +126,26 @@ small,
         margin-bottom: 0;
     }
 
+        .permissions-table-wrapper table thead th,
+        .parent-menu-title,
+        .subheader {
+            color: var(--dark-blue) !important;
+            font-size: 16px !important;
+            font-weight: 700;
+        }
+
         .permissions-table-wrapper table thead th {
             position: sticky;
             top: 0;
-            background-color: var(--light-gray) !important;
             z-index: 2;
+            background-color: var(--light-gray) !important;
             border-bottom: 1px solid var(--border-color);
         }
 
-        /* Option A: Ellipsis Text Control for Table Cells */
         .permissions-table-wrapper table td.menu-cell {
             max-width: 0;
-            white-space: nowrap;
             overflow: hidden;
+            white-space: nowrap;
             text-overflow: ellipsis;
         }
 
@@ -114,10 +158,10 @@ small,
 
 .parent-menu-title,
 .child-menu-title {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
     display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     vertical-align: middle;
 }
 
@@ -131,11 +175,15 @@ small,
 }
 
 .child-menu-row td {
-    font-size: 14px !important;
     color: var(--dark-blue) !important;
+    font-size: 14px !important;
 }
 
-/* Custom Checkbox Alignment & Styling */
+
+/* ================================
+   Checkbox
+================================ */
+
 .form-check-input {
     cursor: pointer;
     border-color: var(--border-color);
@@ -146,51 +194,50 @@ small,
         border-color: var(--primary-blue) !important;
     }
 
-/* Buttons */
-.btn-primary {
+
+/* ================================
+   Buttons
+================================ */
+
+.role-entry-btn {
+    height: 42px;
+    padding: 0 18px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+}
+
+.role-entry-card .btn-primary {
     background-color: var(--primary-blue) !important;
     border: 1px solid var(--primary-blue) !important;
     color: var(--white) !important;
-    font-size: 14px !important;
-    font-weight: 600 !important;
     transition: background-color 0.2s ease;
 }
 
-    .btn-primary:hover {
+    .role-entry-card .btn-primary:hover {
         background-color: var(--primary-blue-hover) !important;
         border-color: var(--primary-blue-hover) !important;
     }
 
-/* Clear / Cancel Button (.btn-outline-secondary & #btnClear) */
-#btnClear,
-a.btn-outline-secondary,
-button.btn-outline-secondary,
-.btn-outline-secondary {
+.role-entry-card #btnClear,
+.role-entry-card .btn-outline-secondary {
     background-color: var(--gray, #6c757d) !important;
     border: 1px solid var(--gray, #6c757d) !important;
-    color: #ffffff !important;
-    font-size: 14px !important;
-    font-weight: 600 !important;
-    transition: background-color 0.2s ease, border-color 0.2s ease !important;
+    color: var(--white) !important;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
-    /* Hover, Focus, Active States - Fixed with fallback color */
-    #btnClear:hover,
-    #btnClear:focus,
-    #btnClear:active,
-    a.btn-outline-secondary:hover,
-    a.btn-outline-secondary:focus,
-    a.btn-outline-secondary:active,
-    button.btn-outline-secondary:hover,
-    button.btn-outline-secondary:focus,
-    button.btn-outline-secondary:active,
-    .btn-outline-secondary:hover,
-    .btn-outline-secondary:focus,
-    .btn-outline-secondary:active {
+    .role-entry-card #btnClear:hover,
+    .role-entry-card #btnClear:focus,
+    .role-entry-card #btnClear:active,
+    .role-entry-card .btn-outline-secondary:hover,
+    .role-entry-card .btn-outline-secondary:focus,
+    .role-entry-card .btn-outline-secondary:active {
         background-color: var(--gray-hover, #5a6268) !important;
         border-color: var(--gray-hover, #545b62) !important;
-        color: #ffffff !important;
+        color: var(--white) !important;
         box-shadow: none !important;
-        opacity: 1 !important;
-        visibility: visible !important;
     }
