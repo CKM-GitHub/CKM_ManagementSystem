@@ -67,7 +67,7 @@ namespace CKM_ManagementSystem.Controllers.TaskStatuses
                         model.Status_Code,
                         model.Status_Name,
                         model.Description,
-                        model.SortOrder
+                        model.SortOrder ?? 0
                     );
                 }
                 else
@@ -76,7 +76,7 @@ namespace CKM_ManagementSystem.Controllers.TaskStatuses
                         model.Status_Code,
                         model.Status_Name,
                         model.Description,
-                        model.SortOrder);
+                        model.SortOrder ?? 0);
                 }
                 if (result.ResponseCode == 1)
                 {

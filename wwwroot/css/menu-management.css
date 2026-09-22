@@ -11,11 +11,16 @@
     font-size: 16px !important;
     font-weight: 700 !important;
 }
-.menu-table td span,
-.menu-table td code {
-    white-space: nowrap;
+
+.text-limit {
+    display: block;
+    max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+    color: var(--dark-blue);
+    cursor: default;
 }
 .toolbar-input, .toolbar-btn, .add-btn, .menu-table td, .custom-modal-text {
     font-size: 14px !important;

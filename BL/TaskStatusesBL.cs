@@ -46,7 +46,6 @@ namespace CKM_ManagementSystem.BL
             {
                 Search = null;
             }
-            var taskStatusList = new List<TaskStatusesListViewModel>();
             SqlParameter[] parameters =
             {
                 new SqlParameter("@Search", Search ?? (object)DBNull.Value),
@@ -54,7 +53,36 @@ namespace CKM_ManagementSystem.BL
                 new SqlParameter("@PageSize", PageSize)
             };
             var result = await SelectDataTableAsync("sp_Task_Statuses_List", parameters);
-            if (result.Rows.Count > 0)
+            if (result.Rows.Count > 0 && result.Rows[0]["TotalCount"] != DBNull.Value)
+            {
+                TotalCount = Convert.ToInt32(result.Rows[0]["TotalCount"]);
+            }
+            if (result.Rows.Count == 0 && PageNumber > 1)
+            {
+                parameters = new[] 
+                {
+                    new SqlParameter("@Search", Search ?? (object)DBNull.Value),
+                    new SqlParameter("@PageNumber", 1),
+                    new SqlParameter("@PageSize", PageSize)
+                };
+                var firstPageResult = await SelectDataTableAsync("sp_Task_Statuses_List", parameters);
+                if (firstPageResult.Rows.Count > 0 && firstPageResult.Rows[0]["TotalCount"] != DBNull.Value)
+                {
+                    TotalCount = Convert.ToInt32(firstPageResult.Rows[0]["TotalCount"]);
+                }
+
+                int totalPages = (int)Math.Ceiling((double)TotalCount / PageSize);
+                PageNumber = totalPages > 0 ? totalPages : 1;
+                parameters = new[]
+                {
+                    new SqlParameter("@Search", Search ?? (object)DBNull.Value),
+                    new SqlParameter("@PageNumber", PageNumber),
+                    new SqlParameter("@PageSize", PageSize)
+                };
+                result = await SelectDataTableAsync("sp_Task_Statuses_List", parameters);
+            }
+            var taskStatusList = new List<TaskStatusesListViewModel>();
+            if(result.Rows.Count > 0)
             {
                 foreach (DataRow row in result.Rows)
                 {

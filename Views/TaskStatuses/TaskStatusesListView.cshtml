@@ -56,38 +56,38 @@
         </form>
     </div>
 
-    <div class="modal fade p-10" id="addTaskStatusModal" tabindex="-1" aria-labelledby="addTaskStatusModalLabel" aria-hidden="true">
+    <div class="modal fade" id="addTaskStatusModal" tabindex="-1" aria-labelledby="addTaskStatusModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content style-modal">
+            <div class="modal-content custom-modal">
                 <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold" id="addTaskStatusModalLabel">Add New Task Status</h5>
+                    <h1 class="modal-title fw-bold" id="addTaskStatusModalLabel">Add New Task Status</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body p-10">
+                <div class="modal-body pt-3 px-0">
                     <form id="createTaskStatusForm">
                         @Html.AntiForgeryToken()
                         <input type="hidden" id="statusMode" name="Mode" value="Create" />
 
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Code <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="statusCode" name="Status_Code" maxlength="50" placeholder="e.g. IN_PROGRESS" required />
+                            <input type="text" class="form-control" id="statusCode" name="Status_Code" maxlength="50" placeholder="e.g., IN_PROGRESS" required />
                             <span class="text-danger small d-none" id="errorStatusCode"></span>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="statusName" name="Status_Name" maxlength="100" placeholder="e.g. In Progress" required />
+                            <input type="text" class="form-control" id="statusName" name="Status_Name" maxlength="100" placeholder="e.g., In Progress" required />
                             <span class="text-danger small d-none" id="errorStatusName"></span>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Description</label>
-                            <textarea class="form-control" id="description" name="Description" rows="3" placeholder="Enter status description..."></textarea>
+                            <textarea class="form-control" id="description" name="Description" rows="3" maxlength="300" placeholder="Enter status description..."></textarea>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Sort Order</label>
-                            <input type="number" class="form-control" id="sortOrder" name="SortOrder" placeholder="e.g. 1" value="0" />
+                            <input type="number" class="form-control" id="sortOrder" name="SortOrder" placeholder="e.g., 1" value="0" />
                             <span class="text-danger small d-none" id="errorSortOrder"></span>
                         </div>
 
@@ -123,14 +123,14 @@
                             <tr>
                                 <td class="text-center">@index</td>
                                 <td>
-                                    <code class="route-text text-truncate d-inline-block w-100"
+                                    <code class="route-text text-limit"
                                           data-tooltip-truncate
                                           data-tooltip-text="@item.Status_Code">
                                         @item.Status_Code
                                     </code>
                                 </td>
                                 <td class="menu-name">
-                                    <span class="text-truncate d-inline-block w-100"
+                                    <span class="text-limit"
                                           data-tooltip-truncate
                                           data-tooltip-text="@item.Status_Name">
                                         @item.Status_Name
@@ -143,7 +143,7 @@
                                     }
                                     else
                                     {
-                                        <span class="text-truncate d-inline-block w-100"
+                                        <span class="text-limit"
                                               data-tooltip-truncate
                                               data-tooltip-text="@item.Description">
                                               @item.Description

@@ -12,7 +12,6 @@
 }
 #addTaskStatusModal .form-control{
     font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
-    font-weight: bold !important;
     font-size: 14px !important;
 }
 #addTaskStatusModal .custom-input-font{
@@ -45,4 +44,23 @@
     color: var(--white);
     border: none;
 }
+
+.custom-modal {
+    border: none;
+    padding: 30px;
+    border-radius: 12px;
+    background-color: #fcfcfc;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+}
+.custom-input {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+}
+.custom-input:focus{
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
 
