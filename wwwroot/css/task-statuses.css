@@ -62,5 +62,13 @@
     border-color: #2563eb;
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
+.col-desc{
+    width: 100%;
+    max-width: 0;
+}
+.sort-order-col {
+    width: 90px !important;
+    white-space: nowrap;
+}
 
 

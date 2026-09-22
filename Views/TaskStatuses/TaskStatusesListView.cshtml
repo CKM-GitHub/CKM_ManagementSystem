@@ -59,9 +59,9 @@
     <div class="modal fade" id="addTaskStatusModal" tabindex="-1" aria-labelledby="addTaskStatusModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content custom-modal">
-                <div class="modal-header border-0 pb-0">
-                    <h1 class="modal-title fw-bold" id="addTaskStatusModalLabel">Add New Task Status</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header border-0 pb-0 justify-content-center">
+                    <h1 class="modal-title fw-bold " id="addTaskStatusModalLabel">Add New Task Status</h1>
+                    <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body pt-3 px-0">
                     <form id="createTaskStatusForm">
@@ -150,7 +150,7 @@
                                         </span>
                                     }
                                 </td>
-                                <td class="text-center">@item.SortOrder.ToString("D2")</td>
+                                <td class="text-center sort-order-col">@(item.SortOrder == 0 ? "-" : item.SortOrder)</td>
                                 <td class="text-center action-column">
                                     <div class="action-btn-group">
                                         <button type="button"
