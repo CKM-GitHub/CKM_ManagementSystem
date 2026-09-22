@@ -14,7 +14,7 @@ namespace CKM_ManagementSystem.Controllers.TaskStatuses
         }
 
         [HttpGet]
-        public async Task<IActionResult> TaskStatusesListView(string? Search = null, int PageNumber = 1, int PageSize = 6)
+        public async Task<IActionResult> TaskStatusesListView(string? Search = null, int PageNumber = 1, int PageSize = 10)
         {
             var model = await _taskStatusesBL.GetTaskStatusesListAsync(Search, PageNumber, PageSize);
             return View(model);
