@@ -1,4 +1,8 @@
 ﻿$(document).ready(function () {
+    if (typeof initializeTruncatedTooltips === "function") {
+        initializeTruncatedTooltips();
+    }
+
     const $parentMenu = $('#ParentMenu');
     truncateParentMenuOptions();
 

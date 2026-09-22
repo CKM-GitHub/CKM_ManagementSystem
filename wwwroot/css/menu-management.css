@@ -211,10 +211,9 @@ body {
 }
 .menu-table{
     width: 100%;
-    min-width: 1180px;
     border-collapse: separate;
     border-spacing: 0;
-    table-layout: fixed;
+    table-layout: auto;
 }
 
 .menu-table thead th{
@@ -237,6 +236,12 @@ body {
     text-overflow: ellipsis;
     font-size: 14px;
 }
+.menu-table td span,
+.menu-table td code {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 .action-btn-group {
     display: flex !important;
     align-items: center !important;
@@ -255,37 +260,6 @@ body {
     border-bottom: 1px solid var(--border-color);
 }
 
-.col-no{
-    width: 6%;
-}
-
-.col-name{
-    width: 20%;
-}
-
-.col-icon{
-    width: 10%;
-}
-
-.col-route{
-    width: 25%;
-}
-
-.col-parent {
-    width: 12%;
-}
-
-.col-order{
-    width: 12%;
-}
-
-.col-status{
-    width: 12%;
-}
-
-.col-actions{
-    width: 8%;
-}
 
 .menu-name{
     color: var(--dark-blue);
