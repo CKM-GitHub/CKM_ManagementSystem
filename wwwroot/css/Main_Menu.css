@@ -94,12 +94,12 @@ body {
 .page-content {
     flex: 1;
     min-height: 0;
-    padding: 0;
+    height: calc(100dvh - 48px);
+    padding: 0 24px;
     overflow-y: auto;
     overflow-x: hidden;
     color: #ffffff;
 }
-
 
 /* Main Menu */
 
@@ -112,7 +112,6 @@ body {
     flex-direction: column;
     padding-top: 8px;
 }
-
 
 /* Menu Items */
 

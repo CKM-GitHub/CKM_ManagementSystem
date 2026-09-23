@@ -472,7 +472,7 @@ namespace CKM_ManagementSystem.BL
             string? searchKeyword,
             string? status,
             int pageNumber = 1,
-            int pageSize = 10)
+            int pageSize = 6)
         {
             ProjectListPagedViewModel model =
                 new ProjectListPagedViewModel

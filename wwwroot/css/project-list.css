@@ -9,7 +9,7 @@
     font-weight: bold;
     font-size: 32px;
     text-align: center;
-    margin-top: 20px;
+    margin-top: 10px;
     margin-bottom: 20px;
     letter-spacing: 0.5px;
 }
@@ -107,7 +107,7 @@
     table-layout: fixed;
 }
 
-    .project-table th {
+/*    .project-table th {
         color: var(--dark-blue);
         font-weight: bold;
         font-size: 16px;
@@ -116,14 +116,9 @@
         background-color: var(--white);
         vertical-align: middle;
         white-space: nowrap;
-    }
+    }*/
 
     .project-table td {
-        color: var(--dark-blue);
-        font-size: 14px;
-        padding: 16px 14px;
-        border-bottom: 1px solid var(--light-gray);
-        vertical-align: middle;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;

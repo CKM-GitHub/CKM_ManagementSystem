@@ -52,7 +52,6 @@
                                value="@Model.SearchKeyword" />
 
                         <i class="bi bi-search search-icon"></i>
-
                     </div>
 
                     <select id="status"
@@ -82,7 +81,6 @@
                                 selected="@(Model.Status == "Inactive")">
                             Inactive
                         </option>
-
                     </select>
 
                     <button type="submit"
@@ -90,28 +88,23 @@
 
                         <i class="bi bi-search me-1"></i>
                         Search Project
-
                     </button>
 
                 </div>
 
                 <div>
-
                     <a asp-action="Create"
                        asp-controller="Project"
                        class="btn btn-add-project">
 
                         <i class="bi bi-plus-lg me-1"></i>
                         Add Project
-
                     </a>
-
                 </div>
 
             </div>
 
         </form>
-
     </div>
 
     <div class="custom-card">
@@ -122,7 +115,6 @@
                    style="table-layout: fixed; width: 100%;">
 
                 <thead>
-
                     <tr>
                         <th style="width:70px;">No.</th>
                         <th style="width:140px;">Project Code</th>
@@ -135,7 +127,6 @@
                         <th style="width:120px;">Status</th>
                         <th style="width:110px;">Actions</th>
                     </tr>
-
                 </thead>
 
                 <tbody>
@@ -146,59 +137,46 @@
                         foreach (var project in Model.Projects)
                         {
                             <tr>
-
                                 <td>
                                     @project.No
                                 </td>
 
                                 <td class="fw-medium">
-
                                     <span class="table-text-truncate"
-                                          title="@project.ProjectCode">
-
+                                          data-tooltip-truncate
+                                          data-tooltip-text="@project.ProjectCode">
                                         @project.ProjectCode
-
                                     </span>
-
                                 </td>
 
                                 <td class="fw-semibold">
-
                                     <span class="table-text-truncate"
-                                          title="@project.ProjectName">
-
+                                          data-tooltip-truncate
+                                          data-tooltip-text="@project.ProjectName">
                                         @project.ProjectName
-
                                     </span>
-
                                 </td>
 
                                 <td>
-
                                     <span class="table-text-truncate"
-                                          title="@project.ProjectManagerName">
-
+                                          data-tooltip-truncate
+                                          data-tooltip-text="@project.ProjectManagerName">
                                         @project.ProjectManagerName
-
                                     </span>
-
                                 </td>
 
                                 <td>
-
                                     <span class="git-repo-text table-text-truncate"
-                                          title="@project.GitRepositoryUrl">
-
+                                          data-tooltip-truncate
+                                          data-tooltip-text="@(string.IsNullOrWhiteSpace(project.GitRepositoryUrl) ? "-" : project.GitRepositoryUrl)">
                                         @(string.IsNullOrWhiteSpace(
                                             project.GitRepositoryUrl)
                                             ? "-"
                                             : project.GitRepositoryUrl)
-
                                     </span>
-
                                 </td>
 
-                                <td>
+                                <td class="text-center">
                                     @project.ProjectMemberCount
                                 </td>
 
@@ -211,7 +189,6 @@
                                 </td>
 
                                 <td>
-
                                     @switch (project.Status)
                                     {
                                         case "Active":
@@ -254,7 +231,6 @@
 
                                             break;
                                     }
-
                                 </td>
 
                                 <td class="action-column">
@@ -263,38 +239,31 @@
                                        asp-controller="Project"
                                        asp-route-projectCode="@project.ProjectCode"
                                        class="icon-button edit-icon"
-                                       title="Edit">
+                                       aria-label="Edit">
 
                                         <i class="bi bi-pencil-square"></i>
-
                                     </a>
 
                                     <button type="button"
                                             class="icon-button delete-icon project-delete-btn"
                                             data-project-code="@project.ProjectCode"
                                             data-project-name="@project.ProjectName"
-                                            title="Delete">
+                                            aria-label="Delete">
 
                                         <i class="bi bi-trash"></i>
-
                                     </button>
 
                                 </td>
-
                             </tr>
                         }
                     }
                     else
                     {
                         <tr>
-
                             <td colspan="10"
                                 class="text-center text-muted py-4">
-
                                 No records found.
-
                             </td>
-
                         </tr>
                     }
 
@@ -346,7 +315,6 @@
                        class="page-btn btn btn-sm btn-outline-secondary @(Model.PageNumber <= 1 ? "disabled" : "")">
 
                         <i class="bi bi-chevron-left"></i>
-
                     </a>
 
                     @for (int i = 1;
@@ -364,7 +332,6 @@
                            class="page-btn btn btn-sm @(i == Model.PageNumber ? "active" : "btn-outline-secondary")">
 
                             @i
-
                         </a>
                     }
 
@@ -379,7 +346,6 @@
                        class="page-btn btn btn-sm btn-outline-secondary @(Model.PageNumber >= Model.TotalPages ? "disabled" : "")">
 
                         <i class="bi bi-chevron-right"></i>
-
                     </a>
 
                 </div>
@@ -394,7 +360,6 @@
 <partial name="AlertModal" />
 
 @section Scripts {
-
     <script src="~/js/Alert_Modal.js"
             asp-append-version="true">
     </script>

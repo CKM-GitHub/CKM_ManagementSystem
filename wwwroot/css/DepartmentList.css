@@ -152,18 +152,24 @@ body {
     font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
 }
 
+<<<<<<< HEAD
 
     .department-table thead th {
         padding: 14px 16px;
+=======
+    /*.department-table thead th {*/
+/*      padding: 14px 16px;
+>>>>>>> origin/main
         background-color: var(--white);
         color: var(--dark-blue);
         border-bottom: 1px solid var(--border-color);
-        text-align: left;
         vertical-align: middle;
         font-size: 16px;
-        font-weight: 700;
+        font-weight: 700;*/
+        /*text-align: left;
         white-space: nowrap;
     }
+
 
     .department-table tbody td {
         padding: 16px;
@@ -172,7 +178,7 @@ body {
         border-bottom: 1px solid var(--border-color);
         vertical-align: middle;
         font-size: 14px;
-    }
+    }*/
 
     .department-table tbody tr:hover td {
         background-color: var(--light-gray);

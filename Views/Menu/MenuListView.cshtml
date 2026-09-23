@@ -43,9 +43,7 @@
                             class="toolbar-input"
                             asp-items="Model.ParentMenuList">
 
-                        <option value="">
-                            All Menus
-                        </option>
+                        <option value="">All Menus</option>
 
                     </select>
 
@@ -109,31 +107,31 @@
 
                 <thead>
                     <tr>
-                        <th class="col-no">
+                        <th >
                             No.
                         </th>
 
-                        <th class="col-name">
+                        <th >
                             Menu Name
                         </th>
 
-                        <th class="col-icon text-center">
+                        <th class=" text-center">
                             Icon
                         </th>
 
-                        <th class="col-route">
+                        <th >
                             Route
                         </th>
 
-                        <th class="col-parent">
+                        <th >
                             Parent Menu
                         </th>
 
-                        <th class="col-order text-center">
+                        <th class=" text-center">
                             Display Order
                         </th>
 
-                        <th class="col-status text-center">
+                        <th class=" text-center">
                             Status
                         </th>
 
@@ -157,9 +155,12 @@
                                 <td class="text-center">
                                     @index
                                 </td>
-
                                 <td class="menu-name">
-                                    @item.MenuName
+                                    <span class="text-limit-menu"
+                                          data-tooltip-truncate
+                                        data-tooltip-text="@item.MenuName">
+                                        @item.MenuName
+                                    </span>
                                 </td>
 
                                 <td class="text-center">
@@ -178,13 +179,18 @@
                                 </td>
 
                                 <td>
-                                    <code class="route-text">
+                                    <code class="route-text text-limit-menu"
+                                            data-tooltip-truncate
+                                          data-tooltip-text="Route Path: @item.Route">
                                         @item.Route
                                     </code>
                                 </td>
-
                                 <td class="parent-text">
-                                    @item.ParentMenuName
+                                    <span class="text-limit-menu"
+                                            data-tooltip-truncate
+                                            data-tooltip-text="@item.ParentMenuName">
+                                            @item.ParentMenuName
+                                    </span>
                                 </td>
 
                                 <td class="text-center">

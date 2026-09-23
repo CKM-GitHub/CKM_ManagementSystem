@@ -69,7 +69,7 @@ namespace CKM_ManagementSystem.Controllers
             string? status,
             int pageNumber = 1)
         {
-            const int pageSize = 10;
+            const int pageSize = 6;
 
             if (pageNumber < 1)
             {

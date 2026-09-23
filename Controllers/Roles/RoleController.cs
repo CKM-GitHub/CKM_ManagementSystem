@@ -79,7 +79,7 @@ namespace CKM_ManagementSystem.Controllers
             string searchKeyword,
             int? status,
             int pageNumber = 1,
-            int pageSize = 10)
+            int pageSize = 6)
         {
             var model =
                 _roleBL.GetRoleListPaged(

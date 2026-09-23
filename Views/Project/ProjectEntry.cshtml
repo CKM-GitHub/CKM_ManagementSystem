@@ -2,7 +2,8 @@
 
 @{
     Layout = "_Layout";
-    ViewData["Title"] = Model.IsEdit ? "Edit Project" : "Create New Project";
+    ViewData["Title"] =
+        Model.IsEdit ? "Edit Project" : "Create New Project";
 }
 
 @section Styles {
@@ -22,7 +23,9 @@
                     </div>
 
                     <h1 class="main-header">
-                        @(Model.IsEdit ? "Edit Project" : "Create New Project")
+                        @(Model.IsEdit
+                            ? "Edit Project"
+                            : "Create New Project")
                     </h1>
 
                     <p class="text-muted small-text mb-0">
@@ -108,6 +111,7 @@
                                     id="ProjectManagerId"
                                     asp-items="@(ViewBag.Managers as List<SelectListItem>)"
                                     class="form-select select-truncate">
+
                                 <option value=""
                                         selected
                                         disabled>
@@ -334,6 +338,7 @@
 
                     <div class="mb-4">
                         <div class="d-flex justify-content-between align-items-center mb-3">
+
                             <h2 class="section-title mb-0">
                                 Project Members
                             </h2>
@@ -344,6 +349,7 @@
                                     data-bs-target="#memberModal">
                                 + Add Member
                             </button>
+
                         </div>
 
                         <div class="table-responsive border rounded-3">
@@ -397,7 +403,9 @@
                                                              class="rounded-circle me-2 flex-shrink-0 member-avatar member-avatar-fallback"
                                                              alt="Profile" />
 
-                                                        <span class="fw-semibold text-dark text-truncate">
+                                                        <span class="fw-semibold text-dark text-truncate"
+                                                              data-tooltip-truncate
+                                                              data-tooltip-text="@member.Staff_Code">
                                                             @member.Staff_Code
                                                         </span>
                                                     </div>
@@ -405,9 +413,8 @@
 
                                                 <td class="text-secondary">
                                                     <span class="text-truncate-custom cursor-pointer"
-                                                          data-bs-toggle="tooltip"
-                                                          data-bs-placement="top"
-                                                          title="@member.Name">
+                                                          data-tooltip-truncate
+                                                          data-tooltip-text="@member.Name">
                                                         @member.Name
                                                     </span>
                                                 </td>
@@ -415,7 +422,7 @@
                                                 <td class="text-end">
                                                     <button type="button"
                                                             class="btn btn-sm text-danger border-0 p-0 btn-remove-member me-2"
-                                                            title="Remove Member">
+                                                            aria-label="Remove Member">
                                                         <i class="bi bi-trash"></i>
                                                     </button>
                                                 </td>
@@ -494,6 +501,7 @@
                         <select id="modalDeptSelect"
                                 class="form-select select-truncate"
                                 asp-items="@(ViewBag.Departments as List<SelectListItem>)">
+
                             <option value=""
                                     selected>
                                 All Departments
@@ -505,6 +513,7 @@
                         <button type="button"
                                 id="btnModalSearch"
                                 class="btn btn-primary project-entry-btn w-100">
+
                             <i class="bi bi-search me-1"></i>
                             Search
                         </button>

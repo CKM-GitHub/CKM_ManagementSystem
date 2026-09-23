@@ -98,8 +98,9 @@ namespace CKM_ManagementSystem.MenuBL
 
             return MapDataRowToMenuListItem(dt.Rows[0], dt.Columns);
         }
-        public async Task<MenuListViewModel> GetPagedMenuListAsync(string? searchTerm, int? parentMenuId, bool? statusFilters = null, int page = 1, int pageSize = 10)
+        public async Task<MenuListViewModel> GetPagedMenuListAsync(string? searchTerm, int? parentMenuId, bool? statusFilters = null, int page = 1, int pageSize = 6)
         {
+            var validPageSize = pageSize > 0 ? pageSize : 6;
             var totalCountParam = new SqlParameter
             {
                 ParameterName = "@TotalCount",
@@ -116,19 +117,23 @@ namespace CKM_ManagementSystem.MenuBL
                 totalCountParam
             };
             DataTable dt = await SelectDataTableAsync("sp_GetMenuList", parameters);
+            int totalItems = (totalCountParam.Value != DBNull.Value) ? Convert.ToInt32(totalCountParam.Value) : 0;
+            int totalPages = (int)Math.Ceiling((double)totalItems / validPageSize);
+            if(page > totalPages && totalPages > 0)
+            {
+                return await GetPagedMenuListAsync(searchTerm, parentMenuId, statusFilters, totalPages, validPageSize);
+            }
             var menuList = dt.Rows.Cast<DataRow>()
                     .Select(row => MapDataRowToMenuListItem(row, dt.Columns))
                     .ToList();
-            int totalItems = (totalCountParam.Value != DBNull.Value) ? Convert.ToInt32(totalCountParam.Value) : 0;
-
-            int validPageSize = pageSize > 0 ? pageSize : 10;
+           
             return new MenuListViewModel
             {
                 SearchTerm = searchTerm,
                 SelectedParentId = parentMenuId,
                 StatusFilters = statusFilters,
                 Menus = menuList,
-                CurrentPage = page,
+                CurrentPage = page > totalPages && totalPages > 0 ? totalPages : page,
                 TotalPages = (int)Math.Ceiling((double)totalItems / validPageSize),
                 TotalItems = totalItems,
                 PageSize = pageSize,

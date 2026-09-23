@@ -1,14 +1,4 @@
-﻿function initTooltips() {
-    var tooltipTriggerList = [].slice.call(
-        document.querySelectorAll('[data-bs-toggle="tooltip"]')
-    );
-
-    tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-}
-
-function getOrCreateModal(elementId) {
+﻿function getOrCreateModal(elementId) {
     var el = document.getElementById(elementId);
 
     return bootstrap.Modal.getInstance(el) ||
@@ -74,8 +64,6 @@ function showErrorAlert(message, title = 'Error!') {
 }
 
 $(document).ready(function () {
-    initTooltips();
-
     var isEditMode =
         $('#IsEdit').val() === 'true' ||
         $('#IsEdit').val() === 'True';
@@ -313,7 +301,10 @@ $(document).ready(function () {
                                                     alt="Profile"
                                                 />
 
-                                                <span class="fw-semibold text-dark text-truncate">
+                                                <span
+                                                    class="fw-semibold text-dark text-truncate"
+                                                    data-tooltip-truncate
+                                                    data-tooltip-text="${staffCode}">
                                                     ${staffCode}
                                                 </span>
 
@@ -323,9 +314,8 @@ $(document).ready(function () {
                                         <td>
                                             <span
                                                 class="text-truncate-custom cursor-pointer"
-                                                data-bs-toggle="tooltip"
-                                                data-bs-placement="top"
-                                                title="${name}">
+                                                data-tooltip-truncate
+                                                data-tooltip-text="${name}">
                                                 ${name}
                                             </span>
                                         </td>
@@ -333,9 +323,8 @@ $(document).ready(function () {
                                         <td>
                                             <span
                                                 class="text-truncate-custom cursor-pointer"
-                                                data-bs-toggle="tooltip"
-                                                data-bs-placement="top"
-                                                title="${dept}">
+                                                data-tooltip-truncate
+                                                data-tooltip-text="${dept}">
                                                 ${dept}
                                             </span>
                                         </td>
@@ -347,7 +336,12 @@ $(document).ready(function () {
                             }
                         );
 
-                        initTooltips();
+                        if (
+                            typeof initializeTruncatedTooltips ===
+                            'function'
+                        ) {
+                            initializeTruncatedTooltips();
+                        }
                     }
                     else {
                         $tbody.append(
@@ -400,7 +394,6 @@ $(document).ready(function () {
                         </td>
 
                         <td>
-
                             <div class="d-flex align-items-center">
 
                                 <img
@@ -412,21 +405,22 @@ $(document).ready(function () {
                                     alt="Profile"
                                 />
 
-                                <span class="fw-semibold text-dark text-truncate">
+                                <span
+                                    class="fw-semibold text-dark text-truncate"
+                                    data-tooltip-truncate
+                                    data-tooltip-text="${code}">
                                     ${code}
                                 </span>
 
                             </div>
-
                         </td>
 
                         <td class="text-secondary">
 
                             <span
                                 class="text-truncate-custom cursor-pointer"
-                                data-bs-toggle="tooltip"
-                                data-bs-placement="top"
-                                title="${name}">
+                                data-tooltip-truncate
+                                data-tooltip-text="${name}">
                                 ${name}
                             </span>
 
@@ -437,7 +431,7 @@ $(document).ready(function () {
                             <button
                                 type="button"
                                 class="btn btn-sm text-danger border-0 p-0 btn-remove-member me-2"
-                                title="Remove Member">
+                                aria-label="Remove Member">
 
                                 <i class="bi bi-trash"></i>
 
@@ -453,7 +447,13 @@ $(document).ready(function () {
             });
 
             updateRowNumbers();
-            initTooltips();
+
+            if (
+                typeof initializeTruncatedTooltips ===
+                'function'
+            ) {
+                initializeTruncatedTooltips();
+            }
 
             getOrCreateModal(
                 'memberModal'
