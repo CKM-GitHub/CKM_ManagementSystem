@@ -1,18 +1,27 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CKM_ManagementSystem.Authorization;
 using CKM_ManagementSystem.BL;
-using CKM_ManagementSystem.Models.ViewModels.Departments;
+using CKM_ManagementSystem.BL.Permissions;
 using CKM_ManagementSystem.Models.Entities;
+using CKM_ManagementSystem.Models.ViewModels.Departments;
+using CKM_ManagementSystem.Permissions;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+
 namespace CKM_ManagementSystem.Controllers.Departments
 {
     public class DepartmentListController : Controller
     {
         private readonly DepartmentBL _departmentBL;
+        private readonly CurrentUserPermission _permission;        
 
-        public DepartmentListController(DepartmentBL departmentBL)
+        public DepartmentListController(DepartmentBL departmentBL, CurrentUserPermission permission)
         {
             _departmentBL = departmentBL;
+            _permission = permission;
         }
 
+        [Authorize(Policy = "Permission.Department.Read")]
         [HttpGet]
         public IActionResult Index(
             string? searchText,
@@ -26,12 +35,16 @@ namespace CKM_ManagementSystem.Controllers.Departments
                     pageNumber,
                     10);
 
+            viewModel.CanWrite = _permission.CanWrite(MenuIDs.Department);
+            viewModel.CanDelete = _permission.CanDelete(MenuIDs.Department);
+
             return View(
                 "~/Views/Departments/List.cshtml",
                 viewModel);
         }
 
         [HttpPost]
+        [Authorize(Policy = "Permission.Department.Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult Delete(
             string departmentCode)

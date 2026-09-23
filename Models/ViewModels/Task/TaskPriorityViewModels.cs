@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CKM_ManagementSystem.Models.ViewModels.Common;
+using CKM_ManagementSystem.Models.ViewModels.Task;
 using System.ComponentModel.DataAnnotations;
 
 namespace CKM_ManagementSystem.Models.ViewModels.Task
@@ -19,12 +20,32 @@ namespace CKM_ManagementSystem.Models.ViewModels.Task
         [Display(Name = "Description")]
         public string? Description { get; set; }
 
-        [Range(0,100, ErrorMessage = "Sort Order must be 0 or greater.")]
+        [Range(0, 100, ErrorMessage = "Sort Order must be 0 or greater.")]
         [Display(Name = "Sort Order")]
         public int SortOrder { get; set; } = 0;
 
         [Display(Name = "Mode")]
         [Required(AllowEmptyStrings = true)]
         public string? Mode { get; set; } = "Entry";
+    }
+
+    public class TaskPriorityListItemViewModel
+    {
+        public string Priority_Code { get; set; } = string.Empty;
+        public string Priority_Name { get; set; } = string.Empty;
+        public string? Description { get; set; }
+        public int SortOrder { get; set; }
+    }
+}
+
+namespace CKM_ManagementSystem.Models.ViewModels.TaskPriorities
+{
+    public class TaskPriorityListViewModel
+    {
+        public PagedResponse<TaskPriorityListItemViewModel> PagedData { get; set; } = new();
+        public CreateTaskPriorityViewModel Entry { get; set; } = new();
+        public string? Search { get; set; }
+        public int ErrorCode { get; set; }
+        public bool HasError => ErrorCode != 0;
     }
 }

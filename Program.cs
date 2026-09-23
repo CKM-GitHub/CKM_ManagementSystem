@@ -1,8 +1,12 @@
+using CKM_ManagementSystem.Authorization;
+using CKM_ManagementSystem.Permissions;
 using CKM_ManagementSystem.BL;
 using CKM_ManagementSystem.Data;
 using CKM_ManagementSystem.MenuBL;
 using CKM_ManagementSystem.DL;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using CKM_ManagementSystem.BL.Permissions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +36,13 @@ builder.Services.AddScoped<ProjectBL>();
 builder.Services.AddScoped<LoginUserBL>();
 builder.Services.AddScoped<ChangePasswordBL>();
 builder.Services.AddScoped<TaskPriorityBL>();
+builder.Services.AddScoped<UserPermissionBL>();
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<CurrentUserPermission>();
+
+builder.Services.AddScoped<IAuthorizationHandler,
+     PermissionAuthorizationHandler>();
 builder.Services.AddAuthentication("MyCookieAuth")
     .AddCookie("MyCookieAuth", options =>
     {
@@ -47,6 +58,9 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddScoped<UserEntryBL>();
 builder.Services.AddScoped<UserListBL>();
 builder.Services.AddScoped<PasswordService>();
+builder.Services.AddSingleton<IAuthorizationPolicyProvider,
+     PermissionPolicyProvider>();
+
 var app = builder.Build();
 
 app.UseSession();
@@ -58,17 +72,13 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
 
 app.UseAuthentication();
-app.UseSession();
-app.UseAuthorization();
-
+app.UseAuthorization();   
 
 app.MapControllerRoute(
     name: "default",

@@ -12,6 +12,7 @@
 }
 @section Styles {
     <link rel="stylesheet" href="~/css/TaskPriorityList.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/TableComponent.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/Font.css" asp-append-version="true" />
 }
 
@@ -35,7 +36,7 @@
     }
     <partial name="AlertModal" />
 
-<h1 class="page-title text-center">Task Priority Management</h1>  
+    <h1 class="page-title text-center">Task Priority Management</h1>
     <div class="card custom-card">
         <div class="card-body p-4 d-flex flex-column h-100">
             <div class="toolbar d-flex flex-wrap align-items-center gap-2 mb-4">
@@ -77,12 +78,12 @@
                     <table class="table align-middle custom-table mb-0">
                         <thead>
                             <tr>
-                                <th class="ps-3" style="width:70px">No.</th>
-                                <th style="width:120px">Code</th>
-                                <th style="width:180px">Name</th>
+                                <th class="ps-3" style="width:4%">No.</th>
+                                <th style="width:12%">Code</th>
+                                <th style="width:18%">Name</th>
                                 <th>Description</th>
-                                <th class="text-center" style="width:110px">Sort Order</th>
-                                <th class="text-end pe-3" style="width:120px">Actions</th>
+                                <th class="text-center" style="width:11%">Sort Order</th>
+                                <th class="text-end pe-3" style="width:12%">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -92,9 +93,9 @@
                             @foreach (var priority in Model.PagedData.Data)
                             {
                                 <tr>
-                                    <td class="text-end ps-3">@index</td>
-                                    <td>@priority.Priority_Code</td>
-                                    <td class="text-muted text-truncate tooltip-cell"
+                                    <td class="text-center ps-3">@index</td>
+                                    <td class="text-truncate tooltip-cell">@priority.Priority_Code</td>
+                                    <td class="text-truncate tooltip-cell"
                                         style="max-width: 170px;"
                                         data-toggle="tooltip"
                                         data-container="body"
@@ -102,7 +103,7 @@
                                         data-title="@priority.Priority_Name">
                                         @priority.Priority_Name
                                     </td>
-                                    <td class="text-muted text-truncate tooltip-cell"
+                                    <td class="text-truncate tooltip-cell"
                                         style="max-width: 300px;"
                                         data-toggle="tooltip"
                                         data-container="body"
@@ -155,7 +156,7 @@
 
             @if (totalItems > 0)
             {
-                <div class="d-flex justify-content-between align-items-center mt-auto pt-3 border-top">
+                <div class="d-flex justify-content-between align-items-center pt-3 border-top">
                     <span class="text-muted small">
                         Showing @startItem-@endItem of @totalItems task priorities
                     </span>
@@ -199,8 +200,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content custom-modal">
                 <div class="modal-header border-0 pb-0">
-
-                    <h1 class="modal-title fw-bold" id="createTaskPriorityModalLabel">
+                    <h1 class="modal-title fw-bold text-center w-100" id="createTaskPriorityModalLabel">
                         @(Model.Entry.Mode == "Edit" ? "Edit Task Priority" : "Add New Task Priority")
                     </h1>
                     <button type="button"
@@ -285,11 +285,12 @@
                             </span>
                         </div>
 
-                        <div class="d-flex justify-content-end gap-2 mt-4">
-                            <button type="button" class="btn btn-light" onclick="window.location.href='@Url.Action("TaskPriorityList", "TaskPriority")'">
+                        <div class="d-flex gap-2 mt-4 w-100 flex-column flex-sm-row">
+                            <button type="button" class="btn btn-light flex-fill btn-duo"
+                                    onclick="window.location.href='@Url.Action("TaskPriorityList", "TaskPriority")'">
                                 Cancel
                             </button>
-                            <button type="submit" class="btn btn-primary btn-add">
+                            <button type="submit" class="btn btn-primary flex-fill btn-duo">
                                 @(Model.Entry.Mode == "Edit" ? "Update Priority" : "Save Priority")
                             </button>
                         </div>

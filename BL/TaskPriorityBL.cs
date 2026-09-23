@@ -21,7 +21,7 @@ namespace CKM_ManagementSystem.BL
         public async Task<TaskPriorityListViewModel> TaskPriorityListAsync(
             string? Search,
             int PageNumber = 1,
-            int PageSize = 6,
+            int PageSize = 7,
             int TotalCount = 0)
         {
             if(PageNumber < 1)
@@ -30,7 +30,7 @@ namespace CKM_ManagementSystem.BL
             }
             if(PageSize < 1 || PageSize > 100)
             {
-                PageSize = 10;
+                PageSize = 7;
             }
 
             if(string.IsNullOrWhiteSpace(Search))
@@ -163,15 +163,15 @@ namespace CKM_ManagementSystem.BL
 
             var parameters = new[]
             {
-        new SqlParameter("@Priority_Code", SqlDbType.NVarChar, 20)
-        {
-            Value = priorityCode
-        },
-        new SqlParameter("@Error_Code", SqlDbType.Int)
-        {
-            Direction = ParameterDirection.Output
-        }
-    };
+            new SqlParameter("@Priority_Code", SqlDbType.NVarChar, 20)
+            {
+                Value = priorityCode
+            },
+            new SqlParameter("@Error_Code", SqlDbType.Int)
+            {
+                Direction = ParameterDirection.Output
+            }
+        };
 
             return await _bdl.ExecuteNonQueryWithErrorCodeAsync(
                 "sp_Delete_TaskPriorities",

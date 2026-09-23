@@ -6,7 +6,7 @@ using CKM_ManagementSystem.BL;
 
 namespace CKM_ManagementSystem.Controllers.Password
 {
-   [Authorize]
+    [Authorize]
     [Route("Password")]
     public class ChangePasswordController : Controller
     {
@@ -45,7 +45,6 @@ namespace CKM_ManagementSystem.Controllers.Password
 
             return View("~/Views/Password/ChangePassword.cshtml", model);
         }  
-
         
         [HttpPost("ChangePassword")]
         [ValidateAntiForgeryToken]
@@ -106,7 +105,7 @@ namespace CKM_ManagementSystem.Controllers.Password
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync("MyCookieAuth");
-
+            HttpContext.Session.Clear();
             return RedirectToAction("Login","LoginUsers");
         }
     }

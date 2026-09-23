@@ -17,6 +17,8 @@
 
         public int TotalPages =>
             (int)Math.Ceiling((double)TotalRecords / PageSize);
+        public bool CanWrite { get; set; }
+        public bool CanDelete { get; set; }
     }
 
     public class DepartmentListItemViewModel

@@ -37,70 +37,40 @@ body {
 }
 
 /*the global table part*/
-.app-table-wrapper {
-    flex: 1;
+/*.table {
+    table-layout: fixed;
     width: 100%;
-    min-height: 0;
-    overflow-x: auto;
-    overflow-y: auto; 
-    background: #ffffff;
-    border-radius: 8px;
 }
 
-.app-table-wrapper::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-}
-
-.app-table-wrapper::-webkit-scrollbar-thumb {
-    background-color: #cbd5e1;
-    border-radius: 4px;
-}
-
-.app-table-wrapper::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.app-table {
-    width: 100%;
-    min-width: 650px;
-    border-collapse: collapse;
-    font-size: 0.85rem; 
-    color: #334155;
-}
-
-.app-table thead th {
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    background-color: #f8fafc;
-    color: #475569;
-    font-weight: 600;
+thead th {
+    height: 55px;
+    padding-top: 12px !important;
+    padding-bottom: 12px !important;
+    vertical-align: bottom;
+    color: var(--dark-blue);
+    border-bottom: 1px solid var(--border-color) !important;
     font-size: 16px;
-    padding: 10px 12px;
-    border-bottom: 1px solid #e2e8f0;
-    white-space: nowrap;
+    font-weight: 700;
 }
 
-.app-table tbody td {
-    padding: 8px 12px; 
-    font-size: 14px;
+tbody td {
+    height: 50px !important;
+    max-width: 150px;
+    color: var(--dark-blue);
+    border-bottom: 1px solid var(--border-color);
     vertical-align: middle;
-    border-bottom: 1px solid #f1f5f9;
-    white-space: nowrap;
-}
+    font-size: 14px;
+}*/
 
-.app-table tbody tr:hover {
-    background-color: #f8fafc;
-    transition: background-color 0.15s ease-in-out;
-}
+/* =========================================================
+   TABLES — shared across all pages
+   ========================================================= */
 
-@media (max-width: 768px) {
-    .app-table {
-        font-size: 0.8rem;
-    }
-    .app-table thead th,
-    .app-table tbody td {
-        padding: 6px 8px;
-    }
+
+.disable-button:disabled,
+disable-button:disabled:hover {
+    opacity: 0.4;
+    user-select: none;
+    cursor: not-allowed;
+    pointer-events:none;
 }
