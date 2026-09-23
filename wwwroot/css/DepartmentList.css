@@ -143,13 +143,15 @@ body {
 
 .department-table {
     width: 100%;
+    min-width: 900px;
     margin-bottom: 0;
     border-collapse: collapse;
-    table-layout:fixed;
+    table-layout: fixed;
     background-color: var(--white);
     color: var(--dark-blue);
     font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
 }
+
 
     .department-table thead th {
         padding: 14px 16px;
@@ -175,32 +177,37 @@ body {
     .department-table tbody tr:hover td {
         background-color: var(--light-gray);
     }
-
-    .department-table th:first-child,
-    .department-table td:first-child {
-        width: 80px;
+    .department-table th:nth-child(1),
+    .department-table td:nth-child(1) {
+        width: 70px;
     }
 
     .department-table th:nth-child(2),
     .department-table td:nth-child(2) {
-        width: 180px;
+        width: 170px;
     }
 
     .department-table th:nth-child(3),
     .department-table td:nth-child(3) {
-        width: 230px;
+        width: 220px;
+    }
+
+    .department-table th:nth-child(4),
+    .department-table td:nth-child(4) {
+        width: 260px;
     }
 
     .department-table th:nth-child(5),
     .department-table td:nth-child(5) {
-        width: 130px;
+        width: 120px;
     }
 
-    .department-table th:last-child,
-    .department-table td:last-child {
-        width: 150px;
+    .department-table th:nth-child(6),
+    .department-table td:nth-child(6) {
+        width: 120px;
     }
 
+   
 .text-limit {
     display:block;
     max-width: 100%;
