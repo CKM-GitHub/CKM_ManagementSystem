@@ -284,7 +284,7 @@
                         </div>
                     </div>
 
-                    <div class="option-row">
+                    <div class="option-row option-row-project-type">
                         <label class="option-row-label">
                             Project Type
                         </label>
@@ -353,95 +353,99 @@
                         </div>
 
                         <div class="table-responsive border rounded-3">
-                            <table class="table table-hover align-middle mb-0"
-                                   id="tblSelectedMembers">
+                            <div class="selected-members-scroll-container">
 
-                                <thead class="bg-light text-muted">
-                                    <tr>
-                                        <th class="text-center col-width-50">
-                                            NO.
-                                        </th>
+                                <table class="table table-hover align-middle mb-0"
+                                       id="tblSelectedMembers">
 
-                                        <th class="col-width-140">
-                                            STAFF CODE
-                                        </th>
+                                    <thead class="bg-light text-muted">
+                                        <tr>
+                                            <th class="text-center col-width-50">
+                                                NO.
+                                            </th>
 
-                                        <th>
-                                            STAFF NAME
-                                        </th>
+                                            <th class="col-width-140">
+                                                STAFF CODE
+                                            </th>
 
-                                        <th class="text-end col-width-60">
-                                            Action
-                                        </th>
-                                    </tr>
-                                </thead>
+                                            <th>
+                                                STAFF NAME
+                                            </th>
 
-                                <tbody>
-                                    @if (Model.ProjectMembers != null &&
-                                    Model.ProjectMembers.Any())
-                                    {
-                                        int no = 1;
+                                            <th class="text-end col-width-60">
+                                                Action
+                                            </th>
+                                        </tr>
+                                    </thead>
 
-                                        foreach (var member in Model.ProjectMembers)
+                                    <tbody>
+                                        @if (Model.ProjectMembers != null &&
+                                        Model.ProjectMembers.Any())
                                         {
-                                            var memberImage =
-                                            string.IsNullOrWhiteSpace(member.Image_URL)
-                                            ? "/images/default-avatar.png"
-                                            : member.Image_URL;
+                                            int no = 1;
 
-                                            <tr data-staffcode="@member.Staff_Code"
-                                                data-img="@memberImage">
+                                            foreach (var member in Model.ProjectMembers)
+                                            {
+                                                var memberImage =
+                                                string.IsNullOrWhiteSpace(member.Image_URL)
+                                                ? "/images/default-avatar.png"
+                                                : member.Image_URL;
 
-                                                <td class="text-center text-muted row-no">
-                                                    @no
-                                                </td>
+                                                <tr data-staffcode="@member.Staff_Code"
+                                                    data-img="@memberImage">
 
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <img src="@memberImage"
-                                                             onerror="this.onerror=null;this.src='/images/default-avatar.png';"
-                                                             class="rounded-circle me-2 flex-shrink-0 member-avatar member-avatar-fallback"
-                                                             alt="Profile" />
+                                                    <td class="text-center text-muted row-no">
+                                                        @no
+                                                    </td>
 
-                                                        <span class="fw-semibold text-dark text-truncate"
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <img src="@memberImage"
+                                                                 onerror="this.onerror=null;this.src='/images/default-avatar.png';"
+                                                                 class="rounded-circle me-2 flex-shrink-0 member-avatar member-avatar-fallback"
+                                                                 alt="Profile" />
+
+                                                            <span class="fw-semibold text-dark text-truncate"
+                                                                  data-tooltip-truncate
+                                                                  data-tooltip-text="@member.Staff_Code">
+                                                                @member.Staff_Code
+                                                            </span>
+                                                        </div>
+                                                    </td>
+
+                                                    <td class="text-secondary">
+                                                        <span class="text-truncate-custom cursor-pointer"
                                                               data-tooltip-truncate
-                                                              data-tooltip-text="@member.Staff_Code">
-                                                            @member.Staff_Code
+                                                              data-tooltip-text="@member.Name">
+                                                            @member.Name
                                                         </span>
-                                                    </div>
-                                                </td>
+                                                    </td>
 
-                                                <td class="text-secondary">
-                                                    <span class="text-truncate-custom cursor-pointer"
-                                                          data-tooltip-truncate
-                                                          data-tooltip-text="@member.Name">
-                                                        @member.Name
-                                                    </span>
-                                                </td>
+                                                    <td class="text-end">
+                                                        <button type="button"
+                                                                class="btn btn-sm text-danger border-0 p-0 btn-remove-member me-2"
+                                                                aria-label="Remove Member">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
 
-                                                <td class="text-end">
-                                                    <button type="button"
-                                                            class="btn btn-sm text-danger border-0 p-0 btn-remove-member me-2"
-                                                            aria-label="Remove Member">
-                                                        <i class="bi bi-trash"></i>
-                                                    </button>
+                                                no++;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr id="emptyMemberRow">
+                                                <td colspan="4"
+                                                    class="text-center text-muted py-3">
+                                                    No project members added.
                                                 </td>
                                             </tr>
-
-                                            no++;
                                         }
-                                    }
-                                    else
-                                    {
-                                        <tr id="emptyMemberRow">
-                                            <td colspan="4"
-                                                class="text-center text-muted py-3">
-                                                No project members added.
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
+                                    </tbody>
+                                </table>
+
+                            </div>
                         </div>
                     </div>
 
@@ -527,10 +531,24 @@
 
                         <thead class="bg-light text-muted">
                             <tr>
-                                <th class="text-center col-width-45"></th>
-                                <th class="col-width-130">STAFF CODE</th>
-                                <th>STAFF NAME</th>
-                                <th>DEPARTMENT NAME</th>
+                                <th class="text-center col-width-45">
+                                    <input type="checkbox"
+                                           id="chkSelectAllMembers"
+                                           class="form-check-input"
+                                           aria-label="Select All Members" />
+                                </th>
+
+                                <th class="col-width-130">
+                                    STAFF CODE
+                                </th>
+
+                                <th>
+                                    STAFF NAME
+                                </th>
+
+                                <th>
+                                    DEPARTMENT NAME
+                                </th>
                             </tr>
                         </thead>
 
