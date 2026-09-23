@@ -223,6 +223,21 @@ $(document).ready(function () {
             );
     }
 
+    function updateSelectAllMembersState() {
+        var $enabled =
+            $('#tblModalMembers .chk-member:not(:disabled)');
+
+        var $checked =
+            $('#tblModalMembers .chk-member:checked:not(:disabled)');
+
+        var allChecked =
+            $enabled.length > 0 &&
+            $enabled.length === $checked.length;
+
+        $('#chkSelectAllMembers')
+            .prop('checked', allChecked);
+    }
+
     $('#btnModalSearch').on(
         'click',
         function () {
@@ -231,6 +246,9 @@ $(document).ready(function () {
 
             var deptCode =
                 $('#modalDeptSelect').val();
+
+            $('#chkSelectAllMembers')
+                .prop('checked', false);
 
             $.post(
                 '/Project/SearchProjectMembers',
@@ -336,6 +354,8 @@ $(document).ready(function () {
                             }
                         );
 
+                        updateSelectAllMembersState();
+
                         if (
                             typeof initializeTruncatedTooltips ===
                             'function'
@@ -344,6 +364,9 @@ $(document).ready(function () {
                         }
                     }
                     else {
+                        $('#chkSelectAllMembers')
+                            .prop('checked', false);
+
                         $tbody.append(
                             '<tr>' +
                             '<td colspan="4" class="text-center text-muted py-3">' +
@@ -354,6 +377,28 @@ $(document).ready(function () {
                     }
                 }
             );
+        }
+    );
+
+    $('#chkSelectAllMembers').on(
+        'change',
+        function () {
+            var isChecked =
+                $(this).is(':checked');
+
+            $('#tblModalMembers .chk-member:not(:disabled)')
+                .prop(
+                    'checked',
+                    isChecked
+                );
+        }
+    );
+
+    $(document).on(
+        'change',
+        '#tblModalMembers .chk-member',
+        function () {
+            updateSelectAllMembersState();
         }
     );
 
