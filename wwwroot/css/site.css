@@ -28,10 +28,6 @@ html , body{
   width: 100%;
 }
 
-.page-content {
-    padding: 10px;
-}
-
 body {
   background-image: url('/images/system_img/background_img.png');
   background-size: cover;
@@ -40,23 +36,11 @@ body {
   background-attachment: fixed;
 }
 
-/*the global table part*/
-thead th {
-    height: 55px;
-    padding-top: 12px!important;
-    padding-bottom: 12px!important;
-    vertical-align: bottom;
-    color: var(--dark-blue);
-    border-bottom: 1px solid var(--border-color) !important;
-    font-size: 16px;
-    font-weight: 700;
-}
 
-tbody td {
-    height: 50px!important;
-    max-width: 150px;
-    color: var(--dark-blue);
-    border-bottom: 1px solid var(--border-color);
-    vertical-align: middle;
-    font-size: 14px;
+.disable-button:disabled,
+disable-button:disabled:hover {
+    opacity: 0.4;
+    user-select: none;
+    cursor: not-allowed;
+    pointer-events:none;
 }
