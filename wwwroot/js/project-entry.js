@@ -1,14 +1,4 @@
-﻿function initTooltips() {
-    var tooltipTriggerList = [].slice.call(
-        document.querySelectorAll('[data-bs-toggle="tooltip"]')
-    );
-
-    tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-}
-
-function getOrCreateModal(elementId) {
+﻿function getOrCreateModal(elementId) {
     var el = document.getElementById(elementId);
 
     return bootstrap.Modal.getInstance(el) ||
@@ -74,8 +64,6 @@ function showErrorAlert(message, title = 'Error!') {
 }
 
 $(document).ready(function () {
-    initTooltips();
-
     var isEditMode =
         $('#IsEdit').val() === 'true' ||
         $('#IsEdit').val() === 'True';
@@ -235,6 +223,21 @@ $(document).ready(function () {
             );
     }
 
+    function updateSelectAllMembersState() {
+        var $enabled =
+            $('#tblModalMembers .chk-member:not(:disabled)');
+
+        var $checked =
+            $('#tblModalMembers .chk-member:checked:not(:disabled)');
+
+        var allChecked =
+            $enabled.length > 0 &&
+            $enabled.length === $checked.length;
+
+        $('#chkSelectAllMembers')
+            .prop('checked', allChecked);
+    }
+
     $('#btnModalSearch').on(
         'click',
         function () {
@@ -243,6 +246,9 @@ $(document).ready(function () {
 
             var deptCode =
                 $('#modalDeptSelect').val();
+
+            $('#chkSelectAllMembers')
+                .prop('checked', false);
 
             $.post(
                 '/Project/SearchProjectMembers',
@@ -313,7 +319,10 @@ $(document).ready(function () {
                                                     alt="Profile"
                                                 />
 
-                                                <span class="fw-semibold text-dark text-truncate">
+                                                <span
+                                                    class="fw-semibold text-dark text-truncate"
+                                                    data-tooltip-truncate
+                                                    data-tooltip-text="${staffCode}">
                                                     ${staffCode}
                                                 </span>
 
@@ -323,9 +332,8 @@ $(document).ready(function () {
                                         <td>
                                             <span
                                                 class="text-truncate-custom cursor-pointer"
-                                                data-bs-toggle="tooltip"
-                                                data-bs-placement="top"
-                                                title="${name}">
+                                                data-tooltip-truncate
+                                                data-tooltip-text="${name}">
                                                 ${name}
                                             </span>
                                         </td>
@@ -333,9 +341,8 @@ $(document).ready(function () {
                                         <td>
                                             <span
                                                 class="text-truncate-custom cursor-pointer"
-                                                data-bs-toggle="tooltip"
-                                                data-bs-placement="top"
-                                                title="${dept}">
+                                                data-tooltip-truncate
+                                                data-tooltip-text="${dept}">
                                                 ${dept}
                                             </span>
                                         </td>
@@ -347,9 +354,19 @@ $(document).ready(function () {
                             }
                         );
 
-                        initTooltips();
+                        updateSelectAllMembersState();
+
+                        if (
+                            typeof initializeTruncatedTooltips ===
+                            'function'
+                        ) {
+                            initializeTruncatedTooltips();
+                        }
                     }
                     else {
+                        $('#chkSelectAllMembers')
+                            .prop('checked', false);
+
                         $tbody.append(
                             '<tr>' +
                             '<td colspan="4" class="text-center text-muted py-3">' +
@@ -360,6 +377,28 @@ $(document).ready(function () {
                     }
                 }
             );
+        }
+    );
+
+    $('#chkSelectAllMembers').on(
+        'change',
+        function () {
+            var isChecked =
+                $(this).is(':checked');
+
+            $('#tblModalMembers .chk-member:not(:disabled)')
+                .prop(
+                    'checked',
+                    isChecked
+                );
+        }
+    );
+
+    $(document).on(
+        'change',
+        '#tblModalMembers .chk-member',
+        function () {
+            updateSelectAllMembersState();
         }
     );
 
@@ -400,7 +439,6 @@ $(document).ready(function () {
                         </td>
 
                         <td>
-
                             <div class="d-flex align-items-center">
 
                                 <img
@@ -412,21 +450,22 @@ $(document).ready(function () {
                                     alt="Profile"
                                 />
 
-                                <span class="fw-semibold text-dark text-truncate">
+                                <span
+                                    class="fw-semibold text-dark text-truncate"
+                                    data-tooltip-truncate
+                                    data-tooltip-text="${code}">
                                     ${code}
                                 </span>
 
                             </div>
-
                         </td>
 
                         <td class="text-secondary">
 
                             <span
                                 class="text-truncate-custom cursor-pointer"
-                                data-bs-toggle="tooltip"
-                                data-bs-placement="top"
-                                title="${name}">
+                                data-tooltip-truncate
+                                data-tooltip-text="${name}">
                                 ${name}
                             </span>
 
@@ -437,7 +476,7 @@ $(document).ready(function () {
                             <button
                                 type="button"
                                 class="btn btn-sm text-danger border-0 p-0 btn-remove-member me-2"
-                                title="Remove Member">
+                                aria-label="Remove Member">
 
                                 <i class="bi bi-trash"></i>
 
@@ -453,7 +492,13 @@ $(document).ready(function () {
             });
 
             updateRowNumbers();
-            initTooltips();
+
+            if (
+                typeof initializeTruncatedTooltips ===
+                'function'
+            ) {
+                initializeTruncatedTooltips();
+            }
 
             getOrCreateModal(
                 'memberModal'

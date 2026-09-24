@@ -73,10 +73,23 @@ namespace CKM_ManagementSystem.Controllers.LoginUser
                         firstMenu.ActionName,
                         firstMenu.ControllerName);
                 }
-                ViewBag.ErrorMessage = "No menu permission assigned.";
+                ModelState.AddModelError(string.Empty, "No menu permission assigned.");
+                model.Password = string.Empty;
                 return View(model);
             }
-            ViewBag.ErrorMessage = result.Message;
+            if (result.Message != null && result.Message.Contains("Email", StringComparison.OrdinalIgnoreCase))
+            {
+                ModelState.AddModelError("Email", result.Message);
+            }
+            else if (result.Message != null && result.Message.Contains("Password", StringComparison.OrdinalIgnoreCase))
+            {
+                ModelState.AddModelError("Password", result.Message);
+            }
+            else
+            {
+                ModelState.AddModelError("Email", result.Message ?? "Invalid Email or Password.");
+            }
+
             model.Password = string.Empty;
             return View(model);
         }

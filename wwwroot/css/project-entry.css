@@ -192,6 +192,16 @@ small,
     }
 
 
+/* Project Type first-row alignment */
+.option-row-project-type {
+    align-items: flex-start;
+}
+
+    .option-row-project-type .option-row-label {
+        padding-top: 2px;
+    }
+
+
 /* ========================================
    Header / Member Elements
 ======================================== */
@@ -249,6 +259,23 @@ small,
 
 .modal-body {
     overflow-x: hidden;
+}
+
+
+/* Manage Project Members title center */
+#memberModal .modal-header {
+    position: relative;
+    justify-content: center;
+}
+
+#memberModal .modal-title {
+    width: 100%;
+    text-align: center;
+}
+
+#memberModal .btn-close {
+    position: absolute;
+    right: 24px;
 }
 
 
@@ -392,6 +419,24 @@ small,
 
 
 /* ========================================
+   Selected Members Table Scroll
+======================================== */
+
+.selected-members-scroll-container {
+    max-height: 340px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#tblSelectedMembers thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background-color: #f8f9fa;
+}
+
+
+/* ========================================
    Table Interaction
 ======================================== */
 
@@ -403,7 +448,20 @@ small,
 .table-hover tbody tr:hover {
     background-color: #f8fafc;
 }
+/* ========================================
+   Project Member Text Color
+======================================== */
 
+#tblSelectedMembers tbody td,
+#tblSelectedMembers tbody span,
+#tblModalMembers tbody td,
+#tblModalMembers tbody span {
+    color: #4b5563 !important;
+}
+
+#tblSelectedMembers tbody .row-no {
+    color: #6b7280 !important;
+}
 
 /* ========================================
    Buttons

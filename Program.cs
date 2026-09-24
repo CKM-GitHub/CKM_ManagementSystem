@@ -43,6 +43,7 @@ builder.Services.AddScoped<CurrentUserPermission>();
 
 builder.Services.AddScoped<IAuthorizationHandler,
      PermissionAuthorizationHandler>();
+builder.Services.AddScoped<TaskStatusesBL>();
 builder.Services.AddAuthentication("MyCookieAuth")
     .AddCookie("MyCookieAuth", options =>
     {

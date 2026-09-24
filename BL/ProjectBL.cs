@@ -21,25 +21,34 @@ namespace CKM_ManagementSystem.BL
 
         public List<SelectListItem> GetActiveManagers()
         {
-            List<SelectListItem> managers = new List<SelectListItem>();
+            List<SelectListItem> managers =
+                new List<SelectListItem>();
 
-            string query =
-                "SELECT Staff_Code, Name FROM Users WHERE Deleted_Date IS NULL";
+            DataTable dt =
+                bdl.ExecuteDataTable(
+                    "SP_Project_GetActiveManagers",
+                    Array.Empty<SqlParameter>()
+                );
 
-            DataTable dt = bdl.ExecuteDataTable(
-                query,
-                Array.Empty<SqlParameter>()
-            );
-
-            if (dt != null && dt.Rows.Count > 0)
+            if (
+                dt != null &&
+                dt.Rows.Count > 0
+            )
             {
                 foreach (DataRow row in dt.Rows)
                 {
-                    managers.Add(new SelectListItem
-                    {
-                        Value = row["Staff_Code"].ToString(),
-                        Text = row["Name"].ToString()
-                    });
+                    managers.Add(
+                        new SelectListItem
+                        {
+                            Value =
+                                row["Staff_Code"]
+                                    .ToString(),
+
+                            Text =
+                                row["Name"]
+                                    .ToString()
+                        }
+                    );
                 }
             }
 
@@ -51,30 +60,31 @@ namespace CKM_ManagementSystem.BL
             List<SelectListItem> departments =
                 new List<SelectListItem>();
 
-            string query =
-                "SELECT Department_Code, Department_Name " +
-                "FROM Departments " +
-                "WHERE Status = 1 " +
-                "AND Deleted_Date IS NULL " +
-                "ORDER BY Department_Name";
+            DataTable dt =
+                bdl.ExecuteDataTable(
+                    "sp_Project_GetDepartments",
+                    Array.Empty<SqlParameter>()
+                );
 
-            DataTable dt = bdl.ExecuteDataTable(
-                query,
-                Array.Empty<SqlParameter>()
-            );
-
-            if (dt != null && dt.Rows.Count > 0)
+            if (
+                dt != null &&
+                dt.Rows.Count > 0
+            )
             {
                 foreach (DataRow row in dt.Rows)
                 {
-                    departments.Add(new SelectListItem
-                    {
-                        Value =
-                            row["Department_Code"].ToString(),
+                    departments.Add(
+                        new SelectListItem
+                        {
+                            Value =
+                                row["Department_Code"]
+                                    .ToString(),
 
-                        Text =
-                            row["Department_Name"].ToString()
-                    });
+                            Text =
+                                row["Department_Name"]
+                                    .ToString()
+                        }
+                    );
                 }
             }
 
@@ -84,22 +94,18 @@ namespace CKM_ManagementSystem.BL
         public bool IsDuplicateProjectCode(
             string projectCode)
         {
-            string query =
-                "SELECT COUNT(1) " +
-                "FROM Projects " +
-                "WHERE ProjectCode = @ProjectCode";
-
             SqlParameter[] sqlprms =
             {
                 new SqlParameter(
                     "@ProjectCode",
-                    (object)projectCode ?? DBNull.Value
+                    (object)projectCode
+                    ?? DBNull.Value
                 )
             };
 
             int count =
                 bdl.ExecuteScalar(
-                    query,
+                    "sp_CheckDuplicateProjectCode",
                     sqlprms
                 );
 
@@ -110,33 +116,24 @@ namespace CKM_ManagementSystem.BL
             string projectName,
             string? currentProjectCode = null)
         {
-            string query =
-                "SELECT COUNT(1) " +
-                "FROM Projects " +
-                "WHERE ProjectName = @ProjectName";
-
-            if (!string.IsNullOrEmpty(currentProjectCode))
-            {
-                query +=
-                    " AND ProjectCode != @CurrentProjectCode";
-            }
-
             SqlParameter[] sqlprms =
             {
                 new SqlParameter(
                     "@ProjectName",
-                    (object)projectName ?? DBNull.Value
+                    (object)projectName
+                    ?? DBNull.Value
                 ),
 
                 new SqlParameter(
                     "@CurrentProjectCode",
-                    (object)currentProjectCode ?? DBNull.Value
+                    (object?)currentProjectCode
+                    ?? DBNull.Value
                 )
             };
 
             int count =
                 bdl.ExecuteScalar(
-                    query,
+                    "sp_CheckDuplicateProjectName",
                     sqlprms
                 );
 
@@ -151,42 +148,20 @@ namespace CKM_ManagementSystem.BL
             List<ProjectMemberSearchViewModel> members =
                 new List<ProjectMemberSearchViewModel>();
 
-            string query = @"
-                SELECT
-                    u.Staff_Code,
-                    u.Name,
-                    u.Image_URL,
-                    d.Department_Name
-                FROM Users u
-                LEFT JOIN Departments d
-                    ON d.Department_Code = u.Department_Code
-                WHERE u.Deleted_Date IS NULL
-                  AND
-                  (
-                      @SearchText IS NULL
-                      OR @SearchText = ''
-                      OR u.Staff_Code LIKE '%' + @SearchText + '%'
-                      OR u.Name LIKE '%' + @SearchText + '%'
-                  )
-                  AND
-                  (
-                      @DepartmentCode IS NULL
-                      OR @DepartmentCode = ''
-                      OR d.Department_Code = @DepartmentCode
-                  )";
-
             SqlParameter[] sqlprms =
             {
                 new SqlParameter(
                     "@SearchText",
-                    string.IsNullOrEmpty(searchText)
+                    string.IsNullOrEmpty(
+                        searchText)
                         ? DBNull.Value
                         : searchText
                 ),
 
                 new SqlParameter(
                     "@DepartmentCode",
-                    string.IsNullOrEmpty(departmentCode)
+                    string.IsNullOrEmpty(
+                        departmentCode)
                         ? DBNull.Value
                         : departmentCode
                 )
@@ -194,11 +169,14 @@ namespace CKM_ManagementSystem.BL
 
             DataTable dt =
                 bdl.ExecuteDataTable(
-                    query,
+                    "sp_GetProjectMembers_Dropdown",
                     sqlprms
                 );
 
-            if (dt != null && dt.Rows.Count > 0)
+            if (
+                dt != null &&
+                dt.Rows.Count > 0
+            )
             {
                 foreach (DataRow row in dt.Rows)
                 {
@@ -214,13 +192,17 @@ namespace CKM_ManagementSystem.BL
                                     .ToString() ?? "",
 
                             Image_URL =
-                                row["Image_URL"] != DBNull.Value
-                                    ? row["Image_URL"].ToString()
+                                row["Image_URL"]
+                                    != DBNull.Value
+                                    ? row["Image_URL"]
+                                        .ToString()
                                     : null,
 
                             Department_Name =
-                                row["Department_Name"] != DBNull.Value
-                                    ? row["Department_Name"].ToString()
+                                row["Department_Name"]
+                                    != DBNull.Value
+                                    ? row["Department_Name"]
+                                        .ToString()
                                     : null
                         }
                     );
@@ -259,55 +241,17 @@ namespace CKM_ManagementSystem.BL
 
             try
             {
-                string queryProject;
+                string projectCommand;
 
                 if (isEdit)
                 {
-                    queryProject = @"
-                        UPDATE Projects
-                        SET
-                            ProjectName = @ProjectName,
-                            ProjectManagerId = @ProjectManagerId,
-                            GitRepositoryUrl = @GitRepositoryUrl,
-                            Description = @Description,
-                            StartDate = @StartDate,
-                            EndDate = @EndDate,
-                            Status = @Status,
-                            ProjectType = @ProjectType,
-                            Updated_Date = GETDATE()
-                        WHERE ProjectCode = @ProjectCode";
+                    projectCommand =
+                        "sp_Project_Update";
                 }
                 else
                 {
-                    queryProject = @"
-                        INSERT INTO Projects
-                        (
-                            ProjectCode,
-                            ProjectName,
-                            ProjectManagerId,
-                            GitRepositoryUrl,
-                            Description,
-                            StartDate,
-                            EndDate,
-                            Status,
-                            ProjectType,
-                            Created_Date,
-                            Updated_Date
-                        )
-                        VALUES
-                        (
-                            @ProjectCode,
-                            @ProjectName,
-                            @ProjectManagerId,
-                            @GitRepositoryUrl,
-                            @Description,
-                            @StartDate,
-                            @EndDate,
-                            @Status,
-                            @ProjectType,
-                            GETDATE(),
-                            GETDATE()
-                        )";
+                    projectCommand =
+                        "sp_InsertProject";
                 }
 
                 SqlParameter[] sqlprms =
@@ -362,7 +306,8 @@ namespace CKM_ManagementSystem.BL
 
                     new SqlParameter(
                         "@Status",
-                        string.IsNullOrEmpty(model.Status)
+                        string.IsNullOrEmpty(
+                            model.Status)
                             ? "Active"
                             : model.Status
                     ),
@@ -378,7 +323,7 @@ namespace CKM_ManagementSystem.BL
 
                 string result =
                     bdl.InsertUpdateDeleteData(
-                        queryProject,
+                        projectCommand,
                         sqlprms
                     );
 
@@ -390,10 +335,6 @@ namespace CKM_ManagementSystem.BL
                 {
                     if (isEdit)
                     {
-                        string deleteMembersQuery =
-                            "DELETE FROM ProjectMembers " +
-                            "WHERE ProjectCode = @ProjectCode";
-
                         SqlParameter[] delParams =
                         {
                             new SqlParameter(
@@ -403,7 +344,7 @@ namespace CKM_ManagementSystem.BL
                         };
 
                         bdl.InsertUpdateDeleteData(
-                            deleteMembersQuery,
+                            "sp_Project_DeleteMembers",
                             delParams
                         );
                     }
@@ -413,22 +354,6 @@ namespace CKM_ManagementSystem.BL
                         model.ProjectMembers.Count > 0
                     )
                     {
-                        string insertMemberQuery = @"
-                            INSERT INTO ProjectMembers
-                            (
-                                ProjectCode,
-                                Staff_Code,
-                                Created_Date,
-                                Updated_Date
-                            )
-                            VALUES
-                            (
-                                @ProjectCode,
-                                @Staff_Code,
-                                GETDATE(),
-                                GETDATE()
-                            )";
-
                         foreach (
                             var member
                             in model.ProjectMembers)
@@ -447,7 +372,7 @@ namespace CKM_ManagementSystem.BL
                             };
 
                             bdl.InsertUpdateDeleteData(
-                                insertMemberQuery,
+                                "sp_Project_InsertMember",
                                 memParams
                             );
                         }
@@ -502,7 +427,8 @@ namespace CKM_ManagementSystem.BL
 
                 new SqlParameter(
                     "@Status",
-                    string.IsNullOrWhiteSpace(status)
+                    string.IsNullOrWhiteSpace(
+                        status)
                         ? DBNull.Value
                         : status
                 ),
@@ -683,20 +609,6 @@ namespace CKM_ManagementSystem.BL
             ProjectEntryViewModel model =
                 new ProjectEntryViewModel();
 
-            string query = @"
-                SELECT
-                    ProjectCode,
-                    ProjectName,
-                    ProjectManagerId,
-                    GitRepositoryUrl,
-                    Description,
-                    StartDate,
-                    EndDate,
-                    Status,
-                    ProjectType
-                FROM Projects
-                WHERE ProjectCode = @ProjectCode";
-
             SqlParameter[] sqlprms =
             {
                 new SqlParameter(
@@ -707,7 +619,7 @@ namespace CKM_ManagementSystem.BL
 
             DataTable dt =
                 bdl.ExecuteDataTable(
-                    query,
+                    "sp_Project_GetById",
                     sqlprms
                 );
 
@@ -796,16 +708,6 @@ namespace CKM_ManagementSystem.BL
             List<ProjectMemberViewModel> members =
                 new List<ProjectMemberViewModel>();
 
-            string query = @"
-                SELECT
-                    pm.Staff_Code,
-                    u.Name,
-                    u.Image_URL
-                FROM ProjectMembers pm
-                INNER JOIN Users u
-                    ON u.Staff_Code = pm.Staff_Code
-                WHERE pm.ProjectCode = @ProjectCode";
-
             SqlParameter[] sqlprms =
             {
                 new SqlParameter(
@@ -816,7 +718,7 @@ namespace CKM_ManagementSystem.BL
 
             DataTable dt =
                 bdl.ExecuteDataTable(
-                    query,
+                    "sp_Project_GetMembers",
                     sqlprms
                 );
 
@@ -826,8 +728,7 @@ namespace CKM_ManagementSystem.BL
             )
             {
                 foreach (
-                    DataRow row
-                    in dt.Rows)
+                    DataRow row in dt.Rows)
                 {
                     members.Add(
                         new ProjectMemberViewModel
