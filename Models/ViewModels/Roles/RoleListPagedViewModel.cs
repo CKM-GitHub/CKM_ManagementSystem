@@ -11,5 +11,7 @@ namespace CKM_ManagementSystem.Models.ViewModels.Roles
         public int TotalPages => (int)Math.Ceiling((double)TotalRecords / PageSize);
         public string SearchKeyword { get; set; }=string.Empty;
         public int? Status { get; set; }
+        public bool CanWrite { get; set; }
+        public bool CanDelete { get; set; }
     }
 }

@@ -24,6 +24,8 @@ namespace CKM_ManagementSystem.Models.ViewModels.Roles
 
         public List<RolePermissionViewModel> MenuPermissions { get; set; }
             = new List<RolePermissionViewModel>();
+
+        public bool CanWrite { get; set; }
     }
 
     public class RolePermissionViewModel

@@ -17,6 +17,8 @@ namespace CKM_ManagementSystem.Models.ViewModels.Project
 
         public string SearchKeyword { get; set; } = string.Empty;
         public string Status { get; set; } = string.Empty;
+        public bool CanWrite { get; set; }
+        public bool CanDelete { get; set; }
     }
 
     public class ProjectListItemViewModel

@@ -2,6 +2,7 @@
 using CKM_ManagementSystem.Models.ViewModels.User;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CKM_ManagementSystem.Controllers.User
 {
@@ -22,6 +23,7 @@ namespace CKM_ManagementSystem.Controllers.User
         }
 
         [HttpGet]
+        [Authorize(Policy = "Permission.User.Read")]
         public async Task<IActionResult> UserCreate(string mode = "Entry",string? staffCode = null ,string? source =null)
         {
             ViewBag.Source = source;
@@ -41,6 +43,7 @@ namespace CKM_ManagementSystem.Controllers.User
         }
 
         [HttpPost]
+        [Authorize(Policy = "Permission.User.Write")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UserCreate(UserCreateViewModel model,string? source)
         {

@@ -447,13 +447,11 @@
 
                         <button type="submit"
                                 id="btnRegister"
-                                class="btn btn-primary project-entry-btn">
-                            @(Model.IsEdit
-                                ? "Update Project"
-                                : "+ Create Project")
+                                class="btn btn-primary project-entry-btn disable-button"
+                                disabled="@(!Model.CanWrite)">
+                            @(Model.IsEdit ? "Update Project" : "+ Create Project")
                         </button>
                     </div>
-
                 </form>
             </div>
         </div>

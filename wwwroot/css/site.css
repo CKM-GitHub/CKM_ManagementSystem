@@ -36,11 +36,11 @@ body {
   background-attachment: fixed;
 }
 
-
+.edit-icon:disabled,
+.delete-icon:disabled,
 .disable-button:disabled,
-disable-button:disabled:hover {
+.disable-button:disabled:hover {
     opacity: 0.4;
     user-select: none;
     cursor: not-allowed;
-    pointer-events:none;
 }

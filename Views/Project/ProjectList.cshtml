@@ -17,6 +17,8 @@
     <link rel="stylesheet"
           href="~/css/ckm-theme.css"
           asp-append-version="true" />
+
+    <link rel="stylesheet" href="~/css/TableComponent.css" asp-append-version="true" />
 }
 
 <div class="container-fluid px-4 px-md-5 pb-5">
@@ -96,16 +98,24 @@
                 </div>
 
                 <div>
-
-                    <a asp-action="Create"
-                       asp-controller="Project"
-                       class="btn btn-add-project">
-
-                        <i class="bi bi-plus-lg me-1"></i>
-                        Add Project
-
-                    </a>
-
+                    @if (Model.CanWrite)
+                    {
+                        <a asp-action="Create"
+                           asp-controller="Project"
+                           class="btn btn-add-project">
+                            <i class="bi bi-plus-lg me-1"></i>
+                            Add Project
+                        </a>
+                    }
+                    else
+                    {
+                        <button type="button"
+                                class="btn btn-add-project"
+                                disabled>
+                            <i class="bi bi-plus-lg me-1"></i>
+                            Add Project
+                        </button>
+                    }
                 </div>
 
             </div>
@@ -259,24 +269,33 @@
 
                                 <td class="action-column">
 
-                                    <a asp-action="Edit"
-                                       asp-controller="Project"
-                                       asp-route-projectCode="@project.ProjectCode"
-                                       class="icon-button edit-icon"
-                                       title="Edit">
-
-                                        <i class="bi bi-pencil-square"></i>
-
-                                    </a>
+                                    @if (Model.CanWrite)
+                                    {
+                                        <a asp-action="Edit"
+                                           asp-controller="Project"
+                                           asp-route-projectCode="@project.ProjectCode"
+                                           class="icon-button edit-icon"
+                                           title="Edit">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <button type="button"
+                                                class="icon-button edit-icon"
+                                                title="Edit (No Permission)"
+                                                disabled>
+                                            <i class="bi bi-pencil-square"></i>
+                                        </button>
+                                    }
 
                                     <button type="button"
                                             class="icon-button delete-icon project-delete-btn"
                                             data-project-code="@project.ProjectCode"
                                             data-project-name="@project.ProjectName"
-                                            title="Delete">
-
+                                            title="Delete"
+                                            @(Model.CanDelete ? null : "disabled")>
                                         <i class="bi bi-trash"></i>
-
                                     </button>
 
                                 </td>

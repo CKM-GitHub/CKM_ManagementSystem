@@ -44,9 +44,24 @@
                 </div>
 
                 <div>
-                    <a asp-action="RoleEntry" asp-controller="Role" class="btn btn-add-role">
-                        <i class="bi bi-plus-lg me-1"></i> Add New Role
-                    </a>
+                    @if (Model.CanWrite)
+                    {
+                        <a asp-action="RoleEntry"
+                           asp-controller="Role"
+                           class="btn btn-add-role">
+                            <i class="bi bi-plus-lg me-1"></i>
+                            Add New Role
+                        </a>
+                    }
+                    else
+                    {
+                        <button type="button"
+                                class="btn btn-add-role"
+                                disabled>
+                            <i class="bi bi-plus-lg me-1"></i>
+                            Add New Role
+                        </button>
+                    }
                 </div>
             </div>
         </form>
@@ -104,25 +119,55 @@
                                 </td>
 
                                 <td class="text-center align-middle">
+
                                     <div class="d-flex justify-content-center align-items-center gap-2">
 
-                                        <a asp-action="RoleEntry"
-                                           asp-controller="Role"
-                                           asp-route-id="@item.RoleCode"
-                                           class="action-icon-btn edit-icon text-decoration-none"
-                                           title="Edit Role">
-                                            <i class="bi bi-pencil-square"></i>
-                                        </a>
+                                        @if (Model.CanWrite)
+                                        {
+                                            <a asp-action="RoleEntry"
+                                               asp-controller="Role"
+                                               asp-route-id="@item.RoleCode"
+                                               class="action-icon-btn edit-icon text-decoration-none"
+                                               aria-label="Edit Role"
+                                               title="Edit Role">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <button type="button"
+                                                    class="action-icon-btn edit-icon"
+                                                    aria-label="Edit Role (No Permission)"
+                                                    title="Edit Role (No Permission)"
+                                                    disabled>
+                                                <i class="bi bi-pencil-square"></i>
+                                            </button>
+                                        }
 
-                                        <button type="button"
-                                                class="action-icon-btn delete-icon delete-role-btn"
-                                                data-role-code="@item.RoleCode"
-                                                data-delete-url="@Url.Action("DeleteRole", "Role")"
-                                                title="Delete Role">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
+                                        @if (Model.CanDelete)
+                                        {
+                                            <button type="button"
+                                                    class="action-icon-btn delete-icon delete-role-btn"
+                                                    data-role-code="@item.RoleCode"
+                                                    data-delete-url="@Url.Action("DeleteRole", "Role")"
+                                                    aria-label="Delete Role"
+                                                    title="Delete Role">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="button"
+                                                    class="action-icon-btn delete-icon"
+                                                    aria-label="Delete Role (No Permission)"
+                                                    title="Delete Role (No Permission)"
+                                                    disabled>
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        }
 
                                     </div>
+
                                 </td>
                             </tr>
                         }

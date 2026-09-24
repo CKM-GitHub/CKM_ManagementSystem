@@ -132,32 +132,28 @@
 
                 @if (isEditMode)
                 {
-                    <input type="hidden"
-                           asp-for="OriginalDepartmentCode" />
+                    <input type="hidden" asp-for="OriginalDepartmentCode" />
+                    <a asp-controller="DepartmentList" asp-action="Index" class="btn-clear">Cancel</a>
 
-                    <a asp-controller="DepartmentList"
-                       asp-action="Index"
-                       class="btn-clear">
-                        Cancel
-                    </a>
-
-                    <button type="submit"
-                            class="btn-register">
+                    <button type="@(Model.CanWrite ? "submit" : "button")"
+                            class="btn-register"
+                            disabled="@(Model.CanWrite ? null : "disabled")">
                         Update
                     </button>
                 }
                 else
                 {
-                    <button type="button"
-                            class="btn-clear"
-                            id="btnClear">
-                        Clear
-                    </button>
+                    <button type="button" class="btn-clear" id="btnClear">Clear</button>
 
-                    <button type="submit"
-                            class="btn-register">
-                        Register
-                    </button>
+                    @if (Model.CanWrite)
+                    {
+                        <button type="submit" class="btn-register">Register</button>
+                    }
+                    else
+                    {
+                        <button type="submit" class="btn-register disable-button" disabled>Register</button>
+                    }
+
                 }
 
             </div>

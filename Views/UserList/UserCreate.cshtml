@@ -291,13 +291,54 @@
             <div class="col-12 d-flex flex-column flex-sm-row justify-content-end gap-2 gap-sm-3 mt-3 pt-2 border-top form-actions">
                 @if (Model.Mode == "Entry")
                 {
-                    <button type="button" class="btn btn-light px-4 py-2 rounded-3 fw-medium border clear-btn" id="clearBtn">Clear</button>
-                    <button type="submit" class="btn btn-primary px-4 py-2 rounded-3 fw-medium create-btn" id="submitBtn">Create User</button>
+                    @* ── Clear က အမြဲ ပြ (form ရှင်းဖို့) ── *@
+                    <button type="button"
+                            class="btn btn-light px-4 py-2 rounded-3 fw-medium border clear-btn"
+                            id="clearBtn">
+                        Clear
+                    </button>
+
+                    @if (Model.CanWrite)
+                    {
+                        <button type="submit"
+                                class="btn btn-primary px-4 py-2 rounded-3 fw-medium create-btn"
+                                id="submitBtn">
+                            Create User
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="button"
+                                class="btn btn-primary px-4 py-2 rounded-3 fw-medium disable-button"
+                                id="submitBtn"
+                                disabled>
+                            Create User
+                        </button>
+                    }
                 }
                 else
                 {
-                    <a asp-action="UserList" asp-controller="UserList" class="btn btn-light px-4 py-2 rounded-3 fw-medium border clear-btn">Cancel</a>
-                    <button type="submit" class="btn px-4 py-2 rounded-3 fw-medium create-btn">Update</button>
+                    <a asp-action="UserList"
+                       asp-controller="UserList"
+                       class="btn btn-light px-4 py-2 rounded-3 fw-medium border clear-btn">
+                        Cancel
+                    </a>
+
+                    @if (Model.CanWrite)
+                    {
+                        <button type="submit"
+                                class="btn px-4 py-2 rounded-3 fw-medium create-btn">
+                            Update
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="button"
+                                class="btn px-4 py-2 rounded-3 fw-medium disable-button"
+                                disabled>
+                            Update
+                        </button>
+                    }
                 }
             </div>
         </form>

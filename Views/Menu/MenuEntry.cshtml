@@ -93,18 +93,30 @@
                         </div>
                         <div class="row g-2 pt-2">
                             <div class="col-6">
-                                @if(isEdit)
+                                @if (isEdit)
                                 {
-                                    <a asp-controller="Menu" asp-action="MenuListView" asp-route-page="@Context.Request.Query["page"]" class="btn btn-cancel w-100 fw-bold">
+                                    <a asp-controller="Menu"
+                                       asp-action="MenuListView"
+                                       asp-route-page="@Context.Request.Query["page"]"
+                                       class="btn btn-cancel w-100 fw-bold">
                                         Cancel
                                     </a>
-                                } else
+                                }
+                                else
                                 {
-                                    <button type="reset" id="btnClear" class="btn btn-clear w-100 fw-bold">Clear</button>
+                                    <button type="reset"
+                                            id="btnClear"
+                                            class="btn btn-clear w-100 fw-bold">
+                                        Clear
+                                    </button>
                                 }
                             </div>
+
                             <div class="col-6">
-                                <button type="submit" id="btnRegister" class="btn btn-register w-100 fw-bold">
+                                <button type="submit"
+                                        id="btnRegister"
+                                        class="btn btn-register w-100 fw-bold disable-button"
+                                        disabled="@(!Model.CanWrite)">
                                     @(isEdit ? "Update" : "Register")
                                 </button>
                             </div>

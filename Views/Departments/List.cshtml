@@ -169,25 +169,44 @@
                                 </td>
 
                                 <td class="action-column">
+                            @if (Model.CanWrite)
+                                    {
+                                        <a asp-controller="DepartmentEntry"
+                                           asp-action="Edit"
+                                           asp-route-departmentCode="@department.DepartmentCode"
+                                           class="icon-button edit-icon"
+                                           title="Edit">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <button type="button"
+                                                class="icon-button edit-icon"
+                                                title="Edit (No Permission)"
+                                                disabled>
+                                            <i class="bi bi-pencil-square"></i>
+                                        </button>
+                                    }
 
-                                    <a asp-controller="DepartmentEntry"
-                                       asp-action="Edit"
-                                       asp-route-departmentCode="@department.DepartmentCode"
-                                       class="icon-button edit-icon"
-                                       title="Edit">
-
-                                        <i class="bi bi-pencil-square"></i>
-
-                                    </a>
-
-                                    <button type="button"
-                                            class="icon-button delete-icon"
-                                            data-department-code="@department.DepartmentCode"
-                                            title="Delete">
-
-                                        <i class="bi bi-trash"></i>
-
-                                    </button>
+                                    @if (Model.CanDelete)
+                                    {
+                                        <button type="button"
+                                                class="icon-button delete-icon"
+                                                data-department-code="@department.DepartmentCode"
+                                                title="Delete">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button type="button"
+                                                class="icon-button delete-icon"
+                                                title="Delete (No Permission)"
+                                                disabled>
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    }
 
                                 </td>
 

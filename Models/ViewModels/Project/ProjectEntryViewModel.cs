@@ -47,6 +47,8 @@ namespace CKM_ManagementSystem.Models.ViewModels.Project
 
         public List<ProjectMemberViewModel> ProjectMembers { get; set; }
             = new List<ProjectMemberViewModel>();
+
+        public bool CanWrite { get; set; }
     }
 
 

@@ -1,4 +1,7 @@
-﻿using CKM_ManagementSystem.Data;
+﻿using CKM_ManagementSystem.Authorization;
+using CKM_ManagementSystem.Permissions;
+using Microsoft.AspNetCore.Authorization;
+using CKM_ManagementSystem.Data;
 using CKM_ManagementSystem.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -11,13 +14,16 @@ namespace CKM_ManagementSystem.Controllers.Menu
     public class MenuController : Controller
     {
         private readonly Menu_BL _menuBL;
+        private readonly CurrentUserPermission _permission;
 
-        public MenuController(Menu_BL menuBL)
+        public MenuController(Menu_BL menuBL, CurrentUserPermission permission)
         {
             _menuBL = menuBL;
+            _permission = permission;
         }
 
         [HttpGet]
+        [Authorize(Policy = "Permission.Menu.Read")]
         public async Task<IActionResult> MenuListView(string? searchTerm, int? selectedParentId, bool? statusFilters, int page = 1)
         {
             int pageSize = 6;
@@ -27,21 +33,26 @@ namespace CKM_ManagementSystem.Controllers.Menu
                 selectedParentId,
                 statusFilters,
                 page,
-                pageSize
-                );
+                pageSize);
 
+            viewModel.CanWrite = _permission.CanWrite(MenuIDs.Menu);
+            viewModel.CanDelete = _permission.CanDelete(MenuIDs.Menu);
             viewModel.ParentMenuList = await GetParentMenuListAsync();
+
             return View(viewModel);
         }
 
         [HttpGet]
+        [Authorize(Policy = "Permission.Menu.Read")]
         public async Task<IActionResult> MenuEntry(int? MenuID, int page = 1)
         {
             ViewBag.CurrentPage = page;
+
             var model = new CreateMenuViewModel
             {
                 ParentMenuList = await _menuBL.GetParentMenusForDropdownAsync()
             };
+
             if (MenuID.HasValue && MenuID > 0)
             {
                 var menu = await _menuBL.GetMenuByIdAsync(MenuID.Value);
@@ -50,6 +61,7 @@ namespace CKM_ManagementSystem.Controllers.Menu
                     TempData["ErrorMessage"] = "The menu item could not be found.";
                     return RedirectToAction(nameof(MenuListView));
                 }
+
                 model.MenuID = menu.MenuID;
                 model.DisplayText = menu.MenuName;
                 model.ActionName = menu.ActionName;
@@ -61,14 +73,26 @@ namespace CKM_ManagementSystem.Controllers.Menu
                 model.IsSubMenu = menu.ParentMenuId.HasValue && menu.ParentMenuId > 0;
                 model.MenuType = model.IsSubMenu ? "Sub" : "Parent";
             }
+
+            model.CanWrite = _permission.CanWrite(MenuIDs.Menu);
+
             return View("MenuEntry", model);
         }
 
+        [Authorize(Policy = "Permission.Menu.Write")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> MenuEntry(CreateMenuViewModel model, int page = 1)
         {
             ViewBag.CurrentPage = page;
+
+            async Task<IActionResult> ReturnViewAsync()
+            {
+                model.CanWrite = _permission.CanWrite(MenuIDs.Menu);
+                model.ParentMenuList = await _menuBL.GetParentMenusForDropdownAsync();
+                return View("MenuEntry", model);
+            }
+
             bool isSubMenu = string.Equals(model.MenuType, "Sub", StringComparison.OrdinalIgnoreCase);
             if (isSubMenu && (!model.ParentMenuId.HasValue || model.ParentMenuId <= 0))
             {
@@ -77,9 +101,9 @@ namespace CKM_ManagementSystem.Controllers.Menu
 
             if (!ModelState.IsValid)
             {
-                model.ParentMenuList = await _menuBL.GetParentMenusForDropdownAsync();
-                return View("MenuEntry", model);
+                return await ReturnViewAsync();
             }
+
             try
             {
                 int? parentMenuId = isSubMenu && model.ParentMenuId.HasValue && model.ParentMenuId > 0
@@ -101,6 +125,7 @@ namespace CKM_ManagementSystem.Controllers.Menu
                         parentMenuId,
                         isSubMenu,
                         model.Status);
+
                     statusCode = result.StatusCode;
                     statusMessage = result.StatusMessage;
                 }
@@ -115,64 +140,56 @@ namespace CKM_ManagementSystem.Controllers.Menu
                         parentMenuId,
                         isSubMenu,
                         model.Status);
+
                     statusCode = result.StatusCode;
                     statusMessage = result.StatusMessage;
                 }
+
                 if (statusCode == 0)
                 {
                     if (statusMessage.Contains("Parent Menu", StringComparison.OrdinalIgnoreCase))
-                    {
                         ModelState.AddModelError("ParentMenuId", statusMessage);
-                    }
                     else if (statusMessage.Contains("display order", StringComparison.OrdinalIgnoreCase))
-                    {
                         ModelState.AddModelError("DisplayOrder", statusMessage);
-                    }
                     else if (statusMessage.Contains("Menu Name", StringComparison.OrdinalIgnoreCase) ||
-                            statusMessage.Contains("DisplayText", StringComparison.OrdinalIgnoreCase))
-                    {
+                             statusMessage.Contains("DisplayText", StringComparison.OrdinalIgnoreCase))
                         ModelState.AddModelError("DisplayText", statusMessage);
-                    }
                     else if (statusMessage.Contains("Action Name", StringComparison.OrdinalIgnoreCase))
-                    {
                         ModelState.AddModelError("ActionName", statusMessage);
-                    }
                     else
-                    {
                         ModelState.AddModelError(string.Empty, statusMessage);
-                    }
-                    model.ParentMenuList = await _menuBL.GetParentMenusForDropdownAsync();
-                    return View("MenuEntry", model);
+
+                    return await ReturnViewAsync();
                 }
+
                 if (statusCode == 1)
                 {
                     TempData["SuccessMessage"] = statusMessage;
                     TempData["RedirectPage"] = page;
-                    model.ParentMenuList = await _menuBL.GetParentMenusForDropdownAsync();
-                    return View("MenuEntry", model);
+                    return await ReturnViewAsync();
                 }
 
                 TempData["ErrorMessage"] = statusMessage ?? "Unexpected status returned";
-                model.ParentMenuList = await _menuBL.GetParentMenusForDropdownAsync();
-                return View("MenuEntry", model);
+                return await ReturnViewAsync();
             }
             catch (Exception ex)
             {
                 if (ex.Message.Contains("String or binary data would be truncated") ||
-                        (ex.InnerException != null && ex.InnerException.Message.Contains("String or binary data would be truncated")))
+                    (ex.InnerException != null &&
+                     ex.InnerException.Message.Contains("String or binary data would be truncated")))
                 {
-                    TempData["ErrorMessage"] = "The input text exceeds the maximum charcher limit allowed.";
+                    TempData["ErrorMessage"] = "The input text exceeds the maximum character limit allowed.";
                 }
                 else
                 {
                     TempData["ErrorMessage"] = "A system error has occurred. Please wait a moment and try again";
                 }
-                model.ParentMenuList = await _menuBL.GetParentMenusForDropdownAsync();
-                return View("MenuEntry", model);
-            }
 
+                return await ReturnViewAsync();
+            }
         }
 
+        [Authorize(Policy = "Permission.Menu.Delete")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("DeleteMenu")]
@@ -195,8 +212,10 @@ namespace CKM_ManagementSystem.Controllers.Menu
             {
                 TempData["ErrorMessage"] = "Error occurred: " + ex.Message;
             }
+
             return RedirectToAction(nameof(MenuListView), new { page = page });
         }
+
         private async Task<List<SelectListItem>> GetParentMenuListAsync()
         {
             return await _menuBL.GetParentMenuListAsync();

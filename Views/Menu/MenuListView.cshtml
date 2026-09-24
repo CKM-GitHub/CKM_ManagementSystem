@@ -86,15 +86,23 @@
             </div>
 
             <div class="toolbar-right">
-
-                <a asp-action="MenuEntry"
-                   class="btn btn-primary-add add-btn">
-
-                    <i class="bi bi-plus me-2"></i>
-
-                    Add Menu
-                </a>
-
+                @if (Model.CanWrite)
+                {
+                    <a asp-action="MenuEntry"
+                       class="btn btn-primary-add add-btn">
+                        <i class="bi bi-plus me-2"></i>
+                        Add Menu
+                    </a>
+                }
+                else
+                {
+                    <button type="button"
+                            class="btn btn-primary-add add-btn"
+                            disabled>
+                        <i class="bi bi-plus me-2"></i>
+                        Add Menu
+                    </button>
+                }
             </div>
 
         </form>
@@ -212,42 +220,64 @@
 
                                 <td class="text-center action-column">
                                     <div class="action-btn-group">
-                                    <a asp-controller="Menu"
-                                       asp-action="MenuEntry"
-                                       asp-route-menuId="@item.MenuID"
-                                       asp-route-page="@Model.CurrentPage"
-                                       class="action-btn edit-icon"
-                                       title="Edit Menu">
 
-                                        <i class="bi bi-pencil-square"></i>
+                                        @if (Model.CanWrite)
+                                        {
+                                            <a asp-controller="Menu"
+                                               asp-action="MenuEntry"
+                                               asp-route-menuId="@item.MenuID"
+                                               asp-route-page="@Model.CurrentPage"
+                                               class="action-btn edit-icon"
+                                               title="Edit Menu">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <button type="button"
+                                                    class="action-btn edit-icon"
+                                                    title="Edit Menu (No Permission)"
+                                                    disabled>
+                                                <i class="bi bi-pencil-square"></i>
+                                            </button>
+                                        }
 
-                                    </a>
+                                        @if (Model.CanDelete)
+                                        {
+                                            <form asp-controller="Menu"
+                                                  asp-action="DeleteMenu"
+                                                  method="post"
+                                                  class="d-inline delete-form">
 
-                                    <form asp-controller="Menu"
-                                          asp-action="DeleteMenu"
-                                          method="post"
-                                          class="d-inline delete-form">
+                                                @Html.AntiForgeryToken()
 
-                                        @Html.AntiForgeryToken()
+                                                <input type="hidden"
+                                                       name="menuId"
+                                                       value="@item.MenuID" />
 
-                                        <input type="hidden"
-                                               name="menuId"
-                                               value="@item.MenuID" />
+                                                <input type="hidden"
+                                                       name="page"
+                                                       value="@Model.CurrentPage" />
 
-                                        <input type="hidden"
-                                               name="page"
-                                               value="@Model.CurrentPage" />
+                                                <button type="submit"
+                                                        class="action-btn delete-icon delete-btn"
+                                                        title="Delete Menu">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
 
-                                        <button type="submit"
-                                                class="action-btn delete-icon delete-btn"
-                                                title="Delete Menu">
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <button type="button"
+                                                    class="action-btn delete-icon delete-btn"
+                                                    title="Delete Menu (No Permission)"
+                                                    disabled>
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        }
 
-                                            <i class="bi bi-trash"></i>
-
-                                        </button>
-
-                                    </form>
-                                   </div>
+                                    </div>
                                 </td>
 
                             </tr>

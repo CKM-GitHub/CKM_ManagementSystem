@@ -1,8 +1,13 @@
+using CKM_ManagementSystem.Authorization;
+using CKM_ManagementSystem.Permissions;
 using CKM_ManagementSystem.BL;
 using CKM_ManagementSystem.Data;
 using CKM_ManagementSystem.MenuBL;
 using CKM_ManagementSystem.DL;
+using CKM_ManagementSystem.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +36,13 @@ builder.Services.AddScoped<RoleBL>();
 builder.Services.AddScoped<ProjectBL>();
 builder.Services.AddScoped<LoginUserBL>();
 builder.Services.AddScoped<ChangePasswordBL>();
+builder.Services.AddScoped<UserPermissionBL>();
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<CurrentUserPermission>();
+
+builder.Services.AddScoped<IAuthorizationHandler,
+     PermissionAuthorizationHandler>();
 builder.Services.AddAuthentication("MyCookieAuth")
     .AddCookie("MyCookieAuth", options =>
     {
@@ -42,10 +54,17 @@ builder.Services.AddAuthorization(options =>
 {
     options.FallbackPolicy = options.DefaultPolicy;
 });
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+builder.Services.AddScoped<CurrentUserPermission>();
 
 builder.Services.AddScoped<UserEntryBL>();
 builder.Services.AddScoped<UserListBL>();
 builder.Services.AddScoped<PasswordService>();
+builder.Services.AddSingleton<IAuthorizationPolicyProvider,
+     PermissionPolicyProvider>();
+
 var app = builder.Build();
 
 app.UseSession();
@@ -53,11 +72,9 @@ app.UseSession();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error/500");
+    app.UseExceptionHandler("Error/500");
     app.UseHsts();
 }
-
-
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -65,9 +82,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication();
-app.UseSession();
 app.UseAuthorization();
-
 
 app.MapControllerRoute(
     name: "default",

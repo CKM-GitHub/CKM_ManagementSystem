@@ -270,17 +270,29 @@
                 <div class="col-6">
                     @if (isEditMode)
                     {
-                        <a asp-action="RoleList"
-                           asp-controller="Role"
-                           class="btn btn-outline-secondary role-entry-btn w-100 text-center text-decoration-none">
-                            Cancel
-                        </a>
+                        @if (Model.CanWrite)
+                        {
+                            <a asp-action="RoleList"
+                               asp-controller="Role"
+                               class="btn btn-outline-secondary w-100 py-2 text-center text-decoration-none">
+                                Cancel
+                            </a>
+                        }
+                        else
+                        {
+                            <button type="button"
+                                    class="btn btn-outline-secondary w-100 py-2 disable-button"
+                                    disabled>
+                                Cancel
+                            </button>
+                        }
                     }
                     else
                     {
                         <button type="button"
                                 id="btnClear"
-                                class="btn btn-outline-secondary role-entry-btn w-100">
+                                class="btn btn-outline-secondary w-100 py-2"
+                                @(Model.CanWrite ? null : "disabled")>
                             Clear
                         </button>
                     }
@@ -289,7 +301,8 @@
                 <div class="col-6">
                     <button type="submit"
                             id="btnRegister"
-                            class="btn btn-primary role-entry-btn w-100">
+                            class="btn btn-primary w-100 py-2 disable-button"
+                            @(Model.CanWrite ? null : "disabled")>
                         @(isEditMode ? "Update" : "Register")
                     </button>
                 </div>

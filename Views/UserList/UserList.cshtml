@@ -19,7 +19,8 @@
     int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
 }
 
-<link rel="stylesheet" href="~/css/UserList.css" />
+<link rel="stylesheet" href="~/css/UserList.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/TableComponent.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/Alert_Modal.css" asp-append-version="true" />
 <div class="user-list-page">
 <h1 class="text-center fw-bold mb-4 header-text">User Management</h1>
@@ -211,36 +212,62 @@
                                 </td>
                                     <td class="pe-4 text-muted">
                                         <div class="action-buttons">
-                                            <form asp-controller="UserList"
-                                                  asp-action="UserUpdate"
-                                                  method="get">
-                                                <input type="hidden" name="staffCode" value="@user.StaffCode" />
 
-                                                <button type="submit"
+                                            @if (Model.CanWrite)
+                                            {
+                                                <form asp-controller="UserList"
+                                                      asp-action="UserUpdate"
+                                                      method="get">
+                                                    <input type="hidden" name="staffCode" value="@user.StaffCode" />
+
+                                                    <button type="submit"
+                                                            class="action-icon-btn edit-icon"
+                                                            title="Update">
+                                                        <i class="bi bi-pencil-square"></i>
+                                                    </button>
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                <button type="button"
                                                         class="action-icon-btn edit-icon"
-                                                        title="Update">
+                                                        title="Update"
+                                                        disabled>
                                                     <i class="bi bi-pencil-square"></i>
                                                 </button>
-                                            </form>
+                                            }
 
-                                            <form asp-controller="UserList"
-                                                  asp-action="DeleteUser"
-                                                  method="post"
-                                                  class="delete-form">
+                                            @if (Model.CanDelete)
+                                            {
+                                                <form asp-controller="UserList"
+                                                      asp-action="DeleteUser"
+                                                      method="post"
+                                                      class="delete-form">
 
-                                                @Html.AntiForgeryToken()
+                                                    @Html.AntiForgeryToken()
 
-                                                <input type="hidden"
-                                                       name="staffCode"
-                                                       value="@user.StaffCode" />
+                                                    <input type="hidden"
+                                                           name="staffCode"
+                                                           value="@user.StaffCode" />
 
+                                                    <button type="button"
+                                                            class="action-icon-btn delete-icon"
+                                                            id="confirmdel"
+                                                            title="Delete">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            }
+                                            else
+                                            {
                                                 <button type="button"
                                                         class="action-icon-btn delete-icon"
-                                                        id="confirmdel"
-                                                        title="Delete">
+                                                        title="Delete"
+                                                        disabled>
                                                     <i class="bi bi-trash"></i>
                                                 </button>
-                                            </form>
+                                            }
+
                                         </div>
                                     </td>
                                 </tr>

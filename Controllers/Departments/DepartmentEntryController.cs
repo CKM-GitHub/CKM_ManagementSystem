@@ -1,28 +1,40 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CKM_ManagementSystem.Authorization;
 using CKM_ManagementSystem.BL;
 using CKM_ManagementSystem.Models.Entities;
 using CKM_ManagementSystem.Models.ViewModels.Departments;
+using CKM_ManagementSystem.Permissions;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CKM_ManagementSystem.Controllers.Departments
 {
     public class DepartmentEntryController : Controller
     {
         private readonly DepartmentBL _departmentBL;
+        private readonly CurrentUserPermission _permission;
 
-        public DepartmentEntryController(DepartmentBL departmentBL)
+        public DepartmentEntryController(DepartmentBL departmentBL, CurrentUserPermission permission)
         {
             _departmentBL = departmentBL;
+            _permission = permission;
         }
 
+        [Authorize(Policy = "Permission.Department.Read")]
         [HttpGet]
         public IActionResult Entry()
         {
+            var viewModel = new DepartmentEntryViewModel
+            {
+                CanWrite = _permission.CanWrite(MenuIDs.Department)
+            };
+
             return View(
                 "~/Views/Departments/Entry.cshtml",
-                new DepartmentEntryViewModel());
+                viewModel);
         }
 
-        [HttpPost]
+        [Authorize(Policy = "Permission.Department.Write")]
+        [HttpPost]        
         [ValidateAntiForgeryToken]
         public IActionResult Entry(DepartmentEntryViewModel model)
         {
@@ -102,6 +114,7 @@ namespace CKM_ManagementSystem.Controllers.Departments
             return RedirectToAction(nameof(Entry));
         }
 
+        [Authorize(Policy = "Permission.Department.Read")]
         [HttpGet]
         public IActionResult Edit(string departmentCode)
         {
@@ -134,6 +147,7 @@ namespace CKM_ManagementSystem.Controllers.Departments
                 viewModel);
         }
 
+        [Authorize(Policy = "Permission.Department.Write")]
         [HttpPost]
         [ValidateAntiForgeryToken]
 

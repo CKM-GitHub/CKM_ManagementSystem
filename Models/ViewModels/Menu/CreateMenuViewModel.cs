@@ -32,5 +32,6 @@ namespace CKM_ManagementSystem.Models.ViewModels.Menu
         public int? ParentMenuId { get; set; }
         public bool Status { get; set; } = true;
         public List<SelectListItem> ParentMenuList { get; set; } = new List<SelectListItem>();
+        public bool CanWrite { get; set; }
     }
 }
