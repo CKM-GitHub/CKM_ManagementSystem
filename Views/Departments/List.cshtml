@@ -70,12 +70,20 @@
         </div>
 
         <div class="search-right">
-
-            <a asp-controller="DepartmentEntry"
-               asp-action="Entry"
-               class="btn-add">
-                + Add Department
-            </a>
+            @if (Model.CanWrite)
+            {
+                <a asp-controller="DepartmentEntry"
+                   asp-action="Entry"
+                   class="btn-add">
+                    + Add Department
+                </a>
+            }
+            else
+            {
+                <button  class="btn-add disable-button" style="" disabled>
+                    + Add Department
+                </button>
+            }      
 
         </div>
 

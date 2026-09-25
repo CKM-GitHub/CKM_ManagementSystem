@@ -1,13 +1,17 @@
-﻿
-using CKM_ManagementSystem.Models.ViewModels;
+﻿using CKM_ManagementSystem.Models.ViewModels;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CKM_ManagementSystem.Controllers
 {
+    [AllowAnonymous]
     public class ErrorController : Controller
     {
+        private const string AuthScheme = "MyCookieAuth";
+
         [Route("Error/StatusCode/{code:int}")]
-        public IActionResult Error(int code)
+        public async Task<IActionResult> Error(int code)
         {
             var model = new ErrorViewModel
             {
@@ -27,20 +31,35 @@ namespace CKM_ManagementSystem.Controllers
                     model.Title = "Unauthorized";
                     model.Message = "Your session has expired or you need to log in.";
                     model.ButtonText = "Go to Login";
-                    model.RedirectUrl =  Url.Action("Login", "LoginUsers") ?? "/";
+                    model.RedirectUrl = Url.Action("Login", "LoginUsers") ?? "/";
+
+                    await HttpContext.SignOutAsync(AuthScheme);
+                    HttpContext.Session.Clear();  
                     break;
 
                 case 403:
                     model.Title = "Access Denied";
-                    model.Message ="You do not have permission to access this page.";
-                    model.ButtonText = "Back to Department";
-                    model.RedirectUrl =
-                        Url.Action("Entry", "DepartmentEntry") ?? "/";
+                    model.Message = "出て行って !!";
+                    var perms = HttpContext.Session.GetString("UserPermissions");
+                    if (string.IsNullOrEmpty(perms))
+                    {
+                        model.Message = "Your session has expired. Please log in again.";
+                        model.ButtonText = "Go to Login";
+                        model.RedirectUrl = Url.Action("Login", "LoginUsers") ?? "/LoginUsers/Login";
+
+                        await HttpContext.SignOutAsync("MyCookieAuth");
+                        HttpContext.Session.Clear();
+                    }
+                    else
+                    {
+                        model.ButtonText = "Back to Department";
+                        model.RedirectUrl = Url.Action("Entry", "DepartmentEntry") ?? "/";
+                    }            
                     break;
 
                 case 404:
                     model.Title = "Page Not Found";
-                    model.Message = "The page you are looking for does not exist or has been moved.";
+                    model.Message = "寺へ行って、寺はそちらね.";
                     model.ButtonText = "Back to Department";
                     model.RedirectUrl = Url.Action("Entry", "DepartmentEntry") ?? "/";
                     break;
