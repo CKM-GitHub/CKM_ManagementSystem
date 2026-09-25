@@ -113,12 +113,38 @@
                             </div>
 
                             <div class="col-6">
-                                <button type="submit"
-                                        id="btnRegister"
-                                        class="btn btn-register w-100 fw-bold disable-button"
-                                        disabled="@(!Model.CanWrite)">
-                                    @(isEdit ? "Update" : "Register")
-                                </button>
+                                @if (Model.CanWrite)
+                                {
+                                    <button type="submit"
+                                            id="btnRegister"
+                                            class="btn btn-register w-100 fw-bold">
+                                        @if (isEdit)
+                                        {
+                                            <text>Update</text>
+                                        }
+                                        else
+                                        {
+                                            <text>Register</text>
+                                        }
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="submit"
+                                            id="btnRegister"
+                                            class="disable-button btn btn-primary w-100 fw-bold "
+                                            style="height: 42px;border-radius: 8px;"
+                                            disabled>
+                                        @if (isEdit)
+                                        {
+                                            <text>Update</text>
+                                        }
+                                        else
+                                        {
+                                            <text>Register</text>
+                                        }
+                                    </button>
+                                }
                             </div>
                         </div>
                     </form>

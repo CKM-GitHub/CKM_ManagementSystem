@@ -120,7 +120,16 @@
             @* <a asp-action="UserList" class="btn btn-outline-secondary btn-sm px-3">Clear</a> *@
         </div>
         <div>
-            <a class="btn btn-primary px-3" asp-controller="UserCreate" asp-action="UserCreate" asp-route-source="list"><i class="fas fa-plus me-1"></i> Add New User</a>
+            @if(Model.CanWrite)
+            {
+                 <a class="btn btn-primary px-3" asp-controller="UserCreate" asp-action="UserCreate" asp-route-source="list"><i class="fas fa-plus me-1"></i> Add New User</a>
+            }
+            else
+            {
+                    <button type="button" class="btn btn-primary px-3 disable-button" disabled>
+                        <i class="fas fa-plus me-1"></i> Add New User
+                    </button>
+            }
         </div>
         
     </div>

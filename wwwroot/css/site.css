@@ -36,18 +36,16 @@ body {
   background-attachment: fixed;
 }
 
+.disable-button:disabled,
 .edit-icon:disabled,
 .delete-icon:disabled,
-.disable-button:disabled {
-    opacity: 0.4;
-    user-select: none;
-    cursor: not-allowed;
-}
-
+.disable-button:disabled:hover,
 .edit-icon:disabled:hover,
-.delete-icon:disabled:hover,
-.disable-button:disabled:hover {
+.delete-icon:disabled:hover {
     opacity: 0.4;
-    cursor: not-allowed;
-    transform: none;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important; 
+    pointer-events: auto; 
+    user-select: none;
 }
