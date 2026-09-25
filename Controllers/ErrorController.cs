@@ -1,9 +1,11 @@
 ﻿
 using CKM_ManagementSystem.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CKM_ManagementSystem.Controllers
 {
+    [AllowAnonymous]
     public class ErrorController : Controller
     {
         [Route("Error/StatusCode/{code:int}")]
@@ -32,7 +34,7 @@ namespace CKM_ManagementSystem.Controllers
 
                 case 403:
                     model.Title = "Access Denied";
-                    model.Message ="You do not have permission to access this page.";
+                    model.Message ="出て行って !!";
                     model.ButtonText = "Back to Department";
                     model.RedirectUrl =
                         Url.Action("Entry", "DepartmentEntry") ?? "/";
@@ -40,7 +42,8 @@ namespace CKM_ManagementSystem.Controllers
 
                 case 404:
                     model.Title = "Page Not Found";
-                    model.Message = "The page you are looking for does not exist or has been moved.";
+                    //model.Message = "The page you are looking for does not exist or has been moved.";
+                    model.Message = "寺へ行って、寺はそちらね.";
                     model.ButtonText = "Back to Department";
                     model.RedirectUrl = Url.Action("Entry", "DepartmentEntry") ?? "/";
                     break;
