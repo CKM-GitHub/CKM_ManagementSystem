@@ -1,0 +1,637 @@
+﻿@model CKM_ManagementSystem.Models.ViewModels.TasksViewModel
+
+@{
+    ViewData["Title"] = "My Tasks Overview";
+}
+
+<div class="task-page-container">
+    <div class="page-header text-center">
+        <h2 class="page-title">
+            My Tasks Overview
+        </h2>
+    </div>
+</div>
+
+<div class="container-fluid px-3 px-md-5">
+
+    <!-- Summary Cards -->
+    <div class="my-task-summary-grid mb-4">
+
+        <!-- Total Tasks -->
+        <div class="my-task-summary-card">
+            <div class="summary-card-icon summary-total">
+                <i class="bi bi-clipboard2-check"></i>
+            </div>
+
+            <div class="summary-card-content">
+                <div class="summary-card-label">
+                    Total Tasks
+                </div>
+
+                <div class="summary-card-value">
+                    0
+                </div>
+
+                <div class="summary-card-subtitle">
+                    All assigned tasks
+                </div>
+            </div>
+        </div>
+
+        <!-- Open -->
+        <div class="my-task-summary-card">
+            <div class="summary-card-icon summary-open">
+                <i class="bi bi-graph-up-arrow"></i>
+            </div>
+
+            <div class="summary-card-content">
+                <div class="summary-card-label">
+                    Open
+                </div>
+
+                <div class="summary-card-value">
+                    0
+                </div>
+
+                <div class="summary-card-subtitle">
+                    0% of total
+                </div>
+            </div>
+        </div>
+
+        <!-- In Progress -->
+        <div class="my-task-summary-card">
+            <div class="summary-card-icon summary-progress">
+                <i class="bi bi-graph-up-arrow"></i>
+            </div>
+
+            <div class="summary-card-content">
+                <div class="summary-card-label">
+                    In Progress
+                </div>
+
+                <div class="summary-card-value">
+                    0
+                </div>
+
+                <div class="summary-card-subtitle">
+                    0% of total
+                </div>
+            </div>
+        </div>
+
+        <!-- Review -->
+        <div class="my-task-summary-card">
+            <div class="summary-card-icon summary-review">
+                <i class="bi bi-pause-circle"></i>
+            </div>
+
+            <div class="summary-card-content">
+                <div class="summary-card-label">
+                    Review
+                </div>
+
+                <div class="summary-card-value">
+                    0
+                </div>
+
+                <div class="summary-card-subtitle">
+                    0% of total
+                </div>
+            </div>
+        </div>
+
+        <!-- Completed -->
+        <div class="my-task-summary-card">
+            <div class="summary-card-icon summary-completed">
+                <i class="bi bi-check-circle"></i>
+            </div>
+
+            <div class="summary-card-content">
+                <div class="summary-card-label">
+                    Completed
+                </div>
+
+                <div class="summary-card-value">
+                    0
+                </div>
+
+                <div class="summary-card-subtitle">
+                    0% of total
+                </div>
+            </div>
+        </div>
+
+        <!-- On Hold -->
+        <div class="my-task-summary-card">
+            <div class="summary-card-icon summary-hold">
+                <i class="bi bi-clock"></i>
+            </div>
+
+            <div class="summary-card-content">
+                <div class="summary-card-label">
+                    On Hold
+                </div>
+
+                <div class="summary-card-value">
+                    0
+                </div>
+
+                <div class="summary-card-subtitle">
+                    0% of total
+                </div>
+            </div>
+        </div>
+
+        <!-- Cancelled -->
+        <div class="my-task-summary-card">
+            <div class="summary-card-icon summary-cancelled">
+                <i class="bi bi-lightning-charge"></i>
+            </div>
+
+            <div class="summary-card-content">
+                <div class="summary-card-label">
+                    Cancelled
+                </div>
+
+                <div class="summary-card-value">
+                    0
+                </div>
+
+                <div class="summary-card-subtitle">
+                    0% of total
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Search / Filter -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4 search-card">
+
+        <div class="card-body">
+
+            <form method="post">
+
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+                        <label asp-for="ProjectCode"
+                               class="form-label">
+                            Project Name
+                        </label>
+
+                        <select asp-for="ProjectCode"
+                                asp-items="Model.ProjectList"
+                                class="form-select form-select-md">
+
+                            <option value="">
+                                All Projects
+                            </option>
+
+                        </select>
+                    </div>
+
+
+                    <div class="col-md-4">
+
+                        <label asp-for="Title"
+                               class="form-label">
+                            Task Title / Program Name
+                        </label>
+
+                        <input asp-for="Title"
+                               type="text"
+                               class="form-control form-control-md"
+                               placeholder="Enter Task Title" />
+
+                    </div>
+
+
+                    <div class="col-md-4">
+
+                        <label asp-for="PriorityCode"
+                               class="form-label">
+                            Priority
+                        </label>
+
+                        <select asp-for="PriorityCode"
+                                asp-items="Model.PriorityList"
+                                class="form-select form-select-md">
+
+                            <option value="">
+                                All Priorities
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="col-md-4">
+
+                        <label asp-for="StatusCode"
+                               class="form-label">
+                            Status
+                        </label>
+
+                        <select asp-for="StatusCode"
+                                asp-items="Model.StatusList"
+                                class="form-select form-select-md">
+
+                            <option value="">
+                                All Statuses
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Issue Date
+                        </label>
+
+                        <div class="row">
+
+                            <div class="date-width">
+
+                                <input asp-for="IssueDateStart"
+                                       type="date"
+                                       class="form-control form-select-md" />
+
+                            </div>
+
+                            <div class="range">
+                                <label class="form-label">
+                                    ~
+                                </label>
+                            </div>
+
+                            <div class="date-width">
+
+                                <input asp-for="IssueDateEnd"
+                                       type="date"
+                                       class="form-control form-select-md" />
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Due Date
+                        </label>
+
+                        <div class="row">
+
+                            <div class="date-width">
+
+                                <input asp-for="DueDateStart"
+                                       type="date"
+                                       class="form-control form-select-md" />
+
+                            </div>
+
+                            <div class="range">
+                                <label class="form-label">
+                                    ~
+                                </label>
+                            </div>
+
+                            <div class="date-width">
+
+                                <input asp-for="DueDateEnd"
+                                       type="date"
+                                       class="form-control form-select-md" />
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-12 text-end mt-4">
+
+                        <button type="submit"
+                                class="btn btn-primary-search toolbar-btn">
+
+                            <i class="bi bi-search me-2"></i>
+                            Search
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- Task Table -->
+    <div class="card main-card p-4">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0 text-nowrap sticky-table">
+
+                <thead class="table-light">
+
+                    <tr>
+
+                        <th scope="col"
+                            class="sticky-col col-1-sticky fw-semibold">
+                            No.
+                        </th>
+
+                        <th scope="col"
+                            class="sticky-col col-2-sticky fw-semibold">
+                            Project Name
+                        </th>
+
+                        <th scope="col"
+                            class="sticky-col col-3-sticky fw-semibold">
+                            Person In Charge
+                        </th>
+
+                        <th scope="col"
+                            class="sticky-col col-4-sticky fw-semibold">
+                            Task Title / Program Name
+                        </th>
+
+                        <th scope="col"
+                            class="fw-semibold col-desc">
+                            Description
+                        </th>
+
+                        <th scope="col"
+                            class="fw-semibold col-assignee">
+                            Assignee
+                        </th>
+
+                        <th scope="col"
+                            class="fw-semibold col-date">
+                            Issue Date
+                        </th>
+
+                        <th scope="col"
+                            class="fw-semibold col-date">
+                            Due Date
+                        </th>
+
+                        <th scope="col"
+                            class="fw-semibold col-priority">
+                            Priority
+                        </th>
+
+                        <th scope="col"
+                            class="fw-semibold col-status">
+                            Status
+                        </th>
+
+                        <th scope="col"
+                            class="fw-semibold col-date">
+                            Start Date
+                        </th>
+
+                        <th scope="col"
+                            class="fw-semibold col-date">
+                            End Date
+                        </th>
+
+                        <th scope="col"
+                            class="text-center fw-semibold col-action">
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    @if (
+                    Model.TaskListData != null &&
+                    Model.TaskListData.Any()
+                    )
+                    {
+                        foreach (var task in Model.TaskListData)
+                        {
+                            <tr>
+
+                                <td class="sticky-col col-1-sticky">
+                                    @task.No
+                                </td>
+
+
+                                <td class="sticky-col col-2-sticky">
+
+                                    <span class="text-limit"
+                                          data-tooltip-truncate
+                                          data-tooltip-text="@task.ProjectName">
+
+                                        @task.ProjectName
+
+                                    </span>
+
+                                </td>
+
+
+                                <td class="sticky-col col-3-sticky">
+
+                                    <span class="text-limit"
+                                          data-tooltip-truncate
+                                          data-tooltip-text="@task.PersonInCharge">
+
+                                        @task.PersonInCharge
+
+                                    </span>
+
+                                </td>
+
+
+                                <td class="sticky-col col-4-sticky">
+
+                                    <span class="text-limit"
+                                          data-tooltip-truncate
+                                          data-tooltip-text="@task.Title">
+
+                                        @task.Title
+
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="text-limit"
+                                          data-tooltip-truncate
+                                          data-tooltip-text="@task.Description">
+
+                                        @task.Description
+
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="text-limit"
+                                          data-tooltip-truncate
+                                          data-tooltip-text="@task.Assignee">
+
+                                        @task.Assignee
+
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+                                    @(task.IssueDate.HasValue
+                                        ? task.IssueDate.Value.ToString("yyyy-MM-dd")
+                                        : "-")
+                                </td>
+
+
+                                <td>
+                                    @(task.DueDate.HasValue
+                                        ? task.DueDate.Value.ToString("yyyy-MM-dd")
+                                        : "-")
+                                </td>
+
+
+                                <td>
+
+                                    @if (task.Priority == "High")
+                                    {
+                                        <span class="badge badge-priority-high px-2 py-1">
+                                            High
+                                        </span>
+                                    }
+                                    else if (task.Priority == "Medium")
+                                    {
+                                        <span class="badge badge-priority-medium px-2 py-1">
+                                            Medium
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-priority-low px-2 py-1">
+                                            @task.Priority
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <td>
+
+                                    @if (task.Status == "Completed")
+                                    {
+                                        <span class="badge badge-status-completed px-3 py-2">
+                                            Completed
+                                        </span>
+                                    }
+                                    else if (task.Status == "In Progress")
+                                    {
+                                        <span class="badge badge-status-progress px-3 py-2">
+                                            In Progress
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-status-hold px-3 py-2">
+                                            @task.Status
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <td>
+                                    @(task.StartDate.HasValue
+                                        ? task.StartDate.Value.ToString("yyyy-MM-dd")
+                                        : "-")
+                                </td>
+
+
+                                <td>
+                                    @(task.EndDate.HasValue
+                                        ? task.EndDate.Value.ToString("yyyy-MM-dd")
+                                        : "-")
+                                </td>
+
+
+                                <td class="text-center">
+
+                                    <button type="button"
+                                            class="action-btn edit-icon"
+                                            title="Edit Status">
+
+                                        <i class="bi bi-pencil-square"></i>
+
+                                    </button>
+
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+
+                            <td colspan="13"
+                                class="text-center py-4">
+
+                                No task records found.
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Styles {
+
+    <link rel="stylesheet"
+          href="~/css/ckm-theme.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/Tasks.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/TaskLists.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/MyTasksOverview.css"
+          asp-append-version="true" />
+}

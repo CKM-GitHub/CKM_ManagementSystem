@@ -54,7 +54,8 @@ namespace CKM_ManagementSystem.Controllers
                     ProjectName = "Enterprise CRM",
                     PersonInCharge = "John Doe",
                     Title = "API Integration",
-                    Description = "Integrate payment gateway API endpointsIntegrate payment gateway API endpointsIntegrate payment gateway API endpoints",
+                    Description =
+                        "Integrate payment gateway API endpointsIntegrate payment gateway API endpointsIntegrate payment gateway API endpoints",
                     Assignee = "Sarah Smith",
                     IssueDate = DateTime.Now.AddDays(-10),
                     DueDate = DateTime.Now.AddDays(15),
@@ -65,46 +66,127 @@ namespace CKM_ManagementSystem.Controllers
                 }
             };
 
-            model.TotalCount = model.TaskListData.Count;
+            model.TotalCount =
+                model.TaskListData.Count;
 
-            return View("~/Views/Tasks/TaskLists.cshtml", model);
+            return View(
+                "~/Views/Tasks/TaskLists.cshtml",
+                model
+            );
         }
-        [HttpPost]
-        public IActionResult Search(TasksViewModel model)
+
+        [HttpGet]
+        public IActionResult MyTasksOverview()
         {
-            model.ProjectList = new List<SelectListItem>
-            {
-                new SelectListItem { Value = "PRJ001", Text = "Enterprise CRM" },
-                new SelectListItem { Value = "PRJ002", Text = "E-Commerce App" }
-            };
+            var model =
+                new TasksViewModel();
 
-            model.PersonInChargeList = new List<SelectListItem>
-            {
-                new SelectListItem { Value = "STAFF01", Text = "John Doe" },
-                new SelectListItem { Value = "STAFF02", Text = "Jane Smith" }
-            };
+            return View(
+                "~/Views/Tasks/MyTasksOverview.cshtml",
+                model
+            );
+        }
 
-            model.AssigneeList = new List<SelectListItem>
-            {
-                new SelectListItem { Value = "STAFF03", Text = "Sarah Smith" },
-                new SelectListItem { Value = "STAFF04", Text = "Michael Brown" }
-            };
+        [HttpPost]
+        public IActionResult Search(
+            TasksViewModel model)
+        {
+            model.ProjectList =
+                new List<SelectListItem>
+                {
+                    new SelectListItem
+                    {
+                        Value = "PRJ001",
+                        Text = "Enterprise CRM"
+                    },
 
-            model.PriorityList = new List<SelectListItem>
-            {
-                new SelectListItem { Value = "LOW", Text = "Low" },
-                new SelectListItem { Value = "MED", Text = "Medium" },
-                new SelectListItem { Value = "HIGH", Text = "High" }
-            };
+                    new SelectListItem
+                    {
+                        Value = "PRJ002",
+                        Text = "E-Commerce App"
+                    }
+                };
 
-            model.StatusList = new List<SelectListItem>
-            {
-                new SelectListItem { Value = "OPEN", Text = "Open" },
-                new SelectListItem { Value = "IN_PROGRESS", Text = "In Progress" },
-                new SelectListItem { Value = "COMPLETED", Text = "Completed" }
-            };
+            model.PersonInChargeList =
+                new List<SelectListItem>
+                {
+                    new SelectListItem
+                    {
+                        Value = "STAFF01",
+                        Text = "John Doe"
+                    },
 
-            return View("~/Views/Tasks/TaskLists.cshtml", model);
+                    new SelectListItem
+                    {
+                        Value = "STAFF02",
+                        Text = "Jane Smith"
+                    }
+                };
+
+            model.AssigneeList =
+                new List<SelectListItem>
+                {
+                    new SelectListItem
+                    {
+                        Value = "STAFF03",
+                        Text = "Sarah Smith"
+                    },
+
+                    new SelectListItem
+                    {
+                        Value = "STAFF04",
+                        Text = "Michael Brown"
+                    }
+                };
+
+            model.PriorityList =
+                new List<SelectListItem>
+                {
+                    new SelectListItem
+                    {
+                        Value = "LOW",
+                        Text = "Low"
+                    },
+
+                    new SelectListItem
+                    {
+                        Value = "MED",
+                        Text = "Medium"
+                    },
+
+                    new SelectListItem
+                    {
+                        Value = "HIGH",
+                        Text = "High"
+                    }
+                };
+
+            model.StatusList =
+                new List<SelectListItem>
+                {
+                    new SelectListItem
+                    {
+                        Value = "OPEN",
+                        Text = "Open"
+                    },
+
+                    new SelectListItem
+                    {
+                        Value = "IN_PROGRESS",
+                        Text = "In Progress"
+                    },
+
+                    new SelectListItem
+                    {
+                        Value = "COMPLETED",
+                        Text = "Completed"
+                    }
+                };
+
+            return View(
+                "~/Views/Tasks/TaskLists.cshtml",
+                model
+            );
         }
     }
 }
