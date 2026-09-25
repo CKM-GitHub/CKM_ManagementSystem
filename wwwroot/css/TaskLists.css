@@ -1,0 +1,139 @@
+﻿.form-label{
+    color: var(--dark-blue);
+    font-weight: bold !important;
+}
+.search-card .form-select{
+    color: var(--gray) !important;
+}
+.form-control,
+.form-select {
+    height: 42px;
+    padding: 0 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--gray);
+    font-size: 14px !important;
+    font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 0.25rem var(--foucs-shadow-color);
+    font-size: 14px !important;
+    color: var(--gray);
+}
+textarea.form-control{
+    height: auto !important;
+    min-height: 80px;
+    padding: 8px 12px;
+}
+.search-card{
+    padding: 21px;
+    border-radius: 16px;
+}
+
+.date-width {
+    width: 48%;
+    flex: 0 0 auto;
+}
+
+.range {
+    width: 4%;
+    padding: 0px;
+    text-align: center;
+}
+.toolbar-btn{
+    height: 42px;
+    padding: 0 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    border:none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    text-decoration:none;
+}
+.btn-primary-search.toolbar-btn, .btn-primary-add.add-btn {
+    background: var(--primary-blue);
+    color: var(--white);
+}
+.btn-primary-search.toolbar-btn:hover, .btn-primary-add.add-btn:hover {
+    background: var(--primary-blue-hover);
+    color: var(--white);
+}
+.btn-primary-search {
+    min-width: 150px;
+}
+.upload-zone {
+    border: 2px dashed #b0c4de;
+    border-radius: 10px;
+    background-color: #f8fafc;
+    padding: 25px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.upload-zone:hover {
+    background-color: #f0f4f9;
+}
+.upload-icon {
+    font-size: 2.5rem;
+    color: var(--primary-blue);
+}
+.custom-modal-btn {
+    font-size: 14px;
+    font-weight: 700;
+}
+.btn-register,
+.btn-cancel {
+    flex: 1 !important;
+    height: 42px !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: var(--white) !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+    transition: opacity 0.2s ease, transform 0.1s ease !important;
+}
+
+.btn-register {
+    background-color: var(--primary-blue) !important;
+}
+.btn-cancel {
+    background-color: var(--gray) !important;
+}
+
+.btn-register:hover,
+.btn-cancel:hover {
+     color: var(--white) !important;
+     text-decoration: none !important;
+     opacity: 0.9 !important;
+}
+
+.btn-register:active,
+.btn-cancel:active {
+     color: var(--white) !important;
+     text-decoration: none !important;
+     transform: translateY(1px) !important;
+}
+
+.btn-register:focus,
+.btn-cancel:focus {
+     color: var(--white) !important;
+     text-decoration: none !important;
+}
+.custom-modal-card {
+    border-radius: 20px !important;
+    border: none !important;
+    overflow: hidden;
+    box-shadow: 0 10px 30px var(--shadow-color) !important;
+}

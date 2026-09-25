@@ -1,0 +1,285 @@
+﻿@model CKM_ManagementSystem.Models.ViewModels.TasksViewModel
+@{
+    ViewData["Title"] = "Task Management";
+}
+
+<div class="task-page-container">
+    <div class="page-header text-center">
+        <h2 class="page-title">
+            Task Management
+        </h2>
+    </div>
+</div>
+
+<div class="container-fluid px-3 px-md-5">
+    <div class="card border-0 shadow-sm rounded-4 mb-4  search-card">
+        <div class="card-body">
+            <form asp-controller="Tasks" asp-action="Search" method="post">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label asp-for="ProjectCode" class="form-label">Project Name</label>
+                    <select asp-for="ProjectCode" asp-items="Model.ProjectList" class="form-select form-select-md" id="projectSelect">
+                        <option value="" selected>All Projects</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="PersonInCharge" class="form-label">Person In Charge</label>
+                    <select asp-for="PersonInCharge" asp-items="Model.PersonInChargeList" class="form-select form-select-md " id="personInCharge">
+                        <option value="" selected>All Staff</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Title" class="form-label">Task Title/ Program Name</label>
+                    <input asp-for="Title" type="text" class="form-control form-control-md" id="searchTitle" placeholder="Enter Task Title">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Issue Date</label>
+                        <div class="row">
+                        <div class="date-width">
+                            <input asp-for="IssueDateStart" type="date" class="form-control form-select-md " id="searchStartDate">
+                        </div>
+                        <div class="range">
+                            <label class="form-label">~</label>
+                        </div>
+                        <div class="date-width">
+                            <input asp-for="IssueDateEnd" type="date" class="form-control form-select-md" id="searchEndDate">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Due Date</label>
+                    <div class="row">
+                        <div class="date-width">
+                            <input asp-for="DueDateStart" type="date" class="form-control form-select-md" id="searchDueStartDate">
+                        </div>
+                        <div class="range">
+                            <label class="form-label">~</label>
+                        </div>
+                        <div class="date-width">
+                            <input asp-for="DueDateEnd" type="date" class="form-control form-select-md" id="searchDueEndDate">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="Assignee" class="form-label">Assignee</label>
+                    <select asp-for="Assignee" asp-items="Model.AssigneeList" class="form-select form-select-md" id="assignee">
+                        <option value="" selected>All Staff</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="PriorityCode" class="form-label">Priority</label>
+                    <select asp-for="PriorityCode" asp-items="Model.PriorityList" class="form-select form-select-md" id="searchPriority">
+                        <option value="" selected>All Priorities</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="StatusCode" class="form-label">Status</label>
+                    <select asp-for="StatusCode" asp-items="Model.StatusList" class="form-select form-select-md" id="searchStatus">
+                        <option value="" selected>All Statuses</option>
+                    </select>
+                </div>
+                <div class="col-12 text-end mt-4">
+                        <button type="submit" class="btn btn-primary-search toolbar-btn">
+                            <i class="bi bi-search me-2"></i> Search Status
+                        </button>
+                </div>
+            </div>
+        </form>
+        </div>
+    </div>
+
+    <div class="card main-card p-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 text-nowrap sticky-table">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col" class="sticky-col col-1-sticky fw-semibold">No.</th>
+                        <th scope="col" class="sticky-col col-2-sticky fw-semibold">Project Name</th>
+                        <th scope="col" class="sticky-col col-3-sticky fw-semibold">Person In Charge</th>
+                        <th scope="col" class="sticky-col col-4-sticky fw-semibold">Task Title / Program Name</th>
+                        <th scope="col" class="fw-semibold col-desc">Description</th>
+                        <th scope="col" class="fw-semibold col-assignee">Assignee</th>
+                        <th scope="col" class="fw-semibold col-date">Issue Date</th>
+                        <th scope="col" class="fw-semibold col-date">Due Date</th>
+                        <th scope="col" class="fw-semibold col-priority">Priority</th>
+                        <th scope="col" class="fw-semibold col-status">Status</th>
+                        <th scope="col" class="fw-semibold col-date">Start Date</th>
+                        <th scope="col" class="fw-semibold col-date">End Date</th>
+                        <th scope="col" class="text-center fw-semibold col-action"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if(Model.TaskListData != null && Model.TaskListData.Any())
+                    {
+                        @foreach(var task in Model.TaskListData)
+                        {
+                            <tr>
+                                <td class="sticky-col col-1-sticky">@task.No</td>
+                                <td class="sticky-col col-2-sticky">
+                                    <span class="text-limit" 
+                                        data-tooltip-truncate
+                                        data-tooltip-text = "@task.ProjectName">@task.ProjectName
+                                    </span>
+                                </td>
+                                <td class="sticky-col col-3-sticky">
+                                    <span class="text-limit"
+                                        data-tooltip-truncate
+                                        data-tooltip-text = "@task.PersonInCharge">@task.PersonInCharge
+                                    </span>
+                                </td>
+                                <td class="sticky-col col-4-sticky">
+                                    <span class="text-limit" 
+                                        data-tooltip-truncate
+                                        data-tooltip-text = "@task.Title">@task.Title
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="text-limit" 
+                                        data-tooltip-truncate
+                                        data-tooltip-text = "@task.Description">@task.Description
+                                    </span>
+                                </td>
+                                <td><span class="text-limit" data-tooltip-truncate data-tooltip-text="@task.Assignee">@task.Assignee</span></td>
+                                <td>@(task.IssueDate.HasValue ? task.IssueDate.Value.ToString("yyyy-MM-dd") : "-")</td>
+                                <td>@(task.DueDate.HasValue ? task.DueDate.Value.ToString("yyyy-MM-dd") : "-") </td>
+                                <td>
+                                    @if(task.Priority == "High")
+                                    {
+                                        <span class="badge badge-priority-high px-2 py-1">High</span>
+                                    } 
+                                    else if(task.Priority == "Medium")
+                                    {
+                                        <span class="badge badge-priority-medium px-2 py-1">Medium</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-priority-low px-2 py-1">Low</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if(task.Status == "Completed")
+                                    {
+                                        <span class="badge badge-status-completed px-3 py-2">Completed</span>
+                                    }
+                                    else if(task.Status == "In Progress")
+                                    {
+                                        <span class="badge badge-status-progress px-3 py-2">In Progress</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-status-hold px-3 py-2">@task.Status</span>
+                                    }
+                                </td>
+                                <td>@(task.StartDate.HasValue ? task.StartDate.Value.ToString("yyyy-MM-dd") : "-")</td>
+                                <td>@(task.EndDate.HasValue ? task.EndDate.Value.ToString("yyyy-MM-dd") : "-")</td>
+                                <td class="text-center">
+                                    <button type="button"
+                                            class="action-btn edit-icon btn-edit"
+                                            title="Edit Status" data-bs-toggle="modal" data-bs-target="#editTaskModal">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="13" class="text-center py-4">No task records found.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- Edit Task Modal -->
+<div class="modal fade" id="editTaskModal" tabindex="-1" aria-labelledby="editTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content custom-modal-card">
+            <div class="modal-header border-0 pb-0 justify-content-center">
+                <h1 class="modal-title fw-bold " id="addTaskStatusModalLabel">Edit Task</h1>
+                <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body pt-3">
+                <form id="editTaskForm">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label for="editTitle" class="form-label fw-semibold">Title</label>
+                            <input type="text" class="form-control" id="editTitle" value="API Integration">
+                        </div>
+                        <div class="col-12">
+                            <label for="editDescription" class="form-label fw-semibold">Description</label>
+                            <textarea class="form-control" id="editDescription" rows="3">Integrate payment gateway API endpoints</textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editAssignee" class="form-label fw-semibold">Assignee</label>
+                            <select class="form-select" id="editAssignee">
+                                <option value="John Doe">John Doe</option>
+                                <option value="Sarah Smith" selected>Sarah Smith</option>
+                                <option value="Michael Brown">Michael Brown</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editDueDate" class="form-label fw-semibold">Due Date</label>
+                            <input type="date" class="form-control" id="editDueDate" value="2024-08-25">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editPriority" class="form-label fw-semibold">Priority</label>
+                            <select class="form-select" id="editPriority">
+                                <option value="Low">Low</option>
+                                <option value="Medium">Medium</option>
+                                <option value="High" selected>High</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editStatus" class="form-label fw-semibold">Status</label>
+                            <select class="form-select" id="editStatus">
+                                <option value="Open">Open</option>
+                                <option value="In Progress" selected>In Progress</option>
+                                <option value="Testing">Testing</option>
+                                <option value="Completed">Completed</option>
+                                <option value="On Hold">On Hold</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                        </div>
+
+                        <!-- Attachments -->
+                        <div class="col-12 mb-4">
+                            <label class="form-label">Attachments</label>
+                            <div class="upload-zone" onclick="document.getElementById('fileInput').click();">
+                                <input type="file" id="fileInput" class="d-none" multiple>
+                                <div class="upload-icon mb-2">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                                </div>
+                                <div class="fw-bold" style="color: #1a2b4c;">Upload Files</div>
+                                <div class="text-muted small">Add relevant files here...</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-0 p-4 pt-0">
+                <div class="row g-2 w-100 m-0">
+                    <div class="col-6 ps-0 pe-1">
+                     <a asp-controller="" asp-action="" asp-route-page="" class="btn btn-cancel w-100 fw-bold">
+                        Cancel
+                     </a>
+                </div>
+                    <div class="col-6 ps-0 pe-1">
+                    <button type="submit" id="btnRegister" class="btn btn-register custom-modal-btn w-100 fw-bold">
+                       Update Task
+                    </button>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Styles {
+    <link rel="stylesheet" href="~/css/Alert_Modal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/ckm-theme.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/tasks.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/TaskLists.css" asp-append-version="true" />
+}

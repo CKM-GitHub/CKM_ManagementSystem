@@ -1,0 +1,231 @@
+﻿body {
+    background-attachment: fixed;
+    color: var(--dark-blue);
+    font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
+    min-height: 100vh;
+}
+
+.task-page-container {
+    width: 100%;
+    margin: 0 auto;
+}
+
+.page-header {
+    margin-bottom: 16px;
+}
+
+.page-title {
+    margin: 0;
+    color: var(--dark-blue);
+    font-weight: 700;
+    line-height: 1.2;
+    font-size: 32px;
+}
+
+.main-card {
+    background-color: var(--white);
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 8px 24px var(--shadow-color);
+}
+
+.badge-status-completed, .badge-status-open {
+    background-color: var(--bg-success-light);
+    color: var(--success-color);
+}
+
+.badge-status-progress {
+    background-color: var(--bg-progress-light);
+    color: var(--progress-color);
+}
+
+.badge-status-hold {
+    background-color: var(--bg-hold-light);
+    color: var(--hold-color);
+}
+
+/* Fixed column layout with scrollable table */
+.table-responsive {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+}
+
+/* Table layout fix for sticky headers */
+.sticky-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: max-content !important;
+    min-width: 100%;
+    table-layout: fixed;
+}
+.sticky-table th, .sticky-table td{
+    box-sizing: border-box;
+    padding: 12px 16px !important;
+}
+.sticky-col {
+    position: sticky !important;
+    background-color: var(--white) !important;
+    z-index: 1;
+}
+thead th.sticky-col{
+    z-index: 5 !important;
+}
+
+/* Fixed Sticky Column Offsets with explicit widths */
+.col-1-sticky {
+    left: 0px;
+    width: 60px;
+    min-width: 60px;
+    max-width: 60px;
+}
+
+.col-2-sticky {
+    left: 60px;
+    width: 160px;
+    min-width: 160px;
+    max-width: 160px;
+}
+
+.col-3-sticky {
+    left: 220px;
+    width: 160px;
+    min-width: 160px;
+    max-width: 160px;
+}
+
+.col-4-sticky {
+    left: 380px;
+    width: 220px;
+    min-width: 220px;
+    max-width: 220px;
+    box-shadow: 4px 0 6px -2px var(--shadow-color);
+}
+
+/* Headers z-index to stay above body cells when scrolling vertically */
+th.sticky-col {
+    z-index: 3;
+    background-color: var(--light-gray) !important;
+}
+
+.sticky-table td{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.col-desc {
+    width: 400px !important;
+    min-width: 400px !important;
+    max-width: 400px !important;
+}
+.col-assignee {
+    width: 160px !important;
+    min-width: 160px !important;
+}
+
+.col-date {
+    width: 140px !important;
+    min-width: 140px !important;
+}
+
+.col-priority {
+    width: 120px !important;
+    min-width: 120px !important;
+}
+
+.col-status {
+    width: 150px !important;
+    min-width: 150px !important;
+}
+
+.col-action {
+    width: 80px !important;
+    min-width: 80px !important;
+}
+.btn-primary-pagination {
+    background-color: var(--primary-blue);
+}
+
+.text-limit {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+    color: var(--dark-blue);
+    cursor: default;
+}
+.search-card .form-select,
+.search-card .form-control[type="date"] {
+    color: var(--gray) !important;
+    opacity: 0.75; 
+}
+
+.search-card .form-select:focus,
+.search-card .form-control[type="date"]:focus {
+    opacity: 1;
+}
+.badge-priority-high {
+    background-color: var(--error-color) !important;
+    color: var(--white) !important;
+}
+
+.badge-priority-medium {
+    background-color: var(--warning-color) !important;
+    color: var(--warning-text) !important;
+}
+
+.badge-priority-low {
+    background-color: var(--gray) !important;
+    color: var(--white) !important;
+}
+
+.badge-status-completed {
+    background-color: var(--bg-success-light) !important;
+    color: var(--success-color) !important;
+}
+
+.badge-status-progress {
+    background-color: var(--bg-progress-light) !important;
+    color: var(--progress-color) !important;
+}
+
+.badge-status-hold {
+    background-color: var(--bg-hold-light) !important;
+    color: var(--hold-color) !important;
+}
+.edit-icon {
+    margin-right: 6px;
+    color: var(--primary-blue) !important;
+}
+
+.edit-icon:hover {
+    background-color: #E8F1FF !important;
+    color: var(--primary-blue-hover) !important;
+}
+
+.action-btn {
+    color: var(--gray);
+    text-decoration: none;
+    transition: color 0.2s ease;
+    border: none;
+    background: transparent;
+    padding: 0;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .sticky-col {
+        position: static !important; 
+        left: auto !important;
+        box-shadow: none !important;
+    }
+    .sticky-table {
+        width: 100% !important;
+        min-width: 1200px !important; 
+    }
+}
