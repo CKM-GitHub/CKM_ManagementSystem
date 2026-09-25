@@ -101,10 +101,34 @@
 
 .project-table {
     width: 100%;
+    min-width: 1430px;
     border-collapse: separate;
     border-spacing: 0;
     margin-bottom: 0;
     table-layout: fixed;
+}
+
+.project-table th {
+    height: 52px;
+    padding: 10px 12px;
+    color: var(--dark-blue);
+    font-size: 15px;
+    font-weight: 600;
+    text-align: left;
+    vertical-align: middle;
+    white-space: nowrap;
+    background-color: var(--white);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.project-table td {
+    height: 44px;
+    padding: 8px 12px;
+    color: var(--dark-blue);
+    font-size: 14px;
+    line-height: 1.4;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--light-gray);
 }
 
 /*    .project-table th {

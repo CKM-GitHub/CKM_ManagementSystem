@@ -1,4 +1,6 @@
-﻿using CKM_ManagementSystem.BL;
+﻿using CKM_ManagementSystem.Authorization;  
+using CKM_ManagementSystem.Permissions;
+using CKM_ManagementSystem.BL;
 using CKM_ManagementSystem.Models.ViewModels.User;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -11,15 +13,18 @@ namespace CKM_ManagementSystem.Controllers.User
         private readonly IWebHostEnvironment _environment;
         private readonly UserEntryBL _userEntryBL;
         private readonly UserListBL _userListBL;
+        private readonly CurrentUserPermission _permission;
 
         public UserCreateController(
             IWebHostEnvironment environment,
             UserEntryBL userEntryBL,
-            UserListBL userListBL)
+            UserListBL userListBL,
+            CurrentUserPermission permission)
         {
             _environment = environment;
             _userEntryBL = userEntryBL;
             _userListBL = userListBL;
+            _permission = permission;
         }
 
         [HttpGet]
@@ -27,8 +32,9 @@ namespace CKM_ManagementSystem.Controllers.User
         public async Task<IActionResult> UserCreate(string mode = "Entry",string? staffCode = null ,string? source =null)
         {
             ViewBag.Source = source;
-            var model = staffCode != null ? await _userListBL.GetUserByStaffCodeAsync(staffCode)
-                                            : new UserCreateViewModel();
+            var model = staffCode != null ? await _userListBL.GetUserByStaffCodeAsync(
+                staffCode)
+                : new UserCreateViewModel();
 
             if(model == null)
         {          
@@ -37,13 +43,16 @@ namespace CKM_ManagementSystem.Controllers.User
 
             model.Mode = mode;
 
+
             await PopulateDropdownsAsync();
+
+            model.CanWrite = _permission.CanWrite(MenuIDs.User);
 
             return View("~/Views/UserList/UserCreate.cshtml", model);
         }
 
         [HttpPost]
-        [Authorize(Policy = "Permission.User.Write")]
+        [Authorize(Policy = "Permission.User.Read")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UserCreate(UserCreateViewModel model,string? source)
         {
@@ -84,6 +93,9 @@ namespace CKM_ManagementSystem.Controllers.User
 
                 ModelState.Remove(nameof(model.ImageUrl));
             }
+
+            model.CanWrite = _permission.CanWrite(MenuIDs.User);
+
             if (!ModelState.IsValid)
             {
                 await PopulateDropdownsAsync(

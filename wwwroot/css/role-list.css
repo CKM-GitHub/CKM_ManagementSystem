@@ -1,17 +1,18 @@
 ﻿body {
-    background: var(--dark-blue);
     font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
 }
+
 .role-list-page {
     padding: 0px 24px 24px;
-    margin-top:--16px;
+    margin-top: -16px;
 }
+
 .page-title {
     color: var(--dark-blue);
     font-weight: bold;
     font-size: 32px; /* Main Header Size */
     text-align: center;
-    margin:0 0 16px;
+    margin: 0 0 16px;
     letter-spacing: 0.5px;
 }
 
@@ -74,9 +75,9 @@
 .btn-search-menu {
     background-color: var(--primary-blue);
     color: var(--white);
-    height:42px;
+    height: 42px;
     border-radius: 8px;
-    font-weight:bold;
+    font-weight: bold;
     font-size: 14px; /* Subheader / Button Size */
     padding: 0 16px;
     border: none;
@@ -112,33 +113,8 @@
         color: var(--white);
     }
 
-/* Table Style & Fixed Layout */
-.role-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    margin-bottom: 0;
-    table-layout: fixed;
-}
-
-    /*.role-table th {
-        color: var(--dark-blue);
-        font-weight: bold;
-        font-size: 16px;*/ /* Subheader Size */
-        /*padding: 14px 10px;
-        border-bottom: 1px solid var(--border-color);
-        background-color: var(--white);
-    }*/
-
-    .role-table td {        
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .role-table tbody tr:hover {
-        background-color: var(--light-gray);
-    }
+/* Role table – inherits layout / hover / padding from TableComponent.css (.custom-table).
+   Keep only page-specific overrides below. */
 
 .cell-truncate {
     white-space: nowrap;
@@ -150,7 +126,7 @@
 }
 
 .desc-truncate {
-    max-width: 250px;
+    max-width: 100%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -166,8 +142,8 @@
 /* Status Badges - Fixed Dimensions & Strict Alignment */
 .badge-status-active,
 .badge-status-inactive {
-    width: 80px; 
-    height: 28px; 
+    width: 80px;
+    height: 28px;
     border-radius: 14px;
     font-size: 12px;
     font-weight: 600;
@@ -189,29 +165,11 @@
     color: #dc3545; /* Inactive text color (Red) */
 }
 
-
 .role-list-page > .page-title {
     margin-top: 0 !important;
     margin-bottom: 16px !important;
     padding-top: 0 !important;
 }
-.edit-icon {
-    color: #0d6efd;
-}
-
-    .edit-icon:hover {
-        background-color: #e8f1ff;
-        color: #084298;
-    }
-
-.delete-icon {
-    color: #dc3545;
-}
-
-    .delete-icon:hover {
-        background-color: #fdeaea;
-        color: #a71d2a;
-    }
 
 .table-footer {
     display: flex;
@@ -222,11 +180,11 @@
     font-size: 14px; /* Body Text Size */
 }
 
-.pagination-box{
+.pagination-box {
     display: flex;
     align-items: center;
     gap: 5px;
-    flex-wrap:wrap;
+    flex-wrap: wrap;
 }
 
 .page-btn {
@@ -242,7 +200,9 @@
     font-size: 14px; /* Body Text Size */
     text-decoration: none;
 }
-.action-icon-btn {
+
+/* Action icons – tighter hit area than global TableComponent default */
+.role-table .action-icon-btn {
     width: 28px;
     height: 28px;
     padding: 0;
@@ -256,41 +216,43 @@
     line-height: 1;
 }
 
-    .action-icon-btn i {
-        font-size: 16px;
-        line-height: 1;
-        font-weight: 400;
-    }
+.role-table .action-icon-btn i {
+    font-size: 16px;
+    line-height: 1;
+    font-weight: 400;
+}
 
-.edit-icon {
+.role-table .edit-icon {
     color: var(--primary-blue);
 }
 
-    .edit-icon:hover {
-        background-color: #E8F1FF;
-        color: var(--primary-blue-hover);
-    }
+.role-table .edit-icon:hover {
+    background-color: #E8F1FF;
+    color: var(--primary-blue-hover);
+}
 
-.delete-icon {
+.role-table .delete-icon {
     color: var(--error-color);
 }
 
-    .delete-icon:hover {
-        background-color: #FDEAEA;
-        color: var(--error-color);
-    }
-    .page-btn.active {
-        background-color: var(--primary-blue);
-        color: var(--white);
-        border-color: var(--primary-blue);
-        font-weight: 600;
-    }
+.role-table .delete-icon:hover {
+    background-color: #FDEAEA;
+    color: var(--error-color);
+}
 
-    .page-btn.disabled {
-        color: var(--border-color);
-        cursor: not-allowed;
-        background-color: var(--light-gray);
-    }
+.page-btn.active {
+    background-color: var(--primary-blue);
+    color: var(--white);
+    border-color: var(--primary-blue);
+    font-weight: 600;
+}
+
+.page-btn.disabled {
+    color: var(--border-color);
+    cursor: not-allowed;
+    background-color: var(--light-gray);
+}
+
 @media (max-width: 767.98px) {
 
     .table-footer {

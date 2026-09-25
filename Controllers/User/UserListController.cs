@@ -51,7 +51,6 @@ namespace CKM_ManagementSystem.Controllers.User
 
             model.CanWrite = _permission.CanWrite(MenuIDs.User);
             model.CanDelete = _permission.CanDelete(MenuIDs.User);
-            // ─────────────
 
             return View(model);
         }

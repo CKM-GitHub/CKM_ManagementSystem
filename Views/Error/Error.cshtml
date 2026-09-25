@@ -1,0 +1,40 @@
+﻿@model CKM_ManagementSystem.Models.ViewModels.ErrorViewModel
+
+@{
+    Layout = null;
+    ViewData["Title"] = Model.Title;
+}
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/error.css"/>
+     
+</head>
+<body>
+    <main class="error-page">
+        <div class="error-card">
+
+            <lottie-player class="error-anim"
+                           src="https://lottie.host/0e9e6009-991d-41c1-aabc-db59c0231217/dP2IK97OhY.json"
+                           background="transparent"
+                           speed="1"
+                           loop
+                           autoplay>
+            </lottie-player>
+
+            <h1 class="error-code">@Model.ErrorCode</h1>
+            <h2 class="error-title">@Model.Title</h2>
+            <p class="error-message">@Model.Message</p>
+
+            <a href="@Model.RedirectUrl" class="error-btn">
+                @Model.ButtonText
+            </a>
+
+        </div>
+    </main>
+
+    <script src="https://unpkg.com/@@lottiefiles/lottie-player@@latest/dist/lottie-player.js"></script>
+</body>
+</html>

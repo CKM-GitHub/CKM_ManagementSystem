@@ -71,11 +71,16 @@ var app = builder.Build();
 app.UseSession();
 
 // Configure the HTTP request pipeline.
+
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("Error/500");
+    app.UseExceptionHandler("/Error/StatusCode/500");
     app.UseHsts();
 }
+
+app.UseStatusCodePagesWithReExecute(
+    "/Error/StatusCode/{0}"
+);
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

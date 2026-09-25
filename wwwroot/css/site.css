@@ -38,9 +38,16 @@ body {
 
 .edit-icon:disabled,
 .delete-icon:disabled,
-.disable-button:disabled,
-.disable-button:disabled:hover {
+.disable-button:disabled {
     opacity: 0.4;
     user-select: none;
     cursor: not-allowed;
+}
+
+.edit-icon:disabled:hover,
+.delete-icon:disabled:hover,
+.disable-button:disabled:hover {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
 }

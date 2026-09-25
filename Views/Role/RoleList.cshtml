@@ -17,6 +17,10 @@
     <link rel="stylesheet"
           href="~/css/ckm-theme.css"
           asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/TableComponent.css"
+          asp-append-version="true" />
 }
 
 <div class="container-fluid role-list-page">
@@ -114,8 +118,7 @@
 
         <div class="table-responsive">
 
-            <table class="role-table"
-                   style="table-layout: fixed; width: 100%;">
+            <table class="custom-table role-table">
 
                 <thead>
 
@@ -172,28 +175,28 @@
                                     @(index++)
                                 </td>
 
-                                <td class="fw-medium"
-                                    data-tooltip-truncate
-                                    data-tooltip-text="@item.RoleCode">
-
-                                    @item.RoleCode
-
+                                <td class="fw-medium">
+                                    <span class="cell-truncate"
+                                          data-tooltip-truncate
+                                          data-tooltip-text="@item.RoleCode">
+                                        @item.RoleCode
+                                    </span>
                                 </td>
 
-                                <td class="fw-semibold"
-                                    data-tooltip-truncate
-                                    data-tooltip-text="@item.DisplayName">
-
-                                    @item.DisplayName
-
+                                <td class="fw-semibold">
+                                    <span class="cell-truncate"
+                                          data-tooltip-truncate
+                                          data-tooltip-text="@item.DisplayName">
+                                        @item.DisplayName
+                                    </span>
                                 </td>
 
-                                <td class="text-secondary"
-                                    data-tooltip-truncate
-                                    data-tooltip-text="@descriptionText">
-
-                                    @descriptionText
-
+                                <td class="text-secondary">
+                                    <span class="desc-truncate"
+                                          data-tooltip-truncate
+                                          data-tooltip-text="@descriptionText">
+                                        @descriptionText
+                                    </span>
                                 </td>
 
                                 <td>

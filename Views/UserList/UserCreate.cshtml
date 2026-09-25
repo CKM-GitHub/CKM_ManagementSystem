@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="~/css/ckm-theme.css" asp-append-version="true" />
 
 <div class="container d-flex justify-content-center align-items-center pt-2">
-    <div class="card border-0 rounded-4 shadow pt-3 pt-md-4 pb-4 pb-md-5 px-4 px-md-5 bg-white w- user-entry-card">
+    <div class="card border-0 rounded-4 shadow pt-3 pt-md-4 pb-3 pb-md-5 px-4 px-md-5 bg-white w- user-entry-card">
         @if (TempData["SuccessMessage"] is string successMessage)
         {
             var redirectUrl = Url.Action("UserList", "UserList");
@@ -291,7 +291,6 @@
             <div class="col-12 d-flex flex-column flex-sm-row justify-content-end gap-2 gap-sm-3 mt-3 pt-2 border-top form-actions">
                 @if (Model.Mode == "Entry")
                 {
-                    @* ── Clear က အမြဲ ပြ (form ရှင်းဖို့) ── *@
                     <button type="button"
                             class="btn btn-light px-4 py-2 rounded-3 fw-medium border clear-btn"
                             id="clearBtn">
@@ -309,7 +308,7 @@
                     else
                     {
                         <button type="button"
-                                class="btn btn-primary px-4 py-2 rounded-3 fw-medium disable-button"
+                                class="btn btn-primary px-4 py-2 rounded-3 fw-medium create-btn disable-button"
                                 id="submitBtn"
                                 disabled>
                             Create User
@@ -334,7 +333,7 @@
                     else
                     {
                         <button type="button"
-                                class="btn px-4 py-2 rounded-3 fw-medium disable-button"
+                                class="btn px-4 py-2 rounded-3 fw-medium disable-button" 
                                 disabled>
                             Update
                         </button>

@@ -10,7 +10,7 @@ namespace CKM_ManagementSystem.Controllers
         public IActionResult DebugSession()
         {
             var json = HttpContext.Session.GetString("UserPermissions");
-            var staffCode = HttpContext.Session.GetString("StaffCode");
+            var staffCode = HttpContext.Session.GetString("staffCode");
 
             return Json(new
             {
