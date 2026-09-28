@@ -39,7 +39,7 @@ namespace CKM_ManagementSystem.Controllers
 
                 case 403:
                     model.Title = "Access Denied";
-                    model.Message = "出て行って !!";
+                    model.Message = "Sorry,You Can't access this page";
                     var perms = HttpContext.Session.GetString("UserPermissions");
                     if (string.IsNullOrEmpty(perms))
                     {
@@ -59,7 +59,7 @@ namespace CKM_ManagementSystem.Controllers
 
                 case 404:
                     model.Title = "Page Not Found";
-                    model.Message = "寺へ行って、寺はそちらね.";
+                    model.Message = "Page is Deleted or Changed.";
                     model.ButtonText = "Back to Department";
                     model.RedirectUrl = Url.Action("Entry", "DepartmentEntry") ?? "/";
                     break;

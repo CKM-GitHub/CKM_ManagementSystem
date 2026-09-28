@@ -2,17 +2,11 @@
     "use strict";
 
     var ERROR_MEDIA = {
-        "403": {
-            type: "video",
-            src: "/player/gobanana.mp4"
-        },
         "404": {
-            //type: "dotlottie",
-            ////src: "https://lottie.host/a5e71762-8e33-4c21-a9d1-5fa817571271/PgZ5u1zzA7.lottie",
-            ////hideCode: true,
-            ////size: "lg"
-            type: "video",
-            src: "/player/otera.mp4"
+            type: "dotlottie",
+            src: "https://lottie.host/a5e71762-8e33-4c21-a9d1-5fa817571271/PgZ5u1zzA7.lottie",
+            hideCode: true,
+            size: "lg"
         },
         "500": {
             type: "lottie",
@@ -42,7 +36,6 @@
         }
 
         switch (cfg.type) {
-            case "video": renderVideo(slot, cfg); break;
             case "dotlottie": renderDotLottie(slot, cfg); break;
             case "image": renderImage(slot, cfg); break;
             case "lottie":
@@ -104,42 +97,6 @@
         img.src = cfg.src;
         img.onerror = function () { fallbackImage(slot, cfg); };
         slot.replaceChildren(img);
-    }
-    function renderVideo(slot, cfg) {
-        var video = document.createElement("video");
-        video.className = "error-anim";
-        video.autoplay = true;
-        video.muted = true;
-        video.loop = true;
-        video.playsInline = true;
-        video.preload = "metadata";
-        video.setAttribute("playsinline", "");
-        video.setAttribute("muted", "");
-        if (cfg.poster) video.poster = cfg.poster;
-        video.setAttribute("aria-label", "Error animation");
-
-        var source = document.createElement("source");
-        source.src = cfg.src;
-        source.type = "video/mp4";
-        video.appendChild(source);
-
-        var fallback = document.createElement("img");
-        fallback.className = "error-anim";
-        fallback.alt = "Error";
-        if (cfg.poster) fallback.src = cfg.poster;
-        video.appendChild(fallback);
-
-        video.addEventListener("error", function () { fallbackImage(slot, cfg); }, true);
-        slot.replaceChildren(video);
-
-        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-            video.autoplay = false;
-            video.removeAttribute("autoplay");
-            video.pause();
-        } else {
-            var p = video.play();
-            if (p && typeof p.catch === "function") p.catch(function () { });
-        }
     }
 
     function fallbackImage(slot, cfg) {
