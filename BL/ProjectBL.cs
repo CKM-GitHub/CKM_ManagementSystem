@@ -241,18 +241,10 @@ namespace CKM_ManagementSystem.BL
 
             try
             {
-                string projectCommand;
-
-                if (isEdit)
-                {
-                    projectCommand =
-                        "sp_Project_Update";
-                }
-                else
-                {
-                    projectCommand =
-                        "sp_InsertProject";
-                }
+                string projectCommand =
+                    isEdit
+                        ? "sp_Project_Update"
+                        : "sp_InsertProject";
 
                 SqlParameter[] sqlprms =
                 {
@@ -328,66 +320,94 @@ namespace CKM_ManagementSystem.BL
                     );
 
                 if (
-                    result == "true" ||
-                    result == "1" ||
-                    string.IsNullOrEmpty(result)
+                    result != "true" &&
+                    result != "1" &&
+                    !string.IsNullOrEmpty(result)
                 )
                 {
-                    if (isEdit)
-                    {
-                        SqlParameter[] delParams =
-                        {
-                            new SqlParameter(
-                                "@ProjectCode",
-                                model.ProjectCode
-                            )
-                        };
+                    errorMessage =
+                        result;
 
-                        bdl.InsertUpdateDeleteData(
-                            "sp_Project_DeleteMembers",
-                            delParams
-                        );
-                    }
-
-                    if (
-                        model.ProjectMembers != null &&
-                        model.ProjectMembers.Count > 0
-                    )
-                    {
-                        foreach (
-                            var member
-                            in model.ProjectMembers)
-                        {
-                            SqlParameter[] memParams =
-                            {
-                                new SqlParameter(
-                                    "@ProjectCode",
-                                    model.ProjectCode
-                                ),
-
-                                new SqlParameter(
-                                    "@Staff_Code",
-                                    member.Staff_Code
-                                )
-                            };
-
-                            bdl.InsertUpdateDeleteData(
-                                "sp_Project_InsertMember",
-                                memParams
-                            );
-                        }
-                    }
-
-                    return true;
+                    return false;
                 }
 
-                errorMessage = result;
+                DataTable memberTable =
+                    new DataTable();
 
-                return false;
+                memberTable.Columns.Add(
+                    "Staff_Code",
+                    typeof(string)
+                );
+
+                if (
+                    model.ProjectMembers != null &&
+                    model.ProjectMembers.Count > 0
+                )
+                {
+                    foreach (
+                        var member
+                        in model.ProjectMembers)
+                    {
+                        if (
+                            string.IsNullOrWhiteSpace(
+                                member.Staff_Code)
+                        )
+                        {
+                            continue;
+                        }
+
+                        memberTable.Rows.Add(
+                            member.Staff_Code.Trim()
+                        );
+                    }
+                }
+
+                SqlParameter membersParameter =
+                    new SqlParameter(
+                        "@Members",
+                        SqlDbType.Structured)
+                    {
+                        TypeName =
+                            "dbo.ProjectMemberTableType",
+
+                        Value =
+                            memberTable
+                    };
+
+                SqlParameter[] memberParams =
+                {
+                    new SqlParameter(
+                        "@ProjectCode",
+                        model.ProjectCode
+                    ),
+
+                    membersParameter
+                };
+
+                string memberResult =
+                    bdl.InsertUpdateDeleteData(
+                        "sp_Project_SaveMembers",
+                        memberParams
+                    );
+
+                if (
+                    memberResult != "true" &&
+                    memberResult != "1" &&
+                    !string.IsNullOrEmpty(memberResult)
+                )
+                {
+                    errorMessage =
+                        memberResult;
+
+                    return false;
+                }
+
+                return true;
             }
             catch (Exception ex)
             {
-                errorMessage = ex.Message;
+                errorMessage =
+                    ex.Message;
 
                 return false;
             }
