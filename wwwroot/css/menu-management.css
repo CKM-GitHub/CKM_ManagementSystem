@@ -66,8 +66,8 @@ body {
     padding: 20px 24px;
 }
 
-.table-card{
-    padding: 20px 24px ;
+.table-card {
+    padding: 20px 24px !important;
 }
 
 .toolbar-row{
@@ -348,18 +348,29 @@ body {
     color: var(--primary-blue);
 }
 
-.table-footer{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 14px;
-    padding: 16px 2px 6px;
+.table-footer {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin-left: -24px !important;
+    margin-right: -24px !important;
+    margin-bottom: -20px !important;
+    border-top: 1px solid #dee2e6 !important;
+    padding: 24px !important;
 }
-
+.table-footer .footer-text,
+.table-footer .pagination-box {
+  margin: 0 !important;
+}
 .footer-text{
     color: var(--gray);
 }
-
+.table-footer .footer-text {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding: 0 !important;
+    line-height: 1 !important; 
+}
 .pagination-box{
     display: flex;
     align-items: center;
@@ -395,6 +406,9 @@ body {
     align-items: center !important;
     justify-content: center !important;
     padding: 0 !important;
+    margin: 0 !important;
+    line-height: 1 !important;
+    box-sizing: border-box !important;
 }
 
 .page-btn.active{
@@ -488,8 +502,8 @@ body {
     }
     .table-footer {
         flex-direction: column;
-        align-items: center;
-        justify-content: center;
+        align-items: center !important;
+        justify-content: center !important;
         gap: 12px;
         text-align: center;
     }
