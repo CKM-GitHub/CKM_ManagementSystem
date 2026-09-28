@@ -103,15 +103,15 @@
 
     <div class="table-card">
         <div class="table-responsive">
-            <table class="table menu-table align-middle mb-0 table-layout-fixed">
+            <table class="table menu-table table-hover align-middle mb-0 table-layout-fixed">
                 <thead>
                     <tr>
                         <th class="text-center">No.</th>
                         <th >Code</th>
                         <th >Name</th>
                         <th >Description</th>
-                        <th class=" text-center">Sort Order</th>
-                        <th class=" text-center">Actions</th>
+                        <th class=" text-center sort-order-col">Sort Order</th>
+                        <th class=" text-center action-column">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -192,7 +192,7 @@
             </form>
         </div>
 
-        <div class="table-footer">
+        <div class="table-footer d-flex align-items-center justify-content-between">
             <div class="footer-text">
                 @{
                     int totalItems = Model.PagedData?.TotalCount ?? 0;
@@ -206,7 +206,7 @@
             </div>
             @if (Model.PagedData != null && Model.PagedData.TotalPages > 1)
             {
-                <div class="pagination-box">
+                <div class="pagination-box d-flex align-items-center">
                     <a href="@Url.Action("TaskStatusesListView", new { PageNumber = Model.PagedData.PageNumber - 1, Search = Model.Search })"
                        class="page-btn btn btn-sm btn-outline-secondary @(Model.PagedData.PageNumber <= 1 ? "disabled" : "")">
                         <i class="bi bi-chevron-left"></i>
