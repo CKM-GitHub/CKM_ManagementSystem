@@ -25,6 +25,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<BaseDL>();
+builder.Services.AddScoped<DashboardBL>();
 builder.Services.AddScoped<DepartmentBL>();
 builder.Services.AddScoped<Menu_BL>();
 builder.Services.AddScoped<MainMenuBL>();

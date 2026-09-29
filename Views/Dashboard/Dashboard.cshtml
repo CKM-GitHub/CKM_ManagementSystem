@@ -1,0 +1,221 @@
+﻿@using CKM_ManagementSystem.Models.ViewModels
+@model DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+
+    var defaultAvatar = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23a9b7cc'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
+    var profileImg = string.IsNullOrWhiteSpace(Model.ImageURL) ? defaultAvatar : Model.ImageURL;
+
+    var statusColorMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "Assigned", "#3B82F6" },    
+        { "In Progress", "#F59E0B" },  
+        { "In Review", "#8B5CF6" },    
+        { "To Do", "#6366F1" },        
+        { "Scheduled", "#10B981" },    
+        { "Open", "#3B82F6" },
+        { "On Hold", "#EF4444" },
+        { "Completed", "#10B981" },
+        { "Canceled", "#6366F1" }
+    };
+
+    var statuses = Model.TaskStatusSummary?.Select(x => x.StatusName).ToList() ?? new List<string>();
+    var counts = Model.TaskStatusSummary?.Select(x => x.StatusCount).ToList() ?? new List<int>();
+    var colors = statuses.Select(s => statusColorMap.ContainsKey(s) ? statusColorMap[s] : "#CBD5E1").ToList();
+
+    var chartJson = System.Text.Json.JsonSerializer.Serialize(new
+    {
+        labels = statuses,
+        values = counts,
+        colors = colors 
+    });
+}
+
+<link rel="stylesheet" href="~/css/Dashboard.css" asp-append-version="true" />
+
+<div class="dashboard-container">
+    <div class="profile-header">
+        <img src="@profileImg"
+             alt="@Model.UserName"
+             class="profile-pic"
+             onerror="this.onerror=null; this.src='@defaultAvatar';" />
+        <h4 class="greeting-text">Hello, <span class="greeting-name">@Model.UserName</span>!</h4>
+    </div>
+
+    <div class="dashboard-grid-top">
+        <div class="dashboard-card">
+            <div class="card-header-custom">
+                <div class="card-title">
+                    <i class="fas fa-chart-pie text-blue"></i>
+                    <span>My tasks overview</span>
+                </div>
+                <i class="fas fa-ellipsis-v menu-icon"></i>
+            </div>
+
+            @if (Model.TaskStatusSummary != null && Model.TaskStatusSummary.Any())
+            {
+                <div class="tasks-content">
+                    <div class="chart-wrapper">
+                        <canvas id="tasksChart" data-chart='@chartJson'></canvas>
+                        <div class="chart-center-text">
+                            <h3>@Model.TaskStatusSummary.Sum(x => x.StatusCount)</h3> 
+                            <span>Tasks</span>                                         
+                        </div>
+                    </div>
+                    <div class="task-stats-grid">
+                        @foreach (var status in Model.TaskStatusSummary)
+                        {
+                            var dotColor = statusColorMap.ContainsKey(status.StatusName) ? statusColorMap[status.StatusName] : "#CBD5E1";
+                            <div class="stat-item">
+                                <div class="stat-item-left">
+                                    <span class="dot" style="background-color: @dotColor"></span>
+                                    <span>@status.StatusName</span>
+                                </div>
+                                <div class="stat-value">@status.StatusCount</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="empty-state">
+                    <i class="fas fa-chart-pie empty-icon"></i>
+                    <h6>No Tasks</h6>
+                    <p>You don't have any tasks assigned yet.</p>
+                </div>
+            }
+        </div>
+
+        <div class="dashboard-card">
+            <div class="card-header-custom">
+                <div class="card-title">
+                    <i class="fas fa-bullhorn text-blue"></i>
+                    <span>Announcements</span>
+                </div>
+                <i class="fas fa-ellipsis-v menu-icon"></i>
+            </div>
+
+            @if (Model.Announcements != null && Model.Announcements.Any())
+            {
+                <ul class="announcement-list">
+                    @foreach (var ann in Model.Announcements)
+                    {
+                        <li class="announcement-item">
+                            <div class="announcement-text">
+                                <i class="fas fa-thumbtack"></i>
+                                <span>@ann.Title</span>
+                            </div>
+                            <button type="button" class="btn btn-view"
+                                    data-announcement-id="@ann.ID"
+                                    data-title="@ann.Title">
+                                View
+                            </button>
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <div class="empty-state">
+                    <i class="fas fa-bullhorn empty-icon"></i>
+                    <h6>No Announcements</h6>
+                    <p>There are no announcements to display right now.</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="dashboard-card mt-4">
+        <div class="card-header-custom">
+            <div class="card-title">
+                <i class="fas fa-folder-open text-blue"></i>
+                <span>My projects</span>
+            </div>
+            <i class="fas fa-ellipsis-v menu-icon"></i>
+        </div>
+
+        @if (Model.ProjectTaskSummary != null && Model.ProjectTaskSummary.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-custom mb-0">
+                    <thead>
+                        <tr>
+                            <th>Project Name</th>
+                            <th>New Tasks</th>
+                            <th>Ongoing Tasks</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var p in Model.ProjectTaskSummary)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="project-name">
+                                        <div class="project-icon">
+                                            <i class="fas fa-cog"></i>
+                                        </div>
+                                        @p.ProjectName
+                                    </div>
+                                </td>
+                                <td>@p.NewTasks</td>
+                                <td>@p.OngoingTasks</td>
+                                <td>
+                                    @{
+                                        var statusClass = p.Status.ToLower() switch
+                                        {
+                                            "active" => "active",
+                                            "completed" => "completed",
+                                            "on hold" => "onhold",
+                                            _ => "active"
+                                        };
+                                    }
+                                    <span class="badge-status @statusClass">
+                                        <span class="dot"></span> @p.Status
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="fas fa-folder-open empty-icon"></i>
+                <h6>No Projects</h6>
+                <p>You are not assigned to any projects yet.</p>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="modal fade" id="announcementModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content custom-modal">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title" id="announcementModalLabel">New Company rules regarding leaves</h5>
+                <button type="button" class="btn-close custom-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body pt-2">
+                <div class="announced-by">
+                    Announced By: <a href="#" class="link-blue" id="announcementName">Daw Htet</a> (<span id="announcementDepartment">HR Department</span>)
+                </div>
+                <p class="modal-text" id="announcementContent">
+                    Please review the updated leave application policies effective next month. All medical leave must be submitted within 48 hours with proper documentation.
+                </p>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-close-modal" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+    <script src="~/js/Dashboard.js" asp-append-version="true"></script>
+}
