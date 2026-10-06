@@ -47,6 +47,7 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddScoped<UserEntryBL>();
 builder.Services.AddScoped<UserListBL>();
 builder.Services.AddScoped<PasswordService>();
+builder.Services.AddScoped<TasksBL>();
 var app = builder.Build();
 
 app.UseSession();
