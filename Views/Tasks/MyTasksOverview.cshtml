@@ -1,14 +1,74 @@
-﻿@model CKM_ManagementSystem.Models.ViewModels.TasksViewModel
+﻿@model CKM_ManagementSystem.Models.ViewModels.Tasks.MyTasksOverviewViewModel
+@using Microsoft.AspNetCore.Mvc.Rendering
+@using System.Text.Json
 
 @{
     ViewData["Title"] = "My Tasks Overview";
+
+    var projectOptions = Model.ProjectList.Select(x => new SelectListItem
+            {
+                Value = x.Value,
+                Text = x.Text,
+                Selected = x.Value == Model.Filter.ProjectCode
+            }).ToList();
+
+    var priorityOptions = Model.PriorityList.Select(x => new SelectListItem
+            {
+                Value = x.Value,
+                Text = x.Text,
+                Selected = x.Value == Model.Filter.PriorityCode
+            }).ToList();
+
+    var statusOptions = Model.StatusList.Select(x => new SelectListItem
+            {
+                Value = x.Value,
+                Text = x.Text,
+                Selected = x.Value == Model.Filter.StatusCode
+            }).ToList();
+
+    int totalTasks = Model.StatusSummary.Any()
+        ? Model.StatusSummary.Max(x => x.TotalTasks)
+        : 0;
+
+    int GetStatusCount(params string[] names)
+    {
+        return Model.StatusSummary
+            .Where(x => names.Any(name =>
+                string.Equals(x.StatusName, name, StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(x.StatusCode, name, StringComparison.OrdinalIgnoreCase)))
+            .Sum(x => x.StatusCount);
+    }
+
+    string GetPercent(int count)
+    {
+        if (totalTasks <= 0)
+            return "0% of total";
+
+        return $"{((double)count / totalTasks * 100):0.#}% of total";
+    }
+
+    int openCount = GetStatusCount("Open", "OPEN");
+    int inProgressCount = GetStatusCount("In Progress", "IN_PROGRESS");
+    int reviewCount = GetStatusCount("Review", "REVIEW");
+    int completedCount = GetStatusCount("Completed", "COMPLETED");
+    int onHoldCount = GetStatusCount("On Hold", "ON_HOLD");
+    int cancelledCount = GetStatusCount(
+        "Cancelled",
+        "Canceled",
+        "CANCELLED",
+        "CANCELED"
+    );
+
+    string successMessage =
+        TempData["MyTaskMessage"]?.ToString() ?? string.Empty;
+
+    string errorMessage =
+        TempData["MyTaskError"]?.ToString() ?? string.Empty;
 }
 
 <div class="task-page-container">
     <div class="page-header text-center">
-        <h2 class="page-title">
-            My Tasks Overview
-        </h2>
+        <h2 class="page-title">My Tasks Overview</h2>
     </div>
 </div>
 
@@ -17,607 +77,565 @@
     <!-- Summary Cards -->
     <div class="my-task-summary-grid mb-4">
 
-        <!-- Total Tasks -->
         <div class="my-task-summary-card">
             <div class="summary-card-icon summary-total">
                 <i class="bi bi-clipboard2-check"></i>
             </div>
-
-            <div class="summary-card-content">
-                <div class="summary-card-label">
-                    Total Tasks
-                </div>
-
-                <div class="summary-card-value">
-                    0
-                </div>
-
-                <div class="summary-card-subtitle">
-                    All assigned tasks
-                </div>
+            <div>
+                <div class="summary-card-label">Total Tasks</div>
+                <div class="summary-card-value">@totalTasks</div>
+                <div class="summary-card-subtitle">All assigned tasks</div>
             </div>
         </div>
 
-        <!-- Open -->
         <div class="my-task-summary-card">
             <div class="summary-card-icon summary-open">
                 <i class="bi bi-graph-up-arrow"></i>
             </div>
-
-            <div class="summary-card-content">
-                <div class="summary-card-label">
-                    Open
-                </div>
-
-                <div class="summary-card-value">
-                    0
-                </div>
-
-                <div class="summary-card-subtitle">
-                    0% of total
-                </div>
+            <div>
+                <div class="summary-card-label">Open</div>
+                <div class="summary-card-value">@openCount</div>
+                <div class="summary-card-subtitle">@GetPercent(openCount)</div>
             </div>
         </div>
 
-        <!-- In Progress -->
         <div class="my-task-summary-card">
             <div class="summary-card-icon summary-progress">
                 <i class="bi bi-graph-up-arrow"></i>
             </div>
-
-            <div class="summary-card-content">
-                <div class="summary-card-label">
-                    In Progress
-                </div>
-
-                <div class="summary-card-value">
-                    0
-                </div>
-
-                <div class="summary-card-subtitle">
-                    0% of total
-                </div>
+            <div>
+                <div class="summary-card-label">In Progress</div>
+                <div class="summary-card-value">@inProgressCount</div>
+                <div class="summary-card-subtitle">@GetPercent(inProgressCount)</div>
             </div>
         </div>
 
-        <!-- Review -->
         <div class="my-task-summary-card">
             <div class="summary-card-icon summary-review">
                 <i class="bi bi-pause-circle"></i>
             </div>
-
-            <div class="summary-card-content">
-                <div class="summary-card-label">
-                    Review
-                </div>
-
-                <div class="summary-card-value">
-                    0
-                </div>
-
-                <div class="summary-card-subtitle">
-                    0% of total
-                </div>
+            <div>
+                <div class="summary-card-label">Review</div>
+                <div class="summary-card-value">@reviewCount</div>
+                <div class="summary-card-subtitle">@GetPercent(reviewCount)</div>
             </div>
         </div>
 
-        <!-- Completed -->
         <div class="my-task-summary-card">
             <div class="summary-card-icon summary-completed">
                 <i class="bi bi-check-circle"></i>
             </div>
-
-            <div class="summary-card-content">
-                <div class="summary-card-label">
-                    Completed
-                </div>
-
-                <div class="summary-card-value">
-                    0
-                </div>
-
-                <div class="summary-card-subtitle">
-                    0% of total
-                </div>
+            <div>
+                <div class="summary-card-label">Completed</div>
+                <div class="summary-card-value">@completedCount</div>
+                <div class="summary-card-subtitle">@GetPercent(completedCount)</div>
             </div>
         </div>
 
-        <!-- On Hold -->
         <div class="my-task-summary-card">
             <div class="summary-card-icon summary-hold">
                 <i class="bi bi-clock"></i>
             </div>
-
-            <div class="summary-card-content">
-                <div class="summary-card-label">
-                    On Hold
-                </div>
-
-                <div class="summary-card-value">
-                    0
-                </div>
-
-                <div class="summary-card-subtitle">
-                    0% of total
-                </div>
+            <div>
+                <div class="summary-card-label">On Hold</div>
+                <div class="summary-card-value">@onHoldCount</div>
+                <div class="summary-card-subtitle">@GetPercent(onHoldCount)</div>
             </div>
         </div>
 
-        <!-- Cancelled -->
         <div class="my-task-summary-card">
             <div class="summary-card-icon summary-cancelled">
                 <i class="bi bi-lightning-charge"></i>
             </div>
-
-            <div class="summary-card-content">
-                <div class="summary-card-label">
-                    Cancelled
-                </div>
-
-                <div class="summary-card-value">
-                    0
-                </div>
-
-                <div class="summary-card-subtitle">
-                    0% of total
-                </div>
+            <div>
+                <div class="summary-card-label">Cancelled</div>
+                <div class="summary-card-value">@cancelledCount</div>
+                <div class="summary-card-subtitle">@GetPercent(cancelledCount)</div>
             </div>
         </div>
 
     </div>
 
-
-    <!-- Search / Filter -->
+    <!-- Search -->
     <div class="card border-0 shadow-sm rounded-4 mb-4 search-card">
-
         <div class="card-body">
 
-            <form method="post">
+            <form asp-controller="Tasks"
+                  asp-action="MyTasksOverview"
+                  method="get">
 
                 <div class="row g-3">
 
                     <div class="col-md-4">
-                        <label asp-for="ProjectCode"
-                               class="form-label">
+                        <label asp-for="Filter.ProjectCode" class="form-label">
                             Project Name
                         </label>
 
-                        <select asp-for="ProjectCode"
-                                asp-items="Model.ProjectList"
-                                class="form-select form-select-md">
-
-                            <option value="">
-                                All Projects
-                            </option>
-
+                        <select asp-for="Filter.ProjectCode"
+                                asp-items="projectOptions"
+                                class="form-select">
+                            <option value="">All Projects</option>
                         </select>
                     </div>
 
-
                     <div class="col-md-4">
-
-                        <label asp-for="Title"
-                               class="form-label">
+                        <label asp-for="Filter.Title" class="form-label">
                             Task Title / Program Name
                         </label>
 
-                        <input asp-for="Title"
-                               type="text"
-                               class="form-control form-control-md"
+                        <input asp-for="Filter.Title"
+                               class="form-control"
                                placeholder="Enter Task Title" />
-
                     </div>
 
-
                     <div class="col-md-4">
-
-                        <label asp-for="PriorityCode"
-                               class="form-label">
+                        <label asp-for="Filter.PriorityCode" class="form-label">
                             Priority
                         </label>
 
-                        <select asp-for="PriorityCode"
-                                asp-items="Model.PriorityList"
-                                class="form-select form-select-md">
-
-                            <option value="">
-                                All Priorities
-                            </option>
-
+                        <select asp-for="Filter.PriorityCode"
+                                asp-items="priorityOptions"
+                                class="form-select">
+                            <option value="">All Priorities</option>
                         </select>
-
                     </div>
 
-
                     <div class="col-md-4">
-
-                        <label asp-for="StatusCode"
-                               class="form-label">
+                        <label asp-for="Filter.StatusCode" class="form-label">
                             Status
                         </label>
 
-                        <select asp-for="StatusCode"
-                                asp-items="Model.StatusList"
-                                class="form-select form-select-md">
-
-                            <option value="">
-                                All Statuses
-                            </option>
-
+                        <select asp-for="Filter.StatusCode"
+                                asp-items="statusOptions"
+                                class="form-select">
+                            <option value="">All Statuses</option>
                         </select>
-
                     </div>
 
-
-                    <div class="col-md-4">
-
-                        <label class="form-label">
-                            Issue Date
-                        </label>
+                    <div class="col-md-8">
+                        <label class="form-label">Due Date</label>
 
                         <div class="row">
-
                             <div class="date-width">
-
-                                <input asp-for="IssueDateStart"
+                                <input asp-for="Filter.DueDateStart"
                                        type="date"
-                                       class="form-control form-select-md" />
-
+                                       class="form-control" />
                             </div>
 
                             <div class="range">
-                                <label class="form-label">
-                                    ~
-                                </label>
+                                <label class="form-label">~</label>
                             </div>
 
                             <div class="date-width">
-
-                                <input asp-for="IssueDateEnd"
+                                <input asp-for="Filter.DueDateEnd"
                                        type="date"
-                                       class="form-control form-select-md" />
-
+                                       class="form-control" />
                             </div>
-
                         </div>
-
                     </div>
-
-
-                    <div class="col-md-4">
-
-                        <label class="form-label">
-                            Due Date
-                        </label>
-
-                        <div class="row">
-
-                            <div class="date-width">
-
-                                <input asp-for="DueDateStart"
-                                       type="date"
-                                       class="form-control form-select-md" />
-
-                            </div>
-
-                            <div class="range">
-                                <label class="form-label">
-                                    ~
-                                </label>
-                            </div>
-
-                            <div class="date-width">
-
-                                <input asp-for="DueDateEnd"
-                                       type="date"
-                                       class="form-control form-select-md" />
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
 
                     <div class="col-12 text-end mt-4">
-
                         <button type="submit"
                                 class="btn btn-primary-search toolbar-btn">
-
                             <i class="bi bi-search me-2"></i>
                             Search
-
                         </button>
+                    </div>
+
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <!-- Task Table -->
+    <div class="card main-card p-4">
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0 text-nowrap sticky-table">
+
+                <thead class="table-light">
+                    <tr>
+                        <th class="sticky-col col-1-sticky fw-semibold">No.</th>
+                        <th class="sticky-col col-2-sticky fw-semibold">Project Name</th>
+                        <th class="sticky-col col-3-sticky fw-semibold">Person In Charge</th>
+                        <th class="sticky-col col-4-sticky fw-semibold">Task Title / Program Name</th>
+                        <th class="fw-semibold col-desc">Description</th>
+                        <th class="fw-semibold col-assignee">Assignee</th>
+                        <th class="fw-semibold col-date">Issue Date</th>
+                        <th class="fw-semibold col-date">Due Date</th>
+                        <th class="fw-semibold col-priority">Priority</th>
+                        <th class="fw-semibold col-status">Status</th>
+                        <th class="fw-semibold col-date">Start Date</th>
+                        <th class="fw-semibold col-date">End Date</th>
+                        <th class="text-center fw-semibold col-action"></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model.TaskList.Any())
+                    {
+                        int rowNo = 1;
+
+                        foreach (var task in Model.TaskList)
+                        {
+                            <tr>
+
+                                <td class="sticky-col col-1-sticky">
+                                    @rowNo
+                                </td>
+
+                                <td class="sticky-col col-2-sticky">
+                                    <span class="text-limit"
+                                          data-tooltip-truncate
+                                          data-tooltip-text="@task.ProjectName">
+                                        @task.ProjectName
+                                    </span>
+                                </td>
+
+                                <td class="sticky-col col-3-sticky">
+                                    <span class="text-limit"
+                                          data-tooltip-truncate
+                                          data-tooltip-text="@task.PersonInChargeName">
+                                        @task.PersonInChargeName
+                                    </span>
+                                </td>
+
+                                <td class="sticky-col col-4-sticky">
+                                    <span class="text-limit"
+                                          data-tooltip-truncate
+                                          data-tooltip-text="@task.Title">
+                                        @task.Title
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="text-limit"
+                                          data-tooltip-truncate
+                                          data-tooltip-text="@task.Description">
+                                        @(string.IsNullOrWhiteSpace(task.Description)
+                                            ? "-"
+                                            : task.Description)
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="text-limit"
+                                          data-tooltip-truncate
+                                          data-tooltip-text="@task.AssigneeName">
+                                        @task.AssigneeName
+                                    </span>
+                                </td>
+
+                                <td>
+                                    @task.IssueDate.ToString("yyyy-MM-dd")
+                                </td>
+
+                                <td>
+                                    @(task.DueDate?.ToString("yyyy-MM-dd") ?? "-")
+                                </td>
+
+                                <td>
+                                    @if (string.Equals(
+                                   task.PriorityName,
+                                   "High",
+                                   StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        <span class="badge badge-priority-high px-2 py-1">
+                                            @task.PriorityName
+                                        </span>
+                                    }
+                                    else if (string.Equals(
+                                    task.PriorityName,
+                                    "Medium",
+                                    StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        <span class="badge badge-priority-medium px-2 py-1">
+                                            @task.PriorityName
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-priority-low px-2 py-1">
+                                            @task.PriorityName
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (string.Equals(
+                                   task.StatusName,
+                                   "Completed",
+                                   StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        <span class="badge badge-status-completed px-3 py-2">
+                                            @task.StatusName
+                                        </span>
+                                    }
+                                    else if (string.Equals(
+                                    task.StatusName,
+                                    "In Progress",
+                                    StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        <span class="badge badge-status-progress px-3 py-2">
+                                            @task.StatusName
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-status-hold px-3 py-2">
+                                            @task.StatusName
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @(task.StartDate?.ToString("yyyy-MM-dd") ?? "-")
+                                </td>
+
+                                <td>
+                                    @(task.EndDate?.ToString("yyyy-MM-dd") ?? "-")
+                                </td>
+
+                                <td class="text-center">
+                                    <button type="button"
+                                            class="action-btn edit-icon btn-edit-my-task"
+                                            title="Edit Task"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#editMyTaskModal"
+                                            data-id="@task.ID"
+                                            data-title="@task.Title"
+                                            data-description="@task.Description"
+                                            data-assignee="@task.AssigneeName"
+                                            data-due-date="@(task.DueDate?.ToString("yyyy-MM-dd") ?? "")"
+                                            data-priority="@task.PriorityName"
+                                            data-status="@task.StatusName"
+                                            data-start-date="@(task.StartDate?.ToString("yyyy-MM-dd") ?? "")"
+                                            data-end-date="@(task.EndDate?.ToString("yyyy-MM-dd") ?? "")">
+
+                                        <i class="bi bi-pencil-square"></i>
+
+                                    </button>
+                                </td>
+
+                            </tr>
+
+                            rowNo++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="13"
+                                class="text-center py-4">
+                                No task records found.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</div>
+
+
+<!-- Edit Task Modal -->
+<div class="modal fade"
+     id="editMyTaskModal"
+     tabindex="-1"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered my-task-edit-dialog">
+        <div class="modal-content my-task-edit-modal">
+
+            <form asp-controller="Tasks"
+                  asp-action="UpdateMyTask"
+                  method="post"
+                  id="editMyTaskForm">
+
+                @Html.AntiForgeryToken()
+
+                <input type="hidden"
+                       id="editTaskId"
+                       name="ID" />
+
+                <input type="hidden"
+                       name="returnUrl"
+                       value="@(Context.Request.Path + Context.Request.QueryString)" />
+
+                <div class="modal-header my-task-modal-header">
+
+                    <h5 class="modal-title">
+                        Edit Task
+                    </h5>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close">
+                    </button>
+
+                </div>
+
+                <div class="modal-body my-task-modal-body">
+
+                    <!-- Title -->
+                    <div class="mb-3">
+                        <label class="form-label">Title</label>
+
+                        <input type="text"
+                               id="editTaskTitle"
+                               class="form-control"
+                               disabled />
+                    </div>
+
+                    <!-- Description -->
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+
+                        <textarea id="editTaskDescription"
+                                  class="form-control my-task-description"
+                                  rows="3"
+                                  disabled></textarea>
+                    </div>
+
+                    <!-- Assignee / Due Date -->
+                    <div class="row g-3 mb-3">
+
+                        <div class="col-6">
+                            <label class="form-label">
+                                Assignee
+                            </label>
+
+                            <input type="text"
+                                   id="editTaskAssignee"
+                                   class="form-control"
+                                   disabled />
+                        </div>
+
+                        <div class="col-6">
+                            <label class="form-label">
+                                Due Date
+                            </label>
+
+                            <input type="date"
+                                   id="editTaskDueDate"
+                                   class="form-control"
+                                   disabled />
+                        </div>
 
                     </div>
+
+                    <!-- Priority / Status -->
+                    <div class="row g-3 mb-3">
+
+                        <div class="col-6">
+                            <label class="form-label">
+                                Priority
+                            </label>
+
+                            <input type="text"
+                                   id="editTaskPriority"
+                                   class="form-control"
+                                   disabled />
+                        </div>
+
+                        <div class="col-6">
+                            <label for="editTaskStatus"
+                                   class="form-label">
+                                Status
+                            </label>
+
+                            <select id="editTaskStatus"
+                                    name="StatusCode"
+                                    class="form-select"
+                                    required>
+
+                                <option value="">
+                                    Select Status
+                                </option>
+
+                                @foreach (var status in Model.StatusList)
+                                {
+                                    <option value="@status.Value">
+                                        @status.Text
+                                    </option>
+                                }
+
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <!-- Start / End Date -->
+                    <div class="row g-3 mb-2">
+
+                        <div class="col-6">
+                            <label for="editTaskStartDate"
+                                   class="form-label">
+                                Start Date
+                            </label>
+
+                            <input type="date"
+                                   id="editTaskStartDate"
+                                   name="StartDate"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-6">
+                            <label for="editTaskEndDate"
+                                   class="form-label">
+                                End Date
+                            </label>
+
+                            <input type="date"
+                                   id="editTaskEndDate"
+                                   name="EndDate"
+                                   class="form-control" />
+                        </div>
+
+                    </div>
+
+                    <div id="editDateError"
+                         class="text-danger small d-none mt-2">
+                        End Date cannot be earlier than Start Date.
+                    </div>
+
+                </div>
+
+                <div class="modal-footer my-task-modal-footer">
+
+                    <button type="button"
+                            class="btn my-task-btn-cancel"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+
+                    <button type="submit"
+                            class="btn my-task-btn-update">
+                        Update Task
+                    </button>
 
                 </div>
 
             </form>
 
         </div>
-
     </div>
-
-
-    <!-- Task Table -->
-    <div class="card main-card p-4">
-
-        <div class="table-responsive">
-
-            <table class="table table-hover align-middle mb-0 text-nowrap sticky-table">
-
-                <thead class="table-light">
-
-                    <tr>
-
-                        <th scope="col"
-                            class="sticky-col col-1-sticky fw-semibold">
-                            No.
-                        </th>
-
-                        <th scope="col"
-                            class="sticky-col col-2-sticky fw-semibold">
-                            Project Name
-                        </th>
-
-                        <th scope="col"
-                            class="sticky-col col-3-sticky fw-semibold">
-                            Person In Charge
-                        </th>
-
-                        <th scope="col"
-                            class="sticky-col col-4-sticky fw-semibold">
-                            Task Title / Program Name
-                        </th>
-
-                        <th scope="col"
-                            class="fw-semibold col-desc">
-                            Description
-                        </th>
-
-                        <th scope="col"
-                            class="fw-semibold col-assignee">
-                            Assignee
-                        </th>
-
-                        <th scope="col"
-                            class="fw-semibold col-date">
-                            Issue Date
-                        </th>
-
-                        <th scope="col"
-                            class="fw-semibold col-date">
-                            Due Date
-                        </th>
-
-                        <th scope="col"
-                            class="fw-semibold col-priority">
-                            Priority
-                        </th>
-
-                        <th scope="col"
-                            class="fw-semibold col-status">
-                            Status
-                        </th>
-
-                        <th scope="col"
-                            class="fw-semibold col-date">
-                            Start Date
-                        </th>
-
-                        <th scope="col"
-                            class="fw-semibold col-date">
-                            End Date
-                        </th>
-
-                        <th scope="col"
-                            class="text-center fw-semibold col-action">
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody>
-
-                    @if (
-                    Model.TaskListData != null &&
-                    Model.TaskListData.Any()
-                    )
-                    {
-                        foreach (var task in Model.TaskListData)
-                        {
-                            <tr>
-
-                                <td class="sticky-col col-1-sticky">
-                                    @task.No
-                                </td>
-
-
-                                <td class="sticky-col col-2-sticky">
-
-                                    <span class="text-limit"
-                                          data-tooltip-truncate
-                                          data-tooltip-text="@task.ProjectName">
-
-                                        @task.ProjectName
-
-                                    </span>
-
-                                </td>
-
-
-                                <td class="sticky-col col-3-sticky">
-
-                                    <span class="text-limit"
-                                          data-tooltip-truncate
-                                          data-tooltip-text="@task.PersonInCharge">
-
-                                        @task.PersonInCharge
-
-                                    </span>
-
-                                </td>
-
-
-                                <td class="sticky-col col-4-sticky">
-
-                                    <span class="text-limit"
-                                          data-tooltip-truncate
-                                          data-tooltip-text="@task.Title">
-
-                                        @task.Title
-
-                                    </span>
-
-                                </td>
-
-
-                                <td>
-
-                                    <span class="text-limit"
-                                          data-tooltip-truncate
-                                          data-tooltip-text="@task.Description">
-
-                                        @task.Description
-
-                                    </span>
-
-                                </td>
-
-
-                                <td>
-
-                                    <span class="text-limit"
-                                          data-tooltip-truncate
-                                          data-tooltip-text="@task.Assignee">
-
-                                        @task.Assignee
-
-                                    </span>
-
-                                </td>
-
-
-                                <td>
-                                    @(task.IssueDate.HasValue
-                                        ? task.IssueDate.Value.ToString("yyyy-MM-dd")
-                                        : "-")
-                                </td>
-
-
-                                <td>
-                                    @(task.DueDate.HasValue
-                                        ? task.DueDate.Value.ToString("yyyy-MM-dd")
-                                        : "-")
-                                </td>
-
-
-                                <td>
-
-                                    @if (task.Priority == "High")
-                                    {
-                                        <span class="badge badge-priority-high px-2 py-1">
-                                            High
-                                        </span>
-                                    }
-                                    else if (task.Priority == "Medium")
-                                    {
-                                        <span class="badge badge-priority-medium px-2 py-1">
-                                            Medium
-                                        </span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge badge-priority-low px-2 py-1">
-                                            @task.Priority
-                                        </span>
-                                    }
-
-                                </td>
-
-
-                                <td>
-
-                                    @if (task.Status == "Completed")
-                                    {
-                                        <span class="badge badge-status-completed px-3 py-2">
-                                            Completed
-                                        </span>
-                                    }
-                                    else if (task.Status == "In Progress")
-                                    {
-                                        <span class="badge badge-status-progress px-3 py-2">
-                                            In Progress
-                                        </span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge badge-status-hold px-3 py-2">
-                                            @task.Status
-                                        </span>
-                                    }
-
-                                </td>
-
-
-                                <td>
-                                    @(task.StartDate.HasValue
-                                        ? task.StartDate.Value.ToString("yyyy-MM-dd")
-                                        : "-")
-                                </td>
-
-
-                                <td>
-                                    @(task.EndDate.HasValue
-                                        ? task.EndDate.Value.ToString("yyyy-MM-dd")
-                                        : "-")
-                                </td>
-
-
-                                <td class="text-center">
-
-                                    <button type="button"
-                                            class="action-btn edit-icon"
-                                            title="Edit Status">
-
-                                        <i class="bi bi-pencil-square"></i>
-
-                                    </button>
-
-                                </td>
-
-                            </tr>
-                        }
-                    }
-                    else
-                    {
-                        <tr>
-
-                            <td colspan="13"
-                                class="text-center py-4">
-
-                                No task records found.
-
-                            </td>
-
-                        </tr>
-                    }
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-    </div>
-
 </div>
 
 
+<!-- Shared Alert Modal -->
+<partial name="AlertModal" />
+
+
 @section Styles {
+    <link rel="stylesheet"
+          href="~/css/Alert_Modal.css"
+          asp-append-version="true" />
 
     <link rel="stylesheet"
           href="~/css/ckm-theme.css"
@@ -634,4 +652,143 @@
     <link rel="stylesheet"
           href="~/css/MyTasksOverview.css"
           asp-append-version="true" />
+}
+
+
+@section Scripts {
+
+    <script src="~/js/Alert_Modal.js"
+            asp-append-version="true">
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const buttons =
+                document.querySelectorAll('.btn-edit-my-task');
+
+            const statusSelect =
+                document.getElementById('editTaskStatus');
+
+            const form =
+                document.getElementById('editMyTaskForm');
+
+            buttons.forEach(function (button) {
+
+                button.addEventListener('click', function () {
+
+                    document.getElementById('editTaskId').value =
+                        this.dataset.id || '';
+
+                    document.getElementById('editTaskTitle').value =
+                        this.dataset.title || '';
+
+                    document.getElementById('editTaskDescription').value =
+                        this.dataset.description || '';
+
+                    document.getElementById('editTaskAssignee').value =
+                        this.dataset.assignee || '';
+
+                    document.getElementById('editTaskDueDate').value =
+                        this.dataset.dueDate || '';
+
+                    document.getElementById('editTaskPriority').value =
+                        this.dataset.priority || '';
+
+                    document.getElementById('editTaskStartDate').value =
+                        this.dataset.startDate || '';
+
+                    document.getElementById('editTaskEndDate').value =
+                        this.dataset.endDate || '';
+
+                    setStatus(
+                        this.dataset.status || ''
+                    );
+
+                    document.getElementById('editDateError')
+                        .classList.add('d-none');
+                });
+
+            });
+
+
+            function setStatus(statusName) {
+
+                statusSelect.value = '';
+
+                const target =
+                    statusName
+                        .trim()
+                        .toLowerCase();
+
+                Array.from(statusSelect.options)
+                    .forEach(function (option) {
+
+                        if (
+                            option.text
+                                .trim()
+                                .toLowerCase()
+                            === target
+                        ) {
+                            statusSelect.value =
+                                option.value;
+                        }
+
+                    });
+            }
+
+
+            form.addEventListener('submit', function (event) {
+
+                const startDate =
+                    document.getElementById(
+                        'editTaskStartDate'
+                    ).value;
+
+                const endDate =
+                    document.getElementById(
+                        'editTaskEndDate'
+                    ).value;
+
+                const error =
+                    document.getElementById(
+                        'editDateError'
+                    );
+
+                if (
+                    startDate &&
+                    endDate &&
+                    endDate < startDate
+                ) {
+                    event.preventDefault();
+
+                    error.classList.remove(
+                        'd-none'
+                    );
+
+                    return;
+                }
+
+                error.classList.add(
+                    'd-none'
+                );
+            });
+
+
+            const successMessage =
+        @Html.Raw(JsonSerializer.Serialize(successMessage));
+
+            const errorMessage =
+        @Html.Raw(JsonSerializer.Serialize(errorMessage));
+
+
+            if (successMessage) {
+                showSuccess(successMessage);
+            }
+            else if (errorMessage) {
+                showError(errorMessage);
+            }
+
+        });
+    </script>
 }

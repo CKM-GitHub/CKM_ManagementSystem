@@ -26,7 +26,7 @@ namespace CKM_ManagementSystem.Models.ViewModels
         public List<SelectListItem> AssigneeList { get; set; } = new List<SelectListItem>();
         public List<SelectListItem> PriorityList { get; set; } = new List<SelectListItem>();
         public List<SelectListItem> StatusList { get; set; } = new List<SelectListItem>();
-        public List<Tasks> TaskListData { get; set; } = new List<Tasks>();
-
+        public List<CKM_ManagementSystem.Models.Entities.Tasks> TaskListData { get; set; }
+         = new List<CKM_ManagementSystem.Models.Entities.Tasks>();
     }
 }

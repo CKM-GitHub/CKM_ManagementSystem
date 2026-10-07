@@ -1,5 +1,5 @@
 ﻿/* =========================================================
-   My Tasks Overview - Summary Cards
+   Summary Cards
 ========================================================= */
 
 .my-task-summary-grid {
@@ -38,10 +38,6 @@
     font-size: 17px;
 }
 
-.summary-card-content {
-    min-width: 0;
-}
-
 .summary-card-label {
     margin-bottom: 2px;
     color: var(--dark-blue);
@@ -61,52 +57,35 @@
 .summary-card-subtitle {
     color: var(--gray);
     font-size: 10px;
-    font-weight: 400;
     white-space: nowrap;
 }
 
-
-/* =========================================================
-   Card Icon Colors
-========================================================= */
-
-/* Total Tasks */
 .summary-total {
     background-color: #eef4ff;
     color: #4f83ff;
 }
 
-/* Open */
-.summary-open {
-    background-color: #fff7e8;
-    color: #f0a11a;
-}
-
-/* In Progress */
+.summary-open,
 .summary-progress {
     background-color: #fff7e8;
     color: #f0a11a;
 }
 
-/* Review */
 .summary-review {
     background-color: #fff4e8;
     color: #ff9f43;
 }
 
-/* Completed */
 .summary-completed {
     background-color: #eafaf1;
     color: #2dbf73;
 }
 
-/* On Hold */
 .summary-hold {
     background-color: #fff0f0;
     color: #ff5b5b;
 }
 
-/* Cancelled */
 .summary-cancelled {
     background-color: #f5edff;
     color: #9b51e0;
@@ -114,25 +93,128 @@
 
 
 /* =========================================================
+   Edit Task Modal
+========================================================= */
+
+.my-task-edit-dialog {
+    max-width: 520px;
+}
+
+.my-task-edit-modal {
+    border: none;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 14px 38px rgba(15, 23, 42, 0.18);
+}
+
+.my-task-modal-header {
+    position: relative;
+    padding: 18px 22px 8px;
+    border-bottom: 0;
+}
+
+    .my-task-modal-header .modal-title {
+        color: var(--dark-blue);
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .my-task-modal-header .btn-close {
+        position: absolute;
+        top: 18px;
+        right: 18px;
+        font-size: 11px;
+    }
+
+.my-task-modal-body {
+    padding: 12px 22px 18px;
+}
+
+    .my-task-modal-body .form-label {
+        margin-bottom: 6px;
+        color: var(--dark-blue);
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .my-task-modal-body .form-control,
+    .my-task-modal-body .form-select {
+        height: 38px;
+        border: 1px solid var(--border-color);
+        border-radius: 7px;
+        font-size: 13px !important;
+        color: var(--dark-blue);
+    }
+
+    .my-task-modal-body textarea.form-control {
+        min-height: 82px;
+        padding-top: 9px;
+        resize: vertical;
+    }
+
+    .my-task-modal-body .form-control:disabled,
+    .my-task-modal-body .form-select:disabled {
+        background-color: #ffffff;
+        color: #64748b;
+        opacity: 1;
+    }
+
+.my-task-modal-footer {
+    padding: 8px 22px 20px;
+    border-top: 0;
+    gap: 8px;
+}
+
+.my-task-btn-cancel,
+.my-task-btn-update {
+    min-width: 92px;
+    height: 38px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.my-task-btn-cancel {
+    background-color: #f4f4f5;
+    border: 1px solid #eeeeee;
+    color: #6b7280;
+}
+
+    .my-task-btn-cancel:hover {
+        background-color: #e9eaec;
+        color: #4b5563;
+    }
+
+.my-task-btn-update {
+    background-color: var(--primary-blue);
+    border: 1px solid var(--primary-blue);
+    color: var(--white);
+}
+
+    .my-task-btn-update:hover {
+        background-color: var(--primary-blue-hover);
+        border-color: var(--primary-blue-hover);
+        color: var(--white);
+    }
+
+
+/* =========================================================
    Responsive
 ========================================================= */
 
 @media (max-width: 1400px) {
-
     .my-task-summary-grid {
         grid-template-columns: repeat(4, minmax(160px, 1fr));
     }
 }
 
 @media (max-width: 992px) {
-
     .my-task-summary-grid {
         grid-template-columns: repeat(2, minmax(160px, 1fr));
     }
 }
 
 @media (max-width: 576px) {
-
     .my-task-summary-grid {
         grid-template-columns: 1fr;
         gap: 10px;
@@ -151,5 +233,22 @@
         width: 36px;
         height: 36px;
         font-size: 16px;
+    }
+
+    .my-task-edit-dialog {
+        margin: 12px;
+    }
+
+    .my-task-modal-body .col-6 {
+        width: 100%;
+    }
+
+    .my-task-modal-footer {
+        justify-content: stretch;
+    }
+
+    .my-task-btn-cancel,
+    .my-task-btn-update {
+        flex: 1;
     }
 }
