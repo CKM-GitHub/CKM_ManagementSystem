@@ -1,43 +1,78 @@
 ﻿$(document).ready(function () {
-    truncateSelectOptions('.form-select', 25);
+
     $(document).on('click', '.btn-edit', function () {
-        var btn = $(this);
-        var id = btn.data('id');
-        var title = btn.data('title');
-        var description = btn.data('description');
-        var assigneeText = btn.data('assignee');
-        var dueDate = btn.data('duedate');
-        var priorityText = btn.data('priority');
-        var statusText = btn.data('status');
+
+        const btn = $(this);
+
+        const id = btn.data('id');
+        const title = btn.data('title');
+        const description = btn.data('description');
+        const assigneeText = btn.data('assignee');
+        const dueDate = btn.data('duedate');
+        const priorityText = btn.data('priority');
+        const statusText = btn.data('status');
 
         $('#editTaskId').val(id);
-        $('#editTitle').val(title);
-        $('#editDescription').val(description);
-        $('#editDueDate').val(dueDate);
+        $('#editTitle').val(title || '');
+        $('#editDescription').val(description || '');
+        $('#editDueDate').val(dueDate || '');
 
         setSelectByText('#editAssignee', assigneeText);
         setSelectByText('#editPriority', priorityText);
         setSelectByText('#editStatus', statusText);
     });
-    function setSelectByText(selectId, textToFind) {
-        var searchText = $.trim(textToFind);
-        if (!searchText) return;
 
-        $(selectId + ' option').filter(function () {
-            var optText = $.trim($(this).text());
-            return optText === searchText || optText.startsWith(searchText.substring(0, 20));
-        }).prop('selected', true);
+
+    function setSelectByText(selectId, textToFind) {
+
+        const searchText =
+            $.trim(textToFind || '');
+
+        if (!searchText) {
+            $(selectId).val('');
+            return;
+        }
+
+        let found = false;
+
+        $(selectId + ' option')
+            .each(function () {
+
+                const optionText =
+                    $.trim($(this).text());
+
+                if (optionText === searchText) {
+
+                    $(this).prop(
+                        'selected',
+                        true
+                    );
+
+                    found = true;
+
+                    return false;
+                }
+            });
+
+        if (!found) {
+            $(selectId).val('');
+        }
     }
-    function truncateSelectOptions(selector, maxLength) {
-        $(selector + ' option').each(function () {
-            var text = $.trim($(this).text());
-            if (text.length > maxLength) {
-                $(this).text(text.substring(0, maxLength) + '...');
-                $(this).attr('title', text); 
-            }
-        });
+
+
+    if (
+        typeof successMessage !== 'undefined' &&
+        successMessage
+    ) {
+        showSuccess(successMessage);
     }
-    $('#btnRegister').click(function () {
-        $('#editTaskForm').submit();
-    });
+
+
+    if (
+        typeof errorMessage !== 'undefined' &&
+        errorMessage
+    ) {
+        showError(errorMessage);
+    }
+
 });
