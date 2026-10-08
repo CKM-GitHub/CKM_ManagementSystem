@@ -9,150 +9,81 @@ namespace CKM_ManagementSystem.Controllers
 {
     public class TasksController : Controller
     {
-        private readonly TasksBL _tasksBL;
+        private readonly TasksBL _taskBL;
 
         public TasksController(TasksBL tasksBL)
         {
-            _tasksBL = tasksBL;
+            _taskBL = tasksBL;
         }
-
-        // =====================================================
-        // Task Management
-        // Existing teammate code
-        // =====================================================
 
         [HttpGet]
-        public IActionResult TaskLists()
+        [Route("Tasks/TaskLists")]
+        public async Task<IActionResult> TaskLists([FromQuery] TaskManagementFilterViewModel filter)
         {
-            var model = new TasksViewModel();
+            filter ??= new TaskManagementFilterViewModel();
+            filter.CurrentPage = filter.CurrentPage < 1 ? 1 : filter.CurrentPage;
+            filter.PageSize = filter.PageSize <= 0 ? 10 : filter.PageSize;
 
-            // want to Test ui so with temp data
-            model.ProjectList = new List<SelectListItem>
-            {
-                new SelectListItem
-                {
-                    Value = "PRJ001",
-                    Text = "Enterprise CRM"
-                },
+            await PopulateDropdownsAsync(filter);
 
-                new SelectListItem
-                {
-                    Value = "PRJ002",
-                    Text = "E-Commerce App"
-                }
-            };
+            filter.TaskListData = await _taskBL.GetTaskManagementListAsync(filter);
 
-            model.PersonInChargeList =
-                new List<SelectListItem>
-                {
-                    new SelectListItem
-                    {
-                        Value = "STAFF01",
-                        Text = "John Doe"
-                    },
+            filter.TotalItems = filter.TaskListData.Count; 
 
-                    new SelectListItem
-                    {
-                        Value = "STAFF02",
-                        Text = "Jane Smith"
-                    }
-                };
-
-            model.AssigneeList =
-                new List<SelectListItem>
-                {
-                    new SelectListItem
-                    {
-                        Value = "STAFF03",
-                        Text = "Sarah Smith"
-                    },
-
-                    new SelectListItem
-                    {
-                        Value = "STAFF04",
-                        Text = "Michael Brown"
-                    }
-                };
-
-            model.PriorityList =
-                new List<SelectListItem>
-                {
-                    new SelectListItem
-                    {
-                        Value = "LOW",
-                        Text = "Low"
-                    },
-
-                    new SelectListItem
-                    {
-                        Value = "MED",
-                        Text = "Medium"
-                    },
-
-                    new SelectListItem
-                    {
-                        Value = "HIGH",
-                        Text = "High"
-                    }
-                };
-
-            model.StatusList =
-                new List<SelectListItem>
-                {
-                    new SelectListItem
-                    {
-                        Value = "OPEN",
-                        Text = "Open"
-                    },
-
-                    new SelectListItem
-                    {
-                        Value = "IN_PROGRESS",
-                        Text = "In Progress"
-                    },
-
-                    new SelectListItem
-                    {
-                        Value = "COMPLETED",
-                        Text = "Completed"
-                    }
-                };
-
-            model.TaskListData =
-                new List<Tasks>
-                {
-                    new Tasks
-                    {
-                        No = 1,
-                        ID = 101,
-                        ProjectName = "Enterprise CRM",
-                        PersonInCharge = "John Doe",
-                        Title = "API Integration",
-                        Description =
-                            "Integrate payment gateway API endpointsIntegrate payment gateway API endpointsIntegrate payment gateway API endpoints",
-                        Assignee = "Sarah Smith",
-                        IssueDate = DateTime.Now.AddDays(-10),
-                        DueDate = DateTime.Now.AddDays(15),
-                        Priority = "High",
-                        Status = "In Progress",
-                        StartDate = DateTime.Now.AddDays(-5),
-                        TotalCount = 1
-                    }
-                };
-
-            model.TotalCount =
-                model.TaskListData.Count;
-
-            return View(
-                "~/Views/Tasks/TaskLists.cshtml",
-                model
-            );
+            return View("TaskLists", filter);
         }
 
+        [HttpPost]
+        [Route("Tasks/TaskLists")]
+        [ActionName("TaskListsPost")]
+        public async Task<IActionResult> TaskListsPost([FromForm] TaskManagementFilterViewModel filter)
+        {
+            filter.CurrentPage = filter.CurrentPage < 1 ? 1 : filter.CurrentPage;
+            filter.PageSize = filter.PageSize <= 0 ? 10 : filter.PageSize;
 
-        // =====================================================
-        // My Tasks Overview
-        // =====================================================
+            filter.TaskListData = await _taskBL.GetTaskManagementListAsync(filter);
+            filter.TotalItems = filter.TaskListData.Count;
+
+            await PopulateDropdownsAsync(filter);
+
+            return View("TaskLists", filter);
+        }
+        private async Task PopulateDropdownsAsync(TaskManagementFilterViewModel filter)
+        {
+            var projects = await _taskBL.GetProjectsAsync();
+            var persons = await _taskBL.GetPersonsInChargeAsync();
+            var assignees = await _taskBL.GetManagementAssigneesAsync();
+            var priorities = await _taskBL.GetPrioritiesAsync();
+            var statuses = await _taskBL.GetStatusesAsync();
+
+            filter.ProjectList = projects
+                .Select(x => new SelectListItem { Value = x.Value, Text = x.Text })
+                .ToList();
+
+            filter.PersonInChargeList = persons
+                .Select(x => new SelectListItem { Value = x.Value, Text = x.Text })
+                .ToList();
+
+            filter.AssigneeList = assignees
+                .Select(x => new SelectListItem { Value = x.Value, Text = x.Text })
+                .ToList();
+
+            filter.PriorityList = priorities
+                .Select(x => new SelectListItem { Value = x.Value, Text = x.Text })
+                .ToList();
+
+            filter.StatusList = statuses
+                .Select(x => new SelectListItem { Value = x.Value, Text = x.Text })
+                .ToList();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAssignees(string projectCode)
+        {
+            var assignees = await _taskBL.GetAssigneesAsync(projectCode);
+            return Json(assignees);
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> MyTasksOverview(
@@ -167,22 +98,22 @@ namespace CKM_ManagementSystem.Controllers
             }
 
             model.ProjectList =
-                await _tasksBL.GetProjectsAsync();
+                await _taskBL.GetProjectsAsync();
 
             model.PriorityList =
-                await _tasksBL.GetPrioritiesAsync();
+                await _taskBL.GetPrioritiesAsync();
 
             model.StatusList =
-                await _tasksBL.GetStatusesAsync();
+                await _taskBL.GetStatusesAsync();
 
             model.TaskList =
-                await _tasksBL.GetMyTaskListAsync(
+                await _taskBL.GetMyTaskListAsync(
                     model.Filter,
                     loginStaffCode
                 );
 
             model.StatusSummary =
-                await _tasksBL.GetMyTaskStatusSummaryAsync(
+                await _taskBL.GetMyTaskStatusSummaryAsync(
                     loginStaffCode
                 );
 
@@ -191,11 +122,6 @@ namespace CKM_ManagementSystem.Controllers
                 model
             );
         }
-
-
-        // =====================================================
-        // Update My Task
-        // =====================================================
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -253,7 +179,7 @@ namespace CKM_ManagementSystem.Controllers
             }
 
             bool updated =
-                await _tasksBL.UpdateMyTaskAsync(
+                await _taskBL.UpdateMyTaskAsync(
                     model,
                     loginStaffCode
                 );
@@ -279,113 +205,6 @@ namespace CKM_ManagementSystem.Controllers
 
             return RedirectToAction(
                 nameof(MyTasksOverview)
-            );
-        }
-
-
-        // =====================================================
-        // Existing Task Management Search
-        // =====================================================
-
-        [HttpPost]
-        public IActionResult Search(
-            TasksViewModel model)
-        {
-            model.ProjectList =
-                new List<SelectListItem>
-                {
-                    new SelectListItem
-                    {
-                        Value = "PRJ001",
-                        Text = "Enterprise CRM"
-                    },
-
-                    new SelectListItem
-                    {
-                        Value = "PRJ002",
-                        Text = "E-Commerce App"
-                    }
-                };
-
-            model.PersonInChargeList =
-                new List<SelectListItem>
-                {
-                    new SelectListItem
-                    {
-                        Value = "STAFF01",
-                        Text = "John Doe"
-                    },
-
-                    new SelectListItem
-                    {
-                        Value = "STAFF02",
-                        Text = "Jane Smith"
-                    }
-                };
-
-            model.AssigneeList =
-                new List<SelectListItem>
-                {
-                    new SelectListItem
-                    {
-                        Value = "STAFF03",
-                        Text = "Sarah Smith"
-                    },
-
-                    new SelectListItem
-                    {
-                        Value = "STAFF04",
-                        Text = "Michael Brown"
-                    }
-                };
-
-            model.PriorityList =
-                new List<SelectListItem>
-                {
-                    new SelectListItem
-                    {
-                        Value = "LOW",
-                        Text = "Low"
-                    },
-
-                    new SelectListItem
-                    {
-                        Value = "MED",
-                        Text = "Medium"
-                    },
-
-                    new SelectListItem
-                    {
-                        Value = "HIGH",
-                        Text = "High"
-                    }
-                };
-
-            model.StatusList =
-                new List<SelectListItem>
-                {
-                    new SelectListItem
-                    {
-                        Value = "OPEN",
-                        Text = "Open"
-                    },
-
-                    new SelectListItem
-                    {
-                        Value = "IN_PROGRESS",
-                        Text = "In Progress"
-                    },
-
-                    new SelectListItem
-                    {
-                        Value = "COMPLETED",
-                        Text = "Completed"
-                    }
-                };
-
-            return View(
-                "~/Views/Tasks/TaskLists.cshtml",
-                model
             );
         }
     }

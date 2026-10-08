@@ -204,7 +204,7 @@ namespace CKM_ManagementSystem.BL
         {
             DataTable table =
                 await bdl.SelectDataTableAsync(
-                    "sp_Task_GetPersonsInCharge",
+                    "sp_Task_GetPersonInCharge",
                     null
                 );
 

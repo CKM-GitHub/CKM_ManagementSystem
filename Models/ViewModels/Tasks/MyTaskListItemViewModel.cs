@@ -27,5 +27,6 @@
         public DateTime? EndDate { get; set; }
 
         public string? Attachments { get; set; }
+
     }
 }
