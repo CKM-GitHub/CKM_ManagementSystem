@@ -13,13 +13,13 @@
     font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
 }
 
-    .form-control:focus,
-    .form-select:focus {
-        border-color: var(--primary-blue);
-        box-shadow: 0 0 0 0.25rem var(--foucs-shadow-color);
-        font-size: 14px !important;
-        color: var(--dark-blue) !important;
-    }
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 0.25rem var(--foucs-shadow-color);
+    font-size: 14px !important;
+     color: var(--dark-blue) !important;
+}
 
 textarea.form-control {
     height: auto !important;
@@ -62,20 +62,16 @@ textarea.form-control {
     color: var(--white);
 }
 
-    .btn-primary-search.toolbar-btn:hover,
-    .btn-primary-add.add-btn:hover {
-        background: var(--primary-blue-hover);
-        color: var(--white);
-    }
+.btn-primary-search.toolbar-btn:hover,
+.btn-primary-add.add-btn:hover {
+     background: var(--primary-blue-hover);
+     color: var(--white);
+}
 
 .btn-primary-search {
     min-width: 150px;
 }
 
-
-/* =====================================================
-   Upload
-   ===================================================== */
 
 .upload-zone {
     border: 2px dashed #b0c4de;
@@ -87,19 +83,14 @@ textarea.form-control {
     transition: background-color 0.2s ease;
 }
 
-    .upload-zone:hover {
-        background-color: #f0f4f9;
-    }
+.upload-zone:hover {
+   background-color: #f0f4f9;
+ }
 
 .upload-icon {
     font-size: 2.5rem;
     color: var(--primary-blue);
 }
-
-
-/* =====================================================
-   Modal
-   ===================================================== */
 
 .custom-modal-btn {
     font-size: 14px;
@@ -133,26 +124,25 @@ textarea.form-control {
     background-color: var(--gray) !important;
 }
 
-    .btn-register:hover,
-    .btn-cancel:hover {
-        color: var(--white) !important;
-        text-decoration: none !important;
-        opacity: 0.9 !important;
-    }
+.btn-register:hover,
+.btn-cancel:hover {
+    color: var(--white) !important;
+    text-decoration: none !important;
+    opacity: 0.9 !important;
+}
 
-    .btn-register:active,
-    .btn-cancel:active {
-        color: var(--white) !important;
-        text-decoration: none !important;
-        transform: translateY(1px) !important;
-    }
+.btn-register:active,
+.btn-cancel:active {
+     color: var(--white) !important;
+     text-decoration: none !important;
+     transform: translateY(1px) !important;
+}
 
-    .btn-register:focus,
-    .btn-cancel:focus {
-        color: var(--white) !important;
-        text-decoration: none !important;
-    }
-
+.btn-register:focus,
+.btn-cancel:focus {
+     color: var(--white) !important;
+     text-decoration: none !important;
+}
 .custom-modal-card {
     border-radius: 20px !important;
     border: none !important;
@@ -160,25 +150,19 @@ textarea.form-control {
     box-shadow: 0 10px 30px var(--shadow-color) !important;
 }
 
-
-
 .empty-task-row {
     height: 52px;
 }
 
-    .empty-task-row td {
-        height: 52px;
-        vertical-align: middle !important;
-    }
-
-
+.empty-task-row td {
+    height: 52px;
+    vertical-align: middle !important;
+}
 
 .empty-sticky-cell {
     padding: 0 !important;
     background-color: var(--white) !important;
 }
-
-
 
 .empty-task-cell {
     height: 52px;

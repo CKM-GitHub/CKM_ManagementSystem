@@ -1,9 +1,8 @@
 ﻿$(document).ready(function () {
-
+    truncateSelectOptions('.form-select', 25);
     $(document).on('click', '.btn-edit', function () {
 
         const btn = $(this);
-
         const id = btn.data('id');
         const title = btn.data('title');
         const description = btn.data('description');
@@ -22,7 +21,15 @@
         setSelectByText('#editStatus', statusText);
     });
 
-
+    function truncateSelectOptions(selector, maxLength) {
+        $(selector + ' option').each(function () {
+            var text = $.trim($(this).text());
+            if (text.length > maxLength) {
+                $(this).text(text.substring(0, maxLength) + '...');
+                $(this).attr('title', text);
+            }
+        });
+    }
     function setSelectByText(selectId, textToFind) {
 
         const searchText =
