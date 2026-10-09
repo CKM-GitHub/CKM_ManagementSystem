@@ -11,32 +11,23 @@
 </div>
 
 <div class="container-fluid px-3 px-md-5">
-
-    <!-- Search -->
     <div class="card border-0 shadow-sm rounded-4 mb-4 search-card">
         <div class="card-body">
-
             <form asp-controller="Tasks"
                   asp-action="TaskListsPost"
                   method="post">
-
                 <input type="hidden" asp-for="PageSize" />
-
                 <div class="row g-3">
-
                     <div class="col-md-3">
                         <label asp-for="ProjectCode"
                                class="form-label">
                             Project Name
                         </label>
-
                         <select asp-for="ProjectCode"
                                 asp-items="Model.ProjectList"
                                 class="form-select form-select-md"
                                 id="project">
-
                             <option value="">All Project</option>
-
                         </select>
                     </div>
 
@@ -471,7 +462,8 @@
                                             data-assignee="@task.AssigneeName"
                                             data-duedate="@(task.DueDate?.ToString("yyyy-MM-dd") ?? "")"
                                             data-priority="@task.PriorityName"
-                                            data-status="@task.StatusName">
+                                            data-status="@task.StatusName"
+                                            data-attachment="@task.Attachments">
 
                                         <i class="bi bi-pencil-square"></i>
 
@@ -492,12 +484,12 @@
 
                             <td class="sticky-col col-3-sticky empty-sticky-cell"></td>
 
-                            <td class="sticky-col col-4-sticky empty-sticky-cell"></td>
+                            <td class="sticky-col col-4-sticky empty-sticky-cell align-middle">
+                                <span class="fw-medium text-muted">No task records found.</span>
+                            </td>
 
                             <td colspan="9"
                                 class="empty-task-cell">
-
-                                No task records found.
 
                             </td>
 
@@ -654,7 +646,7 @@
             <form id="editTaskForm"
                   asp-controller="Tasks"
                   asp-action="UpdateTask"
-                  method="post">
+                  method="post" enctype="multipart/form-data">
 
                 @Html.AntiForgeryToken()
 
@@ -687,7 +679,6 @@
 
                 </div>
 
-
                 <div class="modal-body pt-3">
 
                     <div class="row g-3">
@@ -703,7 +694,7 @@
                             <input type="text"
                                    class="form-control"
                                    id="editTitle"
-                                   name="Title" readonly
+                                   name="Title" 
                                    required />
 
                         </div>
@@ -718,33 +709,18 @@
 
                             <textarea class="form-control"
                                       id="editDescription"
-                                      name="Description" readonly
+                                      name="Description" 
                                       rows="3"></textarea>
 
                         </div>
 
 
-                        <div class="col-md-6">
-
-                            <label for="editAssignee"
-                                   class="form-label fw-semibold">
-                                Assignee
-                            </label>
-
-                            <select class="form-select"
-                                    id="editAssignee"
-                                    name="Assignee"
-                                    asp-items="Model.AssigneeList"
-                                    required>
-
-                                <option value="">
-                                    Select Assignee
-                                </option>
-
+                        <div class="col-6">
+                            <label for="editAssignee" class="form-label fw-semibold">Assignee</label>
+                            <select class="form-select" id="editAssignee" name="Assignee" asp-items="Model.AssigneeList">
+                                <option value="">Select Assignee</option>
                             </select>
-
                         </div>
-
 
                         <div class="col-md-6">
 
@@ -782,7 +758,6 @@
 
                         </div>
 
-
                         <div class="col-md-6">
 
                             <label for="editStatus"
@@ -799,14 +774,28 @@
                                 <option value="">
                                     Select Status
                                 </option>
-
                             </select>
-
                         </div>
 
-
+                        <div class="col-12 mb-4">
+                            <input type="hidden" id="editAttachments" name="Attachments" />
+                                <label class="form-label fw-semibold">Attachments</label>
+                                <div class="upload-zone">
+                                    <input type="file" id="editFileInput" name="AttachmentFile" class="d-none" accept="image/*" >
+                                    <div class="upload-icon mb-2">
+                                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                                    </div>
+                                    <div class="fw-bold upload-title" >Upload Files</div>
+                                    <div class="text-muted small upload-description">Add relevant files here...</div>
+                                </div>
+                            <div id="editAttachmentPreview" class="edit-attachment-preview">
+                                <img id="editAttachmentImage"
+                                     src=""
+                                     alt="Attachment"
+                                     class="edit-attachment-image">
+                            </div>
+                        </div>
                     </div>
-
                 </div>
 
 

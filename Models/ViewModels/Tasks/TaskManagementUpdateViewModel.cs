@@ -24,5 +24,7 @@ namespace CKM_ManagementSystem.Models.ViewModels.Tasks
         public string StatusCode { get; set; } = string.Empty;
 
         public string? Attachments { get; set; }
+
+        public IFormFile? AttachmentFile { get; set; }
     }
 }

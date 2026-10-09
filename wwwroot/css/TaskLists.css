@@ -175,3 +175,39 @@ textarea.form-control {
     font-weight: 400;
     background-color: var(--white);
 }
+.edit-attachment-preview {
+    display: none;
+    margin-top: 12px;
+    text-align: center;
+}
+
+.edit-attachment-image {
+    display: block;
+    width: auto;
+    max-width: 300px;
+    max-height: 180px;
+    object-fit: contain;
+    margin: 0 auto;
+    border-radius: 8px;
+}
+
+.upload-zone {
+    cursor: pointer;
+}
+
+.upload-title {
+    color: #1a2b4c;
+}
+
+.upload-description {
+    margin-top: 2px;
+}
+.edit-attachment-preview {
+    display: none;
+    margin-top: 12px;
+}
+
+.edit-attachment-preview.is-visible {
+    display: block;
+}
+

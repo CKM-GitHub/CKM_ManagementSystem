@@ -96,9 +96,9 @@ thead th.sticky-col{
 
 .col-4-sticky {
     left: 380px;
-    width: 220px;
-    min-width: 220px;
-    max-width: 220px;
+    width: 250px;
+    min-width: 250px;
+    max-width: 250px;
     box-shadow: 4px 0 6px -2px var(--shadow-color);
 }
 

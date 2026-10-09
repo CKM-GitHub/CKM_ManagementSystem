@@ -8,17 +8,14 @@ namespace CKM_ManagementSystem.Controllers
     public class TasksController : Controller
     {
         private readonly TasksBL _taskBL;
-
-        public TasksController(TasksBL tasksBL)
+        private readonly IWebHostEnvironment _environment;
+        public TasksController(TasksBL tasksBL, IWebHostEnvironment environment)
         {
             _taskBL = tasksBL;
+            _environment = environment;
         }
 
-
-        // =====================================================
         // Task Management
-        // =====================================================
-
         [HttpGet]
         [Route("Tasks/TaskLists")]
         public async Task<IActionResult> TaskLists(
@@ -176,8 +173,18 @@ namespace CKM_ManagementSystem.Controllers
 
             if (!ModelState.IsValid)
             {
+                var errors = ModelState
+                    .Where(x => x.Value != null && x.Value.Errors.Count > 0)
+                    .SelectMany(x => x.Value!.Errors)
+                    .Select(x =>
+                        string.IsNullOrWhiteSpace(x.ErrorMessage)
+                            ? x.Exception?.Message
+                            : x.ErrorMessage)
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .ToList();
+
                 TempData["ErrorMessage"] =
-                    "Invalid task data.";
+                    string.Join(" | ", errors);
 
                 if (!string.IsNullOrWhiteSpace(returnUrl) &&
                     Url.IsLocalUrl(returnUrl))
@@ -188,7 +195,53 @@ namespace CKM_ManagementSystem.Controllers
                 return RedirectToAction(
                     nameof(TaskLists));
             }
+            if (model.AttachmentFile != null && model.AttachmentFile.Length > 0)
+            {
+                string uploadFolder = Path.Combine(
+                    _environment.WebRootPath,
+                    "Attached Files"
+                );
 
+                if (!Directory.Exists(uploadFolder))
+                {
+                    Directory.CreateDirectory(uploadFolder);
+                }
+
+                string? oldAttachment = model.Attachments;
+
+                string extension =
+                    Path.GetExtension(model.AttachmentFile.FileName);
+
+                string newFileName =
+                    $"{Guid.NewGuid()}{extension}";
+
+                string newFilePath =
+                    Path.Combine(uploadFolder, newFileName);
+
+                using (var stream = new FileStream(
+                    newFilePath,
+                    FileMode.Create))
+                {
+                    await model.AttachmentFile.CopyToAsync(stream);
+                }
+
+                model.Attachments =
+                    $"/Attached Files/{newFileName}";
+
+                if (!string.IsNullOrWhiteSpace(oldAttachment))
+                {
+                    string oldFileName =
+                        Path.GetFileName(oldAttachment);
+
+                    string oldFilePath =
+                        Path.Combine(uploadFolder, oldFileName);
+
+                    if (System.IO.File.Exists(oldFilePath))
+                    {
+                        System.IO.File.Delete(oldFilePath);
+                    }
+                }
+            }
             bool updated =
                 await _taskBL.UpdateTaskAsync(
                     model,

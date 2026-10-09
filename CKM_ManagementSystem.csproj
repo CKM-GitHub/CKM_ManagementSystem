@@ -7,7 +7,14 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Folder Include="Attached Files\" />
+	  <Compile Remove="Attached Files\**" />
+	  <Content Remove="Attached Files\**" />
+	  <EmbeddedResource Remove="Attached Files\**" />
+	  <None Remove="Attached Files\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="wwwroot\Attached Files\" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.3" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.11" />
