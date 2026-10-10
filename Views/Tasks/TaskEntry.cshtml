@@ -1,0 +1,384 @@
+﻿@model CKM_ManagementSystem.Models.ViewModels.Tasks.TaskEntryViewModel
+
+@{
+    ViewData["Title"] = "Create New Task";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/Alert_Modal.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/ckm-theme.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/TaskEntry.css"
+          asp-append-version="true" />
+}
+<div class="task-entry-page py-4">
+
+    <div class="container-fluid">
+
+        <div class="row justify-content-center">
+
+            <div class="col-lg-10 col-xl-9">
+
+                <div class="card form-card p-4 p-md-5">
+
+                    <!-- Header -->
+                    <div class="mb-5">
+                        <h1 class="task-entry-title">
+                            Create New Task
+                        </h1>
+                    </div>
+
+                    <form asp-controller="Tasks"
+                          asp-action="TaskEntry"
+                          method="post"
+                          enctype="multipart/form-data">
+
+                        @Html.AntiForgeryToken()
+
+                        <!-- Project + Person In Charge -->
+                        <div class="row mb-4 align-items-center">
+
+                            <!-- Project -->
+                            <label asp-for="ProjectCode"
+                                   class="col-auto form-label me-2 mb-0">
+                                Project:
+                            </label>
+
+                            <div class="col-md-4 col-sm-6">
+
+                                <div class="task-custom-select">
+
+                                    <input asp-for="ProjectCode"
+                                           type="hidden"
+                                           id="projectValue" />
+
+                                    <button type="button"
+                                            class="task-custom-select-button"
+                                            id="projectButton">
+
+                                        <span id="projectText">
+                                            Select Project
+                                        </span>
+
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </button>
+
+                                    <div class="task-custom-select-menu"
+                                         id="projectMenu">
+
+                                        @foreach (var item in ViewBag.Projects)
+                                        {
+                                            <button type="button"
+                                                    class="task-custom-select-option"
+                                                    data-value="@item.Value">
+                                                @item.Text
+                                            </button>
+                                        }
+
+                                    </div>
+
+                                </div>
+
+                                <span asp-validation-for="ProjectCode"
+                                      class="text-danger small">
+                                </span>
+
+                            </div>
+
+                            <!-- Person In Charge -->
+                            <label class="col-auto form-label me-2 mb-0">
+                                Person In Charge:
+                            </label>
+
+                            <div class="col-md-4 col-sm-6">
+
+                                <span class="person-in-charge-name">
+                                    @ViewBag.PersonInChargeName
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Task Title -->
+                        <div class="mb-4">
+
+                            <label asp-for="Title"
+                                   class="form-label">
+                                Task Title / Program Name
+                            </label>
+
+                            <input asp-for="Title"
+                                   type="text"
+                                   class="form-control"
+                                   id="taskTitle"
+                                   placeholder="Enter task title here"
+                                   autofocus />
+
+                            <span asp-validation-for="Title"
+                                  class="text-danger small">
+                            </span>
+
+                        </div>
+
+
+                        <!-- Description -->
+                        <div class="mb-4">
+
+                            <label asp-for="Description"
+                                   class="form-label">
+                                Description
+                            </label>
+
+                            <textarea asp-for="Description"
+                                      class="form-control"
+                                      id="taskDescription"
+                                      rows="4"
+                                      placeholder="Describe the task details...">
+                            </textarea>
+
+                        </div>
+
+
+                        <!-- Assignee / Due Date / Priority / Status -->
+                        <div class="row g-3 mb-4 task-option-row">
+
+                            <!-- Assignee -->
+                            <div class="col-md-3 col-sm-6">
+
+                                <label asp-for="Assignee"
+                                       class="form-label">
+                                    Assignee
+                                </label>
+
+                                <div class="task-custom-select">
+
+                                    <input asp-for="Assignee"
+                                           type="hidden"
+                                           id="assigneeValue" />
+
+                                    <button type="button"
+                                            class="task-custom-select-button"
+                                            id="assigneeButton">
+
+                                        <span id="assigneeText">
+                                            Select Assignee
+                                        </span>
+
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </button>
+
+                                    <div class="task-custom-select-menu"
+                                         id="assigneeMenu">
+                                    </div>
+
+                                </div>
+
+                                <span asp-validation-for="Assignee"
+                                      class="text-danger small">
+                                </span>
+
+                            </div>
+
+
+                            <!-- Due Date -->
+                            <div class="col-md-3 col-sm-6">
+
+                                <label asp-for="DueDate"
+                                       class="form-label">
+                                    Due Date
+                                </label>
+
+                                <input asp-for="DueDate"
+                                       type="date"
+                                       class="form-control form-control-md"
+                                       id="dueDate" />
+
+                            </div>
+
+
+                            <!-- Priority -->
+                            <div class="col-md-3 col-sm-6">
+
+                                <label asp-for="PriorityCode"
+                                       class="form-label">
+                                    Priority
+                                </label>
+
+                                <div class="task-custom-select">
+
+                                    <input asp-for="PriorityCode"
+                                           type="hidden"
+                                           id="priorityValue" />
+
+                                    <button type="button"
+                                            class="task-custom-select-button"
+                                            id="priorityButton">
+                                        <span id="priorityText">Select Priority</span>
+
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </button>
+
+                                    <div class="task-custom-select-menu"
+                                         id="priorityMenu">
+
+                                        @foreach (var item in ViewBag.Priorities)
+                                        {
+                                            <button type="button"
+                                                    class="task-custom-select-option"
+                                                    data-value="@item.Value">
+                                                @item.Text
+                                            </button>
+                                        }
+
+                                    </div>
+
+                                </div>
+
+                                <span asp-validation-for="PriorityCode"
+                                      class="text-danger small">
+                                </span>
+
+                            </div>
+                            <!-- Status -->
+                            <div class="col-md-3 col-sm-6">
+
+                                <label asp-for="StatusCode"
+                                       class="form-label">
+                                    Status
+                                </label>
+
+                                <div class="task-custom-select">
+
+                                    <input asp-for="StatusCode"
+                                           type="hidden"
+                                           id="statusValue" />
+
+                                    <button type="button"
+                                            class="task-custom-select-button"
+                                            id="statusButton">
+                                        <span id="statusText">Select Status</span>
+
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </button>
+
+                                    <div class="task-custom-select-menu"
+                                         id="statusMenu">
+
+                                        @foreach (var item in ViewBag.Statuses)
+                                        {
+                                            <button type="button"
+                                                    class="task-custom-select-option"
+                                                    data-value="@item.Value">
+                                                @item.Text
+                                            </button>
+                                        }
+
+                                    </div>
+
+                                </div>
+
+                                <span asp-validation-for="StatusCode"
+                                      class="text-danger small">
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Attachments -->
+                        <div class="mb-4">
+
+                            <label class="form-label">
+                                Attachments
+                            </label>
+                            <div class="upload-zone"
+                                 onclick="document.getElementById('fileInput').click();">
+
+                                <input type="file"
+                                       id="fileInput"
+                                       name="files"
+                                       class="d-none"
+                                       multiple />
+
+                                <div id="uploadPlaceholder">
+
+                                    <div class="upload-icon mb-2">
+                                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                                    </div>
+
+                                    <div class="fw-bold" style="color: #1a2b4c;">
+                                        Upload Files
+                                    </div>
+
+                                    <div class="text-muted small">
+                                        Add relevant files here...
+                                    </div>
+
+                                </div>
+
+                                <div id="selectedFiles"
+                                     class="selected-files-container">
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                        <!-- Buttons -->
+                        <div class="d-flex justify-content-end gap-3 pt-3 border-top">
+
+                            <button type="reset"
+                                    class="btn btn-cancel">
+                                Clear
+                            </button>
+
+                            <button type="submit"
+                                    class="btn btn-primary btn-submit">
+                                Create Task
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+@if (TempData["SuccessMessage"] != null)
+{
+    <input type="hidden"
+           id="successMessage"
+           value="@TempData["SuccessMessage"]" />
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <input type="hidden"
+           id="errorMessage"
+           value="@TempData["ErrorMessage"]" />
+}
+<partial name="AlertModal" />
+@section Scripts {
+    <script src="~/js/Alert_Modal.js"
+            asp-append-version="true"></script>
+
+    <partial name="_ValidationScriptsPartial" />
+
+    <script src="~/js/TaskEntry.js"
+            asp-append-version="true"></script>
+}

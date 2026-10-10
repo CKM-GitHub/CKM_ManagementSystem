@@ -2,19 +2,18 @@
 
 namespace CKM_ManagementSystem.Models.ViewModels.Tasks
 {
-    public class TaskCreateViewModel
+    public class TaskEntryViewModel
     {
         [Required(ErrorMessage = "Project is required.")]
         public string ProjectCode { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Task Title is required.")]
-        public string Title { get; set; } =string.Empty;
+        public string Title { get; set; } = string.Empty;
 
         public string? Description { get; set; }
 
-        [Required(ErrorMessage="Assignee is required.")]
-        public string? Assignee { get; set; } = string.Empty ;
-
+        [Required(ErrorMessage = "Assignee is required.")]
+        public string? Assignee { get; set; } = string.Empty;
         public DateTime? DueDate { get; set; }
 
         [Required(ErrorMessage = "Priority is required.")]
@@ -23,7 +22,7 @@ namespace CKM_ManagementSystem.Models.ViewModels.Tasks
         [Required(ErrorMessage = "Status is required.")]
         public string StatusCode { get; set; } = string.Empty;
 
-        public string? Attachements { get; set; } 
+        public string? Attachments { get; set; }
 
     }
 }

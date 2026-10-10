@@ -129,7 +129,7 @@ namespace CKM_ManagementSystem.BL
         }
 
         public async Task<int> CreateTaskAsync(
-            TaskCreateViewModel model,
+            TaskEntryViewModel model,
             string loginStaffCode)
         {
             SqlParameter[] parameters =
@@ -172,12 +172,12 @@ namespace CKM_ManagementSystem.BL
 
                 new SqlParameter(
                     "@Attachments",
-                    string.IsNullOrWhiteSpace(model.Attachements)
+                    string.IsNullOrWhiteSpace(model.Attachments)
                     ? DBNull.Value
-                    : model.Attachements),
+                    : model.Attachments),
 
                 new SqlParameter(
-                    "@CreateBy",
+                    "@CreatedBy",
                     loginStaffCode)
 
             };
@@ -738,5 +738,32 @@ namespace CKM_ManagementSystem.BL
 
             return affectedRows > 0;
         }
+
+        public async Task<string> GetPersonInChargeNameAsync(
+          string staffCode)
+        {
+            SqlParameter[] parameters =
+            {
+             new SqlParameter(
+             "@StaffCode",
+              staffCode
+        )
+    };
+
+            DataTable table =
+                await bdl.SelectDataTableAsync(
+                    "sp_Task_GetPersonInChargeName",
+                    parameters
+                );
+
+            if (table.Rows.Count == 0)
+            {
+                return string.Empty;
+            }
+
+            return table.Rows[0]["Name"]?.ToString()
+                ?? string.Empty;
+        }
+
     }
 }

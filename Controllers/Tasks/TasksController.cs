@@ -1,6 +1,7 @@
 ﻿using CKM_ManagementSystem.BL;
 using CKM_ManagementSystem.Models.ViewModels.Tasks;
 using Microsoft.AspNetCore.Mvc;
+
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CKM_ManagementSystem.Controllers
@@ -269,16 +270,6 @@ namespace CKM_ManagementSystem.Controllers
         }
 
 
-        [HttpGet]
-        public async Task<IActionResult> GetAssignees(
-            string projectCode)
-        {
-            var assignees =
-                await _taskBL.GetAssigneesAsync(
-                    projectCode);
-
-            return Json(assignees);
-        }
 
 
         // =====================================================
@@ -438,5 +429,241 @@ namespace CKM_ManagementSystem.Controllers
             return RedirectToAction(
                 nameof(MyTasksOverview));
         }
+
+        //Task Entry
+        [HttpGet]
+        public async Task<IActionResult> TaskEntry()
+        {
+            string? loginStaffCode =
+                User.FindFirst("StaffCode")?.Value;
+
+            if (string.IsNullOrWhiteSpace(loginStaffCode))
+            {
+                return RedirectToAction(
+                    "Login",
+                    "LoginUsers"
+                );
+            }
+
+            var model = new TaskEntryViewModel();
+
+            await PopulateTaskEntryDropdownsAsync();
+
+            string personInChargeName = await
+                _taskBL.GetPersonInChargeNameAsync(
+                    loginStaffCode);
+
+            ViewBag.PersonInChargeName =
+                personInChargeName;
+
+            return View(
+                "~/Views/Tasks/TaskEntry.cshtml",
+                model
+            );
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetAssignees(string projectCode)
+        {
+            if (string.IsNullOrWhiteSpace(projectCode))
+            {
+                return Json(new List<object>());
+            }
+
+            var assignees =
+                await _taskBL.GetAssigneesAsync(projectCode);
+
+            var result = assignees.Select(x => new
+            {
+                value = x.Value,
+                text = x.Text
+            });
+
+            return Json(result);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> TaskEntry(
+      TaskEntryViewModel model,
+      List<IFormFile> files
+  )
+        {
+            string? loginStaffCode =
+                User.FindFirst("StaffCode")?.Value;
+
+            if (string.IsNullOrWhiteSpace(loginStaffCode))
+            {
+                return RedirectToAction(
+                    "Login",
+                    "LoginUsers"
+                );
+            }
+
+            if (!ModelState.IsValid)
+            {
+                await PopulateTaskEntryDropdownsAsync();
+
+                if (!string.IsNullOrWhiteSpace(model.ProjectCode))
+                {
+                    var assignees =
+                        await _taskBL.GetAssigneesAsync(
+                            model.ProjectCode
+                        );
+
+                    ViewBag.Assignees =
+                        assignees.Select(x =>
+                            new SelectListItem
+                            {
+                                Value = x.Value,
+                                Text = x.Text
+                            })
+                        .ToList();
+                }
+
+                ViewBag.PersonInChargeName =
+                    await _taskBL.GetPersonInChargeNameAsync(
+                        loginStaffCode
+                    );
+
+                return View(
+                    "~/Views/Tasks/TaskEntry.cshtml",
+                    model
+                );
+            }
+
+            model.Attachments =
+                await SaveTaskAttachmentsAsync(files);
+
+            int taskId =
+                await _taskBL.CreateTaskAsync(
+                    model,
+                    loginStaffCode
+                );
+
+            if (taskId > 0)
+            {
+                TempData["SuccessMessage"] =
+                    "Task created successfully.";
+
+                return RedirectToAction(
+                    nameof(TaskEntry)
+                );
+            }
+
+            TempData["ErrorMessage"] =
+                "Failed to create task.";
+
+            return RedirectToAction(
+                nameof(TaskEntry)
+            );
+        }
+
+
+
+
+
+        private async Task PopulateTaskEntryDropdownsAsync()
+        {
+            var projects = await _taskBL.GetProjectsAsync();
+            var priorities = await _taskBL.GetPrioritiesAsync();
+            var statuses = await _taskBL.GetStatusesAsync();
+
+            ViewBag.Projects = projects
+                .Select(x => new SelectListItem
+                {
+                    Value = x.Value,
+                    Text = x.Text
+                })
+                .ToList();
+
+                ViewBag.Priorities = priorities
+                .Select(x => new SelectListItem
+                {
+                    Value = x.Value,
+                    Text = x.Text.Length > 30
+                        ? x.Text.Substring(0, 30) + "..."
+                        : x.Text
+                })
+                .ToList();
+
+            ViewBag.Statuses = statuses
+              .Select(x => new SelectListItem
+              {
+                  Value = x.Value,
+                  Text = x.Text.Length > 30
+                      ? x.Text.Substring(0, 30) + "..."
+                      : x.Text
+              })
+              .ToList();
+
+            ViewBag.Assignees = new List<SelectListItem>();
+        }
+
+        private async Task<string?> SaveTaskAttachmentsAsync(
+    List<IFormFile> files
+)
+        {
+            if (files == null || files.Count == 0)
+            {
+                return null;
+            }
+
+            string uploadFolder = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "wwwroot",
+                "attachments",
+                "tasks"
+            );
+
+            if (!Directory.Exists(uploadFolder))
+            {
+                Directory.CreateDirectory(uploadFolder);
+            }
+
+            var savedPaths = new List<string>();
+
+            foreach (var file in files)
+            {
+                if (file.Length <= 0)
+                {
+                    continue;
+                }
+
+                string extension =
+                    Path.GetExtension(file.FileName);
+
+                string fileName =
+                    $"{Guid.NewGuid()}{extension}";
+
+                string physicalPath =
+                    Path.Combine(
+                        uploadFolder,
+                        fileName
+                    );
+
+                using var stream =
+                    new FileStream(
+                        physicalPath,
+                        FileMode.Create
+                    );
+
+                await file.CopyToAsync(stream);
+
+                savedPaths.Add(
+                    $"/attachments/tasks/{fileName}"
+                );
+            }
+
+            if (savedPaths.Count == 0)
+            {
+                return null;
+            }
+
+            return string.Join(
+                ";",
+                savedPaths
+            );
+        }
+
     }
-}
+    }
