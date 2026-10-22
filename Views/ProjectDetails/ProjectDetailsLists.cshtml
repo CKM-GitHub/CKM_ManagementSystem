@@ -1,0 +1,270 @@
+﻿@model CKM_ManagementSystem.Models.ViewModels.ProjectDetails.ProjectDetailsDashboardViewModel
+
+@{
+    ViewData["Title"] = "Project Details Dashboard";
+}
+
+<div class="container-fluid dashboard-wrapper ">
+    <div class="project-page-container">
+        <div class="page-header text-center">
+            <h1 class="page-title">
+                Project Details
+            </h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-8 col-md-12">
+            <div class="card card-custom">
+                <form method="get" asp-action="ProjectDetailsLists" class="search-toolbar-form">
+                    <div class="toolbar-input">
+                        <i class="bi bi-search search-icon"></i>
+                        <input type="text" name="projectName" value="@Model.SearchQuery" class="form-control search-box" placeholder="Search projects, tasks, or keywords...">
+                    </div>
+                    <button class="btn btn-primary-search px-4" type="submit"><i class="bi bi-search me-2"></i> Search</button>
+                </form>
+                
+                <div class="row">
+                    @if (Model.Projects != null && Model.Projects.Any())
+                    {
+                        foreach (var project in Model.Projects)
+                        {
+                            string statusClass = project.Status switch
+                            {
+                                "Active" => "status-active",
+                                "On Hold" => "status-onhold",
+                                "Completed" => "status-completed",
+                                _ => "status-inactive"
+                            };
+
+                            <div class="col-md-6">
+                                <div class="project-card">
+                                    <div class="project-card-header-area">
+                                        <div class="project-title-box">
+                                            <div class="project-icon-wrapper me-2">
+                                                <i class="fa fa-layer-group"></i>
+                                            </div>
+                                            <h6 class="fw-bold text-truncate project-title-text text-limit-menu"
+                                                data-tooltip-truncate
+                                                data-tooltip-text="@project.ProjectName">
+                                                @project.ProjectName
+                                            </h6>
+                                        </div>
+                                        <span class="badge-status @statusClass">@project.Status</span>
+                                    </div>
+
+                                    <div class="project-stats-grid">
+                                        <div class="stat-item"><span class="dot dot-open"></span><span>@project.OpenCount Open</span></div>
+                                        <div class="stat-item"><span class="dot dot-inprogress"></span><span>@project.InProgressCount In Progress</span></div>
+                                        <div class="stat-item"><span class="dot dot-review"></span><span>@project.ReviewCount Review</span></div>
+                                        <div class="stat-item"><span class="dot dot-completed"></span><span>@project.CompletedCount Completed</span></div>
+                                        <div class="stat-item"><span class="dot dot-onhold"></span><span>@project.OnHoldCount On Hold</span></div>
+                                        <div class="stat-item"><span class="dot dot-cancelled"></span><span>@project.CancelledCount Cancelled</span></div>
+                                    </div>
+
+                                    <div class="project-card-footer-area">
+                                        <span><i class="fa fa-calendar-alt me-1"></i> Updated @project.Updated_Date?.ToString("MMM dd, yyyy")</span>
+                                        <button type="button" class="btn btn-sm text-primary view-details-btn project-view-btn" data-code="@project.ProjectCode">
+                                            <i class="fa fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center text-muted py-4">Not found Project. </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-12">
+            <div class="card card-custom p-3 mb-4">
+                <h6 class="fw-bold mb-3"><i class="fa fa-chart-bar text-primary me-2"></i> Tasks Overview</h6>
+                <div class="overview-item">
+                    <div class="d-flex align-items-center">
+                        <div class="overview-icon bg-primary"><i class="fa fa-folder-open"></i></div>
+                        <div>
+                            <div class="fw-semibold small">Open Tasks</div>
+                            <div class="text-muted" style="font-size: 0.75rem;">Tasks waiting to be started</div>
+                        </div>
+                    </div>
+                    <span class="fw-bold text-primary">@Model.TotalOpenTasks</span>
+                </div>
+
+                <div class="overview-item">
+                    <div class="d-flex align-items-center">
+                        <div class="overview-icon bg-warning"><i class="fa fa-spinner"></i></div>
+                        <div>
+                            <div class="fw-semibold small">In Progress Tasks</div>
+                            <div class="text-muted" style="font-size: 0.75rem;">Tasks currently in progress</div>
+                        </div>
+                    </div>
+                    <span class="fw-bold text-warning">@Model.TotalInProgressTasks</span>
+                </div>
+
+                <div class="overview-item">
+                    <div class="d-flex align-items-center">
+                        <div class="overview-icon bg-info"><i class="fa fa-eye"></i></div>
+                        <div>
+                            <div class="fw-semibold small">Review Tasks</div>
+                            <div class="text-muted" style="font-size: 0.75rem;">Tasks pending review/approval</div>
+                        </div>
+                    </div>
+                    <span class="fw-bold text-info">@Model.TotalReviewTasks</span>
+                </div>
+
+                <div class="overview-item">
+                    <div class="d-flex align-items-center">
+                        <div class="overview-icon bg-success"><i class="fa fa-check-circle"></i></div>
+                        <div>
+                            <div class="fw-semibold small">Completed Tasks</div>
+                            <div class="text-muted" style="font-size: 0.75rem;">Successfully completed tasks</div>
+                        </div>
+                    </div>
+                    <span class="fw-bold text-success">@Model.TotalCompletedTasks</span>
+                </div>
+
+                <div class="overview-item">
+                    <div class="d-flex align-items-center">
+                        <div class="overview-icon bg-secondary"><i class="fa fa-pause-circle"></i></div>
+                        <div>
+                            <div class="fw-semibold small">On Hold Tasks</div>
+                            <div class="text-muted" style="font-size: 0.75rem;">Tasks temporarily paused</div>
+                        </div>
+                    </div>
+                    <span class="fw-bold text-secondary">@Model.TotalOnHoldTasks</span>
+                </div>
+
+                <div class="overview-item">
+                    <div class="d-flex align-items-center">
+                        <div class="overview-icon bg-danger"><i class="fa fa-times-circle"></i></div>
+                        <div>
+                            <div class="fw-semibold small">Cancelled Tasks</div>
+                            <div class="text-muted" style="font-size: 0.75rem;">Tasks aborted or removed</div>
+                        </div>
+                    </div>
+                    <span class="fw-bold text-danger">@Model.TotalCancelledTasks</span>
+                </div>
+            </div>
+
+            <div class="card card-custom p-3">
+                <h6 class="fw-bold mb-3"><i class="fa fa-layer-group text-primary me-2"></i> Project Status</h6>
+
+                <div class="overview-item">
+                    <div class="d-flex align-items-center">
+                        <div class="overview-icon bg-success"><i class="fa fa-check"></i></div>
+                        <div class="fw-semibold small">Active <br><span class="text-muted fw-normal" style="font-size: 0.75rem;">Projects currently active</span></div>
+                    </div>
+                    <span class="fw-bold text-success">@Model.TotalActiveProjects</span>
+                </div>
+
+                <div class="overview-item">
+                    <div class="d-flex align-items-center">
+                        <div class="overview-icon bg-warning"><i class="fa fa-clock"></i></div>
+                        <div class="fw-semibold small">On Hold <br><span class="text-muted fw-normal" style="font-size: 0.75rem;">Projects on hold</span></div>
+                    </div>
+                    <span class="fw-bold text-warning">@Model.TotalOnHoldProjects</span>
+                </div>
+
+                <div class="overview-item">
+                    <div class="d-flex align-items-center">
+                        <div class="overview-icon bg-primary"><i class="fa fa-flag"></i></div>
+                        <div class="fw-semibold small">Completed <br><span class="text-muted fw-normal" style="font-size: 0.75rem;">Projects completed</span></div>
+                    </div>
+                    <span class="fw-bold text-primary">@Model.TotalCompletedProjects</span>
+                </div>
+
+                <div class="overview-item">
+                    <div class="d-flex align-items-center">
+                        <div class="overview-icon bg-dark"><i class="fa fa-ban"></i></div>
+                        <div class="fw-semibold small">Inactive <br><span class="text-muted fw-normal" style="font-size: 0.75rem;">Projects marked inactive</span></div>
+                    </div>
+                    <span class="fw-bold text-dark">@Model.TotalInactiveProjects</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Project Details Modal -->
+<div class="modal fade" id="projectDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content modal-content-custom">
+            <div class="modal-header modal-header-custom">
+                <h5 class="modal-title fw-bold">Project Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body modal-body-custom">
+                <div class="modal-field-item">
+                    <label class="text-muted ">Project Name</label>
+                    <div id="modalProjectName">-</div>
+                </div>
+
+                <div class="modal-field-item">
+                    <label class="text-muted ">Project Manager</label>
+                    <div class="d-flex align-items-center mt-1">
+                        <img id="modalManagerImage" src="" class="avatar-img me-2 modal-manager-img" alt="Manager">
+                        <div>
+                            <span id="modalManagerName" class="fw-semibold">-</span>
+                            <span id="modalManagerCode" class="text-muted small"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-field-item">
+                    <label class="text-muted ">Project Git Link</label>
+                    <div><a href="#" id="modalGitUrl" target="_blank" class="text-primary text-decoration-none">-</a></div>
+                </div>
+
+                <div class="modal-field-item">
+                    <label class="text-muted ">Project Description</label>
+                    <div id="modalDescription" class="text-secondary">-</div>
+                </div>
+
+                <div class="modal-field-item">
+                    <label class="text-muted small">Start Date ~ End Date</label>
+                    <div id="modalDateRange" class="fw-medium">-</div>
+                </div>
+
+                <div class="modal-field-item">
+                    <label class="text-muted small mb-2">Project Members</label>
+                    <div class="table-responsive">
+                        <table class="table  align-middle mb-0 modal-custom-table">
+                            <thead class="table-light text-uppercase">
+                                <tr>
+                                    <th class="col-no">No.</th>
+                                    <th class="col-code">Staff Code</th>
+                                    <th class="col-name">Staff Name</th>
+                                </tr>
+                            </thead>
+                            <tbody id="modalMembersTableBody">
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="memberPaginationContainer" class="d-flex justify-content-between align-items-center mt-3"></div>
+                </div>
+            </div>
+            <div class="modal-footer modal-footer-custom">
+                <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/ProjectDetails.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/ckm-theme.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    <script>
+        window.projectDetailsUrl =
+            '@Url.Action("GetProjectDetails", "ProjectDetails")';
+    </script>
+
+    <script src="~/js/project-details.js"
+            asp-append-version="true"></script>
+}

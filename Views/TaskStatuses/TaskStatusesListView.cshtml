@@ -202,7 +202,7 @@
                     int startItem = totalItems == 0 ? 0 : ((currentPage - 1) * pageSize) + 1;
                     int endItem = totalItems == 0 ? 0 : Math.Min(currentPage * pageSize, totalItems);
                 }
-                Showing @startItem-@endItem of @totalItems records
+                Showing @startItem-@endItem of @totalItems  Statuses
             </div>
             @if (Model.PagedData != null && Model.PagedData.TotalPages > 1)
             {

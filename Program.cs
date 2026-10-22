@@ -36,6 +36,7 @@ builder.Services.AddScoped<UserPermissionBL>();
 builder.Services.AddScoped<TaskStatusesBL>();
 builder.Services.AddScoped<UserEntryBL>();
 builder.Services.AddScoped<UserListBL>();
+builder.Services.AddScoped<ProjectDetailsBL>();
 builder.Services.AddScoped<PasswordService>();
 
 builder.Services.AddHttpContextAccessor();
