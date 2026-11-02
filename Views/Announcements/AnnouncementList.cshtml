@@ -1,0 +1,509 @@
+﻿@using CKM_ManagementSystem.Models.ViewModels.Announcements
+@model AnnouncementListViewModel
+
+@{
+    ViewData["Title"] = "Announcement Management";
+}
+
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/AnnouncementList.css"
+          asp-append-version="true" />
+}
+
+<div class="announcement-list-page">
+
+    <h2 class="announcement-list-title">
+        Announcement Management
+    </h2>
+
+
+    <!-- Search / Filter -->
+    <form asp-controller="Announcements"
+          asp-action="AnnouncementList"
+          method="get"
+          class="announcement-search-section">
+
+        <div class="announcement-search-left">
+
+            <!-- Search Title / Content -->
+            <div class="announcement-search-box">
+
+                <input type="text"
+                       name="SearchText"
+                       value="@Model.Filter.SearchText"
+                       class="form-control announcement-search-input"
+                       placeholder="Search title or content" />
+
+                <i class="bi bi-search announcement-search-icon"></i>
+
+            </div>
+
+
+            <!-- Priority Filter -->
+            <select name="Priority"
+                    class="form-select announcement-priority-select">
+
+                <option value="">
+                    All Priority
+                </option>
+
+                <option value="1"
+                        selected="@(Model.Filter.Priority == 1)">
+                    Hight 
+                </option>
+
+                <option value="2"
+                        selected="@(Model.Filter.Priority == 2)">
+                    Medium
+                </option>
+
+                <option value="3"
+                        selected="@(Model.Filter.Priority == 3)">
+                    Low
+                </option>
+
+            </select>
+
+
+            <!-- Date Filter -->
+            <input type="date"
+                   name="AnnouncedDate"
+                   value="@(Model.Filter.AnnouncedDate?.ToString("yyyy-MM-dd"))"
+                   class="form-control announcement-date-input" />
+
+
+            <!-- Search Button -->
+            <button type="submit"
+                    class="announcement-search-button">
+
+                <i class="bi bi-search me-1"></i>
+                Search Announcement
+
+            </button>
+
+        </div>
+
+    </form>
+
+
+    <!-- Announcement Table -->
+    <div class="announcement-table-card">
+
+        <div class="table-responsive">
+
+            <table class="table announcement-table">
+
+                <thead>
+
+                    <tr>
+                        <th>No.</th>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Content</th>
+                        <th>Announced By</th>
+                        <th>Announced Date</th>
+                        <th>Target</th>
+                        <th>Priority</th>
+                        <th>Actions</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    @if (Model.Announcements == null ||
+                    Model.Announcements.Count == 0)
+                    {
+                        <tr>
+
+                            <td colspan="9"
+                                class="announcement-no-records">
+
+                                No announcements found.
+
+                            </td>
+
+                        </tr>
+                    }
+                    else
+                    {
+                        int rowNumber =
+                        ((Model.PageNumber - 1)
+                        * Model.PageSize) + 1;
+                        foreach (var announcement in Model.Announcements)
+                        {
+                            <tr>
+
+                                <!-- No. -->
+                                <td>
+                                    @rowNumber
+                                </td>
+
+
+                                <!-- ID -->
+                                <td>
+                                    @announcement.ID
+                                </td>
+
+
+                                <!-- Title -->
+                                <td>
+
+                                    <span class="announcement-text-limit"
+                                          data-tooltip-truncate
+                                          data-tooltip-text="@announcement.Title">
+
+                                        @announcement.Title
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- Content -->
+                                <td>
+
+                                    <span class="announcement-text-limit"
+                                          data-tooltip-truncate
+                                          data-tooltip-text="@announcement.Content">
+
+                                        @announcement.Content
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- Announced By -->
+                                <td>
+
+                                    <span class="announcement-text-limit"
+                                          data-tooltip-truncate
+                                          data-tooltip-text="@announcement.AnnouncedBy">
+
+                                        @announcement.AnnouncedBy
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- Announced Date -->
+                                <td>
+                                    @announcement.AnnouncedDate.ToString("dd/MM/yyyy")
+                                </td>
+
+
+                                <!-- Target -->
+                                <td>
+
+                                    <span class="announcement-text-limit"
+                                          data-tooltip-truncate
+                                          data-tooltip-text="@announcement.Target">
+
+                                        @announcement.Target
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- Priority -->
+                                <td>
+                                    @switch (announcement.Priority)
+                                    {
+                                        case 1:
+                                            <span class="priority-badge priority-high">
+                                                Hight
+                                            </span>
+                                            break;
+
+                                        case 2:
+                                            <span class="priority-badge priority-medium">
+                                                Medium
+                                            </span>
+                                            break;
+
+                                        case 3:
+                                            <span class="priority-badge priority-low">
+                                                Low
+                                            </span>
+                                            break;
+
+                                        default:
+                                            <span>-</span>
+                                            break;
+                                    }
+                                </td>
+
+                                <td class="announcement-action-column">
+
+                                    <!-- View -->
+                                    <button type="button"
+                                            class="announcement-action-btn announcement-view-btn"
+                                            data-id="@announcement.ID"
+                                            title="View">
+
+                                        <i class="bi bi-eye"></i>
+
+                                    </button>
+
+
+                                    <!-- Edit - Temporary Route -->
+                                    <a asp-controller="Announcements"
+                                       asp-action="EditAnnouncement"
+                                       asp-route-id="@announcement.ID"
+                                       class="announcement-action-btn announcement-edit-btn"
+                                       title="Edit">
+
+                                        <i class="bi bi-pencil-square"></i>
+
+                                    </a>
+
+
+                                    <!-- Delete -->
+                                    <button type="button"
+                                            class="announcement-action-btn announcement-delete-btn"
+                                            data-id="@announcement.ID"
+                                            title="Delete">
+
+                                        <i class="bi bi-trash"></i>
+
+                                    </button>
+
+                                </td>
+
+                            </tr>
+
+                            rowNumber++;
+                        }
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <!--footer -->
+        <div class="announcement-table-footer">
+
+            <div class="announcement-record-summary">
+
+                @if (Model.TotalRecords > 0)
+                {
+                    int startRecord =
+                    ((Model.PageNumber - 1)
+                    * Model.PageSize) + 1;
+
+                    int endRecord =
+                    Math.Min(
+                    Model.PageNumber * Model.PageSize,
+                    Model.TotalRecords
+                    );
+
+                    <span>
+                        Showing
+                        <strong>@startRecord–@endRecord</strong>
+                        of
+                        <strong>@Model.TotalRecords</strong>
+                        Announcements
+                    </span>
+                }
+                else
+                {
+                    <span>
+                        Showing 0 Announcements
+                    </span>
+                }
+
+            </div>
+
+
+            @if (Model.TotalPages > 1)
+            {
+                <nav class="announcement-pagination-container"
+                     aria-label="Announcement list pagination">
+
+                    <ul class="pagination">
+
+                        <!-- Previous -->
+                        <li class="page-item @(Model.PageNumber == 1
+                    ? "disabled"
+                    : "")">
+
+                            <a class="page-link"
+                               asp-controller="Announcements"
+                               asp-action="AnnouncementList"
+                               asp-route-SearchText="@Model.Filter.SearchText"
+                               asp-route-Priority="@Model.Filter.Priority"
+                               asp-route-AnnouncedDate="@(Model.Filter.AnnouncedDate?.ToString("yyyy-MM-dd"))"
+                               asp-route-pageNumber="@(Model.PageNumber - 1)">
+
+                                ‹
+
+                            </a>
+
+                        </li>
+
+
+                        <!-- Page Numbers -->
+                        @for (
+                       int pageNo = 1;
+                       pageNo <= Model.TotalPages;
+                       pageNo++)
+                        {
+                            <li class="page-item @(pageNo == Model.PageNumber
+                        ? "active"
+                        : "")">
+
+                                <a class="page-link"
+                                   asp-controller="Announcements"
+                                   asp-action="AnnouncementList"
+                                   asp-route-SearchText="@Model.Filter.SearchText"
+                                   asp-route-Priority="@Model.Filter.Priority"
+                                   asp-route-AnnouncedDate="@(Model.Filter.AnnouncedDate?.ToString("yyyy-MM-dd"))"
+                                   asp-route-pageNumber="@pageNo">
+
+                                    @pageNo
+
+                                </a>
+
+                            </li>
+                        }
+
+
+                        <!-- Next -->
+                        <li class="page-item @(Model.PageNumber == Model.TotalPages
+                    ? "disabled"
+                    : "")">
+
+                            <a class="page-link"
+                               asp-controller="Announcements"
+                               asp-action="AnnouncementList"
+                               asp-route-SearchText="@Model.Filter.SearchText"
+                               asp-route-Priority="@Model.Filter.Priority"
+                               asp-route-AnnouncedDate="@(Model.Filter.AnnouncedDate?.ToString("yyyy-MM-dd"))"
+                               asp-route-pageNumber="@(Model.PageNumber + 1)">
+
+                                ›
+
+                            </a>
+
+                        </li>
+
+                    </ul>
+
+                </nav>
+            }
+
+        </div>
+
+    </div>
+
+</div>
+<!-- Announcement Details Modal -->
+<div class="modal fade"
+     id="announcementDetailsModal"
+     tabindex="-1"
+     aria-labelledby="announcementDetailsModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content announcement-details-modal">
+
+            <div class="modal-header border-0">
+
+                <h5 class="modal-title fw-bold"
+                    id="announcementDetailsModalLabel">
+
+                    <i class="bi bi-info-circle-fill me-2 text-primary"></i>
+                    Announcement Details
+
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                </button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                <div class="announcement-detail-badges">
+
+                    <span id="detailPriority"
+                          class="priority-badge">
+                    </span>
+
+                    <span id="detailTarget"
+                          class="announcement-target-badge">
+                    </span>
+
+                </div>
+
+
+                <h4 id="detailTitle"
+                    class="announcement-detail-title">
+                </h4>
+
+
+                <div class="announcement-detail-meta">
+
+                    <div>
+                        <i class="bi bi-person me-2"></i>
+
+                        Announced by:
+                        <strong id="detailAnnouncedBy"></strong>
+                    </div>
+
+
+                    <div>
+                        <i class="bi bi-calendar3 me-2"></i>
+
+                        Announced Date:
+                        <strong id="detailAnnouncedDate"></strong>
+                    </div>
+
+                </div>
+
+
+                <div class="announcement-detail-content"
+                     id="detailContent">
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer border-0">
+
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+
+                    Close
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<partial name="AlertModal" />
+@section Scripts {
+
+    <script src="~/js/Alert_Modal.js"
+            asp-append-version="true"></script>
+
+    <script src="~/js/AnnouncementList.js"
+            asp-append-version="true"></script>
+}

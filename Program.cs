@@ -48,6 +48,7 @@ builder.Services.AddScoped<UserEntryBL>();
 builder.Services.AddScoped<UserListBL>();
 builder.Services.AddScoped<PasswordService>();
 builder.Services.AddScoped<TasksBL>();
+builder.Services.AddScoped<AnnouncementsBL>();
 var app = builder.Build();
 
 app.UseSession();
